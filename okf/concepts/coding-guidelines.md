@@ -6,7 +6,7 @@ path: /coding-guidelines/
 updated: 2026-09-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-09-20T10:46:54.923Z"
+  generated_at: "2026-09-20T10:56:12.920Z"
 ---
 # Coding Guidelines
 
