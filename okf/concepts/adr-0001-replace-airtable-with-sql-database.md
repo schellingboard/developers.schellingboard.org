@@ -6,7 +6,7 @@ path: /adr/0001-replace-airtable-with-sql-database/
 updated: 2026-09-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-09-20T09:10:43.817Z"
+  generated_at: "2026-09-20T10:21:19.493Z"
 ---
 # ADR 0001: Replace Airtable with a SQL database
 

@@ -6,7 +6,7 @@ path: /github-issues/
 updated: 2026-09-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-09-20T09:10:43.823Z"
+  generated_at: "2026-09-20T10:21:19.502Z"
 ---
 # Creating and Reading GitHub Issues
 

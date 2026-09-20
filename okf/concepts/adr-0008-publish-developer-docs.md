@@ -6,7 +6,7 @@ path: /adr/0008-publish-developer-docs/
 updated: 2026-09-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-09-20T09:10:43.820Z"
+  generated_at: "2026-09-20T10:21:19.496Z"
 ---
 # ADR 0008: Publish the developer docs at developers.schellingboard.org
 
