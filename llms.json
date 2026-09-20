@@ -51,6 +51,12 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0009: Move to a standalone repo in new schellingboard GitHub org",
+      "url": "https://developers.schellingboard.org/adr/0009-standalone-repository-in-own-org/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",

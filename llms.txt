@@ -12,6 +12,7 @@
 - [ADR 0006: Push notifications through an installable web app](https://developers.schellingboard.org/adr/0006-push-notifications/)
 - [ADR 0007: Attendee count storage and in-process reminder dispatch](https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/)
 - [ADR 0008: Publish the developer docs at developers.schellingboard.org](https://developers.schellingboard.org/adr/0008-publish-developer-docs/)
+- [ADR 0009: Move to a standalone repo in new schellingboard GitHub org](https://developers.schellingboard.org/adr/0009-standalone-repository-in-own-org/)
 - [Architecture decision records](https://developers.schellingboard.org/adr/)
 - [Architecture rules](https://developers.schellingboard.org/architecture-rules/)
 - [Predicting session attendance from voting results](https://developers.schellingboard.org/attendance-model/attendance-2025/)

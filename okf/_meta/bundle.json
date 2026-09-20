@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-09-20T10:21:19.512Z",
+    "generated_at": "2026-09-20T10:46:54.938Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 38,
+    "concepts": 39,
     "by_type": {
-      "concept": 38
+      "concept": 39
     },
     "locales": [],
     "versions": []
@@ -104,6 +104,16 @@
       "title": "ADR 0008: Publish the developer docs at developers.schellingboard.org",
       "path": "/adr/0008-publish-developer-docs/",
       "file": "concepts/adr-0008-publish-developer-docs.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0009-standalone-repository-in-own-org",
+      "type": "concept",
+      "title": "ADR 0009: Move to a standalone repo in new schellingboard GitHub org",
+      "path": "/adr/0009-standalone-repository-in-own-org/",
+      "file": "concepts/adr-0009-standalone-repository-in-own-org.md",
       "locale": "",
       "version": "",
       "tags": []

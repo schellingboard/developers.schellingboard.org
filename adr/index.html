@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9o1y4j">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9o1y4j">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9oyu84">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9oyu84">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9o1y4j" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9o1y4j" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9oyu84" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9oyu84" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9o1y4j" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9o1y4j" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9oyu84" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9oyu84" >
 
     
     
@@ -1025,7 +1025,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Architecture%20decision%20records%0A%0AOne%20record%20per%20decision%20that%20was%20expensive%20to%20make%20and%20would%20be%20expensive%20to%0Arevisit%3A%20what%20the%20situation%20was%2C%20what%20was%20chosen%2C%20and%20what%20that%20costs.%20They%20are%0Anot%20updated%20as%20the%20code%20moves%20on%20%E2%80%94%20a%20decision%20that%20no%20longer%20holds%20gets%20a%20new%0AADR%20superseding%20it%2C%20so%20the%20reasoning%20at%20the%20time%20stays%20readable.%0A%0AWrite%20one%20when%20a%20choice%20constrains%20later%20work%20(a%20dependency%2C%20a%20data%20model%2C%20a%0Aprotocol%2C%20a%20deployment%20shape)%2C%20not%20for%20every%20design%20discussion.%20Number%20it%20after%0Athe%20highest%20existing%20ADR%20and%20give%20it%20the%20same%20header%20block%3A%20status%2C%20date%2C%20and%0Athe%20tracking%20issue%20where%20there%20is%20one.%0A%0A%7C%20ADR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Decision%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Date%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------%20%7C%20-----------------------------------------------------------%20%7C%20----------%20%7C%0A%7C%20%5B0001%5D(0001-replace-airtable-with-sql-database.md)%20%20%20%7C%20Replace%20Airtable%20with%20a%20SQL%20database%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-16%20%7C%0A%7C%20%5B0002%5D(0002-testing-strategy.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Testing%20strategy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-23%20%7C%0A%7C%20%5B0003%5D(0003-form-field-validation-with-zod.md)%20%20%20%20%20%20%20%7C%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%20%20%20%7C%202026-07-02%20%7C%0A%7C%20%5B0004%5D(0004-dev-fake-clock.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-07-23%20%7C%0A%7C%20%5B0005%5D(0005-dark-mode.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%20%20%20%20%20%20%20%7C%202026-08-17%20%7C%0A%7C%20%5B0006%5D(0006-push-notifications.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Push%20notifications%20through%20an%20installable%20web%20app%20%20%20%20%20%20%20%20%20%20%20%7C%202026-09-05%20%7C%0A%7C%20%5B0007%5D(0007-attendee-count-and-reminder-dispatch.md)%20%7C%20Attendee%20count%20storage%20and%20in-process%20reminder%20dispatch%20%20%20%20%20%7C%202026-08-25%20%7C%0A%7C%20%5B0008%5D(0008-publish-developer-docs.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Publish%20the%20developer%20docs%20at%20developers.schellingboard.org%20%7C%202026-09-18%20%7C%0A%0ALonger%20design%20work%20that%20isn&#039;t%20a%20single%20decision%20lives%20next%20door%3A%0A%5BTarget%20architecture%5D(..%2Ftarget-architecture%2FREADME.md)%20and%0A%5BAttendance%20model%5D(..%2Fattendance-model%2FREADME.md).%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Architecture%20decision%20records%0A%0AOne%20record%20per%20decision%20that%20was%20expensive%20to%20make%20and%20would%20be%20expensive%20to%0Arevisit%3A%20what%20the%20situation%20was%2C%20what%20was%20chosen%2C%20and%20what%20that%20costs.%20They%20are%0Anot%20updated%20as%20the%20code%20moves%20on%20%E2%80%94%20a%20decision%20that%20no%20longer%20holds%20gets%20a%20new%0AADR%20superseding%20it%2C%20so%20the%20reasoning%20at%20the%20time%20stays%20readable.%0A%0AWrite%20one%20when%20a%20choice%20constrains%20later%20work%20(a%20dependency%2C%20a%20data%20model%2C%20a%0Aprotocol%2C%20a%20deployment%20shape)%2C%20not%20for%20every%20design%20discussion.%20Number%20it%20after%0Athe%20highest%20existing%20ADR%20and%20give%20it%20the%20same%20header%20block%3A%20status%2C%20date%2C%20and%0Athe%20tracking%20issue%20where%20there%20is%20one.%0A%0A%7C%20ADR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Decision%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Date%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------%20%7C%20-----------------------------------------------------------%20%7C%20----------%20%7C%0A%7C%20%5B0001%5D(0001-replace-airtable-with-sql-database.md)%20%20%20%7C%20Replace%20Airtable%20with%20a%20SQL%20database%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-16%20%7C%0A%7C%20%5B0002%5D(0002-testing-strategy.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Testing%20strategy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-23%20%7C%0A%7C%20%5B0003%5D(0003-form-field-validation-with-zod.md)%20%20%20%20%20%20%20%7C%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%20%20%20%7C%202026-07-02%20%7C%0A%7C%20%5B0004%5D(0004-dev-fake-clock.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-07-23%20%7C%0A%7C%20%5B0005%5D(0005-dark-mode.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%20%20%20%20%20%20%20%7C%202026-08-17%20%7C%0A%7C%20%5B0006%5D(0006-push-notifications.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Push%20notifications%20through%20an%20installable%20web%20app%20%20%20%20%20%20%20%20%20%20%20%7C%202026-09-05%20%7C%0A%7C%20%5B0007%5D(0007-attendee-count-and-reminder-dispatch.md)%20%7C%20Attendee%20count%20storage%20and%20in-process%20reminder%20dispatch%20%20%20%20%20%7C%202026-08-25%20%7C%0A%7C%20%5B0008%5D(0008-publish-developer-docs.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Publish%20the%20developer%20docs%20at%20developers.schellingboard.org%20%7C%202026-09-18%20%7C%0A%7C%20%5B0009%5D(0009-standalone-repository-in-own-org.md)%20%20%20%20%20%7C%20Move%20to%20a%20standalone%20repo%20in%20new%20schellingboard%20GitHub%20org%20%20%7C%202026-09-19%20%7C%0A%0ALonger%20design%20work%20that%20isn&#039;t%20a%20single%20decision%20lives%20next%20door%3A%0A%5BTarget%20architecture%5D(..%2Ftarget-architecture%2FREADME.md)%20and%0A%5BAttendance%20model%5D(..%2Fattendance-model%2FREADME.md).%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1172,6 +1172,11 @@ the tracking issue where there is one.</p>
 <td>Publish the developer docs at <a href="http://developers.schellingboard.org">developers.schellingboard.org</a></td>
 <td>2026-09-18</td>
 </tr>
+<tr>
+<td><a href="0009-standalone-repository-in-own-org/">0009</a></td>
+<td>Move to a standalone repo in new schellingboard GitHub org</td>
+<td>2026-09-19</td>
+</tr>
 </tbody>
 </table>
 </div><p>Longer design work that isn’t a single decision lives next door:
@@ -1243,17 +1248,32 @@ the tracking issue where there is one.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1789892736000">
+                <span class="git-last-updated" data-timestamp="1789900853000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1789892736000"></span>
+                  <span class="git-time" data-timestamp="1789900853000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: add ADR 0009 on moving to a standalone repo">docs: add ADR 0009 on moving to a sta...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789900853000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1296,13 +1316,13 @@ the tracking issue where there is one.</p>
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mu9o1y4j"></script>
+      <script src="../assets/js/docmd-main.js?v=mu9oyu84"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mu9o1y4j"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mu9o1y4j" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mu9o1y4j" ></script>
-<script src="../assets/js/docmd-search.js?v=mu9o1y4j" ></script>
-<script src="../assets/js/docmd-git.js?v=mu9o1y4j" ></script>
+      <script src="../assets/js/docmd-git.js?v=mu9oyu84"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mu9oyu84" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mu9oyu84" ></script>
+<script src="../assets/js/docmd-search.js?v=mu9oyu84" ></script>
+<script src="../assets/js/docmd-git.js?v=mu9oyu84" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1380,7 +1400,7 @@ the tracking issue where there is one.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mu9o1y4j"></script>
+          src="../assets/js/likec4-embed.js?v=mu9oyu84"></script>
         
       
       
