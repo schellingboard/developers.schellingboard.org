@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9past7">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9past7">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9pvcu8">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9pvcu8">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9past7" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9past7" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9pvcu8" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9pvcu8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9past7" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9past7" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9pvcu8" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9pvcu8" >
 
     
     
@@ -712,7 +712,7 @@
         
       </li>
     
-      <li class="expanded nav-group" >
+      <li class="active-parent expanded nav-group" >
       
         <span class="nav-label nav-group">
            
@@ -746,9 +746,9 @@
         
           <ul class="submenu">
             
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../adr/" class=" "
+        <a href="../../adr/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -775,6 +775,39 @@
             Decision records
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
           
         </a>
         
@@ -784,7 +817,139 @@
     
       <li class="" >
       
-        <a href="../../target-architecture/" class=" "
+        <a href="../../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <a href="../../target-architecture/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -809,10 +974,239 @@
             Target architecture
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../target-architecture/02-domain/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/06-data-and-time/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/08-decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -868,9 +1262,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../attendance-model/" class=" "
+        <a href="../../attendance-model/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -894,10 +1288,47 @@
             Attendance model
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1027,7 +1458,67 @@
                 <div class="docmd-breadcrumbs-row">
                   <div id="docmd-raw-markdown" data-content="%23%202%20%C2%B7%20Domain%0A%0AEverything%20in%20this%20chapter%20lives%20in%20%60packages%2Fdomain%60%3A%20plain%20TypeScript%20with%20no%20I%2FO%2C%0Ano%20framework%2C%20no%20database%20types.%20It%20is%20what%20the%20server%20runs%20to%20decide%20and%20the%20client%0Aruns%20to%20predict.%20Words%20follow%20the%20%5Bglossary%5D(glossary.md).%0A%0A%23%23%20Modules%0A%0ANine%20modules%2C%20each%20owning%20its%20aggregates%2C%20its%20policies%20and%20the%20change%20types%20it%0Arecords.%20A%20module%20reads%20another%20module&#039;s%20data%20only%20through%20that%20module&#039;s%20public%0Aqueries%2C%20and%20reacts%20to%20another%20module&#039;s%20changes%20instead%20of%20calling%20into%20it.%0A%0A%7C%20Module%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Owns%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Records%20changes%20such%20as%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20-----------------%20%7C%20---------------------------------------------------------------------------------------------------------------------------%20%7C%20------------------------------------------------------------------------------------%20%7C%0A%7C%20**events**%20%20%20%20%20%20%20%20%7C%20Event%2C%20Day%2C%20phase%20windows%2C%20time%20zone%2C%20per-event%20settings%20(identity%20mode%2C%20public%20schedule%2C%20RSVP%20visibility%2C%20capacity%20policy)%20%7C%20EventCreated%2C%20DayChanged%2C%20PhaseWindowChanged%2C%20EventSettingChanged%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**venue**%20%20%20%20%20%20%20%20%20%7C%20Place%20(room%2C%20area%2C%20meeting%20point%2C%20anywhere)%2C%20floor%2C%20directions%2C%20capacity%2C%20colour%2C%20map%20pin%3B%20the%20venue%20map%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20PlaceCreated%2C%20PlaceChanged%2C%20VenueMapChanged%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**people**%20%20%20%20%20%20%20%20%7C%20Person%2C%20profile%20(prompts%2C%20avatar%2C%20languages%2C%20contacts%2C%20labels)%2C%20Participation%20(person%20%C3%97%20event%2C%20role)%2C%20profile%20comments%20%20%20%20%20%20%7C%20ProfileChanged%2C%20ParticipationAdded%2C%20RoleChanged%2C%20ProfileCommentAdded%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**identity**%20%20%20%20%20%20%7C%20Credentials%20(password%2C%20passkeys)%2C%20email%20codes%2C%20join%20tokens%2C%20login%20sessions%2C%20API%20tokens%2C%20assurance%20rules%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20LoginStarted%2C%20CredentialChanged%2C%20ApiTokenIssued%20(audience%3A%20the%20person%20%2F%20admins)%20%20%20%20%20%20%7C%0A%7C%20**proposals**%20%20%20%20%20%7C%20Proposal%2C%20hosts%2C%20Vote%2C%20proposal%20comments%2C%20attendance%20prediction%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20ProposalCreated%2FChanged%2FDeleted%2C%20HostAdded%2FRemoved%2C%20VoteCast%2FWithdrawn%2C%20CommentAdded%20%7C%0A%7C%20**scheduling**%20%20%20%20%7C%20Session%20(kinds)%2C%20hosts%2C%20RSVP%2C%20booking%20rules%2C%20reserved%20windows%2C%20attendance%20count%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20SessionPlaced%2FMoved%2FChanged%2FDeleted%2C%20RsvpAdded%2FRemoved%2C%20AttendanceRecorded%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**meetings**%20%20%20%20%20%20%7C%20Meeting%20(1-on-1)%2C%20availability%2C%20meeting%20settings%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20MeetingRequested%2FAccepted%2FDeclined%2FCancelled%2FLapsed%2C%20AvailabilityChanged%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**personal**%20%20%20%20%20%20%7C%20Mark%20(star%2C%20hide%2C%20note)%20on%20any%20subject%3B%20personal%20preferences%20(time%20format%2C%20notification%20prefs)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20MarkSet%2FCleared%2C%20PreferenceChanged%20(audience%3A%20the%20person%20only)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**notifications**%20%7C%20Notification%2C%20channel%20bindings%2C%20delivery%20attempts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20NotificationCreated%2C%20NotificationRead%2C%20DeliveryAttempted%20(audience%3A%20the%20person%20only)%20%7C%0A%0AThe%20dependency%20direction%20among%20modules%20(view%20%60modules%60%20in%20the%20diagrams)%3A%0A%0A%60%60%60%0Aidentity%20%E2%94%80%E2%96%BA%20people%20%E2%94%80%E2%96%BA%20events%20%E2%97%84%E2%94%80%20venue%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%96%B2%20%20%20%20%20%20%20%20%20%20%E2%96%B2%0A%20%20%20%20%20%20%20%20%20%20%20%20%20proposals%20%E2%94%80%E2%94%A4%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%E2%94%82%20%20%20%20%20%20%20%20%20%20%E2%94%82%0A%20%20%20%20%20%20%20%20%20%20%20%20scheduling%20%E2%94%80%E2%94%B4%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%98%20%20%20%20%20%20%20%20personal%20%E2%94%80%E2%96%BA%20scheduling%2C%20proposals%2C%20people%20(references%20only)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20meetings%20%E2%94%80%E2%96%BA%20events%2C%20venue%2C%20people%0A%20%20%20%20%20%20%20%20%20notifications%20%E2%94%80%E2%96%BA%20(reacts%20to%20everything%3B%20nothing%20depends%20on%20it)%0A%60%60%60%0A%0A%60notifications%60%20and%20%60personal%60%20are%20leaves%3A%20they%20depend%20on%20others%2C%20nothing%20depends%20on%0Athem.%20Anything%20one%20module%20must%20do%20because%20of%20what%20happened%20in%20another%20is%20a%0Areaction%20to%20a%20recorded%20change%20(%60notifications%60%20reacting%20to%20%60SessionMoved%60)%2C%20so%0Athe%20depended-on%20module%20never%20learns%20about%20its%20dependants.%0A%0A%23%23%20Aggregates%20and%20invariants%0A%0AAn%20aggregate%20is%20the%20unit%20a%20use%20case%20loads%2C%20checks%20and%20saves%20in%20one%20transaction.%20The%0Ainvariants%20listed%20are%20the%20ones%20a%20policy%20or%20the%20aggregate%20itself%20must%20guarantee%3B%0Aeverything%20else%20is%20validation%20on%20the%20contract.%0A%0A%23%23%23%20Event%2C%20Day%0A%0A-%20Phase%20is%20**derived**%3A%20%60phaseAt(event%2C%20instant)%60%20returns%20proposal%20%2F%20voting%20%2F%0A%20%20scheduling%20%2F%20none%20from%20the%20windows.%20Never%20stored%2C%20so%20the%20fake%20clock%20and%20tests%0A%20%20need%20no%20state.%0A-%20A%20Day%20has%20a%20%60bookableWindow%60%20(start%2C%20end)%2C%20a%20%60slotGrid%60%20(slot%20length%2C%20break%0A%20%20length%2C%20first%20slot%20start)%2C%20and%20optional%20%60mealWindows%60.%20The%20grid%20drawn%20on%20screen%0A%20%20and%20the%20%22slot%22%20a%20booking%20refers%20to%20are%20both%20derived%20from%20this%3B%20sessions%20store%0A%20%20real%20instants%2C%20so%20a%20session%20that%20starts%20after%20a%20ten-minute%20break%20is%20drawn%20at%20its%0A%20%20real%20time%20and%20the%20row%20labels%20are%20slot%20starts.%20The%20mismatch%20attendees%20reported%0A%20%20cannot%20recur%20because%20there%20is%20no%20second%20copy%20of%20the%20grid.%0A-%20Event%20settings%20that%20other%20modules%20consult%20are%20read%20through%20one%20query%2C%0A%20%20%60eventSettings(eventId)%60%2C%20never%20duplicated.%0A%0A%23%23%23%20Place%2C%20Venue%0A%0A-%20%60kind%60%3A%20%60room%60%20%7C%20%60area%60%20%7C%20%60meetingPoint%60%20%7C%20%60anywhere%60.%20%60uses%60%3A%20which%20of%0A%20%20%60sessions%60%2C%20%60meetings%60%20may%20be%20placed%20here.%20Today&#039;s%20separate%20meeting%20points%20become%0A%20%20places%20with%20%60uses%20%3D%20%5Bmeetings%5D%60.%0A-%20%60floor%60%2C%20%60directions%60%20(markdown%2C%20short)%2C%20%60mapPin%60%20(x%2C%20y%20on%20the%20venue%20map%2C%200%E2%80%931)%2C%0A%20%20%60capacity%60%2C%20%60bookable%60%2C%20%60colour%60.%0A-%20%60anywhere%60%20is%20a%20real%20place%20per%20event%20with%20no%20capacity%3B%20a%20session%20placed%20there%0A%20%20must%20carry%20a%20%60gatheringPoint%60%20text.%0A%0A%23%23%23%20Person%2C%20Participation%0A%0A-%20A%20Person%20is%20site-wide%3B%20a%20Participation%20is%20per%20event%20and%20carries%20the%20event%20role%0A%20%20(%60attendee%60%20%7C%20%60organizer%60)%20and%20event-scoped%20settings%20such%20as%20%22my%20RSVPs%20are%0A%20%20anonymous%20by%20default%22.%0A-%20%60siteAdmin%60%20is%20a%20site%20role%20on%20the%20person.%0A-%20Profile%20comments%20belong%20to%20the%20subject%20person%2C%20who%20may%20remove%20them%20(%23901).%0A%0A%23%23%23%20Proposal%2C%20Vote%0A%0A-%20Hosts%20are%20participations.%20A%20proposal%20with%20no%20host%20is%20editable%20by%20any%20attendee%0A%20%20(unclaimed%20ideas%20can%20be%20picked%20up)%3B%20%60lookingForCoHosts%60%20is%20a%20flag%20(%23775).%0A-%20%60createdBy%60%20is%20kept%20and%20shown%20(attendees%20asked%20who%20proposed%20something)%3B%20it%20is%0A%20%20not%20a%20host.%0A-%20One%20vote%20per%20participation%20per%20proposal%3B%20casting%20the%20same%20choice%20again%20withdraws.%0A-%20Vote%20choice%20is%20visible%20only%20to%20the%20voter%3B%20the%20breakdown%20is%20visible%20to%20hosts%2C%20and%0A%20%20to%20everyone%20for%20a%20host-less%20proposal.%20It%20is%20a%20query%20fetched%20when%20a%20proposal%20is%0A%20%20opened%2C%20not%20part%20of%20the%20snapshot.%20The%20prediction%20is%20a%20pure%20function%20of%20the%0A%20%20breakdown%2C%20turnout%20and%20the%20event&#039;s%20%60concurrency%60%20setting.%0A%0A%23%23%23%20Session%0A%0A%60%60%60%0ASession%20%7B%0A%20%20kind%3A%20&#039;session&#039;%20%7C%20&#039;shift&#039;%20%7C%20&#039;fixture&#039;%0A%20%20title%2C%20description%20(markdown)%2C%20tags%0A%20%20hosts%3A%20ParticipationId%5B%5D%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20empty%20allowed%20for%20shifts%20and%20fixtures%0A%20%20proposalId%3F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20a%20proposal%20may%20be%20scheduled%20more%20than%20once%0A%20%20place%3A%20PlaceId%2C%20gatheringPoint%3F%20%20%20%20%20%2F%2F%20required%20when%20place.kind%20%3D%20anywhere%0A%20%20start%2C%20end%3A%20Instant%0A%20%20capacity%3F%3A%20number%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20absent%20%3D%20unlimited%3B%200%20not%20allowed%0A%20%20minHeadcount%3F%3A%20number%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20shifts%3A%20%22needs%202%22%0A%20%20latecomers%3A%20&#039;welcome&#039;%20%7C%20&#039;closed&#039;%20%7C%20&#039;unspecified&#039;%0A%20%20rsvp%3A%20&#039;optional&#039;%20%7C%20&#039;required&#039;%20%7C%20&#039;none&#039;%20%20%20%2F%2F%20fixtures%20default%20to%20none%0A%20%20lockedByOrganizer%3A%20boolean%20%20%20%20%20%20%20%20%20%20%2F%2F%20hosts%20cannot%20change%20it%0A%20%20createdBy%2C%20version%0A%7D%0A%60%60%60%0A%0A-%20Invariants%3A%20%60end%20%3E%20start%60%3B%20%60start%60%20and%20%60end%60%20on%20the%20same%20Day%3B%20%60place.uses%60%0A%20%20includes%20%60sessions%60%3B%20a%20shift%20has%20%60minHeadcount%20%E2%89%A5%201%60%3B%20a%20fixture%20has%20no%20hosts.%0A-%20A%20fixture%20is%20on%20**everyone&#039;s**%20agenda%20by%20default%20(meals%2C%20opening%2C%20closing)%20and%0A%20%20can%20be%20hidden%20by%20a%20personal%20mark.%20It%20defaults%20to%20%60rsvp%20%3D%20none%60%2C%20but%20may%20carry%20a%0A%20%20capacity%20and%20take%20RSVPs%20like%20any%20session%20(a%20dinner%20with%20limited%20seats).%0A-%20%22Which%20shifts%20still%20need%20people%22%20is%20%60shiftsBelowMinimum(sessions%2C%20rsvps)%60%2C%20a%20pure%0A%20%20derived%20view%2C%20so%20it%20is%20one%20list%20in%20the%20UI%20and%20one%20line%20in%20a%20reminder.%0A-%20An%20**RSVP**%20is%20%60%7B%20session%2C%20participation%2C%20visibility%3A%20public%20%7C%20anonymous%20%7D%60.%0A%20%20Capacity%20is%20checked%20by%20the%20policy%20against%20the%20count%20of%20RSVPs%3B%20hosts%20do%20not%0A%20%20count.%20Anonymous%20RSVPs%20count%20and%20show%20as%20%22%2B1%22.%0A%0A%23%23%23%20Booking%20rules%20and%20reserved%20windows%0A%0A%60%60%60%0ABookingRules%20%7B%0A%20%20maxSessionLength%2C%20minSessionLength%0A%20%20bookablePlaces%3A%20PlaceId%5B%5D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20per%20day%20override%20possible%0A%20%20reservedWindows%3A%20ReservedWindow%5B%5D%0A%7D%0AReservedWindow%20%7B%0A%20%20places%3A%20PlaceId%5B%5D%20%7C%20&#039;all&#039;%2C%20from%2C%20to%3A%20Instant%0A%20%20restriction%3A%0A%20%20%20%20%7C%20%7B%20kind%3A%20&#039;organizerOnly&#039;%20%7D%0A%20%20%20%20%7C%20%7B%20kind%3A%20&#039;spontaneousOnly&#039;%2C%20bookableFrom%3A%20Duration%20%7D%20%20%20%2F%2F%20e.g.%201h%20before%20the%20window%20starts%0A%20%20%20%20%7C%20%7B%20kind%3A%20&#039;maxLength&#039;%2C%20length%3A%20Duration%20%7D%0A%7D%0A%60%60%60%0A%0A%22Someone%20moved%20a%20scheduled%20session%20into%20the%20slots%20reserved%20for%20spontaneous%20ones%22%20is%0Athe%20policy%20%60canPlace%60%20denying%20a%20move%20into%20a%20%60spontaneousOnly%60%20window%20before%0A%60bookableFrom%60.%20Organizers%20configure%20the%20rule%3B%20the%20software%20enforces%20it.%0A%0A%23%23%23%20Meeting%0A%0A%60%60%60%0AMeeting%20%7B%20requester%2C%20invitee%3A%20ParticipationId%2C%20slot%3A%20%7Bstart%2C%20end%7D%2C%20place%3A%20PlaceId%2C%0A%20%20%20%20%20%20%20%20%20%20state%2C%20cancelReason%3F%2C%20createdAt%20%7D%0A%60%60%60%0A%0A%60%60%60mermaid%0AstateDiagram-v2%0A%20%20%5B*%5D%20--%3E%20requested%0A%20%20requested%20--%3E%20accepted%3A%20invitee%20accepts%0A%20%20requested%20--%3E%20declined%3A%20invitee%20declines%0A%20%20requested%20--%3E%20lapsed%3A%20slot%20start%20passes%20(job)%0A%20%20requested%20--%3E%20cancelled%3A%20requester%20cancels%0A%20%20accepted%20--%3E%20cancelled%3A%20either%20cancels%20(reason%20optional)%0A%20%20accepted%20--%3E%20%5B*%5D%3A%20slot%20ends%0A%60%60%60%0A%0A-%20Invariants%3A%20requester%20%E2%89%A0%20invitee%3B%20both%20participate%20in%20the%20event%3B%20both%20marked%0A%20%20available%20for%20the%20slot%3B%20%60place.uses%60%20includes%20%60meetings%60%3B%20an%20open-request%20cap%20per%0A%20%20requester%20from%20the%20event&#039;s%20meeting%20settings.%0A-%20Meetings%20are%20visible%20only%20to%20the%20two%20persons%20(and%20organizers%20on%20request)%3B%20they%0A%20%20are%20never%20in%20the%20event-wide%20audience.%0A-%201-on-1s%20are%20**on%20by%20default**%20for%20a%20new%20event%20(feedback)%2C%20with%20the%20organizer%20able%0A%20%20to%20turn%20them%20off%2C%20and%20are%20offered%20only%20while%20the%20event%20is%20in%20a%20phase%20the%0A%20%20organizer%20chose%20(default%3A%20scheduling%2C%20per%20%23952).%0A%0A%23%23%23%20Mark%20(personal)%0A%0A%60%60%60%0AMark%20%7B%20participation%2C%20subject%3A%20%7Btype%3A%20&#039;session&#039;%7C&#039;proposal&#039;%7C&#039;person&#039;%2C%20id%7D%2C%20kind%3A%20&#039;star&#039;%7C&#039;hide&#039;%7C&#039;note&#039;%2C%20text%3F%20%7D%0A%60%60%60%0A%0A-%20Private%20by%20construction%3A%20the%20change%20audience%20is%20the%20person%20alone%3B%20the%20snapshot%0A%20%20includes%20only%20the%20viewer&#039;s%20marks.%20There%20is%20no%20query%20that%20returns%20another%0A%20%20person&#039;s%20marks%2C%20so%20a%20bug%20cannot%20leak%20them%20by%20omission%20of%20a%20filter.%0A-%20%60star%60%20on%20a%20session%20puts%20it%20on%20the%20agenda%20without%20counting%3B%20%60hide%60%20removes%20it%0A%20%20from%20the%20default%20views%3B%20%60note%60%20is%20free%20text.%20A%20star%20on%20a%20person%20is%20the%20%22people%20I%0A%20%20want%20to%20meet%22%20shortlist%20(%23773).%0A%0A%23%23%23%20Notification%0A%0A%60Notification%20%7B%20person%2C%20category%2C%20subject%2C%20title%2C%20body%2C%20createdAt%2C%20readAt%3F%20%7D%60%0Aplus%20%60ChannelBinding%20%7B%20person%2C%20channel%2C%20address%2C%20verifiedAt%20%7D%60%20and%0A%60DeliveryAttempt%20%7B%20notification%2C%20channel%2C%20at%2C%20outcome%20%7D%60.%20Categories%20are%20an%20enum%0Ashared%20with%20preferences%20so%20a%20new%20one%20is%20added%20in%20one%20place.%0A%0A%23%23%20Policies%0A%0AA%20policy%20is%20%60(actor%2C%20subject%2C%20context)%20%E2%86%92%20%7B%20allow%3A%20true%20%7D%20%7C%20%7B%20allow%3A%20false%2C%20reason%20%7D%60.%0AThey%20are%20the%20only%20place%20a%20rule%20is%20written.%20The%20server%20calls%20them%20before%20every%0Amutation%3B%20the%20client%20calls%20them%20to%20enable%20or%20disable%20controls%20and%20to%20predict%0Aoptimistic%20changes.%20Because%20both%20sides%20run%20the%20same%20function%2C%20%22the%20button%20was%0Aenabled%20but%20the%20server%20refused%22%20becomes%20a%20bug%20with%20one%20cause.%0A%0A%7C%20Policy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Decides%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Inputs%20beyond%20actor%20and%20subject%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------%20%7C%20--------------------------------------------------------------------------------------------------------------------------------------------------------------------%20%7C%20------------------------------------------------%20%7C%0A%7C%20%60phase.allows(action)%60%20%20%20%20%20%20%20%7C%20Whether%20proposing%2C%20editing%20proposals%2C%20voting%2C%20scheduling%2C%20RSVPing%20are%20open%20now%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20event%2C%20clock%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60proposals.canEdit%60%20%20%20%20%20%20%20%20%20%20%7C%20Host%2C%20or%20anyone%20if%20no%20host%3B%20organizer%20always%3B%20phase%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20proposal%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60scheduling.canEditSession%60%20%20%7C%20Host%20and%20not%20%60lockedByOrganizer%60%3B%20organizer%20always%3B%20a%20started%20session%20keeps%20its%20start%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20session%2C%20clock%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60scheduling.canPlace%60%20%20%20%20%20%20%20%20%7C%20Booking%20window%2C%20bookable%20place%2C%20length%2C%20reserved%20windows%2C%20place%20uses%3B%20only%20fields%20actually%20changed%20are%20held%20to%20the%20rules%20(an%20organizer-placed%20session%20stays%20fixable)%20%7C%20day%2C%20place%2C%20rules%2C%20previous%20session%20state%2C%20clock%20%7C%0A%7C%20%60scheduling.canRsvp%60%20%20%20%20%20%20%20%20%20%7C%20Phase%2C%20participation%2C%20%60rsvp%20%E2%89%A0%20none%60%2C%20capacity%20mode%20(hard%20limit%20vs%20advisory)%2C%20not%20a%20host%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20rsvp%20count%2C%20event%20settings%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60scheduling.clashes%60%20%20%20%20%20%20%20%20%20%7C%20Which%20of%20a%20person&#039;s%20agenda%20items%20overlap%20a%20candidate%3B%20returns%20all%20of%20them%20(%231042)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20agenda%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60meetings.canRequest%60%20%20%20%20%20%20%20%20%7C%20Enabled%2C%20phase%2C%20availability%20of%20both%2C%20open-request%20cap%2C%20place%20use%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20meeting%20settings%2C%20availabilities%2C%20open%20count%20%20%20%20%20%7C%0A%7C%20%60people.canEditProfile%60%20%20%20%20%20%20%7C%20The%20person%2C%20or%20organizer%20for%20labels%20only%3B%20profile%20comments%20removable%20by%20subject%20or%20author%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60identity.assuranceRequired%60%20%7C%20Whether%20this%20action%20needs%20a%20verified%20session%3A%20the%20event&#039;s%20minimum%2C%20raised%20by%20the%20person&#039;s%20own%20protection%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20event%20identity%20mode%2C%20person&#039;s%20protection%20flag%20%20%20%20%7C%0A%7C%20%60visibility.audienceOf%60%20%20%20%20%20%20%7C%20For%20each%20change%20type%2C%20who%20may%20see%20it%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20change%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60visibility.canView%60%20%20%20%20%20%20%20%20%20%7C%20Vote%20breakdown%20(hosts%20%2F%20everyone%20if%20host-less)%2C%20meeting%20(the%20two)%2C%20marks%20(owner)%2C%20attendance%20count%20(hosts)%2C%20profiles%20(participants)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20subject%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0APolicies%20take%20a%20%60clock%60%20argument%20rather%20than%20reading%20time%2C%20which%20is%20what%20keeps%20the%0Afake%20clock%20and%20the%20tests%20honest.%0A%0A%23%23%20Derived%20views%0A%0APure%20functions%20from%20replica-shaped%20data%20to%20what%20a%20screen%20or%20an%20email%20shows.%20In%0A%60domain%60%20so%20the%20server%20can%20reuse%20them%20(a%20reminder%20email%20listing%20unfilled%20shifts%20uses%0Athe%20same%20function%20as%20the%20screen).%0A%0A-%20%60agenda(viewer%2C%20sessions%2C%20rsvps%2C%20marks%2C%20meetings%2C%20fixtures)%60%20%E2%86%92%20ordered%20items%20with%0A%20%20%60source%3A%20host%20%7C%20rsvp%20%7C%20star%20%7C%20fixture%20%7C%20meeting%60%20and%20clash%20groups.%0A-%20%60shiftsBelowMinimum%60%2C%20%60sessionsNow(clock)%60%2C%20%60grid(day%2C%20sessions%2C%20places)%60%20with%0A%20%20column%20packing%2C%20%60filters%60%20(mine%2C%20starred%2C%20unhidden%2C%20place%2C%20tag%2C%20text).%0A-%20%60prediction(breakdown%2C%20turnout%2C%20concurrency)%60.%0A%0A%23%23%20Time%20model%0A%0A-%20Instants%20are%20stored%20and%20transported%20as%20ISO-8601%20UTC%20strings.%20Every%20Event%20has%20an%0A%20%20IANA%20zone.%20Days%20are%20local%20dates%20in%20that%20zone.%0A-%20%60domain%2Ftime%60%20has%20the%20only%20formatting%20functions%3A%20%60formatTime(instant%2C%20zone%2C%0Aprefs)%60%20honouring%20the%20person&#039;s%2012%2F24-hour%20preference%20(%23607)%20and%20locale%2C%20and%20the%0A%20%20grid%20maths.%20Nothing%20else%20formats%20a%20time.%20An%20ambient-clock%20ban%20(%60new%20Date()%60)%20and%0A%20%20an%20ambient-zone%20ban%20(%60toLocaleTimeString%60%20without%20a%20zone)%20are%20lint%20rules.%0A-%20The%20%60Clock%60%20is%20a%20port.%20Production%20reads%20the%20system%20clock%3B%20the%20dev%20toolbar%20sets%20a%0A%20%20per-actor%20offset%20(today&#039;s%20fake%20clock%2C%20kept)%3B%20tests%20inject%20fixed%20instants.%0A%0A%23%23%20Language%20and%20accessibility%20as%20domain%20concerns%0A%0AUser-visible%20strings%20are%20keys%20from%20the%20start%2C%20with%20English%20as%20the%20source%20catalog.%0AThe%20domain%20returns%20**reason%20codes**%20from%20policies%2C%20never%20sentences%3B%20the%20client%20and%0Aemail%20templates%20translate.%20This%20costs%20nothing%20now%20and%20avoids%20the%20rewrite%20that%0Aadding%20a%20second%20language%20to%20sentence-returning%20code%20always%20is.%0A" style="display: none;"></div>
                   
-                    <div class="docmd-breadcrumbs-spacer"></div>
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <a href="../../target-architecture/">Target architecture</a>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>2 · Domain</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
                   
 
                   
@@ -1391,14 +1882,34 @@ adding a second language to sentence-returning code always is.</p>
                 
                   <div class="page-navigation">
                     
-                      <div class="prev-page-placeholder">
-                      </div>
+                      <a href="../../target-architecture/01-overview/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            1 · Overview
+                          </strong></span>
+                      </a>
                     
                     
-                      <a href="../../" class="next-page">
+                      <a href="../../target-architecture/03-server/" class="next-page">
                         <span><small>Next</small>
                           <strong>
-                            Overview
+                            3 · Server
                           </strong></span>
                         
 <svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -1572,14 +2083,14 @@ adding a second language to sentence-returning code always is.</p>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mu9past7"></script>
+      <script src="../../assets/js/docmd-main.js?v=mu9pvcu8"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mu9past7"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9past7" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-search.js?v=mu9past7" ></script>
-<script src="../../assets/js/init-mermaid.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-git.js?v=mu9past7" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mu9pvcu8"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/init-mermaid.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9pvcu8" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1657,7 +2168,7 @@ adding a second language to sentence-returning code always is.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mu9past7"></script>
+          src="../../assets/js/likec4-embed.js?v=mu9pvcu8"></script>
         
       
       

@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9past7">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9past7">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9pvcu8">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9pvcu8">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9past7" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9past7" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9pvcu8" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9pvcu8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9past7" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9past7" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9pvcu8" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9pvcu8" >
 
     
     
@@ -746,9 +746,9 @@
         
           <ul class="submenu">
             
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../adr/" class=" "
+        <a href="../adr/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -775,6 +775,39 @@
             Decision records
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
           
         </a>
         
@@ -784,7 +817,139 @@
     
       <li class="" >
       
-        <a href="../target-architecture/" class=" "
+        <a href="../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../target-architecture/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -809,10 +974,239 @@
             Target architecture
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/02-domain/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/06-data-and-time/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/08-decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -868,9 +1262,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../attendance-model/" class=" "
+        <a href="../attendance-model/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -894,10 +1288,47 @@
             Attendance model
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1283,13 +1714,13 @@ against the changelog — see <a href="../releasing/">Releasing a new version</a
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mu9past7"></script>
+      <script src="../assets/js/docmd-main.js?v=mu9pvcu8"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mu9past7"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mu9past7" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mu9past7" ></script>
-<script src="../assets/js/docmd-search.js?v=mu9past7" ></script>
-<script src="../assets/js/docmd-git.js?v=mu9past7" ></script>
+      <script src="../assets/js/docmd-git.js?v=mu9pvcu8"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mu9pvcu8" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mu9pvcu8" ></script>
+<script src="../assets/js/docmd-search.js?v=mu9pvcu8" ></script>
+<script src="../assets/js/docmd-git.js?v=mu9pvcu8" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1367,7 +1798,7 @@ against the changelog — see <a href="../releasing/">Releasing a new version</a
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mu9past7"></script>
+          src="../assets/js/likec4-embed.js?v=mu9pvcu8"></script>
         
       
       

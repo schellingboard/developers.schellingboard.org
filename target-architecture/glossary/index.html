@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9past7">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9past7">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9pvcu8">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9pvcu8">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9past7" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9past7" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9pvcu8" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9pvcu8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9past7" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9past7" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9pvcu8" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9pvcu8" >
 
     
     
@@ -712,7 +712,7 @@
         
       </li>
     
-      <li class="expanded nav-group" >
+      <li class="active-parent expanded nav-group" >
       
         <span class="nav-label nav-group">
            
@@ -746,9 +746,9 @@
         
           <ul class="submenu">
             
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../adr/" class=" "
+        <a href="../../adr/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -775,6 +775,39 @@
             Decision records
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
           
         </a>
         
@@ -784,7 +817,139 @@
     
       <li class="" >
       
-        <a href="../../target-architecture/" class=" "
+        <a href="../../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <a href="../../target-architecture/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -809,10 +974,239 @@
             Target architecture
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/02-domain/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/06-data-and-time/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/08-decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../target-architecture/glossary/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -868,9 +1262,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../attendance-model/" class=" "
+        <a href="../../attendance-model/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -894,10 +1288,47 @@
             Attendance model
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1027,7 +1458,67 @@
                 <div class="docmd-breadcrumbs-row">
                   <div id="docmd-raw-markdown" data-content="%23%20Glossary%0A%0AThe%20words%20used%20across%20this%20design.%20Where%20a%20word%20already%20means%20something%20to%20attendees%2C%0Athe%20design%20keeps%20that%20meaning%3B%20where%20the%20code%20needs%20a%20word%20attendees%20never%20see%2C%20it%20is%0Amarked%20_(internal)_.%0A%0A%7C%20Term%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Meaning%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20-------------------------%20%7C%20----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%20%7C%0A%7C%20**Site**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20One%20installation.%20Has%20settings%2C%20persons%2C%20events%2C%20API%20tokens.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Event**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20One%20conference%20or%20weekend%2C%20with%20days%2C%20places%2C%20phases%20and%20participants.%20Never%20used%20for%20%22something%20that%20happened%20in%20the%20system%22%20%E2%80%94%20that%20is%20a%20_change_.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Day**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20calendar%20date%20of%20an%20event%20in%20the%20event&#039;s%20time%20zone%2C%20with%20a%20bookable%20window%20and%20a%20slot%20grid.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Phase**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Proposal%2C%20voting%20or%20scheduling.%20Derived%20from%20the%20event&#039;s%20phase%20windows%20and%20the%20clock%2C%20never%20stored%20as%20state.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Place**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Somewhere%20a%20session%20or%20meeting%20happens%3A%20a%20room%2C%20an%20area%2C%20a%20meeting%20point%2C%20or%20%22anywhere%22.%20Has%20floor%2C%20directions%2C%20capacity%2C%20a%20map%20pin%2C%20and%20which%20uses%20it%20allows.%20Replaces%20today&#039;s%20_location_%20and%20_meeting%20point_.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Venue**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20An%20event&#039;s%20places%20plus%20its%20map%20image%20and%20general%20directions.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Person**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20human%20known%20to%20the%20site.%20Site-wide%3B%20profile%20lives%20here.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Participation**%20%20%20%20%20%20%20%20%20%7C%20A%20person&#039;s%20membership%20in%20one%20event%2C%20with%20their%20event%20role%20(attendee%2C%20organizer)%20and%20per-event%20preferences.%20Replaces%20_guest_%20and%20the%20event%E2%86%94guest%20assignment.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Actor**%20_(internal)_%20%20%20%20%7C%20Who%20is%20acting%20in%20a%20request%3A%20a%20person%20with%20an%20assurance%20level%20and%20roles%2C%20a%20bot%20with%20token%20scopes%2C%20or%20the%20system.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Assurance**%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20How%20sure%20the%20server%20is%20that%20the%20actor%20is%20the%20person%3A%20_claimed_%20(picked%20a%20name)%20or%20_verified_%20(join%20link%2C%20code%2C%20password%20or%20passkey).%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Proposal**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20An%20idea%20for%20a%20session%2C%20with%20hosts%2C%20votes%20and%20comments.%20Owned%20by%20the%20proposals%20module.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Vote**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Interested%20%2F%20Maybe%20%2F%20Skip%2C%20one%20per%20participant%20per%20proposal.%20Private%20to%20the%20voter%3B%20aggregated%20for%20hosts.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Session**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Something%20placed%20on%20the%20schedule.%20Has%20a%20**kind**%3A%20_session_%20(a%20talk%2C%20workshop%2C%20discussion)%2C%20_shift_%20(a%20volunteer%20slot%20needing%20a%20minimum%20headcount)%2C%20or%20_fixture_%20(an%20organizer%20item%20everyone%20sees%2C%20such%20as%20a%20meal%20or%20the%20opening).%20%7C%0A%7C%20**RSVP**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20public%20commitment%20to%20attend%20a%20session.%20Counts%20toward%20capacity.%20Can%20be%20_anonymous_%20(counts%2C%20name%20hidden).%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Mark**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20private%20annotation%20by%20a%20person%20on%20a%20session%2C%20proposal%20or%20person%3A%20_star_%20(interested%2C%20on%20my%20agenda)%2C%20_hide_%20(not%20for%20me)%2C%20_note_%20(free%20text).%20Never%20visible%20to%20anyone%20else%2C%20never%20counted.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Agenda**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20person&#039;s%20own%20view%3A%20sessions%20they%20host%20or%20RSVP&#039;d%20or%20starred%2C%20fixtures%2C%20confirmed%20meetings%2C%20with%20clashes%20computed.%20A%20derived%20view%2C%20not%20stored.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Meeting**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%201-on-1%20between%20two%20persons%20in%20a%20slot%20at%20a%20place%2C%20with%20a%20request%20%E2%86%92%20accepted%20%2F%20declined%20%2F%20lapsed%20%2F%20cancelled%20lifecycle.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Booking%20rule**%20%20%20%20%20%20%20%20%20%20%7C%20What%20may%20be%20placed%20where%20and%20when%3A%20bookable%20windows%20per%20day%2C%20bookable%20places%2C%20maximum%20length%2C%20and%20**reserved%20windows**%20(place%20%C3%97%20time%20range%20%C3%97%20restriction%2C%20e.g.%20%22spontaneous%20sessions%20only%2C%20bookable%20from%20one%20hour%20before%22).%20%20%20%20%20%20%20%20%7C%0A%7C%20**Policy**%20_(internal)_%20%20%20%7C%20A%20pure%20function%20deciding%20a%20rule%3A%20%60(actor%2C%20subject%2C%20context)%20%E2%86%92%20allow%20%5C%7C%20deny(reason)%60.%20Lives%20in%20%60domain%60%2C%20used%20by%20server%20and%20client.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Change**%20_(internal)_%20%20%20%7C%20A%20recorded%20fact%3A%20something%20that%20happened%2C%20with%20a%20type%2C%20subject%2C%20actor%2C%20time%2C%20payload%20and%20audience.%20Committed%20in%20the%20same%20transaction%20as%20the%20state%20it%20describes.%20What%20other%20systems%20call%20a%20domain%20event.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Change%20log**%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20append-only%20table%20of%20changes%2C%20ordered%20by%20sequence%20number.%20Source%20of%20the%20change%20feed%2C%20of%20reactions%2C%20of%20notifications%2C%20and%20of%20the%20audit%20trail.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Change%20feed**%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20per-viewer%20SSE%20stream%20of%20changes%20the%20viewer&#039;s%20audience%20permits%2C%20resumable%20from%20a%20sequence%20number.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Audience**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Who%20may%20see%20a%20change%3A%20the%20public%20(public-schedule%20events%20only)%2C%20everyone%20in%20the%20event%2C%20a%20set%20of%20persons%2C%20a%20session&#039;s%20hosts%2C%20the%20event&#039;s%20organizers.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Snapshot**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Everything%20in%20the%20viewer&#039;s%20audience%20for%20one%20event%2C%20at%20one%20sequence%20number.%20What%20the%20client%20loads%20before%20subscribing.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Replica**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20client&#039;s%20local%20copy%20of%20a%20snapshot%20kept%20current%20by%20the%20feed.%20Persisted%20so%20the%20app%20opens%20offline.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Reaction**%20_(internal)_%20%7C%20A%20handler%20in%20one%20module%20that%20runs%20after%20a%20change%20from%20another%20module%20was%20committed%2C%20at%20least%20once%2C%20idempotently.%20How%20modules%20cooperate%20without%20calling%20each%20other.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Notification**%20%20%20%20%20%20%20%20%20%20%7C%20An%20in-app%20record%20telling%20one%20person%20something.%20Delivered%20additionally%20over%20the%20channels%20they%20bound%3A%20email%2C%20push%2C%20chat.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Channel**%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20way%20to%20reach%20a%20person%20outside%20the%20app%3A%20email%2C%20web%20push%2C%20a%20chat%20platform.%20Each%20is%20an%20adapter%20behind%20one%20port.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Use%20case**%20_(internal)_%20%7C%20One%20command%20or%20query%20in%20a%20module&#039;s%20application%20layer%3A%20authorize%2C%20load%2C%20apply%20the%20domain%2C%20record%20changes%2C%20respond.%20The%20only%20thing%20HTTP%2C%20jobs%20and%20other%20modules%20may%20call.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20**Kernel**%20_(internal)_%20%20%20%7C%20The%20server&#039;s%20shared%20code%3A%20unit%20of%20work%2C%20change%20log%2C%20clock%2C%20ids%2C%20actor%20context%2C%20errors.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A" style="display: none;"></div>
                   
-                    <div class="docmd-breadcrumbs-spacer"></div>
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <a href="../../target-architecture/">Target architecture</a>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Glossary</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
                   
 
                   
@@ -1216,14 +1707,34 @@ marked <em>(internal)</em>.</p>
                 
                   <div class="page-navigation">
                     
-                      <div class="prev-page-placeholder">
-                      </div>
+                      <a href="../../target-architecture/diagrams/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Diagrams
+                          </strong></span>
+                      </a>
                     
                     
-                      <a href="../../" class="next-page">
+                      <a href="../../target-architecture/open-questions/" class="next-page">
                         <span><small>Next</small>
                           <strong>
-                            Overview
+                            Open questions
                           </strong></span>
                         
 <svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -1311,13 +1822,13 @@ marked <em>(internal)</em>.</p>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mu9past7"></script>
+      <script src="../../assets/js/docmd-main.js?v=mu9pvcu8"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mu9past7"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9past7" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-search.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-git.js?v=mu9past7" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mu9pvcu8"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9pvcu8" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1395,7 +1906,7 @@ marked <em>(internal)</em>.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mu9past7"></script>
+          src="../../assets/js/likec4-embed.js?v=mu9pvcu8"></script>
         
       
       

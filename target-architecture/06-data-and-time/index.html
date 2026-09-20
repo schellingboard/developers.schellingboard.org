@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9past7">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9past7">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9pvcu8">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9pvcu8">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9past7" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9past7" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9pvcu8" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9pvcu8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9past7" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9past7" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9pvcu8" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9pvcu8" >
 
     
     
@@ -712,7 +712,7 @@
         
       </li>
     
-      <li class="expanded nav-group" >
+      <li class="active-parent expanded nav-group" >
       
         <span class="nav-label nav-group">
            
@@ -746,9 +746,9 @@
         
           <ul class="submenu">
             
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../adr/" class=" "
+        <a href="../../adr/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -775,6 +775,39 @@
             Decision records
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
           
         </a>
         
@@ -784,7 +817,139 @@
     
       <li class="" >
       
-        <a href="../../target-architecture/" class=" "
+        <a href="../../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <a href="../../target-architecture/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -809,10 +974,239 @@
             Target architecture
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/02-domain/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../target-architecture/06-data-and-time/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/08-decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -868,9 +1262,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../attendance-model/" class=" "
+        <a href="../../attendance-model/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -894,10 +1288,47 @@
             Attendance model
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1027,7 +1458,67 @@
                 <div class="docmd-breadcrumbs-row">
                   <div id="docmd-raw-markdown" data-content="%23%206%20%C2%B7%20Data%20and%20time%0A%0A%23%23%20Principles%0A%0A-%20**State%20tables%20are%20boring.**%20One%20table%20per%20aggregate%20root%20plus%20its%20children%2C%0A%20%20foreign%20keys%20on%2C%20no%20JSON%20where%20a%20column%20would%20do%2C%20JSON%20only%20for%20genuinely%0A%20%20polymorphic%20payloads%20(change%20payloads%2C%20reserved-window%20restrictions).%0A-%20**Ids**%20are%20opaque%2C%20URL-safe%2C%20generated%20by%20the%20kernel%20(%60Ids%60%20port)%2C%20never%0A%20%20sequential%20where%20they%20are%20exposed.%20Slugs%20are%20for%20events%20only.%0A-%20**Versions**%20on%20every%20editable%20row%20(%60version%20INTEGER%60)%2C%20bumped%20by%20the%20unit%20of%0A%20%20work%3B%20edits%20carry%20%60expectedVersion%60.%0A-%20**No%20soft%20delete**%20except%20where%20the%20domain%20needs%20a%20tombstone%20(a%20deleted%20session%0A%20%20still%20appears%20in%20%22who%20moved%2Fdeleted%20this%22%20via%20the%20change%20log%2C%20which%20is%20enough).%0A-%20**Row%20shapes%20stay%20in%20%60db%2F%60.**%20The%20adapter%20maps%20rows%20to%20domain%20objects%3B%20nothing%0A%20%20above%20the%20adapter%20imports%20a%20row%20type.%20This%20is%20the%20boundary%20the%20current%20code%20is%0A%20%20still%20moving%20towards%20(%23965)%2C%20made%20structural%20here%20by%20the%20package%20split.%0A%0A%23%23%20Tables%20by%20module%0A%0A%7C%20Module%20%20%20%20%20%20%20%20%7C%20Tables%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20-------------%20%7C%20-----------------------------------------------------------------------------------------------------------------------%20%7C%0A%7C%20site%20%20%20%20%20%20%20%20%20%20%7C%20%60site_settings%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20events%20%20%20%20%20%20%20%20%7C%20%60events%60%2C%20%60days%60%2C%20%60event_settings%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20venue%20%20%20%20%20%20%20%20%20%7C%20%60places%60%2C%20%60venue_maps%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20people%20%20%20%20%20%20%20%20%7C%20%60persons%60%2C%20%60participations%60%2C%20%60profile_prompts%60%2C%20%60profile_answers%60%2C%20%60profile_comments%60%2C%20%60labels%60%2C%20%60participation_labels%60%20%7C%0A%7C%20identity%20%20%20%20%20%20%7C%20%60credentials%60%2C%20%60passkeys%60%2C%20%60email_codes%60%2C%20%60join_tokens%60%2C%20%60login_sessions%60%2C%20%60api_tokens%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20proposals%20%20%20%20%20%7C%20%60proposals%60%2C%20%60proposal_hosts%60%2C%20%60votes%60%2C%20%60proposal_comments%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20scheduling%20%20%20%20%7C%20%60sessions%60%2C%20%60session_hosts%60%2C%20%60rsvps%60%2C%20%60booking_rules%60%2C%20%60reserved_windows%60%2C%20%60attendance_counts%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20meetings%20%20%20%20%20%20%7C%20%60meetings%60%2C%20%60availability%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20personal%20%20%20%20%20%20%7C%20%60marks%60%2C%20%60preferences%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20notifications%20%7C%20%60notifications%60%2C%20%60channel_bindings%60%2C%20%60notification_preferences%60%2C%20%60delivery_attempts%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20kernel%20%20%20%20%20%20%20%20%7C%20%60changes%60%2C%20%60consumer_cursors%60%2C%20%60scheduled_jobs%60%2C%20%60leases%60%2C%20%60idempotency_keys%60%2C%20%60files%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0AEvery%20event-scoped%20table%20carries%20%60event_id%60%20so%20a%20per-event%20export%20or%20deletion%20is%20a%0Afiltered%20copy.%0A%0A%23%23%20The%20change%20log%20table%0A%0A%60%60%60sql%0ACREATE%20TABLE%20changes%20(%0A%20%20seq%20%20%20%20%20%20%20%20%20%20%20%20INTEGER%20PRIMARY%20KEY%20AUTOINCREMENT%2C%0A%20%20id%20%20%20%20%20%20%20%20%20%20%20%20%20TEXT%20NOT%20NULL%20UNIQUE%2C%20%20%20%20%20%20%20%20%20%20--%20client-recognisable%20id%0A%20%20event_id%20%20%20%20%20%20%20TEXT%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20NULL%20for%20site-level%20changes%0A%20%20type%20%20%20%20%20%20%20%20%20%20%20TEXT%20NOT%20NULL%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20&#039;scheduling.SessionMoved&#039;%0A%20%20subject_type%20%20%20TEXT%20NOT%20NULL%2C%20subject_id%20TEXT%20NOT%20NULL%2C%0A%20%20actor_type%20%20%20%20%20TEXT%20NOT%20NULL%2C%20actor_id%20TEXT%2C%20%20--%20person%20%7C%20token%20%7C%20system%20%7C%20deleted%0A%20%20occurred_at%20%20%20%20TEXT%20NOT%20NULL%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20ISO%20UTC%0A%20%20correlation_id%20TEXT%2C%0A%20%20command_key%20%20%20%20TEXT%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20Idempotency-Key%20of%20the%20causing%20command%0A%20%20audience%20%20%20%20%20%20%20TEXT%20NOT%20NULL%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20JSON%2C%20computed%20at%20write%20time%0A%20%20payload%20%20%20%20%20%20%20%20TEXT%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20--%20JSON%2C%20NULL%20once%20pruned%0A)%3B%0ACREATE%20INDEX%20changes_event_seq%20ON%20changes(event_id%2C%20seq)%3B%0ACREATE%20INDEX%20changes_subject%20%20%20ON%20changes(subject_type%2C%20subject_id%2C%20seq)%3B%0A%60%60%60%0A%0AFeed%20resume%20is%20%60WHERE%20event_id%20%3D%20%3F%20AND%20seq%20%3E%20%3F%60%20plus%20the%20audience%20filter%20in%0Aapplication%20code%20(audiences%20are%20small%20JSON%3B%20SQLite&#039;s%20%60json_each%60%20can%20index%20the%0A%60persons%60%20case%20if%20it%20ever%20matters).%0A%0A%23%23%20SQLite%20settings%0A%0A%60journal_mode%3DWAL%60%2C%20%60synchronous%3DNORMAL%60%2C%20%60foreign_keys%3DON%60%2C%20%60busy_timeout%3D5000%60%2C%0Aone%20connection%20for%20writes%2C%20a%20small%20pool%20for%20reads.%20Backups%20are%20%60VACUUM%20INTO%60%20or%20a%0Afile%20copy%20of%20the%20database%20plus%20the%20uploads%20directory%2C%20as%20today.%0A%0A%23%23%20Migrations%0A%0ADrizzle-generated%20SQL%20migrations%2C%20applied%20on%20server%20start%20before%20anything%20else%2C%0Aforward%20only.%20The%20release-upgrade%20test%20tier%20(migrate%20a%20released%20database%20forward%2C%0Aexercise%20CRUD)%20is%20kept.%20A%20migration%20that%20changes%20a%20change%20payload%20shape%20bumps%20the%0Achange%20%60type%60%20version%20suffix%20(%60SessionMoved.v2%60)%20rather%20than%20rewriting%20old%20rows%3B%0A%60apply%60%20handles%20both%20until%20the%20retention%20window%20has%20pruned%20the%20old%20ones.%0A%0A%23%23%20Time%0A%0A-%20Storage%20and%20wire%3A%20ISO-8601%20UTC%20instants.%20Durations%20as%20ISO-8601%20or%20integer%0A%20%20minutes%2C%20never%20floats.%0A-%20Every%20event%20has%20an%20IANA%20zone%3B%20every%20Day%20is%20a%20local%20date%20in%20it.%20%22Today%22%20is%0A%20%20computed%20in%20the%20event%20zone%20through%20the%20%60Clock%60%20port.%0A-%20The%20slot%20grid%20is%20data%20on%20the%20Day%20(%60slotGrid%60%20and%20%60bookableWindow%60%2C%20as%20in%0A%20%20%5B02%5D(02-domain.md%23event-day))%3B%20the%20grid%20rows%20and%20the%20sessions&#039;%20real%20times%20are%0A%20%20drawn%20from%20the%20same%20numbers%2C%20so%20labels%20and%20blocks%20cannot%20disagree.%0A-%20Formatting%20happens%20in%20exactly%20two%20places%3A%20%60domain%2Ftime%60%20(pure%2C%20given%20zone%2C%0A%20%20locale%2C%20preference)%20and%20the%20email%20templates%2C%20which%20call%20it.%20The%20lint%20rules%20ban%0A%20%20%60new%20Date()%60%20and%20locale-dependent%20formatting%20outside%20those%20files.%0A-%20The%20fake%20clock%20is%20an%20offset%20on%20the%20actor%20context%2C%20honoured%20by%20%60Clock%60%2C%20usable%20in%0A%20%20production%20only%20with%20the%20dev-tools%20flag%2C%20as%20today.%0A" style="display: none;"></div>
                   
-                    <div class="docmd-breadcrumbs-spacer"></div>
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <a href="../../target-architecture/">Target architecture</a>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>6 · Data and time</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
                   
 
                   
@@ -1200,14 +1691,34 @@ production only with the dev-tools flag, as today.</li>
                 
                   <div class="page-navigation">
                     
-                      <div class="prev-page-placeholder">
-                      </div>
+                      <a href="../../target-architecture/05-security/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            5 · Security
+                          </strong></span>
+                      </a>
                     
                     
-                      <a href="../../" class="next-page">
+                      <a href="../../target-architecture/07-repo-and-rules/" class="next-page">
                         <span><small>Next</small>
                           <strong>
-                            Overview
+                            7 · Repository, enforced rules, testing, agents
                           </strong></span>
                         
 <svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -1345,13 +1856,13 @@ production only with the dev-tools flag, as today.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mu9past7"></script>
+      <script src="../../assets/js/docmd-main.js?v=mu9pvcu8"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mu9past7"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9past7" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-search.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-git.js?v=mu9past7" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mu9pvcu8"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9pvcu8" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1429,7 +1940,7 @@ production only with the dev-tools flag, as today.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mu9past7"></script>
+          src="../../assets/js/likec4-embed.js?v=mu9pvcu8"></script>
         
       
       

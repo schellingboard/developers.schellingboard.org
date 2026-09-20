@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9past7">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9past7">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9pvcu8">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9pvcu8">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9past7" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9past7" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9pvcu8" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9pvcu8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9past7" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9past7" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9pvcu8" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9pvcu8" >
 
     
     
@@ -712,7 +712,7 @@
         
       </li>
     
-      <li class="expanded nav-group" >
+      <li class="active-parent expanded nav-group" >
       
         <span class="nav-label nav-group">
            
@@ -746,9 +746,9 @@
         
           <ul class="submenu">
             
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../adr/" class=" "
+        <a href="../../adr/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -775,6 +775,39 @@
             Decision records
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
           
         </a>
         
@@ -784,7 +817,139 @@
     
       <li class="" >
       
-        <a href="../../target-architecture/" class=" "
+        <a href="../../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <a href="../../target-architecture/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -809,10 +974,239 @@
             Target architecture
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/02-domain/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/06-data-and-time/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../target-architecture/08-decisions/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -868,9 +1262,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../attendance-model/" class=" "
+        <a href="../../attendance-model/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -894,10 +1288,47 @@
             Attendance model
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1027,7 +1458,67 @@
                 <div class="docmd-breadcrumbs-row">
                   <div id="docmd-raw-markdown" data-content="%23%208%20%C2%B7%20Decisions%0A%0AEach%20in%20ADR%20form%3A%20context%2C%20decision%2C%20alternatives%2C%20consequences.%20When%20one%20is%20adopted%0Ait%20moves%20to%20%60..%2Fadr%2F%60%20with%20a%20number%20and%20a%20status.%0A%0A%3Ca%20id%3D%22d1%22%3E%3C%2Fa%3E%0A%0A%23%23%20D1%20%C2%B7%20API%20server%20plus%20static%20SPA%2C%20no%20server-side%20rendering%0A%0A**Context.**%20Today&#039;s%20app%20is%20Next.js%20App%20Router%20with%20server%20components%20and%20server%0Aactions%20as%20the%20primary%20data%20path%2C%20plus%20some%20route%20handlers.%20The%20requirements%20that%0Amotivated%20this%20redesign%2C%20live%20updates%2C%20bots%2C%20an%20admin%20API%2C%20an%20OpenAPI%20document%2C%20a%0Aclear%20frontend%2Fbackend%20line%2C%20all%20need%20a%20real%20HTTP%20API.%20The%20question%20was%20whether%20to%0Akeep%20SSR%20alongside%20it.%0A%0A**What%20SSR%20is%20and%20what%20it%20buys.**%20The%20server%20runs%20the%20React%20tree%20per%20request%20and%0Areturns%20finished%20HTML%3B%20the%20browser%20shows%20it%2C%20then%20downloads%20the%20JavaScript%20and%0Ahydrates.%20React%20Server%20Components%20additionally%20let%20components%20run%20only%20on%20the%0Aserver%20and%20read%20the%20database%20directly.%20The%20benefits%2C%20measured%20against%20this%20app%3A%0A%0A%7C%20Benefit%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Applies%20here%3F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------%20%7C%20--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%20%7C%0A%7C%20Content%20visible%20before%20JS%20loads%20%20%20%20%7C%20On%20a%20**cold**%20visit%2C%20about%20one%20to%20two%20seconds%20on%20a%20slow%20phone.%20On%20every%20later%20open%20an%20installed%20PWA%20serves%20the%20shell%20and%20the%20last%20replica%20from%20disk%20with%20no%20round%20trip%2C%20which%20SSR%20cannot%20beat%2C%20and%20works%20offline.%20During%20an%20event%20the%20app%20is%20opened%20dozens%20of%20times%20a%20day.%20%7C%0A%7C%20Search%20engines%20and%20link%20previews%20%20%20%7C%20No%3A%20the%20app%20is%20behind%20a%20login.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Less%20client%20JS%2C%20no%20API%20to%20design%20%20%20%7C%20Only%20until%20a%20second%20consumer%20of%20the%20data%20exists.%20Bots%2C%20admin%20automation%20and%20the%20feed%20are%20that%20consumer%2C%20so%20the%20API%20exists%20anyway%20and%20SSR%20becomes%20a%20second%20data%20path%20to%20keep%20consistent.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Auth-gated%20rendering%20on%20the%20server%20%7C%20The%20API%20enforces%20the%20same%20at%20the%20endpoint%2C%20in%20one%20place%20that%20is%20easier%20to%20audit%20than%20per-component%20rules.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A**What%20SSR%20costs%20here.**%0A%0A-%20Two%20runtimes%20for%20one%20UI%3A%20components%20must%20run%20on%20the%20server%20and%20in%20the%20browser%2C%0A%20%20props%20must%20be%20serializable%2C%20%60%22use%20client%22%60%20boundaries%20are%20placed%20by%20hand.%0A%20%20The%20timezone%20hydration%20mismatch%20(%23734)%20and%20the%20Suspense-boundary%20freeze%20are%20this%0A%20%20class%20of%20bug%2C%20and%20they%20are%20the%20hard%20kind%3A%20%22which%20code%20ran%20where%2C%20and%20when%22.%0A-%20A%20snapshot%20that%20is%20stale%20on%20arrival%3A%20live%20updates%20need%20client%20state%20anyway%2C%0A%20%20which%20overwrites%20the%20server%20HTML%20on%20load.%20The%20optimistic-RSVP%20mess%20(%23463)%20is%0A%20%20server-rendered%20truth%20plus%20client%20mutation%20plus%20revalidation.%0A-%20No%20offline%20path%20unless%20the%20client%20render%20path%20exists%20too%2C%20which%20is%20the%20SPA.%0A-%20Convention%20churn%3A%20the%20framework&#039;s%20own%20agent%20notice%20in%20this%20repo%20warns%20that%20this%0A%20%20Next.js%20is%20not%20the%20one%20agents%20know.%0A%0A**Decision.**%20One%20process%20serving%20an%20OpenAPI-described%20HTTP%20API%2C%20an%20SSE%20change%0Afeed%2C%20and%20a%20static%20React%20SPA%20built%20with%20Vite.%20The%20initial%20HTML%20is%20a%20static%20shell%3B%0Athere%20is%20no%20SSR.%20React%20stays%3B%20only%20the%20Next-specific%20parts%20(routing%2C%20server%0Aactions%2C%20image%20and%20link%20components)%20are%20replaced.%0A%0A**Alternatives.**%20(a)%20Meta-framework%20rendering%20from%20the%20API%20(Next%20or%20TanStack%0AStart%2C%20no%20server%20actions)%3A%20keeps%20the%20hydration%20cost%20and%20still%20needs%20the%20client%0Astore%2C%20for%20the%20cold-load%20second.%20(b)%20Keep%20Next%20full-stack%20with%20a%20side%20API%20for%0Abots%3A%20two%20data%20paths%2C%20the%20weakest%20separation.%0A%0A**Consequences.**%20An%20API%20contract%2C%20a%20generated%20client%20and%20a%20client%20store%20to%0Amaintain%2C%20each%20with%20one%20job%20and%20one%20runtime.%20Cold%20first%20load%20is%20slower%20by%20the%0Abundle%20download%3B%20mitigated%20by%20code-splitting%20per%20feature%20and%20precaching.%0A%0A%3Ca%20id%3D%22d2%22%3E%3C%2Fa%3E%0A%0A%23%23%20D2%20%C2%B7%20Persons%20with%20assurance%20levels%3B%20picking%20a%20name%20stays%20viable%0A%0A**Context.**%20Attendees%20valued%20having%20nothing%20to%20remember.%20Half%20the%20new%20feature%0Arequests%20are%20private%20data%2C%20which%20is%20meaningless%20if%20anyone%20can%20pick%20a%20name.%20Some%0Afuture%20events%20will%20want%20to%20require%20verification%20for%20everyone.%0A%0A**Decision.**%20Identity%20is%20per%20person%3B%20each%20session%20has%20an%20assurance%20level%0A(claimed%20%2F%20verified)%3B%20verification%20is%20passwordless%20first%20(join%20link%2C%20emailed%20code%2C%0Apasskey)%2C%20with%20a%20password%20as%20one%20more%20option.%20The%20event&#039;s%20identity%20mode%20sets%20the%0Aminimum%3B%20a%20person%20can%20raise%20their%20own%20by%20protecting%20their%20name.%20Roles%20are%20data%20on%0Apersons%20and%20participations%3B%20there%20is%20no%20shared%20site%20or%20admin%20password.%0A%0A**Alternatives.**%20Verified%20only%20(rejected%3A%20friction%20for%20events%20without%20emails%20or%0Atime%20to%20distribute%20links).%20Today&#039;s%20model%20with%20protection%20opt-in%20as%20the%20only%0Amechanism%20(rejected%3A%20no%20way%20for%20an%20organizer%20to%20require%20it%2C%20and%20admin%20as%20a%20shared%0Apassword).%0A%0A**Consequences.**%20Organizers%20need%20a%20way%20to%20distribute%20join%20links%20(CSV%20export%2C%0AQR%20sheet%2C%20or%20emailing%20everyone%20at%20once).%20Private%20features%20in%20%60open%60%20mode%20show%20a%0Aone-time%20notice.%0A%0A%3Ca%20id%3D%22d3%22%3E%3C%2Fa%3E%0A%0A%23%23%20D3%20%C2%B7%20Per-event%20replica%20kept%20current%20by%20a%20change%20feed%0A%0A**Context.**%20The%20schedule%20must%20update%20without%20reloads%3B%20the%20requested%20views%0A(agenda%2C%20clashes%2C%20filters%2C%20unfilled%20shifts)%20cut%20across%20sessions%2C%20RSVPs%2C%20marks%20and%0Ameetings%3B%20the%20venue%20wifi%20drops.%0A%0A**Decision.**%20The%20client%20loads%20a%20snapshot%20of%20everything%20in%20its%20audience%20for%20one%0Aevent%20and%20applies%20changes%20from%20an%20SSE%20feed%20by%20sequence%20number%3B%20the%20replica%20is%0Apersisted%20for%20offline%20opening.%20Derived%20views%20are%20pure%20functions%20in%20%60domain%60.%0APaged%20or%20role-restricted%20data%20(directory%20search%2C%20vote%20breakdowns%2C%20notification%0Ahistory%2C%20admin%20lists)%20uses%20ordinary%20queries.%0A%0A**Alternatives.**%20Query%20cache%20with%20invalidation%20(TanStack%20Query)%3A%20no%20custom%20sync%2C%0Abut%20every%20cross-cutting%20view%20needs%20an%20endpoint%20or%20client-side%20joins%2C%20and%20offline%0Ais%20partial.%20A%20third-party%20sync%20engine%20(Replicache%2C%20Zero%2C%20Electric)%3A%20strongest%0Aoffline%20story%2C%20heavy%20dependency%2C%20usually%20Postgres.%0A%0A**Consequences.**%20About%20a%20thousand%20lines%20of%20purpose-built%20sync%20(%60apply%60%2C%20feed%0Aclient%2C%20persistence)%20with%20property%20tests%3B%20a%20visibility%20model%20that%20decides%0Aaudience%20at%20write%20time%3B%20payloads%20that%20carry%20full%20subject%20state.%0A%0A%3Ca%20id%3D%22d4%22%3E%3C%2Fa%3E%0A%0A%23%23%20D4%20%C2%B7%20Session%20kinds%20plus%20a%20separate%20Meeting%20aggregate%0A%0A**Decision.**%20%60Session%60%20carries%20%60kind%60%20(session%2C%20shift%2C%20fixture)%20and%20structured%0Aattributes%3B%20%60Meeting%60%20is%20its%20own%20aggregate%20with%20its%20own%20lifecycle%20and%20two-party%0Aprivacy%3B%20the%20client%20merges%20both%20into%20the%20agenda.%0A%0A**Alternatives.**%20One%20calendar-item%20type%20including%20meetings%20(privacy%20and%20lifecycle%0Abecome%20optional%20fields%20everywhere)%3B%20separate%20aggregates%20per%20kind%20(four%20grids).%0A%0A%3Ca%20id%3D%22d5%22%3E%3C%2Fa%3E%0A%0A%23%23%20D5%20%C2%B7%20Workspace%20packages%20as%20the%20boundary%20mechanism%0A%0A**Decision.**%20%60domain%60%2C%20%60contracts%60%2C%20%60api-client%60%2C%20%60server%60%2C%20%60web%60%20as%20Bun%0Aworkspace%20packages%20with%20TypeScript%20project%20references%3B%20dependency-cruiser%20and%0Alocal%20ESLint%20rules%20for%20the%20boundaries%20inside%20%60server%60%20and%20%60web%60.%0A%0A**Alternative.**%20Directories%20in%20one%20package%20with%20lint%20rules%20only%3A%20less%20tooling%2C%0Aevery%20boundary%20exemptable.%0A%0A%3Ca%20id%3D%22d6%22%3E%3C%2Fa%3E%0A%0A%23%23%20D6%20%C2%B7%20SQLite%20only%2C%20behind%20ports%0A%0A**Decision.**%20SQLite%20in%20WAL%20mode%20is%20the%20only%20supported%20database.%20Repositories%20are%0Aports%20so%20a%20Postgres%20adapter%20is%20possible%3B%20it%20is%20not%20promised%2C%20and%20multi-replica%0Adeployment%20is%20a%20non-goal.%0A%0A**Alternatives.**%20Both%20databases%20(double%20the%20persistence%20maintenance)%3B%20Postgres%0Aonly%20(a%20second%20container%20for%20self-hosters%2C%20harder%20backups).%0A%0A%3Ca%20id%3D%22d7%22%3E%3C%2Fa%3E%0A%0A%23%23%20D7%20%C2%B7%20Server-Sent%20Events%2C%20not%20WebSockets%0A%0A**Decision.**%20The%20feed%20is%20SSE%20with%20%60Last-Event-ID%60%20resume.%20Mutations%20go%20over%20HTTP.%0A%0A**Why.**%20The%20client%20never%20needs%20to%20push%20over%20the%20socket%3B%20SSE%20reconnects%20itself%2C%0Aworks%20through%20HTTP%2F2%20and%20ordinary%20proxies%2C%20and%20needs%20no%20library.%20WebSockets%20would%0Abe%20justified%20by%20a%20bidirectional%20need%20such%20as%20typing%20indicators%2C%20which%20nothing%0Aplanned%20has.%0A%0A%3Ca%20id%3D%22d8%22%3E%3C%2Fa%3E%0A%0A%23%23%20D8%20%C2%B7%20The%20change%20log%20as%20the%20single%20backbone%0A%0A**Decision.**%20Every%20use%20case%20records%20changes%20in%20the%20same%20transaction%20as%20its%20state.%0AThe%20log%20serves%20the%20feed%2C%20notifications%2C%20reactions%20between%20modules%2C%20scheduled%20work%0Atriggers%20and%20the%20audit%20trail.%0A%0A**Alternatives.**%20Event%20sourcing%20(state%20rebuilt%20from%20events%3A%20a%20large%20mental-model%0Acost%20for%20no%20need%20here)%3B%20separate%20mechanisms%20per%20concern%20(an%20email%20outbox%2C%20a%0Anotification%20table%2C%20a%20pub%2Fsub%20for%20the%20UI%2C%20no%20history)%2C%20which%20is%20where%20the%20current%0Acode%20was%20heading.%0A%0A**Consequences.**%20Payload%20shapes%20are%20part%20of%20the%20contract%20and%20versioned%3B%20retention%0Ais%20a%20setting%3B%20reactions%20must%20be%20idempotent.%0A%0A%3Ca%20id%3D%22d9%22%3E%3C%2Fa%3E%0A%0A%23%23%20D9%20%C2%B7%20Vite%2C%20TanStack%20Router%2C%20a%20small%20reactive%20store%0A%0A**Decision.**%20Vite%20builds%20the%20SPA%3B%20TanStack%20Router%20for%20typed%20routes%20with%20search%0Aparams%20(modals%20as%20URL%20state)%3B%20a%20Zustand-style%20store%20for%20the%20replica%20with%20memoized%0Aselectors.%20Tailwind%20and%20the%20existing%20token%20system%20stay.%0A%0A**Why.**%20Stable%2C%20widely%20known%2C%20minimal%20API%20surface.%20Any%20equivalent%20would%20do%3B%20the%0Apoint%20is%20to%20pick%20boring%20tools%20and%20not%20revisit.%0A%0A%3Ca%20id%3D%22d10%22%3E%3C%2Fa%3E%0A%0A%23%23%20D10%20%C2%B7%20One%20jobs%20loop%20in%20the%20process%0A%0A**Decision.**%20Reactions%2C%20scheduled%20jobs%20and%20deliveries%20run%20in%20one%20leased%20loop%20in%0Athe%20server%20process%2C%20reading%20from%20tables%2C%20idempotent%2C%20through%20the%20%60Clock%60%20port.%0A%0A**Alternatives.**%20An%20external%20queue%20(something%20to%20operate%20for%20a%20self-hoster)%3B%0Aa%20separate%20worker%20process%20(two%20things%20to%20run%20and%20a%20second%20database%20writer).%0A%0A%3Ca%20id%3D%22d11%22%3E%3C%2Fa%3E%0A%0A%23%23%20D11%20%C2%B7%20Node%20in%20the%20image%2C%20Bun%20for%20tooling%0A%0A**Decision.**%20The%20Docker%20image%20runs%20the%20server%20on%20Node.%20Bun%20stays%20the%20package%0Amanager%20and%20script%20runner%3B%20Vitest%20and%20Playwright%20stay%20the%20test%20runners.%0A%0A**Why.**%20The%20SQLite%20driver%20and%20%60sharp%60%20are%20native%20modules%20with%20Node%20as%20their%0Afirst-class%20target%3B%20Bun&#039;s%20compatibility%20with%20them%20changes%20between%20releases.%0ARevisit%20yearly.%0A%0A%23%23%20Resolved%20product%20questions%0A%0ASettled%20while%20reviewing%20this%20design%2C%20recorded%20so%20they%20are%20not%20reopened%20by%0Aaccident%3A%0A%0A-%20A%20new%20event%20defaults%20to%20identity%20mode%20%60verified%60%20(%5B05%5D(05-security.md%23identity-and-assurance)).%0A-%20The%20vote%20breakdown%20is%20fetched%20on%20demand%2C%20not%20streamed%20(%5B02%5D(02-domain.md%23proposal-vote)).%0A-%20Change%20payload%20retention%20defaults%20to%207%20days%20(%5B03%5D(03-server.md%23change-log)).%0A-%20Suggesting%20a%201-on-1%20for%20a%20proposal%20that%20was%20never%20scheduled%20is%20**not**%20a%20feature.%0A-%20Fixtures%20may%20carry%20a%20capacity%20and%20take%20RSVPs%20(%5B02%5D(02-domain.md%23session)).%0A-%20A%20public%20read-only%20schedule%20is%20a%20per-event%20setting%2C%20off%20by%20default%0A%20%20(%5B03%5D(03-server.md%23change-feed-and-snapshot)).%0A-%20Which%20chat%20channel%20to%20build%20first%20is%20a%20product%20question%20outside%20this%20design.%0A" style="display: none;"></div>
                   
-                    <div class="docmd-breadcrumbs-spacer"></div>
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <a href="../../target-architecture/">Target architecture</a>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>8 · Decisions</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
                   
 
                   
@@ -1252,14 +1743,34 @@ accident:</p>
                 
                   <div class="page-navigation">
                     
-                      <div class="prev-page-placeholder">
-                      </div>
+                      <a href="../../target-architecture/07-repo-and-rules/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            7 · Repository, enforced rules, testing, agents
+                          </strong></span>
+                      </a>
                     
                     
-                      <a href="../../" class="next-page">
+                      <a href="../../target-architecture/09-feedback-map/" class="next-page">
                         <span><small>Next</small>
                           <strong>
-                            Overview
+                            9 · Feedback and issues, mapped to the design
                           </strong></span>
                         
 <svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -1421,13 +1932,13 @@ accident:</p>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mu9past7"></script>
+      <script src="../../assets/js/docmd-main.js?v=mu9pvcu8"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mu9past7"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9past7" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-search.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-git.js?v=mu9past7" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mu9pvcu8"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9pvcu8" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1505,7 +2016,7 @@ accident:</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mu9past7"></script>
+          src="../../assets/js/likec4-embed.js?v=mu9pvcu8"></script>
         
       
       

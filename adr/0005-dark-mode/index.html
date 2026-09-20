@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9past7">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9past7">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9pvcu8">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9pvcu8">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9past7" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9past7" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9pvcu8" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9pvcu8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9past7" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9past7" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9pvcu8" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9pvcu8" >
 
     
     
@@ -712,7 +712,7 @@
         
       </li>
     
-      <li class="expanded nav-group" >
+      <li class="active-parent expanded nav-group" >
       
         <span class="nav-label nav-group">
            
@@ -746,9 +746,9 @@
         
           <ul class="submenu">
             
-      <li class="" >
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
       
-        <a href="../../adr/" class=" "
+        <a href="../../adr/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -775,6 +775,39 @@
             Decision records
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
           
         </a>
         
@@ -784,7 +817,139 @@
     
       <li class="" >
       
-        <a href="../../target-architecture/" class=" "
+        <a href="../../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../adr/0005-dark-mode/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../../target-architecture/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -809,10 +974,239 @@
             Target architecture
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/02-domain/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/06-data-and-time/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/08-decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -868,9 +1262,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../attendance-model/" class=" "
+        <a href="../../attendance-model/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -894,10 +1288,47 @@
             Attendance model
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1027,7 +1458,67 @@
                 <div class="docmd-breadcrumbs-row">
                   <div id="docmd-raw-markdown" data-content="%23%20ADR%200005%3A%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-08-17%0A%0A%23%23%20Context%0A%0AThe%20app%20had%20no%20dark%20mode%3A%20no%20%60dark%3A%60%20utility%20anywhere%2C%20no%20%60color-scheme%60%0Adeclaration%2C%20and%20roughly%20a%20thousand%20hard-coded%20palette%20utilities%0A(%60text-gray-500%60%20alone%20appeared%2095%20times)%20spread%20over%20some%2078%20components.%0A%0AAttendees%20were%20reaching%20for%20browser%20extensions%20instead.%20%5B%23802%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F802)%0Areported%20that%20under%20%5BDark%20Reader%5D(https%3A%2F%2Fdarkreader.org%2F)%20a%20voted-on%20proposal%0Abecame%20indistinguishable%20from%20an%20unvoted%20one%2C%20because%20the%20only%20cue%20was%20a%20pale%0Ablue%20fill%20against%20white%20and%20the%20extension%20collapsed%20both%20to%20near-identical%0Adarks.%20That%20specific%20bug%20is%20fixed%20separately%20%E2%80%94%20the%20state%20is%20now%20also%20carried%20by%0A%60aria-pressed%60%20and%20a%20check%20mark%20%E2%80%94%20but%20it%20is%20the%20symptom%20of%20not%20owning%20the%0Aquestion.%0A%0AConstraints%20that%20shape%20the%20decision%3A%0A%0A-%20The%20site%20has%20surfaces%20that%20anonymous%20visitors%20see%3A%20the%20password%20gate%2C%20the%0A%20%20login%20screen%2C%20the%20guest%20picker%2C%20the%20kiosk%20display.%20Anything%20that%20lives%20behind%0A%20%20%22select%20your%20name%20first%22%20cannot%20be%20the%20only%20way%20to%20change%20the%20theme.%0A-%20A%20wrong%20first%20paint%20is%20worse%20than%20no%20dark%20mode.%20Whatever%20resolves%20the%20theme%0A%20%20has%20to%20run%20before%20the%20page%20is%20painted.%0A-%20The%20schedule%20renders%20location%20colours%20as%20dynamic%20Tailwind%20classes%0A%20%20(%60bg-%24%7Bcolor%7D-500%60)%2C%20kept%20alive%20by%20a%20%60%40source%20inline(...)%60%20safelist.%20Doubling%0A%20%20that%20safelist%20for%20a%20second%20theme%20is%20a%20cost%20worth%20avoiding.%0A%0A%23%23%20Decision%0A%0A%23%23%23%20The%20preference%20is%20per%20device%2C%20in%20a%20cookie%0A%0A%60sb-theme%60%20holds%20%60system%60%2C%20%60light%60%20or%20%60dark%60%2C%20and%20the%20root%20layout%20turns%20it%20into%0A%60class%3D%22light%22%60%20%2F%20%60class%3D%22dark%22%60%20on%20%60%3Chtml%3E%60%20%E2%80%94%20%60system%60%20sets%20no%20class%20at%20all.%0A%0APer%20device%2C%20rather%20than%20on%20the%20guest%20record%2C%20because%3A%0A%0A-%20%60app%2F(site)%2Fsettings%2Fpage.tsx%60%20requires%20a%20selected%20guest%2C%20and%20the%20header%20menu%0A%20%20that%20reaches%20it%20only%20renders%20once%20a%20name%20is%20chosen%0A%20%20(%60header-user-select.tsx%3A62%60).%20A%20guest-record%20setting%20would%20be%20unreachable%0A%20%20from%20exactly%20the%20screens%20a%20first-time%20visitor%20sees.%0A-%20Ambient%20light%20genuinely%20differs%20per%20device.%20One%20attendee%20on%20a%20phone%20at%20night%0A%20%20and%20on%20a%20laptop%20in%20a%20bright%20room%20wants%20two%20different%20answers%3B%20a%20single%20stored%0A%20%20preference%20can%20only%20give%20one.%0A-%20Switching%20the%20current%20user%20is%20unauthenticated%2C%20so%20a%20guest-record%20preference%0A%20%20would%20be%20writable%20by%20anyone%20claiming%20that%20name.%0A%0AThe%20control%20sits%20in%20the%20footer%2C%20which%20is%20on%20every%20page%20including%20anonymous%20ones%0Aand%20already%20carries%20the%20low-salience%20global%20strip%20(version%2C%20help%2C%20report%20a%20bug).%0AIt%20is%20mirrored%20on%20the%20settings%20page%2C%20labelled%20as%20applying%20to%20this%20device%2C%20for%0Adiscoverability%20%E2%80%94%20both%20write%20the%20same%20cookie.%0A%0A%23%23%23%20%22System%22%20is%20resolved%20in%20CSS%2C%20not%20in%20an%20inline%20script%0A%0AThe%20server%20cannot%20know%20the%20OS%20preference%2C%20so%20the%20usual%20fix%20is%20a%20blocking%20inline%0Ascript%20that%20reads%20it%20and%20sets%20a%20class%20before%20paint.%20We%20avoid%20the%20script%0Aentirely%3A%20an%20explicit%20choice%20is%20a%20class%20on%20%60%3Chtml%3E%60%2C%20and%20%60system%60%20is%20the%20absence%0Aof%20one%2C%20handled%20by%20a%20media%20query%20inside%20the%20%60dark%60%20variant.%0A%0A%60%60%60css%0A%40custom-variant%20dark%20%7B%0A%20%20%26%3Awhere(.dark%2C%20.dark%20*)%20%7B%0A%20%20%20%20%40slot%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%26%3Awhere(html%3Anot(.light)%2C%20html%3Anot(.light)%20*)%20%7B%0A%20%20%20%20%20%20%40slot%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%60.dark%60%20wins%20outright%3B%20otherwise%20the%20OS%20decides%20unless%20%60light%60%20pinned%20it.%20No%0Ascript%2C%20no%20flash%2C%20and%20it%20still%20works%20with%20JavaScript%20off.%20The%20cost%20is%20that%0A%22which%20theme%20am%20I%20actually%20in%22%20is%20not%20readable%20from%20JS%20%E2%80%94%20nothing%20needs%20it.%0A%0AA%20variant%20on%20its%20own%20would%20only%20reach%20utilities%20that%20are%20written%20%60dark%3A%E2%80%A6%60%2C%20and%0Athe%20whole%20point%20of%20the%20tokens%20below%20is%20that%20components%20never%20write%20one.%20So%20the%0Atoken%20rule%20applies%20the%20variant%20to%20_itself_%3A%0A%0A%60%60%60css%0A%3Aroot%20%7B%0A%20%20color-scheme%3A%20light%3B%0A%20%20--surface%3A%20%23ffffff%3B%0A%0A%20%20%40variant%20dark%20%7B%0A%20%20%20%20color-scheme%3A%20dark%3B%0A%20%20%20%20--surface%3A%20%2316181d%3B%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0ATailwind%20expands%20that%20into%20the%20two%20branches%20above%20and%20flattens%20the%20nesting%20in%0Athe%20production%20build%2C%20so%20the%20browser%20sees%20plain%20%60%3Aroot%3Awhere(.dark%2C%20.dark%20*)%60%0Aand%20%60%40media%20(prefers-color-scheme%3A%20dark)%60%20rules.%20Writing%20the%20dark%20values%20once%2C%0Aunder%20the%20one%20definition%20of%20%22am%20I%20dark%22%2C%20is%20what%20keeps%20the%20class%20and%20the%20media%0Aquery%20from%20drifting%20apart.%20%60color-scheme%60%20rides%20along%20in%20the%20same%20block%2C%20which%0Ais%20what%20gives%20native%20controls%2C%20scrollbars%20and%20form%20autofill%20the%20right%20theme%20%E2%80%94%0Athe%20layout%20only%20has%20to%20set%20the%20class.%0A%0AReading%20the%20cookie%20makes%20the%20root%20layout%20dynamic.%20The%20site%20is%20already%0Aeffectively%20dynamic%20(a%20settings%20read%20in%20%60generateMetadata%60%2C%20%60cookies()%60%20in%0A%60(site)%2Flayout.tsx%60)%2C%20so%20this%20costs%20nothing%20in%20practice.%0A%0A%23%23%23%20Semantic%20tokens%2C%20not%20%60dark%3A%60%20on%20every%20utility%0A%0AComponents%20name%20the%20role%20a%20colour%20plays%20%E2%80%94%20%60bg-surface%60%2C%20%60text-fg-muted%60%2C%0A%60border-line%60%2C%20%60bg-brand%60%20%E2%80%94%20and%20the%20token%20rule%20in%20%60app%2Fglobals.css%60%20is%20the%20only%0Aplace%20a%20colour%20is%20picked.%20Its%20%60%40variant%20dark%60%20block%20lists%20only%20the%20tokens%20that%0Achange%2C%20so%20what%20the%20two%20themes%20disagree%20about%20is%20readable%20at%20a%20glance%20and%20a%0Acolour%20that%20is%20meant%20to%20be%20the%20same%20in%20both%20cannot%20drift.%0A%0AAnnotating%20each%20existing%20utility%20with%20a%20%60dark%3A%60%20counterpart%20would%20have%20been%20a%0Adiff%20of%20the%20same%20size%20that%20left%20the%20problem%20permanently%20open%3A%20every%20new%0Acomponent%20would%20be%20free%20to%20forget%2C%20and%20nothing%20would%20notice.%20With%20tokens%2C%20dark%0Amode%20is%20correct%20by%20default%20for%20code%20that%20hasn&#039;t%20been%20written%20yet.%0A%0A%60%40theme%20inline%60%20is%20required%20for%20the%20swap%20to%20work%20%E2%80%94%20a%20plain%20%60%40theme%60%20bakes%20the%0Avalue%20into%20the%20generated%20utility%20at%20build%20time%2C%20so%20%60.dark%60%20could%20never%20override%0Ait.%0A%0A%23%23%23%20The%20dark%20theme%20is%20not%20an%20inversion%0A%0ATwo%20things%20change%20shape%20rather%20than%20value%3A%0A%0A-%20**Elevation.**%20Light%20mode%20raises%20a%20card%20with%20a%20shadow%3B%20on%20a%20dark%20ground%20a%0A%20%20shadow%20is%20nearly%20invisible%2C%20so%20%60--surface-raised%60%20is%20_lighter_%20than%20the%20page%0A%20%20and%20%60--surface-sunken%60%20is%20darker.%20The%20contrast%20test%20asserts%20this%20ordering.%0A-%20**Tints.**%20%60bg-rose-50%60%20and%20friends%20become%20deep%20desaturated%20grounds%0A%20%20(%60--brand-tint%3A%20%233b1220%60)%20with%20a%20light%20accent%20on%20top%2C%20not%20darkened%20pastels.%0A%0ANeither%20theme%20uses%20the%20extremes%3A%20the%20dark%20page%20is%20%60%2316181d%60%20rather%20than%20black%0Aand%20its%20text%20%60%23e8eaee%60%20rather%20than%20white%2C%20because%20pure%20white%20on%20pure%20black%0Ablooms%20at%20reading%20sizes.%0A%0A%23%23%23%20The%20contrast%20contract%20is%20a%20test%0A%0A%60tests%2Funit%2Ftheme-contrast.test.ts%60%20parses%20the%20tokens%20out%20of%20%60globals.css%60%20and%0Aasserts%20a%20WCAG%20ratio%20for%20every%20(foreground%2C%20background)%20pair%20that%20occurs%20in%20the%0AUI%2C%20in%20both%20themes%20%E2%80%94%207%3A1%20for%20body%20copy%2C%204.5%3A1%20for%20secondary%20and%20semantic%20text%2C%0A3%3A1%20for%20control%20borders%20and%20state%20indicators%20per%20WCAG%202.2%201.4.11.%20It%20reads%20the%0Adark%20block%20the%20way%20the%20cascade%20does%2C%20light%20values%20with%20the%20overrides%20on%20top%2C%20so%0Aa%20token%20that%20is%20only%20wrong%20once%20it%20inherits%20is%20still%20caught.%0A%0AThis%20is%20what%20stops%20dark%20mode%20from%20quietly%20rotting%3A%20%22looks%20a%20bit%20washed%20out%22%20is%0Aotherwise%20nobody&#039;s%20bug.%20Row%20dividers%20and%20hover%20fills%20are%20deliberately%20exempt%20%E2%80%94%0Athey%20are%20neither%20text%20nor%20controls%2C%20and%20holding%20them%20to%203%3A1%20would%20mean%20drawing%0Aboxes%20everywhere.%0A%0AThe%20list%20of%20pairs%20doubles%20as%20the%20rule%20for%20which%20token%20belongs%20on%20which%20ground%3A%0A%60--fg-subtle%60%20and%20%60--line%60%20clear%20the%20three%20page%20grounds%20but%20not%20the%20filled%20ones%0A(%60--surface-muted%60%2C%20%60--surface-hover%60)%2C%20where%20%60--fg-muted%60%20and%20%60--line-strong%60%0Atake%20over.%0A%0AEnforcing%20the%20contract%20moved%20a%20few%20light-mode%20colours%2C%20which%20is%20a%20deliberate%0Aconsequence%20rather%20than%20a%20side%20effect%20(see%20below).%0A%0A%23%23%23%20Location%20colours%20are%20derived%2C%20not%20safelisted%20twice%0A%0AA%20location&#039;s%20colour%20stays%20a%20palette%20name.%20%60loc-%3Cname%3E%60%20puts%20that%20hue%20into%20a%0A%60--loc%60%20custom%20property%20and%20each%20role%20%E2%80%94%20block%20fill%2C%20dimmed%20fill%2C%20border%2C%20RSVP%0Abadge%2C%20tag%2C%20admin%20swatch%20%E2%80%94%20is%20a%20%60color-mix()%60%20of%20it%20with%20the%20current%20%60--surface%60%0Aor%20%60--fg%60%2C%20so%20one%20class%20works%20in%20both%20themes.%20The%20alternative%2C%20a%20second%20set%20of%0Asafelisted%20%60dark%3Abg-*-900%60%20classes%2C%20would%20have%20doubled%20the%20%60%40source%20inline(...)%60%0Alist%3B%20as%20it%20turns%20out%20the%2022%20%60loc-*%60%20rules%20are%20plain%20CSS%2C%20so%20the%20safelist%20is%0Agone%20entirely.%0A%0ADeriving%20also%20fixes%20a%20light-mode%20bug%20we%20would%20otherwise%20have%20carried%20over%3A%20the%0Aold%20block%20was%20%60bg-%24%7Bcolor%7D-500%60%20with%20%60text-white%60%2C%20which%20is%201.8%3A1%20on%0A%60yellow-500%60.%20Because%20the%20fill%20is%20now%20mixed%20with%20the%20page%2C%20the%20title%20is%20%60--fg%60%0Aon%20a%20tint%20of%20the%20hue%20and%20stays%20legible%20whichever%20of%20the%2022%20colours%20a%20location%0Ahas.%20%60tests%2Funit%2Flocation-colors.test.ts%60%20recomputes%20every%20hue%20in%20both%20themes%20%E2%80%94%0Amixing%20in%20oklab%20as%20the%20browser%20does%20%E2%80%94%20rather%20than%20trusting%20that.%0A%0AThe%20visible%20cost%20is%20that%20a%20scheduled%20session%20is%20a%20tinted%20card%20with%20a%20saturated%0Aborder%20instead%20of%20a%20solid%20block%20of%20colour.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Dark%20mode%20works%20before%20a%20name%20is%20selected%20and%20on%20the%20kiosk.%0A-%20Correct%20on%20first%20paint%2C%20with%20no%20inline%20script%20and%20no%20flash.%0A-%20Native%20controls%2C%20scrollbars%20and%20autofill%20follow%20the%20theme%2C%20because%0A%20%20%60color-scheme%60%20is%20set%20by%20the%20same%20rule%20as%20the%20tokens.%0A-%20New%20components%20get%20dark%20mode%20for%20free%20by%20naming%20roles.%0A-%20The%20contrast%20test%20makes%20readability%20regressions%20fail%20the%20build.%0A-%20%23802&#039;s%20class%20of%20bug%20is%20harder%20to%20reintroduce%3A%20state%20is%20no%20longer%20encoded%20as%20a%0A%20%20bare%20palette%20shade.%0A%0A%23%23%23%20Negative%0A%0A-%20A%20large%20mechanical%20migration%20touching%20most%20components%2C%20and%20one%20that%20reviewers%0A%20%20have%20to%20read%20as%20%22renames%22%20rather%20than%20logic.%0A-%20%60text-white%60%20needed%20judgment%20per%20call%20site%20%E2%80%94%20it%20splits%20into%20%60--on-brand%60%2C%0A%20%20%60--on-danger%60%2C%20%60--on-info%60%20and%20%60--fg-inverse%60%20depending%20on%20what%20it%20sits%20on.%0A-%20The%20token%20vocabulary%20is%20one%20more%20thing%20to%20learn%20before%20writing%20a%20component.%0A%0A%23%23%23%20Neutral%0A%0A-%20The%20schedule%20grid%20looks%20different%20in%20light%20mode%3A%20session%20blocks%20are%20tinted%0A%20%20rather%20than%20solid%20(see%20above).%20Locations%20are%20still%20told%20apart%20by%20hue%2C%20now%0A%20%20carried%20by%20the%20border%20as%20much%20as%20the%20fill.%0A-%20Light%20mode%20shifts%20slightly%20where%20the%20contrast%20contract%20required%20it%2C%20most%0A%20%20visibly%3A%20the%20several%20grays%20doing%20%22muted%20text%22%20collapse%20to%20three%20levels%2C%20so%0A%20%20%60text-gray-400%60%20text%20darkens%20to%20a%20readable%20%60--fg-subtle%60%20(it%20was%202.9%3A1%20on%0A%20%20white)%3B%20primary%20rose%20buttons%20deepen%20from%20rose-400%2F500%20to%20rose-600%2C%20because%0A%20%20white%20on%20rose-400%20was%202.7%3A1%3B%20and%20form-control%20borders%20darken%20to%20meet%20the%203%3A1%0A%20%20of%201.4.11.%0A-%20Emails%2C%20the%20hand-written%20landing%20page%20in%20%60www%2F%60%2C%20and%20the%20docs%20site%20are%20out%20of%0A%20%20scope.%20Mail-client%20support%20for%20%60prefers-color-scheme%60%20is%20too%20patchy%20to%20be%0A%20%20worth%20the%20divergence.%0A" style="display: none;"></div>
                   
-                    <div class="docmd-breadcrumbs-spacer"></div>
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <a href="../../adr/">Decision records</a>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>0005: Dark mode via semantic tokens and a per-device cookie</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
                   
 
                   
@@ -1264,14 +1755,34 @@ worth the divergence.</li>
                 
                   <div class="page-navigation">
                     
-                      <div class="prev-page-placeholder">
-                      </div>
+                      <a href="../../adr/0004-dev-fake-clock/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            0004: Dev fake clock for time-traveling event phases
+                          </strong></span>
+                      </a>
                     
                     
-                      <a href="../../" class="next-page">
+                      <a href="../../adr/0006-push-notifications/" class="next-page">
                         <span><small>Next</small>
                           <strong>
-                            Overview
+                            0006: Push notifications through an installable web app
                           </strong></span>
                         
 <svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -1478,13 +1989,13 @@ worth the divergence.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mu9past7"></script>
+      <script src="../../assets/js/docmd-main.js?v=mu9pvcu8"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mu9past7"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9past7" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-search.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-git.js?v=mu9past7" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mu9pvcu8"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9pvcu8" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1562,7 +2073,7 @@ worth the divergence.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mu9past7"></script>
+          src="../../assets/js/likec4-embed.js?v=mu9pvcu8"></script>
         
       
       

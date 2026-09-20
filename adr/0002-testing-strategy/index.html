@@ -104,11 +104,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9past7">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9past7">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9pvcu8">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9pvcu8">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9past7" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9past7" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9pvcu8" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9pvcu8" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -123,8 +123,8 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9past7" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9past7" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9pvcu8" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9pvcu8" >
 
     
     
@@ -712,7 +712,7 @@
         
       </li>
     
-      <li class="expanded nav-group" >
+      <li class="active-parent expanded nav-group" >
       
         <span class="nav-label nav-group">
            
@@ -746,9 +746,9 @@
         
           <ul class="submenu">
             
-      <li class="" >
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
       
-        <a href="../../adr/" class=" "
+        <a href="../../adr/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -775,6 +775,55 @@
             Decision records
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../adr/0002-testing-strategy/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
           
         </a>
         
@@ -784,7 +833,123 @@
     
       <li class="" >
       
-        <a href="../../target-architecture/" class=" "
+        <a href="../../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../../target-architecture/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -809,10 +974,239 @@
             Target architecture
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/02-domain/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/06-data-and-time/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/08-decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -868,9 +1262,9 @@
         
       </li>
     
-      <li class="" >
+      <li class="collapsible nav-group"  aria-expanded="false" >
       
-        <a href="../../attendance-model/" class=" "
+        <a href="../../attendance-model/" class=" nav-group"
           >
            
 <svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -894,10 +1288,47 @@
             Attendance model
             </span>
           
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
           
         </a>
         
 
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
         
       </li>
     
@@ -1027,7 +1458,67 @@
                 <div class="docmd-breadcrumbs-row">
                   <div id="docmd-raw-markdown" data-content="%23%20ADR%200002%3A%20Testing%20strategy%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-04-23%0A%0A%23%23%20Context%0A%0AThe%20app%20has%20end-to-end%20tests%20(Playwright)%20against%20three%20seeded%20events%20and%20no%0Aother%20automated%20tests.%20Coverage%20of%20business%20rules%20%E2%80%94%20session%20overlap%0Avalidation%2C%20vote%20tallying%2C%20phase%20gating%2C%20timezone-aware%20session%20parsing%20%E2%80%94%20is%0Athin%20and%20lives%20only%20inside%20full%20browser%20flows.%20Several%20of%20these%20rules%20are%0Aexactly%20the%20kind%20of%20logic%20that%20breaks%20quietly%20under%20refactor.%0A%0AWe%20want%20more%20confidence%20without%20the%20usual%20failure%20mode%20of%20a%20growing%20test%0Asuite%3A%20tests%20that%20mirror%20implementation%2C%20fail%20on%20every%20rename%2C%20mock%20out%20the%0Ainteresting%20parts%2C%20and%20catch%20no%20real%20bugs.%20A%20test%20should%20fail%20when%20a%20user&#039;s%0Aoutcome%20changes%2C%20and%20ideally%20only%20then.%0A%0AConstraints%20that%20shape%20the%20decision%3A%0A%0A-%20Next.js%2016%20App%20Router%2C%20Drizzle%20%2B%20%60better-sqlite3%60%2C%20Bun%2C%20Playwright%2C%20strict%0A%20%20TS.%20Repositories%20are%20already%20behind%20interfaces%20in%0A%20%20%60db%2Frepositories%2Finterfaces.ts%60%2C%20which%20makes%20DB-backed%20tests%20cheap%20to%20set%0A%20%20up.%0A-%20SQLite%20is%20the%20only%20supported%20datastore%20(see%20ADR%200001)%20and%20can%20run%0A%20%20in-memory%20per%20test.%20There%20is%20no%20reason%20to%20mock%20it.%0A-%20Much%20of%20the%20interesting%20logic%20sits%20in%20server%20actions%20and%20API%20route%0A%20%20handlers%2C%20not%20in%20pure%20functions.%20A%20strategy%20that%20only%20tests%20pure%20units%0A%20%20will%20miss%20most%20of%20it.%0A%0A%23%23%20Decision%0A%0AThree%20test%20layers%2C%20each%20with%20a%20distinct%20role.%20Tests%20go%20into%20the%20layer%20where%0Athe%20behavior%20they%20protect%20actually%20lives.%0A%0A%23%23%23%201.%20Unit%20tests%20%E2%80%94%20Vitest%2C%20no%20I%2FO%0A%0AFor%20pure%20functions%20and%20isolated%20business%20rules%3A%20session%20overlap%2C%0Asession-time%20parsing%2C%20duration%2Fbreak%20math%2C%20slug%20helpers%2C%20vote%E2%86%92emoji%0Amapping%2C%20and%20similar.%20Fast%2C%20deterministic%2C%20no%20DB%2C%20no%20Next%20runtime.%0A%0A%23%23%23%202.%20Integration%20tests%20%E2%80%94%20Vitest%20%2B%20real%20SQLite%20%60%3Amemory%3A%60%0A%0AFor%20server%20actions%20and%20API%20route%20handlers.%20Tests%20import%20the%20handler%2C%0Aconstruct%20inputs%20a%20user&#039;s%20browser%20would%20produce%20(%60FormData%60%2C%20%60Request%60)%2C%0Ainvoke%20the%20handler%2C%20and%20assert%20on%20the%20returned%20response.%20The%20repository%0Alayer%2C%20validation%2C%20and%20the%20DB%20all%20run%20for%20real.%0A%0APost-condition%20state%20is%20verified%20through%20a%20read%20surface%2C%20not%20by%20inspecting%0ADB%20rows.%20In%20order%20of%20preference%3A%0A%0A1.%20The%20corresponding%20GET%20endpoint%20or%20read%20action%20a%20user&#039;s%20browser%20would%0A%20%20%20hit%20(e.g.%2C%20create%20via%20%60POST%20%2Fapi%2Fadd-vote%60%2C%20verify%20via%0A%20%20%20%60GET%20%2Fapi%2Fvotes%60).%0A2.%20The%20repository&#039;s%20read%20methods%20(e.g.%2C%20%60sessionsRepo.listByEvent%60)%20%E2%80%94%20the%0A%20%20%20same%20interface%20server%20components%20use%20to%20render%20the%20page.%20Use%20this%20when%0A%20%20%20no%20HTTP%20read%20surface%20exists.%0A3.%20Direct%20DB%20row%20inspection%20%E2%80%94%20last%20resort%2C%20reserved%20for%20state%20that%20has%20no%0A%20%20%20read%20surface%20at%20any%20layer.%0A%0AThis%20keeps%20tests%20coupled%20to%20externally%20observable%20behavior%2C%20not%20to%20the%0Atable%20schema.%20Asserting%20on%20raw%20rows%20means%20a%20schema%20rename%20breaks%20the%20test%0Aeven%20when%20user-visible%20behavior%20is%20unchanged%20%E2%80%94%20the%20failure%20mode%20this%20ADR%0Ais%20meant%20to%20avoid.%0A%0AThe%20only%20things%20mocked%20are%20email%20sending%2C%20and%20the%20Next.js%20boundary%20primitives%0Athat%20don&#039;t%20belong%20in%20a%20unit%20process%3A%20%60redirect()%60%20from%20%60next%2Fnavigation%60%0A(recorded%20instead%20of%20thrown)%20and%20%60revalidatePath()%60%20from%20%60next%2Fcache%60%20(no-op).%0AEverything%20else%20%E2%80%94%20repos%2C%20schema%2C%20migrations%2C%20Drizzle%2C%20%60better-sqlite3%60%20%E2%80%94%20is%20the%0Areal%20production%20code%20path.%0A%0A%23%23%23%203.%20End-to-end%20tests%20%E2%80%94%20Playwright%2C%20existing%20runner%0A%0AFor%20behavior%20that%20only%20manifests%20in%20a%20browser%3A%20routing%2C%20phase-dependent%20UI%0Arendering%2C%20modals%2C%20form%20interaction%2C%20mobile%20layout.%20Expanded%20to%20cover%0Auser-facing%20flows%20that%20are%20not%20adequately%20reached%20by%20the%20other%20layers%2C%20not%0Aused%20to%20duplicate%20what%20integration%20tests%20already%20check.%0A%0A%23%23%23%20Tooling%0A%0A-%20**Vitest**%20(%60bun%20x%20vitest%60)%20for%20layers%201%20and%202.%20Chosen%20over%20%60bun%20test%60%20for%0A%20%20a%20larger%20Next.js%2FTS%20ecosystem%2C%20mature%20mocking%20surface%20(%60vi.mock%60)%2C%20and%0A%20%20better%20editor%2FCI%20tooling.%20Run%20speed%20difference%20is%20not%20material%20at%20this%0A%20%20project&#039;s%20size.%20%60bun%20test%60%20would%20be%20reconsidered%20if%20Vitest&#039;s%20Next.js%0A%20%20integration%20ever%20becomes%20a%20drag.%0A-%20**Playwright**%20unchanged.%0A-%20**Directory%20layout%3A**%0A%20%20%60%60%60%0A%20%20tests%2F%0A%20%20%20%20e2e%2F%20%20%20%20%20%20%20%20%20%20%23%20Playwright%20(*.spec.ts)%20%E2%80%94%20existing%20specs%20moved%20here%0A%20%20%20%20unit%2F%20%20%20%20%20%20%20%20%20%23%20Vitest%20(*.test.ts)%20%E2%80%94%20pure%20functions%0A%20%20%20%20integration%2F%20%20%23%20Vitest%20(*.test.ts)%20%E2%80%94%20actions%20%2B%20API%20routes%20%2B%20real%20DB%0A%20%20%20%20helpers%2F%20%20%20%20%20%20%23%20shared%3A%20DB%20setup%2C%20factories%2C%20Next.js%20mocks%0A%20%20%60%60%60%0A%20%20Separating%20by%20directory%20makes%20it%20obvious%20which%20runner%20owns%20each%20file%20and%0A%20%20keeps%20Playwright%20config%20and%20Vitest%20config%20from%20having%20to%20share%20a%0A%20%20%60testMatch%60%20pattern.%20Playwright%20%60testDir%60%20points%20to%20%60tests%2Fe2e%2F%60%3B%0A%20%20Vitest%20%60include%60%20covers%20%60tests%2Funit%2F%60%20and%20%60tests%2Fintegration%2F%60.%0A-%20**DB%20setup%3A**%20Vitest%20integration%20tests%20open%20an%20in-memory%0A%20%20%60better-sqlite3%60%20DB%20and%20apply%20migrations%20from%20%60drizzle%2F%60%20at%20suite%20start.%0A%20%20State%20is%20reset%20between%20tests.%20No%20shared%20fixtures%20across%20tests%3B%20each%20test%0A%20%20builds%20the%20minimum%20entities%20it%20needs%20via%20a%20small%20factory%20helper.%0A%0A%23%23%23%20Coverage%20measurement%0A%0ACoverage%20is%20collected%20on%20the%20Vitest%20layers%20(%60%40vitest%2Fcoverage-v8%60).%20It%0Aserves%20two%20roles%3A%0A%0A1.%20**Discovery%20tool%20(always).**%20Run%20it%20to%20find%20completely%20uncovered%0A%20%20%20modules%20or%20code%20paths%20that%20look%20risky.%20Ask%20whether%20the%20gap%20represents%0A%20%20%20untested%20user-facing%20behavior.%20If%20yes%2C%20write%20a%20test%3B%20if%20no%2C%20move%20on.%0A%20%20%20The%20right%20question%20is%3A%20_%22What%20user-visible%20behavior%20would%20regress%0A%20%20%20silently%20if%20we%20deleted%20this%20test%3F%22_%20A%20number%20cannot%20answer%20that%3B%20it%0A%20%20%20can%20only%20point%20to%20places%20where%20we%20have%20not%20asked%20the%20question%20yet.%0A%0A2.%20**CI%20floor%20(introduced%20gradually).**%20A%20minimum%20threshold%20%E2%80%94%20targeting%0A%20%20%20roughly%2080%25%20line%20coverage%20%E2%80%94%20is%20added%20to%20CI%20once%20the%20initial%20test%0A%20%20%20suite%20is%20in%20place.%20The%20threshold%20starts%20low%20(wherever%20the%20suite%0A%20%20%20naturally%20lands%20after%20the%20first%20few%20rollout%20steps)%20and%20is%20raised%20in%0A%20%20%20small%20increments%20as%20real%20tests%20are%20added.%20Its%20purpose%20is%20to%20catch%0A%20%20%20obvious%20problems%3A%20a%20large%20new%20feature%20shipped%20with%20no%20tests%2C%20or%20tests%0A%20%20%20accidentally%20deleted.%20It%20is%20not%20a%20target%20to%20optimise%20toward.%0A%0AThe%20Goodhart&#039;s%20law%20failure%20mode%20%E2%80%94%20writing%20tests%20purely%20to%20raise%20the%0Anumber%20%E2%80%94%20is%20treated%20as%20a%20defect.%20A%20suite%20that%20hits%2090%25%20by%20exercising%0A%60voteChoiceToEmoji%60%20repeatedly%20while%20leaving%20%60validateSession%60%20branch%0Alogic%20uncovered%20has%20failed%20in%20the%20only%20way%20that%20matters.%20Code-review%0Ashould%20ask%20whether%20a%20test%20protects%20user-visible%20behaviour%2C%20not%20whether%0Ait%20moves%20the%20percentage.%0A%0A%23%23%23%20What%20we%20deliberately%20do%20not%20do%0A%0A-%20**No%20React%20component%20tests%20(RTL%2FJSDOM).**%20They%20tend%20to%20assert%20on%0A%20%20component%20internals%20and%20break%20under%20refactor%20without%20catching%0A%20%20user-visible%20regressions.%20Playwright%20covers%20UI%20behavior%20from%20the%20user&#039;s%0A%20%20side.%20Revisit%20only%20if%20the%20E2E%20layer%20becomes%20too%20slow%20or%20too%20flaky%20to%0A%20%20serve%20that%20role.%0A-%20**No%20mocked%20repositories%20in%20integration%20tests.**%20The%20point%20of%20the%0A%20%20integration%20layer%20is%20that%20action%20%E2%86%92%20repo%20%E2%86%92%20DB%20actually%20runs.%20Mocking%20the%0A%20%20repo%20interface%20turns%20these%20into%20slow%20unit%20tests%20that%20miss%20the%20bugs%20they%0A%20%20exist%20to%20catch%20(migration%2Fschema%20mismatches%2C%20wrong%20SQL%2C%20cascade%0A%20%20surprises).%0A-%20**No%20snapshot%20tests.**%20Easy%20to%20write%2C%20easy%20to%20rubber-stamp%2C%20poor%20signal.%0A-%20**No%20coverage-percentage%20target%20to%20optimise%20toward.**%20A%20CI%20floor%20exists%0A%20%20to%20catch%20obvious%20gaps%20(see%20%22Coverage%20measurement%22)%2C%20but%20raising%20the%20number%0A%20%20is%20not%20a%20valid%20reason%20to%20write%20a%20test.%20See%20%22Coverage%20measurement%22%20above.%0A%0A%23%23%20Alternatives%20considered%0A%0A%23%23%23%20Keep%20E2E-only%20and%20add%20more%20Playwright%20specs%0A%0A-%20**Pros%3A**%20One%20runner%2C%20one%20mental%20model.%20Tests%20exercise%20the%20real%20stack.%0A-%20**Cons%3A**%20E2E%20is%20slow%20(order%20of%20seconds%20per%20test)%2C%20flaky%20by%20nature%20of%0A%20%20browsers%2C%20and%20a%20bad%20shape%20for%20enumerating%20the%20rule%20matrix%20of%20a%0A%20%20validator.%20Driving%2030%20overlap%20cases%20through%20a%20browser%20is%20both%20painful%0A%20%20to%20write%20and%20painful%20to%20debug.%20Rejected.%0A%0A%23%23%23%20React%20Testing%20Library%20for%20component-level%20tests%0A%0A-%20**Pros%3A**%20Fast%20feedback%20on%20component%20logic%3B%20catches%20some%20bugs%20before%0A%20%20E2E.%0A-%20**Cons%3A**%20In%20a%20Next.js%20App%20Router%20codebase%20with%20lots%20of%20server%0A%20%20components%20and%20server%20actions%2C%20RTL%20forces%20mocking%20of%20%60next%2F*%60%20surfaces%0A%20%20and%20client%2Fserver%20seams%2C%20and%20the%20tests%20that%20result%20mostly%20re-describe%0A%20%20JSX%20rather%20than%20protect%20user-visible%20behavior.%20The%20failure%20mode%20we%20are%0A%20%20trying%20to%20avoid%20%E2%80%94%20tests%20that%20change%20on%20every%20refactor%20%E2%80%94%20is%20exactly%0A%20%20what%20RTL%20tends%20to%20produce%20here.%20Rejected%20for%20now%3B%20reconsider%20if%20E2E%0A%20%20flakiness%20or%20cost%20becomes%20the%20bottleneck.%0A%0A%23%23%23%20Mock%20the%20repository%20interface%20in%20integration%20tests%0A%0A-%20**Pros%3A**%20Faster%3B%20no%20DB%20setup.%0A-%20**Cons%3A**%20Hides%20some%20of%20the%20bugs%20the%20integration%20layer%20is%20meant%20to%0A%20%20catch%3A%20schema%20drift%2C%20wrong%20SQL%2C%20cascade%20behavior%2C%20JSON%2Fboolean%20encoding%0A%20%20quirks%2C%20migration%20gaps.%20With%20%60%3Amemory%3A%60%20SQLite%20available%2C%20the%20cost%20of%0A%20%20real%20DB%20is%20negligible.%20Rejected.%0A%0A%23%23%23%20%60bun%20test%60%20instead%20of%20Vitest%0A%0A-%20**Pros%3A**%20Native%20to%20the%20stack%3B%20zero%20config%3B%20fast.%0A-%20**Cons%3A**%20Smaller%20ecosystem%20for%20Next.js-shaped%20code%2C%20less%20mature%0A%20%20mocking%20ergonomics%2C%20thinner%20editor%2FCI%20integration.%20The%20speed%20edge%20is%0A%20%20immaterial%20at%20this%20project&#039;s%20size.%20Rejected%20as%20primary%3B%20would%0A%20%20reconsider%20on%20a%20project%20that%20is%20unit-heavy%20and%20Bun-exclusive.%0A%0A%23%23%23%20Full%20unit%20coverage%20with%20a%20mocked%20DB%20layer%0A%0A-%20**Pros%3A**%20Fastest%20possible%20suite.%0A-%20**Cons%3A**%20Pushes%20every%20bug%20class%20that%20crosses%20the%20action%2Frepo%2FDB%0A%20%20boundary%20out%20of%20the%20tested%20surface%20and%20into%20%22hope%20E2E%20caught%20it%22.%0A%20%20Rejected.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Business%20rules%20(overlap%2C%20phase%20gating%2C%20vote%20tallying)%20become%20cheap%20to%0A%20%20enumerate%20at%20the%20unit%2Fintegration%20layer%20instead%20of%20being%20locked%20inside%0A%20%20browser%20flows.%0A-%20Refactors%20are%20safer%3A%20unit%20tests%20pin%20rules%2C%20integration%20tests%20pin%0A%20%20action%E2%86%92DB%20contracts%2C%20E2E%20pins%20user-facing%20flows.%20Each%20layer%20fails%20for%0A%20%20a%20different%20reason%2C%20which%20is%20diagnostic%20signal%20rather%20than%20noise.%0A-%20Contributors%20get%20fast%20local%20feedback%3A%20%60bun%20x%20vitest%60%20in%20watch%20mode%20runs%0A%20%20in%20under%20a%20second%20for%20the%20unit%20layer%20and%20a%20few%20seconds%20for%20the%0A%20%20integration%20layer.%20Playwright%20stays%20for%20the%20full%20flow.%0A-%20The%20repository%20interface%20in%20%60db%2Frepositories%2Finterfaces.ts%60%20gains%20a%0A%20%20second%20consumer%20(tests)%2C%20which%20disciplines%20the%20interface%20itself.%0A%0A%23%23%23%20Negative%20%2F%20costs%0A%0A-%20Two%20test%20runners%20instead%20of%20one.%20Developers%20need%20to%20remember%20which%0A%20%20layer%20a%20given%20test%20belongs%20to.%20Mitigation%3A%20the%20%60*.spec.ts%60%20vs%0A%20%20%60*.test.ts%60%20convention%20and%20the%20rule%20%22if%20it%20talks%20to%20a%20browser%2C%20it&#039;s%20a%0A%20%20spec%3B%20otherwise%20it&#039;s%20a%20test%22%20resolve%20the%20common%20case.%0A-%20Integration%20tests%20have%20to%20set%20%60DATABASE_URL%60%20before%20the%0A%20%20%60getRepositories()%60%20singleton%20first%20reads%20it%2C%20and%20reset%20the%20singleton%0A%20%20between%20tests.%20Small%20helper%3B%20worth%20the%20extra%20plumbing.%20If%20this%20becomes%0A%20%20painful%2C%20a%20lightweight%20DI%20refactor%20of%20%60db%2Fcontainer.ts%60%20is%20cheap.%0A-%20Mocking%20%60next%2Fnavigation%60%20and%20%60next%2Fcache%60%20at%20the%20integration%20boundary%0A%20%20is%20a%20small%20source%20of%20friction%20and%20must%20be%20re-evaluated%20if%20the%20Next.js%0A%20%20App%20Router%20internals%20change%20materially%20in%20a%20future%20upgrade.%0A%0A%23%23%23%20Neutral%20%2F%20follow-ups%0A%0A-%20Pre-commit%20runs%20%60bun%20lint%60%2C%20%60bun%20format%60%2C%20%60bun%20typecheck%60%2C%20and%20gains%0A%20%20%60bun%20x%20vitest%20run%60.%20Playwright%20continues%20to%20run%20via%20%60bun%20test%3Ae2e%60%0A%20%20(heavier%2C%20not%20part%20of%20the%20fast%20feedback%20loop).%0A-%20The%20existing%20Playwright%20seed%20in%20%60tests%2Freset-database.ts%60%20stays%20for%0A%20%20E2E.%20Integration%20tests%20build%20per-test%20state%20and%20do%20not%20depend%20on%20it.%0A-%20When%20a%20bug%20is%20found%20in%20production%2C%20the%20default%20place%20to%20pin%20the%0A%20%20regression%20is%20the%20integration%20layer%20(cheapest%20that%20still%20exercises%20the%0A%20%20real%20stack)%2C%20unless%20the%20bug%20is%20purely%20UI%2C%20in%20which%20case%20E2E.%20Unit%20tests%0A%20%20are%20for%20rules%2C%20not%20for%20incident%20response.%0A%0A%23%23%20References%0A%0A-%20ADR%200001%20%E2%80%94%20datastore%20choice%20and%20repository%20interface%20shape.%0A-%20Vitest%3A%20%3Chttps%3A%2F%2Fvitest.dev%3E%0A-%20Playwright%3A%20%3Chttps%3A%2F%2Fplaywright.dev%3E%0A-%20%60better-sqlite3%60%20in-memory%20mode%3A%20%3Chttps%3A%2F%2Fgithub.com%2FWiseLibs%2Fbetter-sqlite3%2Fblob%2Fmaster%2Fdocs%2Fapi.md%3E%0A" style="display: none;"></div>
                   
-                    <div class="docmd-breadcrumbs-spacer"></div>
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <a href="../../adr/">Decision records</a>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>0002: Testing strategy</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
                   
 
                   
@@ -1305,14 +1796,34 @@ are for rules, not for incident response.</li>
                 
                   <div class="page-navigation">
                     
-                      <div class="prev-page-placeholder">
-                      </div>
+                      <a href="../../adr/0001-replace-airtable-with-sql-database/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            0001: Replace Airtable with a SQL database
+                          </strong></span>
+                      </a>
                     
                     
-                      <a href="../../" class="next-page">
+                      <a href="../../adr/0003-form-field-validation-with-zod/" class="next-page">
                         <span><small>Next</small>
                           <strong>
-                            Overview
+                            0003: Form handling and validation with React Hook Form and Zod
                           </strong></span>
                         
 <svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
@@ -1562,13 +2073,13 @@ are for rules, not for incident response.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mu9past7"></script>
+      <script src="../../assets/js/docmd-main.js?v=mu9pvcu8"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mu9past7"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9past7" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-search.js?v=mu9past7" ></script>
-<script src="../../assets/js/docmd-git.js?v=mu9past7" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mu9pvcu8"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9pvcu8" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9pvcu8" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1646,7 +2157,7 @@ are for rules, not for incident response.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mu9past7"></script>
+          src="../../assets/js/likec4-embed.js?v=mu9pvcu8"></script>
         
       
       
