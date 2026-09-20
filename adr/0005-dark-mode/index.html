@@ -1,0 +1,1570 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      ADR 0005: Dark mode via semantic tokens and a per-device cookie : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/adr/0005-dark-mode/">
+<meta property="og:title" content="ADR 0005: Dark mode via semantic tokens and a per-device cookie - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/adr/0005-dark-mode/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ADR 0005: Dark mode via semantic tokens and a per-device cookie - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/adr/0005-dark-mode.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  ADR 0005: Dark mode via semantic tokens and a per-device cookie
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200005%3A%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-08-17%0A%0A%23%23%20Context%0A%0AThe%20app%20had%20no%20dark%20mode%3A%20no%20%60dark%3A%60%20utility%20anywhere%2C%20no%20%60color-scheme%60%0Adeclaration%2C%20and%20roughly%20a%20thousand%20hard-coded%20palette%20utilities%0A(%60text-gray-500%60%20alone%20appeared%2095%20times)%20spread%20over%20some%2078%20components.%0A%0AAttendees%20were%20reaching%20for%20browser%20extensions%20instead.%20%5B%23802%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F802)%0Areported%20that%20under%20%5BDark%20Reader%5D(https%3A%2F%2Fdarkreader.org%2F)%20a%20voted-on%20proposal%0Abecame%20indistinguishable%20from%20an%20unvoted%20one%2C%20because%20the%20only%20cue%20was%20a%20pale%0Ablue%20fill%20against%20white%20and%20the%20extension%20collapsed%20both%20to%20near-identical%0Adarks.%20That%20specific%20bug%20is%20fixed%20separately%20%E2%80%94%20the%20state%20is%20now%20also%20carried%20by%0A%60aria-pressed%60%20and%20a%20check%20mark%20%E2%80%94%20but%20it%20is%20the%20symptom%20of%20not%20owning%20the%0Aquestion.%0A%0AConstraints%20that%20shape%20the%20decision%3A%0A%0A-%20The%20site%20has%20surfaces%20that%20anonymous%20visitors%20see%3A%20the%20password%20gate%2C%20the%0A%20%20login%20screen%2C%20the%20guest%20picker%2C%20the%20kiosk%20display.%20Anything%20that%20lives%20behind%0A%20%20%22select%20your%20name%20first%22%20cannot%20be%20the%20only%20way%20to%20change%20the%20theme.%0A-%20A%20wrong%20first%20paint%20is%20worse%20than%20no%20dark%20mode.%20Whatever%20resolves%20the%20theme%0A%20%20has%20to%20run%20before%20the%20page%20is%20painted.%0A-%20The%20schedule%20renders%20location%20colours%20as%20dynamic%20Tailwind%20classes%0A%20%20(%60bg-%24%7Bcolor%7D-500%60)%2C%20kept%20alive%20by%20a%20%60%40source%20inline(...)%60%20safelist.%20Doubling%0A%20%20that%20safelist%20for%20a%20second%20theme%20is%20a%20cost%20worth%20avoiding.%0A%0A%23%23%20Decision%0A%0A%23%23%23%20The%20preference%20is%20per%20device%2C%20in%20a%20cookie%0A%0A%60sb-theme%60%20holds%20%60system%60%2C%20%60light%60%20or%20%60dark%60%2C%20and%20the%20root%20layout%20turns%20it%20into%0A%60class%3D%22light%22%60%20%2F%20%60class%3D%22dark%22%60%20on%20%60%3Chtml%3E%60%20%E2%80%94%20%60system%60%20sets%20no%20class%20at%20all.%0A%0APer%20device%2C%20rather%20than%20on%20the%20guest%20record%2C%20because%3A%0A%0A-%20%60app%2F(site)%2Fsettings%2Fpage.tsx%60%20requires%20a%20selected%20guest%2C%20and%20the%20header%20menu%0A%20%20that%20reaches%20it%20only%20renders%20once%20a%20name%20is%20chosen%0A%20%20(%60header-user-select.tsx%3A62%60).%20A%20guest-record%20setting%20would%20be%20unreachable%0A%20%20from%20exactly%20the%20screens%20a%20first-time%20visitor%20sees.%0A-%20Ambient%20light%20genuinely%20differs%20per%20device.%20One%20attendee%20on%20a%20phone%20at%20night%0A%20%20and%20on%20a%20laptop%20in%20a%20bright%20room%20wants%20two%20different%20answers%3B%20a%20single%20stored%0A%20%20preference%20can%20only%20give%20one.%0A-%20Switching%20the%20current%20user%20is%20unauthenticated%2C%20so%20a%20guest-record%20preference%0A%20%20would%20be%20writable%20by%20anyone%20claiming%20that%20name.%0A%0AThe%20control%20sits%20in%20the%20footer%2C%20which%20is%20on%20every%20page%20including%20anonymous%20ones%0Aand%20already%20carries%20the%20low-salience%20global%20strip%20(version%2C%20help%2C%20report%20a%20bug).%0AIt%20is%20mirrored%20on%20the%20settings%20page%2C%20labelled%20as%20applying%20to%20this%20device%2C%20for%0Adiscoverability%20%E2%80%94%20both%20write%20the%20same%20cookie.%0A%0A%23%23%23%20%22System%22%20is%20resolved%20in%20CSS%2C%20not%20in%20an%20inline%20script%0A%0AThe%20server%20cannot%20know%20the%20OS%20preference%2C%20so%20the%20usual%20fix%20is%20a%20blocking%20inline%0Ascript%20that%20reads%20it%20and%20sets%20a%20class%20before%20paint.%20We%20avoid%20the%20script%0Aentirely%3A%20an%20explicit%20choice%20is%20a%20class%20on%20%60%3Chtml%3E%60%2C%20and%20%60system%60%20is%20the%20absence%0Aof%20one%2C%20handled%20by%20a%20media%20query%20inside%20the%20%60dark%60%20variant.%0A%0A%60%60%60css%0A%40custom-variant%20dark%20%7B%0A%20%20%26%3Awhere(.dark%2C%20.dark%20*)%20%7B%0A%20%20%20%20%40slot%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%26%3Awhere(html%3Anot(.light)%2C%20html%3Anot(.light)%20*)%20%7B%0A%20%20%20%20%20%20%40slot%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%60.dark%60%20wins%20outright%3B%20otherwise%20the%20OS%20decides%20unless%20%60light%60%20pinned%20it.%20No%0Ascript%2C%20no%20flash%2C%20and%20it%20still%20works%20with%20JavaScript%20off.%20The%20cost%20is%20that%0A%22which%20theme%20am%20I%20actually%20in%22%20is%20not%20readable%20from%20JS%20%E2%80%94%20nothing%20needs%20it.%0A%0AA%20variant%20on%20its%20own%20would%20only%20reach%20utilities%20that%20are%20written%20%60dark%3A%E2%80%A6%60%2C%20and%0Athe%20whole%20point%20of%20the%20tokens%20below%20is%20that%20components%20never%20write%20one.%20So%20the%0Atoken%20rule%20applies%20the%20variant%20to%20_itself_%3A%0A%0A%60%60%60css%0A%3Aroot%20%7B%0A%20%20color-scheme%3A%20light%3B%0A%20%20--surface%3A%20%23ffffff%3B%0A%0A%20%20%40variant%20dark%20%7B%0A%20%20%20%20color-scheme%3A%20dark%3B%0A%20%20%20%20--surface%3A%20%2316181d%3B%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0ATailwind%20expands%20that%20into%20the%20two%20branches%20above%20and%20flattens%20the%20nesting%20in%0Athe%20production%20build%2C%20so%20the%20browser%20sees%20plain%20%60%3Aroot%3Awhere(.dark%2C%20.dark%20*)%60%0Aand%20%60%40media%20(prefers-color-scheme%3A%20dark)%60%20rules.%20Writing%20the%20dark%20values%20once%2C%0Aunder%20the%20one%20definition%20of%20%22am%20I%20dark%22%2C%20is%20what%20keeps%20the%20class%20and%20the%20media%0Aquery%20from%20drifting%20apart.%20%60color-scheme%60%20rides%20along%20in%20the%20same%20block%2C%20which%0Ais%20what%20gives%20native%20controls%2C%20scrollbars%20and%20form%20autofill%20the%20right%20theme%20%E2%80%94%0Athe%20layout%20only%20has%20to%20set%20the%20class.%0A%0AReading%20the%20cookie%20makes%20the%20root%20layout%20dynamic.%20The%20site%20is%20already%0Aeffectively%20dynamic%20(a%20settings%20read%20in%20%60generateMetadata%60%2C%20%60cookies()%60%20in%0A%60(site)%2Flayout.tsx%60)%2C%20so%20this%20costs%20nothing%20in%20practice.%0A%0A%23%23%23%20Semantic%20tokens%2C%20not%20%60dark%3A%60%20on%20every%20utility%0A%0AComponents%20name%20the%20role%20a%20colour%20plays%20%E2%80%94%20%60bg-surface%60%2C%20%60text-fg-muted%60%2C%0A%60border-line%60%2C%20%60bg-brand%60%20%E2%80%94%20and%20the%20token%20rule%20in%20%60app%2Fglobals.css%60%20is%20the%20only%0Aplace%20a%20colour%20is%20picked.%20Its%20%60%40variant%20dark%60%20block%20lists%20only%20the%20tokens%20that%0Achange%2C%20so%20what%20the%20two%20themes%20disagree%20about%20is%20readable%20at%20a%20glance%20and%20a%0Acolour%20that%20is%20meant%20to%20be%20the%20same%20in%20both%20cannot%20drift.%0A%0AAnnotating%20each%20existing%20utility%20with%20a%20%60dark%3A%60%20counterpart%20would%20have%20been%20a%0Adiff%20of%20the%20same%20size%20that%20left%20the%20problem%20permanently%20open%3A%20every%20new%0Acomponent%20would%20be%20free%20to%20forget%2C%20and%20nothing%20would%20notice.%20With%20tokens%2C%20dark%0Amode%20is%20correct%20by%20default%20for%20code%20that%20hasn&#039;t%20been%20written%20yet.%0A%0A%60%40theme%20inline%60%20is%20required%20for%20the%20swap%20to%20work%20%E2%80%94%20a%20plain%20%60%40theme%60%20bakes%20the%0Avalue%20into%20the%20generated%20utility%20at%20build%20time%2C%20so%20%60.dark%60%20could%20never%20override%0Ait.%0A%0A%23%23%23%20The%20dark%20theme%20is%20not%20an%20inversion%0A%0ATwo%20things%20change%20shape%20rather%20than%20value%3A%0A%0A-%20**Elevation.**%20Light%20mode%20raises%20a%20card%20with%20a%20shadow%3B%20on%20a%20dark%20ground%20a%0A%20%20shadow%20is%20nearly%20invisible%2C%20so%20%60--surface-raised%60%20is%20_lighter_%20than%20the%20page%0A%20%20and%20%60--surface-sunken%60%20is%20darker.%20The%20contrast%20test%20asserts%20this%20ordering.%0A-%20**Tints.**%20%60bg-rose-50%60%20and%20friends%20become%20deep%20desaturated%20grounds%0A%20%20(%60--brand-tint%3A%20%233b1220%60)%20with%20a%20light%20accent%20on%20top%2C%20not%20darkened%20pastels.%0A%0ANeither%20theme%20uses%20the%20extremes%3A%20the%20dark%20page%20is%20%60%2316181d%60%20rather%20than%20black%0Aand%20its%20text%20%60%23e8eaee%60%20rather%20than%20white%2C%20because%20pure%20white%20on%20pure%20black%0Ablooms%20at%20reading%20sizes.%0A%0A%23%23%23%20The%20contrast%20contract%20is%20a%20test%0A%0A%60tests%2Funit%2Ftheme-contrast.test.ts%60%20parses%20the%20tokens%20out%20of%20%60globals.css%60%20and%0Aasserts%20a%20WCAG%20ratio%20for%20every%20(foreground%2C%20background)%20pair%20that%20occurs%20in%20the%0AUI%2C%20in%20both%20themes%20%E2%80%94%207%3A1%20for%20body%20copy%2C%204.5%3A1%20for%20secondary%20and%20semantic%20text%2C%0A3%3A1%20for%20control%20borders%20and%20state%20indicators%20per%20WCAG%202.2%201.4.11.%20It%20reads%20the%0Adark%20block%20the%20way%20the%20cascade%20does%2C%20light%20values%20with%20the%20overrides%20on%20top%2C%20so%0Aa%20token%20that%20is%20only%20wrong%20once%20it%20inherits%20is%20still%20caught.%0A%0AThis%20is%20what%20stops%20dark%20mode%20from%20quietly%20rotting%3A%20%22looks%20a%20bit%20washed%20out%22%20is%0Aotherwise%20nobody&#039;s%20bug.%20Row%20dividers%20and%20hover%20fills%20are%20deliberately%20exempt%20%E2%80%94%0Athey%20are%20neither%20text%20nor%20controls%2C%20and%20holding%20them%20to%203%3A1%20would%20mean%20drawing%0Aboxes%20everywhere.%0A%0AThe%20list%20of%20pairs%20doubles%20as%20the%20rule%20for%20which%20token%20belongs%20on%20which%20ground%3A%0A%60--fg-subtle%60%20and%20%60--line%60%20clear%20the%20three%20page%20grounds%20but%20not%20the%20filled%20ones%0A(%60--surface-muted%60%2C%20%60--surface-hover%60)%2C%20where%20%60--fg-muted%60%20and%20%60--line-strong%60%0Atake%20over.%0A%0AEnforcing%20the%20contract%20moved%20a%20few%20light-mode%20colours%2C%20which%20is%20a%20deliberate%0Aconsequence%20rather%20than%20a%20side%20effect%20(see%20below).%0A%0A%23%23%23%20Location%20colours%20are%20derived%2C%20not%20safelisted%20twice%0A%0AA%20location&#039;s%20colour%20stays%20a%20palette%20name.%20%60loc-%3Cname%3E%60%20puts%20that%20hue%20into%20a%0A%60--loc%60%20custom%20property%20and%20each%20role%20%E2%80%94%20block%20fill%2C%20dimmed%20fill%2C%20border%2C%20RSVP%0Abadge%2C%20tag%2C%20admin%20swatch%20%E2%80%94%20is%20a%20%60color-mix()%60%20of%20it%20with%20the%20current%20%60--surface%60%0Aor%20%60--fg%60%2C%20so%20one%20class%20works%20in%20both%20themes.%20The%20alternative%2C%20a%20second%20set%20of%0Asafelisted%20%60dark%3Abg-*-900%60%20classes%2C%20would%20have%20doubled%20the%20%60%40source%20inline(...)%60%0Alist%3B%20as%20it%20turns%20out%20the%2022%20%60loc-*%60%20rules%20are%20plain%20CSS%2C%20so%20the%20safelist%20is%0Agone%20entirely.%0A%0ADeriving%20also%20fixes%20a%20light-mode%20bug%20we%20would%20otherwise%20have%20carried%20over%3A%20the%0Aold%20block%20was%20%60bg-%24%7Bcolor%7D-500%60%20with%20%60text-white%60%2C%20which%20is%201.8%3A1%20on%0A%60yellow-500%60.%20Because%20the%20fill%20is%20now%20mixed%20with%20the%20page%2C%20the%20title%20is%20%60--fg%60%0Aon%20a%20tint%20of%20the%20hue%20and%20stays%20legible%20whichever%20of%20the%2022%20colours%20a%20location%0Ahas.%20%60tests%2Funit%2Flocation-colors.test.ts%60%20recomputes%20every%20hue%20in%20both%20themes%20%E2%80%94%0Amixing%20in%20oklab%20as%20the%20browser%20does%20%E2%80%94%20rather%20than%20trusting%20that.%0A%0AThe%20visible%20cost%20is%20that%20a%20scheduled%20session%20is%20a%20tinted%20card%20with%20a%20saturated%0Aborder%20instead%20of%20a%20solid%20block%20of%20colour.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Dark%20mode%20works%20before%20a%20name%20is%20selected%20and%20on%20the%20kiosk.%0A-%20Correct%20on%20first%20paint%2C%20with%20no%20inline%20script%20and%20no%20flash.%0A-%20Native%20controls%2C%20scrollbars%20and%20autofill%20follow%20the%20theme%2C%20because%0A%20%20%60color-scheme%60%20is%20set%20by%20the%20same%20rule%20as%20the%20tokens.%0A-%20New%20components%20get%20dark%20mode%20for%20free%20by%20naming%20roles.%0A-%20The%20contrast%20test%20makes%20readability%20regressions%20fail%20the%20build.%0A-%20%23802&#039;s%20class%20of%20bug%20is%20harder%20to%20reintroduce%3A%20state%20is%20no%20longer%20encoded%20as%20a%0A%20%20bare%20palette%20shade.%0A%0A%23%23%23%20Negative%0A%0A-%20A%20large%20mechanical%20migration%20touching%20most%20components%2C%20and%20one%20that%20reviewers%0A%20%20have%20to%20read%20as%20%22renames%22%20rather%20than%20logic.%0A-%20%60text-white%60%20needed%20judgment%20per%20call%20site%20%E2%80%94%20it%20splits%20into%20%60--on-brand%60%2C%0A%20%20%60--on-danger%60%2C%20%60--on-info%60%20and%20%60--fg-inverse%60%20depending%20on%20what%20it%20sits%20on.%0A-%20The%20token%20vocabulary%20is%20one%20more%20thing%20to%20learn%20before%20writing%20a%20component.%0A%0A%23%23%23%20Neutral%0A%0A-%20The%20schedule%20grid%20looks%20different%20in%20light%20mode%3A%20session%20blocks%20are%20tinted%0A%20%20rather%20than%20solid%20(see%20above).%20Locations%20are%20still%20told%20apart%20by%20hue%2C%20now%0A%20%20carried%20by%20the%20border%20as%20much%20as%20the%20fill.%0A-%20Light%20mode%20shifts%20slightly%20where%20the%20contrast%20contract%20required%20it%2C%20most%0A%20%20visibly%3A%20the%20several%20grays%20doing%20%22muted%20text%22%20collapse%20to%20three%20levels%2C%20so%0A%20%20%60text-gray-400%60%20text%20darkens%20to%20a%20readable%20%60--fg-subtle%60%20(it%20was%202.9%3A1%20on%0A%20%20white)%3B%20primary%20rose%20buttons%20deepen%20from%20rose-400%2F500%20to%20rose-600%2C%20because%0A%20%20white%20on%20rose-400%20was%202.7%3A1%3B%20and%20form-control%20borders%20darken%20to%20meet%20the%203%3A1%0A%20%20of%201.4.11.%0A-%20Emails%2C%20the%20hand-written%20landing%20page%20in%20%60www%2F%60%2C%20and%20the%20docs%20site%20are%20out%20of%0A%20%20scope.%20Mail-client%20support%20for%20%60prefers-color-scheme%60%20is%20too%20patchy%20to%20be%0A%20%20worth%20the%20divergence.%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ADR 0005: Dark mode via semantic tokens and a per-device cookie</h1>
+<ul>
+<li><strong>Status:</strong> Accepted</li>
+<li><strong>Date:</strong> 2026-08-17</li>
+</ul>
+<h2 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-context" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
+<p>The app had no dark mode: no <code>dark:</code> utility anywhere, no <code>color-scheme</code>
+declaration, and roughly a thousand hard-coded palette utilities
+(<code>text-gray-500</code> alone appeared 95 times) spread over some 78 components.</p>
+<p>Attendees were reaching for browser extensions instead. <a href="https://github.com/schellingboard/schellingboard/issues/802">#802</a>
+reported that under <a href="https://darkreader.org/">Dark Reader</a> a voted-on proposal
+became indistinguishable from an unvoted one, because the only cue was a pale
+blue fill against white and the extension collapsed both to near-identical
+darks. That specific bug is fixed separately — the state is now also carried by
+<code>aria-pressed</code> and a check mark — but it is the symptom of not owning the
+question.</p>
+<p>Constraints that shape the decision:</p>
+<ul>
+<li>The site has surfaces that anonymous visitors see: the password gate, the
+login screen, the guest picker, the kiosk display. Anything that lives behind
+“select your name first” cannot be the only way to change the theme.</li>
+<li>A wrong first paint is worse than no dark mode. Whatever resolves the theme
+has to run before the page is painted.</li>
+<li>The schedule renders location colours as dynamic Tailwind classes
+(<code>bg-${color}-500</code>), kept alive by a <code>@source inline(...)</code> safelist. Doubling
+that safelist for a second theme is a cost worth avoiding.</li>
+</ul>
+<h2 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-preference-is-per-device-in-a-cookie" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-preference-is-per-device-in-a-cookie" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The preference is per device, in a cookie</h3>
+<p><code>sb-theme</code> holds <code>system</code>, <code>light</code> or <code>dark</code>, and the root layout turns it into
+<code>class=&quot;light&quot;</code> / <code>class=&quot;dark&quot;</code> on <code>&lt;html&gt;</code> — <code>system</code> sets no class at all.</p>
+<p>Per device, rather than on the guest record, because:</p>
+<ul>
+<li><code>app/(site)/settings/page.tsx</code> requires a selected guest, and the header menu
+that reaches it only renders once a name is chosen
+(<code>header-user-select.tsx:62</code>). A guest-record setting would be unreachable
+from exactly the screens a first-time visitor sees.</li>
+<li>Ambient light genuinely differs per device. One attendee on a phone at night
+and on a laptop in a bright room wants two different answers; a single stored
+preference can only give one.</li>
+<li>Switching the current user is unauthenticated, so a guest-record preference
+would be writable by anyone claiming that name.</li>
+</ul>
+<p>The control sits in the footer, which is on every page including anonymous ones
+and already carries the low-salience global strip (version, help, report a bug).
+It is mirrored on the settings page, labelled as applying to this device, for
+discoverability — both write the same cookie.</p>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-system-is-resolved-in-css-not-in-an-inline-script" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-system-is-resolved-in-css-not-in-an-inline-script" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>“System” is resolved in CSS, not in an inline script</h3>
+<p>The server cannot know the OS preference, so the usual fix is a blocking inline
+script that reads it and sets a class before paint. We avoid the script
+entirely: an explicit choice is a class on <code>&lt;html&gt;</code>, and <code>system</code> is the absence
+of one, handled by a media query inside the <code>dark</code> variant.</p>
+<pre class="hljs"><code class="language-css">@custom<span class="hljs-operator">-</span>variant dark {
+  <span class="hljs-operator">&amp;:</span><span class="hljs-keyword">where</span>(.<span class="hljs-attr">dark</span>, .<span class="hljs-attr">dark</span> <span class="hljs-operator">*</span>) {
+    @slot;
+  }
+  @<span class="hljs-title function_">media</span> (prefers<span class="hljs-operator">-</span>color<span class="hljs-operator">-</span>scheme<span class="hljs-operator">:</span> dark) {
+    <span class="hljs-operator">&amp;:</span><span class="hljs-keyword">where</span>(html<span class="hljs-operator">:</span><span class="hljs-title function_">not</span>(.<span class="hljs-attr">light</span>), html<span class="hljs-operator">:</span><span class="hljs-title function_">not</span>(.<span class="hljs-attr">light</span>) <span class="hljs-operator">*</span>) {
+      @slot;
+    }
+  }
+}
+</code></pre>
+<p><code>.dark</code> wins outright; otherwise the OS decides unless <code>light</code> pinned it. No
+script, no flash, and it still works with JavaScript off. The cost is that
+“which theme am I actually in” is not readable from JS — nothing needs it.</p>
+<p>A variant on its own would only reach utilities that are written <code>dark:…</code>, and
+the whole point of the tokens below is that components never write one. So the
+token rule applies the variant to <em>itself</em>:</p>
+<pre class="hljs"><code class="language-css"><span class="hljs-operator">:</span>root {
+  color<span class="hljs-operator">-</span>scheme<span class="hljs-operator">:</span> light;
+  <span class="hljs-operator">--</span>surface<span class="hljs-operator">:</span> <span class="hljs-comment">#ffffff;</span>
+
+  @variant dark {
+    color<span class="hljs-operator">-</span>scheme<span class="hljs-operator">:</span> dark;
+    <span class="hljs-operator">--</span>surface<span class="hljs-operator">:</span> <span class="hljs-comment">#16181d;</span>
+  }
+}
+</code></pre>
+<p>Tailwind expands that into the two branches above and flattens the nesting in
+the production build, so the browser sees plain <code>:root:where(.dark, .dark *)</code>
+and <code>@media (prefers-color-scheme: dark)</code> rules. Writing the dark values once,
+under the one definition of “am I dark”, is what keeps the class and the media
+query from drifting apart. <code>color-scheme</code> rides along in the same block, which
+is what gives native controls, scrollbars and form autofill the right theme —
+the layout only has to set the class.</p>
+<p>Reading the cookie makes the root layout dynamic. The site is already
+effectively dynamic (a settings read in <code>generateMetadata</code>, <code>cookies()</code> in
+<code>(site)/layout.tsx</code>), so this costs nothing in practice.</p>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-semantic-tokens-not-dark-on-every-utility" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-semantic-tokens-not-dark-on-every-utility" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Semantic tokens, not <code>dark:</code> on every utility</h3>
+<p>Components name the role a colour plays — <code>bg-surface</code>, <code>text-fg-muted</code>,
+<code>border-line</code>, <code>bg-brand</code> — and the token rule in <code>app/globals.css</code> is the only
+place a colour is picked. Its <code>@variant dark</code> block lists only the tokens that
+change, so what the two themes disagree about is readable at a glance and a
+colour that is meant to be the same in both cannot drift.</p>
+<p>Annotating each existing utility with a <code>dark:</code> counterpart would have been a
+diff of the same size that left the problem permanently open: every new
+component would be free to forget, and nothing would notice. With tokens, dark
+mode is correct by default for code that hasn’t been written yet.</p>
+<p><code>@theme inline</code> is required for the swap to work — a plain <code>@theme</code> bakes the
+value into the generated utility at build time, so <code>.dark</code> could never override
+it.</p>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-dark-theme-is-not-an-inversion" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-dark-theme-is-not-an-inversion" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The dark theme is not an inversion</h3>
+<p>Two things change shape rather than value:</p>
+<ul>
+<li><strong>Elevation.</strong> Light mode raises a card with a shadow; on a dark ground a
+shadow is nearly invisible, so <code>--surface-raised</code> is <em>lighter</em> than the page
+and <code>--surface-sunken</code> is darker. The contrast test asserts this ordering.</li>
+<li><strong>Tints.</strong> <code>bg-rose-50</code> and friends become deep desaturated grounds
+(<code>--brand-tint: #3b1220</code>) with a light accent on top, not darkened pastels.</li>
+</ul>
+<p>Neither theme uses the extremes: the dark page is <code>#16181d</code> rather than black
+and its text <code>#e8eaee</code> rather than white, because pure white on pure black
+blooms at reading sizes.</p>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-contrast-contract-is-a-test" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-contrast-contract-is-a-test" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The contrast contract is a test</h3>
+<p><code>tests/unit/theme-contrast.test.ts</code> parses the tokens out of <code>globals.css</code> and
+asserts a WCAG ratio for every (foreground, background) pair that occurs in the
+UI, in both themes — 7:1 for body copy, 4.5:1 for secondary and semantic text,
+3:1 for control borders and state indicators per WCAG 2.2 1.4.11. It reads the
+dark block the way the cascade does, light values with the overrides on top, so
+a token that is only wrong once it inherits is still caught.</p>
+<p>This is what stops dark mode from quietly rotting: “looks a bit washed out” is
+otherwise nobody’s bug. Row dividers and hover fills are deliberately exempt —
+they are neither text nor controls, and holding them to 3:1 would mean drawing
+boxes everywhere.</p>
+<p>The list of pairs doubles as the rule for which token belongs on which ground:
+<code>--fg-subtle</code> and <code>--line</code> clear the three page grounds but not the filled ones
+(<code>--surface-muted</code>, <code>--surface-hover</code>), where <code>--fg-muted</code> and <code>--line-strong</code>
+take over.</p>
+<p>Enforcing the contract moved a few light-mode colours, which is a deliberate
+consequence rather than a side effect (see below).</p>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-location-colours-are-derived-not-safelisted-twice" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-location-colours-are-derived-not-safelisted-twice" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Location colours are derived, not safelisted twice</h3>
+<p>A location’s colour stays a palette name. <code>loc-&lt;name&gt;</code> puts that hue into a
+<code>--loc</code> custom property and each role — block fill, dimmed fill, border, RSVP
+badge, tag, admin swatch — is a <code>color-mix()</code> of it with the current <code>--surface</code>
+or <code>--fg</code>, so one class works in both themes. The alternative, a second set of
+safelisted <code>dark:bg-*-900</code> classes, would have doubled the <code>@source inline(...)</code>
+list; as it turns out the 22 <code>loc-*</code> rules are plain CSS, so the safelist is
+gone entirely.</p>
+<p>Deriving also fixes a light-mode bug we would otherwise have carried over: the
+old block was <code>bg-${color}-500</code> with <code>text-white</code>, which is 1.8:1 on
+<code>yellow-500</code>. Because the fill is now mixed with the page, the title is <code>--fg</code>
+on a tint of the hue and stays legible whichever of the 22 colours a location
+has. <code>tests/unit/location-colors.test.ts</code> recomputes every hue in both themes —
+mixing in oklab as the browser does — rather than trusting that.</p>
+<p>The visible cost is that a scheduled session is a tinted card with a saturated
+border instead of a solid block of colour.</p>
+<h2 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-positive" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-positive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Positive</h3>
+<ul>
+<li>Dark mode works before a name is selected and on the kiosk.</li>
+<li>Correct on first paint, with no inline script and no flash.</li>
+<li>Native controls, scrollbars and autofill follow the theme, because
+<code>color-scheme</code> is set by the same rule as the tokens.</li>
+<li>New components get dark mode for free by naming roles.</li>
+<li>The contrast test makes readability regressions fail the build.</li>
+<li>#802’s class of bug is harder to reintroduce: state is no longer encoded as a
+bare palette shade.</li>
+</ul>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-negative" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-negative" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Negative</h3>
+<ul>
+<li>A large mechanical migration touching most components, and one that reviewers
+have to read as “renames” rather than logic.</li>
+<li><code>text-white</code> needed judgment per call site — it splits into <code>--on-brand</code>,
+<code>--on-danger</code>, <code>--on-info</code> and <code>--fg-inverse</code> depending on what it sits on.</li>
+<li>The token vocabulary is one more thing to learn before writing a component.</li>
+</ul>
+<h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-neutral" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-neutral" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Neutral</h3>
+<ul>
+<li>The schedule grid looks different in light mode: session blocks are tinted
+rather than solid (see above). Locations are still told apart by hue, now
+carried by the border as much as the fill.</li>
+<li>Light mode shifts slightly where the contrast contract required it, most
+visibly: the several grays doing “muted text” collapse to three levels, so
+<code>text-gray-400</code> text darkens to a readable <code>--fg-subtle</code> (it was 2.9:1 on
+white); primary rose buttons deepen from rose-400/500 to rose-600, because
+white on rose-400 was 2.7:1; and form-control borders darken to meet the 3:1
+of 1.4.11.</li>
+<li>Emails, the hand-written landing page in <code>www/</code>, and the docs site are out of
+scope. Mail-client support for <code>prefers-color-scheme</code> is too patchy to be
+worth the divergence.</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie" class="toc-link">ADR 0005: Dark mode via semantic tokens and a per-device cookie</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-context" class="toc-link">Context</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision" class="toc-link">Decision</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-preference-is-per-device-in-a-cookie" class="toc-link">The preference is per device, in a cookie</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-system-is-resolved-in-css-not-in-an-inline-script" class="toc-link">“System” is resolved in CSS, not in an inline script</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-semantic-tokens-not-dark-on-every-utility" class="toc-link">Semantic tokens, not dark: on every utility</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-dark-theme-is-not-an-inversion" class="toc-link">The dark theme is not an inversion</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-contrast-contract-is-a-test" class="toc-link">The contrast contract is a test</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-location-colours-are-derived-not-safelisted-twice" class="toc-link">Location colours are derived, not safelisted twice</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences" class="toc-link">Consequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-positive" class="toc-link">Positive</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-negative" class="toc-link">Negative</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-neutral" class="toc-link">Neutral</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789885892000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789885892000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: derive location colours from the theme">feat: derive location colours from th...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1786996920000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: semantic colour tokens with a checked contrast contract">feat: semantic colour tokens with a c...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1786996913000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

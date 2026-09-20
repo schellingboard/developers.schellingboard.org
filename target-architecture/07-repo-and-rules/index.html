@@ -1,0 +1,1546 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      7 · Repository, enforced rules, testing, agents : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/target-architecture/07-repo-and-rules/">
+<meta property="og:title" content="7 · Repository, enforced rules, testing, agents - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/target-architecture/07-repo-and-rules/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="7 · Repository, enforced rules, testing, agents - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/target-architecture/07-repo-and-rules.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  7 · Repository, enforced rules, testing, agents
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%207%20%C2%B7%20Repository%2C%20enforced%20rules%2C%20testing%2C%20agents%0A%0A%23%23%20Layout%0A%0A%60%60%60%0Aschellingboard%2F%0A%20%20packages%2F%0A%20%20%20%20domain%2F%20%20%20%20%20%20%20%20%20%20src%2F%3Cmodule%3E%2F%7Bentities%2Cpolicies%2Cchanges%2Cviews%7D.ts%2C%20src%2Ftime%2F%2C%20src%2Fapply.ts%0A%20%20%20%20contracts%2F%20%20%20%20%20%20%20src%2F%3Cmodule%3E%2F*.ts%20(zod)%2C%20src%2Ffeed.ts%2C%20src%2Fsnapshot.ts%2C%20openapi.json%20(generated%2C%20committed)%0A%20%20%20%20api-client%2F%20%20%20%20%20%20generated%3B%20do%20not%20edit%0A%20%20apps%2F%0A%20%20%20%20server%2F%20%20%20%20%20%20%20%20%20%20see%2003-server.md%0A%20%20%20%20web%2F%20%20%20%20%20%20%20%20%20%20%20%20%20see%2004-client.md%0A%20%20tools%2F%0A%20%20%20%20seed%2F%20%20%20%20%20%20%20%20%20%20%20%20fixtures%20and%20generated%20data%20(small%20%2F%20large%20profiles)%0A%20%20%20%20e2e%2F%20%20%20%20%20%20%20%20%20%20%20%20%20Playwright%20suite%2C%20run%20against%20the%20built%20app%20and%20against%20the%20Docker%20image%0A%20%20%20%20scripts%2F%20%20%20%20%20%20%20%20%20release%2C%20docs%2C%20dump-release-db%0A%20%20docs%2F%0A%20%20%20%20dev%2F%20%20%20%20%20%20%20%20%20%20%20%20%20ADRs%2C%20this%20design%2C%20chapters%3B%20CONTEXT.md%20(glossary%20%2B%20module%20map%2C%20for%20agents)%0A%20%20%20%20public%2F%20%20%20%20%20%20%20%20%20%20attendee%2C%20organizer%20and%20self-hosting%20docs%20(published)%0A%20%20Dockerfile%2C%20docker-compose.yml%2C%20Makefile%2C%20package.json%20(workspaces)%2C%20bunfig.toml%0A%60%60%60%0A%0ABun%20workspaces.%20One%20%60tsconfig%60%20per%20package%20with%20project%20references%20so%20%60tsc%20-b%60%0Achecks%20the%20graph%20in%20dependency%20order%20and%20a%20package%20cannot%20see%20another&#039;s%20internals.%0A%0A%23%23%20Enforced%20rules%0A%0AConventions%20that%20only%20live%20in%20a%20document%20decay.%20Each%20rule%20below%20names%20its%20tool%20and%0Athe%20message%20the%20author%20reads.%0A%0A%7C%20Rule%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Tool%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Message%20(abridged)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------------------------------------------------------------%20%7C%20--------------------------%20%7C%20-------------------------------------------------------------------------------------------%20%7C%0A%7C%20%60domain%60%20imports%20nothing%20but%20itself%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20package.json%20%2B%20tsc%20refs%20%20%20%20%7C%20(cannot%20resolve)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60server%60%20and%20%60web%60%20never%20import%20each%20other%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20package.json%20%2B%20tsc%20refs%20%20%20%20%7C%20(cannot%20resolve)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60application%2F%60%20never%20imports%20%60adapters%2F%60%2C%20%60http%2F%60%2C%20%60feed%2F%60%2C%20%60jobs%2F%60%2C%20%60db%2F%60%20%7C%20dependency-cruiser%20%20%20%20%20%20%20%20%20%7C%20%22Use%20cases%20depend%20on%20ports%3B%20adapters%20are%20wired%20in%20main.ts%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Modules%20import%20other%20modules%20only%20via%20%60module.ts%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20dependency-cruiser%20%20%20%20%20%20%20%20%20%7C%20%22Other%20modules&#039;%20internals%20are%20private%3B%20call%20a%20use%20case%20or%20react%20to%20a%20change%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20No%20dependency%20cycles%20among%20modules%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20dependency-cruiser%20%20%20%20%20%20%20%20%20%7C%20%22Cycle%20between%20modules%3A%20one%20of%20these%20should%20be%20a%20reaction%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Every%20command%20use%20case%20calls%20a%20%60policies.*%60%20function%20before%20%60save%60%20%20%20%20%20%20%20%20%20%7C%20ESLint%20(local%20rule%2C%20typed)%20%7C%20%22Authorize%20with%20a%20domain%20policy%20before%20mutating%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Every%20HTTP%20route%20declares%20request%20and%20response%20contracts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20ESLint%20(local%20rule)%20%20%20%20%20%20%20%20%7C%20%22Routes%20are%20typed%20by%20contracts%3B%20the%20OpenAPI%20document%20is%20generated%20from%20them%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Change%20types%20are%20only%20constructed%20via%20%60changes.X()%60%20in%20%60domain%60%20%20%20%20%20%20%20%20%20%20%20%20%7C%20ESLint%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%22Audience%20and%20payload%20shape%20are%20decided%20in%20domain%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20No%20%60new%20Date()%60%2C%20no%20locale-dependent%20formatting%20outside%20%60domain%2Ftime%60%20%20%20%20%20%20%7C%20ESLint%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%22Use%20the%20Clock%20port%20%2F%20domain%2Ftime%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20No%20palette%20colour%20class%2C%20only%20role%20tokens%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20ESLint%20%2B%20contrast%20test%20%20%20%20%20%7C%20%22Name%20the%20role%3A%20bg-surface%2C%20text-fg-muted%20%E2%80%A6%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60features%2F%60%20never%20imports%20%60api-client%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20dependency-cruiser%20%20%20%20%20%20%20%20%20%7C%20%22Mutations%20go%20through%20commands%2F%3B%20reads%20through%20the%20replica%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Committed%20%60openapi.json%60%20matches%20the%20contracts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20CI%20diff%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%22Regenerate%20and%20review%20the%20API%20change%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20LikeC4%20model%20parses%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60make%20arch%60%20(CI)%20%20%20%20%20%20%20%20%20%20%20%7C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Repository%20methods%20returning%20private%20subjects%20take%20an%20owner%20argument%20%20%20%20%20%20%20%7C%20ESLint%20(naming%20%2B%20typed)%20%20%20%20%7C%20%22Private%20data%20is%20queried%20per%20owner%3B%20there%20is%20no%20list-all%22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Snapshot%20per%20role%20matches%20golden%20files%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20test%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%22A%20field%20became%20visible%20to%20%3Crole%3E%3B%20confirm%20in%20visibility%20policy%20and%20update%20the%20golden%20file%22%20%7C%0A%0AExemptions%20are%20per%20line%20with%20a%20reason%2C%20as%20today.%0A%0A%23%23%20Testing%0A%0A%7C%20Package%20%2F%20tier%20%20%20%20%20%20%20%7C%20What%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20How%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20----------------------------------------------------------------------------------------------------------------------------------------------------------%20%7C%20------------------------------------------------------------------------------------------%20%7C%0A%7C%20domain%20%C2%B7%20unit%20%20%20%20%20%20%20%20%7C%20Policies%2C%20state%20machines%2C%20%60apply%60%2C%20grid%20maths%2C%20derived%20views%2C%20prediction%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Vitest%3B%20property%20tests%20for%20%60apply%60%20(any%20change%20sequence%20keeps%20invariants)%20and%20for%20clashes%20%20%7C%0A%7C%20contracts%20%C2%B7%20unit%20%20%20%20%20%7C%20Every%20schema%20round-trips%20its%20fixtures%3B%20OpenAPI%20generation%20is%20deterministic%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Vitest%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20server%20%C2%B7%20integration%20%7C%20Use%20cases%20against%20a%20real%20in-memory%20SQLite%3A%20authorization%20per%20role%2C%20phase%20gating%2C%20changes%20recorded%20with%20correct%20audience%2C%20reactions%20idempotent%2C%20feed%20resume%20%7C%20Vitest%20with%20the%20db%20test%20factory%3B%20this%20is%20where%20most%20coverage%20lives%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20server%20%C2%B7%20contract%20%20%20%20%7C%20Each%20route%20validates%20against%20%60openapi.json%60%20in%20and%20out%3B%20problem%20details%20codes%20stable%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Vitest%20%2B%20an%20OpenAPI%20validator%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20server%20%C2%B7%20golden%20%20%20%20%20%20%7C%20Snapshot%20per%20role%20for%20a%20fixed%20world%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Vitest%20golden%20files%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20web%20%C2%B7%20component%20%20%20%20%20%20%7C%20Features%20rendered%20from%20replica%20fixtures%3B%20commands&#039;%20predict%2Freconcile%2Frollback%20with%20a%20fake%20API%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Vitest%20browser%20mode%20%2B%20Testing%20Library%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20e2e%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20important%20attendee%20and%20organizer%20journeys%20by%20clicking%20through%20the%20UI%20with%20semantic%20locators%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Playwright%20against%20the%20built%20app%3B%20the%20same%20suite%20against%20the%20Docker%20image%20before%20a%20release%20%7C%0A%7C%20release-upgrade%20%20%20%20%20%20%7C%20Migrate%20a%20released%20database%20forward%20and%20exercise%20CRUD%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Vitest%2C%20fixtures%20dumped%20at%20release%20time%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0ATDD%20stays%20mandatory.%20Integration%20tests%20are%20cheap%20because%20a%20use%20case%20is%20a%20function%0Awith%20injected%20ports%20and%20an%20in-memory%20database%3B%20there%20is%20no%20HTTP%20to%20spin%20up%20for%0Amost%20of%20them.%0A%0A%23%23%20What%20makes%20this%20navigable%20for%20agents%20(and%20people)%0A%0A-%20**One%20place%20per%20concern**%2C%20and%20a%20table%20saying%20which%3A%0A%0A%20%20%7C%20I%20want%20to%20%E2%80%A6%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Go%20to%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%20%20%7C%20-----------------------------------%20%7C%20----------------------------------------------------------------------------------------------------------------------------%20%7C%0A%20%20%7C%20change%20a%20rule%20about%20who%20may%20do%20what%20%7C%20%60packages%2Fdomain%2Fsrc%2F%3Cmodule%3E%2Fpolicies.ts%60%20%2B%20its%20test%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%20%20%7C%20add%20a%20field%20to%20a%20session%20%20%20%20%20%20%20%20%20%20%20%20%7C%20domain%20entity%20%E2%86%92%20contract%20%E2%86%92%20migration%20%E2%86%92%20adapter%20%E2%86%92%20%60apply%60%20fixture%20%E2%86%92%20golden%20snapshots%3B%20the%20compiler%20walks%20you%20through%20the%20rest%20%7C%0A%20%20%7C%20add%20a%20mutation%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60make%20new-use-case%20module%3Dscheduling%20name%3DpinSession%60%20%E2%86%92%20fills%20application%2C%20contract%2C%20route%2C%20command%2C%20tests%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%20%20%7C%20tell%20someone%20about%20something%20%20%20%20%20%20%20%20%7C%20a%20change%20type%20%2B%20a%20reaction%20in%20%60notifications%2Freactions%2F%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%20%20%7C%20reach%20people%20a%20new%20way%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20one%20adapter%20implementing%20%60ChannelPort%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%20%20%7C%20add%20a%20screen%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60apps%2Fweb%2Fsrc%2Ffeatures%2F%3Cname%3E%2F%60%2C%20selectors%20from%20the%20replica%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%20%20%7C%20know%20what%20a%20word%20means%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60docs%2Fdev%2FCONTEXT.md%60%20(the%20glossary)%20and%20the%20module%20README%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A-%20**Module%20READMEs**%20with%20a%20fixed%20template%3A%20purpose%2C%20aggregates%20and%20invariants%2C%0A%20%20use%20cases%2C%20changes%20recorded%2C%20changes%20reacted%20to%2C%20open%20questions.%20Short%2C%20and%0A%20%20checked%20in%20the%20same%20commit%20as%20a%20change%20to%20the%20module.%0A-%20**Scaffolds**%20(%60make%20new-use-case%60%2C%20%60make%20new-reaction%60%2C%20%60make%20new-feature%60)%0A%20%20generate%20the%20files%20and%20the%20failing%20test%2C%20so%20the%20shape%20is%20always%20the%20same.%0A-%20**Reason%20codes%2C%20not%20sentences**%2C%20from%20policies%3B%20**contracts%2C%20not%20prose**%2C%20for%0A%20%20the%20API%3B%20**golden%20files%2C%20not%20judgement**%2C%20for%20visibility.%20An%20agent%20can%20verify%0A%20%20each%20of%20these%20without%20understanding%20the%20whole%20system.%0A-%20Small%20files%2C%20one%20export%20each%20in%20%60application%2F%60%2C%20names%20from%20the%20glossary.%20The%0A%20%20comment%20rules%20from%20%60coding-guidelines.md%60%20apply%20unchanged.%0A-%20The%20**ADR%20directory**%20stays%20the%20place%20a%20decision%20is%20made%3B%20this%20design%20becomes%0A%20%20ADRs%20as%20parts%20of%20it%20are%20adopted.%0A%0A%23%23%20Documentation%0A%0AUnchanged%20in%20principle%3A%20%60docs%2Fpublic%2F%60%20for%20attendees%2C%20organizers%20and%20self-hosters%2C%0Aedited%20in%20the%20same%20commit%20as%20the%20change%3B%20%60docs%2Fdev%2F%60%20for%20developers%2C%20with%20ADRs%20and%0Athis%20design%3B%20%60docs%2Fdev%2FCONTEXT.md%60%20as%20the%20agent%20entry%20point%20(glossary%2C%20module%0Amap%2C%20the%20table%20above).%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="7-repository-enforced-rules-testing-agents" class="docmd-heading"><a href="#7-repository-enforced-rules-testing-agents" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7 · Repository, enforced rules, testing, agents</h1>
+<h2 id="7-repository-enforced-rules-testing-agents-layout" class="docmd-heading"><a href="#7-repository-enforced-rules-testing-agents-layout" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Layout</h2>
+<pre class="hljs"><code>schellingboard<span class="hljs-operator">/</span>
+  packages<span class="hljs-operator">/</span>
+    domain<span class="hljs-operator">/</span>          src<span class="hljs-operator">/&lt;</span>module<span class="hljs-operator">&gt;/</span>{entities,policies,changes,views}.<span class="hljs-attr">ts</span>, src<span class="hljs-operator">/</span>time<span class="hljs-operator">/</span>, src<span class="hljs-operator">/</span>apply.<span class="hljs-attr">ts</span>
+    contracts<span class="hljs-operator">/</span>       src<span class="hljs-operator">/&lt;</span>module<span class="hljs-operator">&gt;/*</span>.<span class="hljs-title function_">ts</span> (zod), src<span class="hljs-operator">/</span>feed.<span class="hljs-attr">ts</span>, src<span class="hljs-operator">/</span>snapshot.<span class="hljs-attr">ts</span>, openapi.<span class="hljs-title function_">json</span> (generated, committed)
+    api<span class="hljs-operator">-</span>client<span class="hljs-operator">/</span>      generated; <span class="hljs-keyword">do</span> not edit
+  apps<span class="hljs-operator">/</span>
+    server<span class="hljs-operator">/</span>          see <span class="hljs-number">03</span><span class="hljs-operator">-</span>server.<span class="hljs-attr">md</span>
+    web<span class="hljs-operator">/</span>             see <span class="hljs-number">04</span><span class="hljs-operator">-</span>client.<span class="hljs-attr">md</span>
+  tools<span class="hljs-operator">/</span>
+    seed<span class="hljs-operator">/</span>            fixtures and generated <span class="hljs-title function_">data</span> (small <span class="hljs-operator">/</span> large profiles)
+    e2e<span class="hljs-operator">/</span>             Playwright suite, run against the built app and against the Docker image
+    scripts<span class="hljs-operator">/</span>         release, docs, dump<span class="hljs-operator">-</span>release<span class="hljs-operator">-</span>db
+  docs<span class="hljs-operator">/</span>
+    dev<span class="hljs-operator">/</span>             ADRs, <span class="hljs-keyword">this</span> design, chapters; CONTEXT.<span class="hljs-title function_">md</span> (glossary <span class="hljs-operator">+</span> module map, <span class="hljs-keyword">for</span> agents)
+    <span class="hljs-keyword">public</span><span class="hljs-operator">/</span>          attendee, organizer and self<span class="hljs-operator">-</span>hosting <span class="hljs-title function_">docs</span> (published)
+  Dockerfile, <span class="hljs-keyword">docker</span><span class="hljs-operator">-</span>compose.<span class="hljs-attr">yml</span>, Makefile, package.<span class="hljs-title function_">json</span> (workspaces), bunfig.<span class="hljs-attr">toml</span>
+</code></pre>
+<p>Bun workspaces. One <code>tsconfig</code> per package with project references so <code>tsc -b</code>
+checks the graph in dependency order and a package cannot see another’s internals.</p>
+<h2 id="7-repository-enforced-rules-testing-agents-enforced-rules" class="docmd-heading"><a href="#7-repository-enforced-rules-testing-agents-enforced-rules" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Enforced rules</h2>
+<p>Conventions that only live in a document decay. Each rule below names its tool and
+the message the author reads.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Tool</th>
+<th>Message (abridged)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>domain</code> imports nothing but itself</td>
+<td>package.json + tsc refs</td>
+<td>(cannot resolve)</td>
+</tr>
+<tr>
+<td><code>server</code> and <code>web</code> never import each other</td>
+<td>package.json + tsc refs</td>
+<td>(cannot resolve)</td>
+</tr>
+<tr>
+<td><code>application/</code> never imports <code>adapters/</code>, <code>http/</code>, <code>feed/</code>, <code>jobs/</code>, <code>db/</code></td>
+<td>dependency-cruiser</td>
+<td>“Use cases depend on ports; adapters are wired in main.ts”</td>
+</tr>
+<tr>
+<td>Modules import other modules only via <code>module.ts</code></td>
+<td>dependency-cruiser</td>
+<td>“Other modules’ internals are private; call a use case or react to a change”</td>
+</tr>
+<tr>
+<td>No dependency cycles among modules</td>
+<td>dependency-cruiser</td>
+<td>“Cycle between modules: one of these should be a reaction”</td>
+</tr>
+<tr>
+<td>Every command use case calls a <code>policies.*</code> function before <code>save</code></td>
+<td>ESLint (local rule, typed)</td>
+<td>“Authorize with a domain policy before mutating”</td>
+</tr>
+<tr>
+<td>Every HTTP route declares request and response contracts</td>
+<td>ESLint (local rule)</td>
+<td>“Routes are typed by contracts; the OpenAPI document is generated from them”</td>
+</tr>
+<tr>
+<td>Change types are only constructed via <code>changes.X()</code> in <code>domain</code></td>
+<td>ESLint</td>
+<td>“Audience and payload shape are decided in domain”</td>
+</tr>
+<tr>
+<td>No <code>new Date()</code>, no locale-dependent formatting outside <code>domain/time</code></td>
+<td>ESLint</td>
+<td>“Use the Clock port / domain/time”</td>
+</tr>
+<tr>
+<td>No palette colour class, only role tokens</td>
+<td>ESLint + contrast test</td>
+<td>“Name the role: bg-surface, text-fg-muted …”</td>
+</tr>
+<tr>
+<td><code>features/</code> never imports <code>api-client</code></td>
+<td>dependency-cruiser</td>
+<td>“Mutations go through commands/; reads through the replica”</td>
+</tr>
+<tr>
+<td>Committed <code>openapi.json</code> matches the contracts</td>
+<td>CI diff</td>
+<td>“Regenerate and review the API change”</td>
+</tr>
+<tr>
+<td>LikeC4 model parses</td>
+<td><code>make arch</code> (CI)</td>
+<td></td>
+</tr>
+<tr>
+<td>Repository methods returning private subjects take an owner argument</td>
+<td>ESLint (naming + typed)</td>
+<td>“Private data is queried per owner; there is no list-all”</td>
+</tr>
+<tr>
+<td>Snapshot per role matches golden files</td>
+<td>test</td>
+<td>“A field became visible to <role>; confirm in visibility policy and update the golden file”</td>
+</tr>
+</tbody>
+</table>
+</div><p>Exemptions are per line with a reason, as today.</p>
+<h2 id="7-repository-enforced-rules-testing-agents-testing" class="docmd-heading"><a href="#7-repository-enforced-rules-testing-agents-testing" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Testing</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Package / tier</th>
+<th>What</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>domain · unit</td>
+<td>Policies, state machines, <code>apply</code>, grid maths, derived views, prediction</td>
+<td>Vitest; property tests for <code>apply</code> (any change sequence keeps invariants) and for clashes</td>
+</tr>
+<tr>
+<td>contracts · unit</td>
+<td>Every schema round-trips its fixtures; OpenAPI generation is deterministic</td>
+<td>Vitest</td>
+</tr>
+<tr>
+<td>server · integration</td>
+<td>Use cases against a real in-memory SQLite: authorization per role, phase gating, changes recorded with correct audience, reactions idempotent, feed resume</td>
+<td>Vitest with the db test factory; this is where most coverage lives</td>
+</tr>
+<tr>
+<td>server · contract</td>
+<td>Each route validates against <code>openapi.json</code> in and out; problem details codes stable</td>
+<td>Vitest + an OpenAPI validator</td>
+</tr>
+<tr>
+<td>server · golden</td>
+<td>Snapshot per role for a fixed world</td>
+<td>Vitest golden files</td>
+</tr>
+<tr>
+<td>web · component</td>
+<td>Features rendered from replica fixtures; commands’ predict/reconcile/rollback with a fake API</td>
+<td>Vitest browser mode + Testing Library</td>
+</tr>
+<tr>
+<td>e2e</td>
+<td>The important attendee and organizer journeys by clicking through the UI with semantic locators</td>
+<td>Playwright against the built app; the same suite against the Docker image before a release</td>
+</tr>
+<tr>
+<td>release-upgrade</td>
+<td>Migrate a released database forward and exercise CRUD</td>
+<td>Vitest, fixtures dumped at release time</td>
+</tr>
+</tbody>
+</table>
+</div><p>TDD stays mandatory. Integration tests are cheap because a use case is a function
+with injected ports and an in-memory database; there is no HTTP to spin up for
+most of them.</p>
+<h2 id="7-repository-enforced-rules-testing-agents-what-makes-this-navigable-for-agents-and-people" class="docmd-heading"><a href="#7-repository-enforced-rules-testing-agents-what-makes-this-navigable-for-agents-and-people" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>What makes this navigable for agents (and people)</h2>
+<ul>
+<li><p><strong>One place per concern</strong>, and a table saying which:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>I want to …</th>
+<th>Go to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>change a rule about who may do what</td>
+<td><code>packages/domain/src/&lt;module&gt;/policies.ts</code> + its test</td>
+</tr>
+<tr>
+<td>add a field to a session</td>
+<td>domain entity → contract → migration → adapter → <code>apply</code> fixture → golden snapshots; the compiler walks you through the rest</td>
+</tr>
+<tr>
+<td>add a mutation</td>
+<td><code>make new-use-case module=scheduling name=pinSession</code> → fills application, contract, route, command, tests</td>
+</tr>
+<tr>
+<td>tell someone about something</td>
+<td>a change type + a reaction in <code>notifications/reactions/</code></td>
+</tr>
+<tr>
+<td>reach people a new way</td>
+<td>one adapter implementing <code>ChannelPort</code></td>
+</tr>
+<tr>
+<td>add a screen</td>
+<td><code>apps/web/src/features/&lt;name&gt;/</code>, selectors from the replica</td>
+</tr>
+<tr>
+<td>know what a word means</td>
+<td><code>docs/dev/CONTEXT.md</code> (the glossary) and the module README</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+<li><p><strong>Module READMEs</strong> with a fixed template: purpose, aggregates and invariants,
+use cases, changes recorded, changes reacted to, open questions. Short, and
+checked in the same commit as a change to the module.</p>
+</li>
+<li><p><strong>Scaffolds</strong> (<code>make new-use-case</code>, <code>make new-reaction</code>, <code>make new-feature</code>)
+generate the files and the failing test, so the shape is always the same.</p>
+</li>
+<li><p><strong>Reason codes, not sentences</strong>, from policies; <strong>contracts, not prose</strong>, for
+the API; <strong>golden files, not judgement</strong>, for visibility. An agent can verify
+each of these without understanding the whole system.</p>
+</li>
+<li><p>Small files, one export each in <code>application/</code>, names from the glossary. The
+comment rules from <code>coding-guidelines.md</code> apply unchanged.</p>
+</li>
+<li><p>The <strong>ADR directory</strong> stays the place a decision is made; this design becomes
+ADRs as parts of it are adopted.</p>
+</li>
+</ul>
+<h2 id="7-repository-enforced-rules-testing-agents-documentation" class="docmd-heading"><a href="#7-repository-enforced-rules-testing-agents-documentation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Documentation</h2>
+<p>Unchanged in principle: <code>docs/public/</code> for attendees, organizers and self-hosters,
+edited in the same commit as the change; <code>docs/dev/</code> for developers, with ADRs and
+this design; <code>docs/dev/CONTEXT.md</code> as the agent entry point (glossary, module
+map, the table above).</p>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#7-repository-enforced-rules-testing-agents" class="toc-link">7 · Repository, enforced rules, testing, agents</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#7-repository-enforced-rules-testing-agents-layout" class="toc-link">Layout</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#7-repository-enforced-rules-testing-agents-enforced-rules" class="toc-link">Enforced rules</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#7-repository-enforced-rules-testing-agents-testing" class="toc-link">Testing</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#7-repository-enforced-rules-testing-agents-what-makes-this-navigable-for-agents-and-people" class="toc-link">What makes this navigable for agents (and people)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#7-repository-enforced-rules-testing-agents-documentation" class="toc-link">Documentation</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789625537000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789625537000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: propose a from-scratch target architecture">docs: propose a from-scratch target a...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789625537000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

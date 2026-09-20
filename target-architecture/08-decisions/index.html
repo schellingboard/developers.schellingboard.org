@@ -1,0 +1,1513 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      8 · Decisions : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/target-architecture/08-decisions/">
+<meta property="og:title" content="8 · Decisions - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/target-architecture/08-decisions/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="8 · Decisions - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/target-architecture/08-decisions.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  8 · Decisions
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%208%20%C2%B7%20Decisions%0A%0AEach%20in%20ADR%20form%3A%20context%2C%20decision%2C%20alternatives%2C%20consequences.%20When%20one%20is%20adopted%0Ait%20moves%20to%20%60..%2Fadr%2F%60%20with%20a%20number%20and%20a%20status.%0A%0A%3Ca%20id%3D%22d1%22%3E%3C%2Fa%3E%0A%0A%23%23%20D1%20%C2%B7%20API%20server%20plus%20static%20SPA%2C%20no%20server-side%20rendering%0A%0A**Context.**%20Today&#039;s%20app%20is%20Next.js%20App%20Router%20with%20server%20components%20and%20server%0Aactions%20as%20the%20primary%20data%20path%2C%20plus%20some%20route%20handlers.%20The%20requirements%20that%0Amotivated%20this%20redesign%2C%20live%20updates%2C%20bots%2C%20an%20admin%20API%2C%20an%20OpenAPI%20document%2C%20a%0Aclear%20frontend%2Fbackend%20line%2C%20all%20need%20a%20real%20HTTP%20API.%20The%20question%20was%20whether%20to%0Akeep%20SSR%20alongside%20it.%0A%0A**What%20SSR%20is%20and%20what%20it%20buys.**%20The%20server%20runs%20the%20React%20tree%20per%20request%20and%0Areturns%20finished%20HTML%3B%20the%20browser%20shows%20it%2C%20then%20downloads%20the%20JavaScript%20and%0Ahydrates.%20React%20Server%20Components%20additionally%20let%20components%20run%20only%20on%20the%0Aserver%20and%20read%20the%20database%20directly.%20The%20benefits%2C%20measured%20against%20this%20app%3A%0A%0A%7C%20Benefit%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Applies%20here%3F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------%20%7C%20--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%20%7C%0A%7C%20Content%20visible%20before%20JS%20loads%20%20%20%20%7C%20On%20a%20**cold**%20visit%2C%20about%20one%20to%20two%20seconds%20on%20a%20slow%20phone.%20On%20every%20later%20open%20an%20installed%20PWA%20serves%20the%20shell%20and%20the%20last%20replica%20from%20disk%20with%20no%20round%20trip%2C%20which%20SSR%20cannot%20beat%2C%20and%20works%20offline.%20During%20an%20event%20the%20app%20is%20opened%20dozens%20of%20times%20a%20day.%20%7C%0A%7C%20Search%20engines%20and%20link%20previews%20%20%20%7C%20No%3A%20the%20app%20is%20behind%20a%20login.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Less%20client%20JS%2C%20no%20API%20to%20design%20%20%20%7C%20Only%20until%20a%20second%20consumer%20of%20the%20data%20exists.%20Bots%2C%20admin%20automation%20and%20the%20feed%20are%20that%20consumer%2C%20so%20the%20API%20exists%20anyway%20and%20SSR%20becomes%20a%20second%20data%20path%20to%20keep%20consistent.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Auth-gated%20rendering%20on%20the%20server%20%7C%20The%20API%20enforces%20the%20same%20at%20the%20endpoint%2C%20in%20one%20place%20that%20is%20easier%20to%20audit%20than%20per-component%20rules.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A**What%20SSR%20costs%20here.**%0A%0A-%20Two%20runtimes%20for%20one%20UI%3A%20components%20must%20run%20on%20the%20server%20and%20in%20the%20browser%2C%0A%20%20props%20must%20be%20serializable%2C%20%60%22use%20client%22%60%20boundaries%20are%20placed%20by%20hand.%0A%20%20The%20timezone%20hydration%20mismatch%20(%23734)%20and%20the%20Suspense-boundary%20freeze%20are%20this%0A%20%20class%20of%20bug%2C%20and%20they%20are%20the%20hard%20kind%3A%20%22which%20code%20ran%20where%2C%20and%20when%22.%0A-%20A%20snapshot%20that%20is%20stale%20on%20arrival%3A%20live%20updates%20need%20client%20state%20anyway%2C%0A%20%20which%20overwrites%20the%20server%20HTML%20on%20load.%20The%20optimistic-RSVP%20mess%20(%23463)%20is%0A%20%20server-rendered%20truth%20plus%20client%20mutation%20plus%20revalidation.%0A-%20No%20offline%20path%20unless%20the%20client%20render%20path%20exists%20too%2C%20which%20is%20the%20SPA.%0A-%20Convention%20churn%3A%20the%20framework&#039;s%20own%20agent%20notice%20in%20this%20repo%20warns%20that%20this%0A%20%20Next.js%20is%20not%20the%20one%20agents%20know.%0A%0A**Decision.**%20One%20process%20serving%20an%20OpenAPI-described%20HTTP%20API%2C%20an%20SSE%20change%0Afeed%2C%20and%20a%20static%20React%20SPA%20built%20with%20Vite.%20The%20initial%20HTML%20is%20a%20static%20shell%3B%0Athere%20is%20no%20SSR.%20React%20stays%3B%20only%20the%20Next-specific%20parts%20(routing%2C%20server%0Aactions%2C%20image%20and%20link%20components)%20are%20replaced.%0A%0A**Alternatives.**%20(a)%20Meta-framework%20rendering%20from%20the%20API%20(Next%20or%20TanStack%0AStart%2C%20no%20server%20actions)%3A%20keeps%20the%20hydration%20cost%20and%20still%20needs%20the%20client%0Astore%2C%20for%20the%20cold-load%20second.%20(b)%20Keep%20Next%20full-stack%20with%20a%20side%20API%20for%0Abots%3A%20two%20data%20paths%2C%20the%20weakest%20separation.%0A%0A**Consequences.**%20An%20API%20contract%2C%20a%20generated%20client%20and%20a%20client%20store%20to%0Amaintain%2C%20each%20with%20one%20job%20and%20one%20runtime.%20Cold%20first%20load%20is%20slower%20by%20the%0Abundle%20download%3B%20mitigated%20by%20code-splitting%20per%20feature%20and%20precaching.%0A%0A%3Ca%20id%3D%22d2%22%3E%3C%2Fa%3E%0A%0A%23%23%20D2%20%C2%B7%20Persons%20with%20assurance%20levels%3B%20picking%20a%20name%20stays%20viable%0A%0A**Context.**%20Attendees%20valued%20having%20nothing%20to%20remember.%20Half%20the%20new%20feature%0Arequests%20are%20private%20data%2C%20which%20is%20meaningless%20if%20anyone%20can%20pick%20a%20name.%20Some%0Afuture%20events%20will%20want%20to%20require%20verification%20for%20everyone.%0A%0A**Decision.**%20Identity%20is%20per%20person%3B%20each%20session%20has%20an%20assurance%20level%0A(claimed%20%2F%20verified)%3B%20verification%20is%20passwordless%20first%20(join%20link%2C%20emailed%20code%2C%0Apasskey)%2C%20with%20a%20password%20as%20one%20more%20option.%20The%20event&#039;s%20identity%20mode%20sets%20the%0Aminimum%3B%20a%20person%20can%20raise%20their%20own%20by%20protecting%20their%20name.%20Roles%20are%20data%20on%0Apersons%20and%20participations%3B%20there%20is%20no%20shared%20site%20or%20admin%20password.%0A%0A**Alternatives.**%20Verified%20only%20(rejected%3A%20friction%20for%20events%20without%20emails%20or%0Atime%20to%20distribute%20links).%20Today&#039;s%20model%20with%20protection%20opt-in%20as%20the%20only%0Amechanism%20(rejected%3A%20no%20way%20for%20an%20organizer%20to%20require%20it%2C%20and%20admin%20as%20a%20shared%0Apassword).%0A%0A**Consequences.**%20Organizers%20need%20a%20way%20to%20distribute%20join%20links%20(CSV%20export%2C%0AQR%20sheet%2C%20or%20emailing%20everyone%20at%20once).%20Private%20features%20in%20%60open%60%20mode%20show%20a%0Aone-time%20notice.%0A%0A%3Ca%20id%3D%22d3%22%3E%3C%2Fa%3E%0A%0A%23%23%20D3%20%C2%B7%20Per-event%20replica%20kept%20current%20by%20a%20change%20feed%0A%0A**Context.**%20The%20schedule%20must%20update%20without%20reloads%3B%20the%20requested%20views%0A(agenda%2C%20clashes%2C%20filters%2C%20unfilled%20shifts)%20cut%20across%20sessions%2C%20RSVPs%2C%20marks%20and%0Ameetings%3B%20the%20venue%20wifi%20drops.%0A%0A**Decision.**%20The%20client%20loads%20a%20snapshot%20of%20everything%20in%20its%20audience%20for%20one%0Aevent%20and%20applies%20changes%20from%20an%20SSE%20feed%20by%20sequence%20number%3B%20the%20replica%20is%0Apersisted%20for%20offline%20opening.%20Derived%20views%20are%20pure%20functions%20in%20%60domain%60.%0APaged%20or%20role-restricted%20data%20(directory%20search%2C%20vote%20breakdowns%2C%20notification%0Ahistory%2C%20admin%20lists)%20uses%20ordinary%20queries.%0A%0A**Alternatives.**%20Query%20cache%20with%20invalidation%20(TanStack%20Query)%3A%20no%20custom%20sync%2C%0Abut%20every%20cross-cutting%20view%20needs%20an%20endpoint%20or%20client-side%20joins%2C%20and%20offline%0Ais%20partial.%20A%20third-party%20sync%20engine%20(Replicache%2C%20Zero%2C%20Electric)%3A%20strongest%0Aoffline%20story%2C%20heavy%20dependency%2C%20usually%20Postgres.%0A%0A**Consequences.**%20About%20a%20thousand%20lines%20of%20purpose-built%20sync%20(%60apply%60%2C%20feed%0Aclient%2C%20persistence)%20with%20property%20tests%3B%20a%20visibility%20model%20that%20decides%0Aaudience%20at%20write%20time%3B%20payloads%20that%20carry%20full%20subject%20state.%0A%0A%3Ca%20id%3D%22d4%22%3E%3C%2Fa%3E%0A%0A%23%23%20D4%20%C2%B7%20Session%20kinds%20plus%20a%20separate%20Meeting%20aggregate%0A%0A**Decision.**%20%60Session%60%20carries%20%60kind%60%20(session%2C%20shift%2C%20fixture)%20and%20structured%0Aattributes%3B%20%60Meeting%60%20is%20its%20own%20aggregate%20with%20its%20own%20lifecycle%20and%20two-party%0Aprivacy%3B%20the%20client%20merges%20both%20into%20the%20agenda.%0A%0A**Alternatives.**%20One%20calendar-item%20type%20including%20meetings%20(privacy%20and%20lifecycle%0Abecome%20optional%20fields%20everywhere)%3B%20separate%20aggregates%20per%20kind%20(four%20grids).%0A%0A%3Ca%20id%3D%22d5%22%3E%3C%2Fa%3E%0A%0A%23%23%20D5%20%C2%B7%20Workspace%20packages%20as%20the%20boundary%20mechanism%0A%0A**Decision.**%20%60domain%60%2C%20%60contracts%60%2C%20%60api-client%60%2C%20%60server%60%2C%20%60web%60%20as%20Bun%0Aworkspace%20packages%20with%20TypeScript%20project%20references%3B%20dependency-cruiser%20and%0Alocal%20ESLint%20rules%20for%20the%20boundaries%20inside%20%60server%60%20and%20%60web%60.%0A%0A**Alternative.**%20Directories%20in%20one%20package%20with%20lint%20rules%20only%3A%20less%20tooling%2C%0Aevery%20boundary%20exemptable.%0A%0A%3Ca%20id%3D%22d6%22%3E%3C%2Fa%3E%0A%0A%23%23%20D6%20%C2%B7%20SQLite%20only%2C%20behind%20ports%0A%0A**Decision.**%20SQLite%20in%20WAL%20mode%20is%20the%20only%20supported%20database.%20Repositories%20are%0Aports%20so%20a%20Postgres%20adapter%20is%20possible%3B%20it%20is%20not%20promised%2C%20and%20multi-replica%0Adeployment%20is%20a%20non-goal.%0A%0A**Alternatives.**%20Both%20databases%20(double%20the%20persistence%20maintenance)%3B%20Postgres%0Aonly%20(a%20second%20container%20for%20self-hosters%2C%20harder%20backups).%0A%0A%3Ca%20id%3D%22d7%22%3E%3C%2Fa%3E%0A%0A%23%23%20D7%20%C2%B7%20Server-Sent%20Events%2C%20not%20WebSockets%0A%0A**Decision.**%20The%20feed%20is%20SSE%20with%20%60Last-Event-ID%60%20resume.%20Mutations%20go%20over%20HTTP.%0A%0A**Why.**%20The%20client%20never%20needs%20to%20push%20over%20the%20socket%3B%20SSE%20reconnects%20itself%2C%0Aworks%20through%20HTTP%2F2%20and%20ordinary%20proxies%2C%20and%20needs%20no%20library.%20WebSockets%20would%0Abe%20justified%20by%20a%20bidirectional%20need%20such%20as%20typing%20indicators%2C%20which%20nothing%0Aplanned%20has.%0A%0A%3Ca%20id%3D%22d8%22%3E%3C%2Fa%3E%0A%0A%23%23%20D8%20%C2%B7%20The%20change%20log%20as%20the%20single%20backbone%0A%0A**Decision.**%20Every%20use%20case%20records%20changes%20in%20the%20same%20transaction%20as%20its%20state.%0AThe%20log%20serves%20the%20feed%2C%20notifications%2C%20reactions%20between%20modules%2C%20scheduled%20work%0Atriggers%20and%20the%20audit%20trail.%0A%0A**Alternatives.**%20Event%20sourcing%20(state%20rebuilt%20from%20events%3A%20a%20large%20mental-model%0Acost%20for%20no%20need%20here)%3B%20separate%20mechanisms%20per%20concern%20(an%20email%20outbox%2C%20a%0Anotification%20table%2C%20a%20pub%2Fsub%20for%20the%20UI%2C%20no%20history)%2C%20which%20is%20where%20the%20current%0Acode%20was%20heading.%0A%0A**Consequences.**%20Payload%20shapes%20are%20part%20of%20the%20contract%20and%20versioned%3B%20retention%0Ais%20a%20setting%3B%20reactions%20must%20be%20idempotent.%0A%0A%3Ca%20id%3D%22d9%22%3E%3C%2Fa%3E%0A%0A%23%23%20D9%20%C2%B7%20Vite%2C%20TanStack%20Router%2C%20a%20small%20reactive%20store%0A%0A**Decision.**%20Vite%20builds%20the%20SPA%3B%20TanStack%20Router%20for%20typed%20routes%20with%20search%0Aparams%20(modals%20as%20URL%20state)%3B%20a%20Zustand-style%20store%20for%20the%20replica%20with%20memoized%0Aselectors.%20Tailwind%20and%20the%20existing%20token%20system%20stay.%0A%0A**Why.**%20Stable%2C%20widely%20known%2C%20minimal%20API%20surface.%20Any%20equivalent%20would%20do%3B%20the%0Apoint%20is%20to%20pick%20boring%20tools%20and%20not%20revisit.%0A%0A%3Ca%20id%3D%22d10%22%3E%3C%2Fa%3E%0A%0A%23%23%20D10%20%C2%B7%20One%20jobs%20loop%20in%20the%20process%0A%0A**Decision.**%20Reactions%2C%20scheduled%20jobs%20and%20deliveries%20run%20in%20one%20leased%20loop%20in%0Athe%20server%20process%2C%20reading%20from%20tables%2C%20idempotent%2C%20through%20the%20%60Clock%60%20port.%0A%0A**Alternatives.**%20An%20external%20queue%20(something%20to%20operate%20for%20a%20self-hoster)%3B%0Aa%20separate%20worker%20process%20(two%20things%20to%20run%20and%20a%20second%20database%20writer).%0A%0A%3Ca%20id%3D%22d11%22%3E%3C%2Fa%3E%0A%0A%23%23%20D11%20%C2%B7%20Node%20in%20the%20image%2C%20Bun%20for%20tooling%0A%0A**Decision.**%20The%20Docker%20image%20runs%20the%20server%20on%20Node.%20Bun%20stays%20the%20package%0Amanager%20and%20script%20runner%3B%20Vitest%20and%20Playwright%20stay%20the%20test%20runners.%0A%0A**Why.**%20The%20SQLite%20driver%20and%20%60sharp%60%20are%20native%20modules%20with%20Node%20as%20their%0Afirst-class%20target%3B%20Bun&#039;s%20compatibility%20with%20them%20changes%20between%20releases.%0ARevisit%20yearly.%0A%0A%23%23%20Resolved%20product%20questions%0A%0ASettled%20while%20reviewing%20this%20design%2C%20recorded%20so%20they%20are%20not%20reopened%20by%0Aaccident%3A%0A%0A-%20A%20new%20event%20defaults%20to%20identity%20mode%20%60verified%60%20(%5B05%5D(05-security.md%23identity-and-assurance)).%0A-%20The%20vote%20breakdown%20is%20fetched%20on%20demand%2C%20not%20streamed%20(%5B02%5D(02-domain.md%23proposal-vote)).%0A-%20Change%20payload%20retention%20defaults%20to%207%20days%20(%5B03%5D(03-server.md%23change-log)).%0A-%20Suggesting%20a%201-on-1%20for%20a%20proposal%20that%20was%20never%20scheduled%20is%20**not**%20a%20feature.%0A-%20Fixtures%20may%20carry%20a%20capacity%20and%20take%20RSVPs%20(%5B02%5D(02-domain.md%23session)).%0A-%20A%20public%20read-only%20schedule%20is%20a%20per-event%20setting%2C%20off%20by%20default%0A%20%20(%5B03%5D(03-server.md%23change-feed-and-snapshot)).%0A-%20Which%20chat%20channel%20to%20build%20first%20is%20a%20product%20question%20outside%20this%20design.%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="8-decisions" class="docmd-heading"><a href="#8-decisions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8 · Decisions</h1>
+<p>Each in ADR form: context, decision, alternatives, consequences. When one is adopted
+it moves to <code>../adr/</code> with a number and a status.</p>
+<a id="d1"></a>
+<h2 id="8-decisions-d1-api-server-plus-static-spa-no-server-side-rendering" class="docmd-heading"><a href="#8-decisions-d1-api-server-plus-static-spa-no-server-side-rendering" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D1 · API server plus static SPA, no server-side rendering</h2>
+<p><strong>Context.</strong> Today’s app is Next.js App Router with server components and server
+actions as the primary data path, plus some route handlers. The requirements that
+motivated this redesign, live updates, bots, an admin API, an OpenAPI document, a
+clear frontend/backend line, all need a real HTTP API. The question was whether to
+keep SSR alongside it.</p>
+<p><strong>What SSR is and what it buys.</strong> The server runs the React tree per request and
+returns finished HTML; the browser shows it, then downloads the JavaScript and
+hydrates. React Server Components additionally let components run only on the
+server and read the database directly. The benefits, measured against this app:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Benefit</th>
+<th>Applies here?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content visible before JS loads</td>
+<td>On a <strong>cold</strong> visit, about one to two seconds on a slow phone. On every later open an installed PWA serves the shell and the last replica from disk with no round trip, which SSR cannot beat, and works offline. During an event the app is opened dozens of times a day.</td>
+</tr>
+<tr>
+<td>Search engines and link previews</td>
+<td>No: the app is behind a login.</td>
+</tr>
+<tr>
+<td>Less client JS, no API to design</td>
+<td>Only until a second consumer of the data exists. Bots, admin automation and the feed are that consumer, so the API exists anyway and SSR becomes a second data path to keep consistent.</td>
+</tr>
+<tr>
+<td>Auth-gated rendering on the server</td>
+<td>The API enforces the same at the endpoint, in one place that is easier to audit than per-component rules.</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>What SSR costs here.</strong></p>
+<ul>
+<li>Two runtimes for one UI: components must run on the server and in the browser,
+props must be serializable, <code>&quot;use client&quot;</code> boundaries are placed by hand.
+The timezone hydration mismatch (#734) and the Suspense-boundary freeze are this
+class of bug, and they are the hard kind: “which code ran where, and when”.</li>
+<li>A snapshot that is stale on arrival: live updates need client state anyway,
+which overwrites the server HTML on load. The optimistic-RSVP mess (#463) is
+server-rendered truth plus client mutation plus revalidation.</li>
+<li>No offline path unless the client render path exists too, which is the SPA.</li>
+<li>Convention churn: the framework’s own agent notice in this repo warns that this
+Next.js is not the one agents know.</li>
+</ul>
+<p><strong>Decision.</strong> One process serving an OpenAPI-described HTTP API, an SSE change
+feed, and a static React SPA built with Vite. The initial HTML is a static shell;
+there is no SSR. React stays; only the Next-specific parts (routing, server
+actions, image and link components) are replaced.</p>
+<p><strong>Alternatives.</strong> (a) Meta-framework rendering from the API (Next or TanStack
+Start, no server actions): keeps the hydration cost and still needs the client
+store, for the cold-load second. (b) Keep Next full-stack with a side API for
+bots: two data paths, the weakest separation.</p>
+<p><strong>Consequences.</strong> An API contract, a generated client and a client store to
+maintain, each with one job and one runtime. Cold first load is slower by the
+bundle download; mitigated by code-splitting per feature and precaching.</p>
+<a id="d2"></a>
+<h2 id="8-decisions-d2-persons-with-assurance-levels-picking-a-name-stays-viable" class="docmd-heading"><a href="#8-decisions-d2-persons-with-assurance-levels-picking-a-name-stays-viable" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D2 · Persons with assurance levels; picking a name stays viable</h2>
+<p><strong>Context.</strong> Attendees valued having nothing to remember. Half the new feature
+requests are private data, which is meaningless if anyone can pick a name. Some
+future events will want to require verification for everyone.</p>
+<p><strong>Decision.</strong> Identity is per person; each session has an assurance level
+(claimed / verified); verification is passwordless first (join link, emailed code,
+passkey), with a password as one more option. The event’s identity mode sets the
+minimum; a person can raise their own by protecting their name. Roles are data on
+persons and participations; there is no shared site or admin password.</p>
+<p><strong>Alternatives.</strong> Verified only (rejected: friction for events without emails or
+time to distribute links). Today’s model with protection opt-in as the only
+mechanism (rejected: no way for an organizer to require it, and admin as a shared
+password).</p>
+<p><strong>Consequences.</strong> Organizers need a way to distribute join links (CSV export,
+QR sheet, or emailing everyone at once). Private features in <code>open</code> mode show a
+one-time notice.</p>
+<a id="d3"></a>
+<h2 id="8-decisions-d3-per-event-replica-kept-current-by-a-change-feed" class="docmd-heading"><a href="#8-decisions-d3-per-event-replica-kept-current-by-a-change-feed" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D3 · Per-event replica kept current by a change feed</h2>
+<p><strong>Context.</strong> The schedule must update without reloads; the requested views
+(agenda, clashes, filters, unfilled shifts) cut across sessions, RSVPs, marks and
+meetings; the venue wifi drops.</p>
+<p><strong>Decision.</strong> The client loads a snapshot of everything in its audience for one
+event and applies changes from an SSE feed by sequence number; the replica is
+persisted for offline opening. Derived views are pure functions in <code>domain</code>.
+Paged or role-restricted data (directory search, vote breakdowns, notification
+history, admin lists) uses ordinary queries.</p>
+<p><strong>Alternatives.</strong> Query cache with invalidation (TanStack Query): no custom sync,
+but every cross-cutting view needs an endpoint or client-side joins, and offline
+is partial. A third-party sync engine (Replicache, Zero, Electric): strongest
+offline story, heavy dependency, usually Postgres.</p>
+<p><strong>Consequences.</strong> About a thousand lines of purpose-built sync (<code>apply</code>, feed
+client, persistence) with property tests; a visibility model that decides
+audience at write time; payloads that carry full subject state.</p>
+<a id="d4"></a>
+<h2 id="8-decisions-d4-session-kinds-plus-a-separate-meeting-aggregate" class="docmd-heading"><a href="#8-decisions-d4-session-kinds-plus-a-separate-meeting-aggregate" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D4 · Session kinds plus a separate Meeting aggregate</h2>
+<p><strong>Decision.</strong> <code>Session</code> carries <code>kind</code> (session, shift, fixture) and structured
+attributes; <code>Meeting</code> is its own aggregate with its own lifecycle and two-party
+privacy; the client merges both into the agenda.</p>
+<p><strong>Alternatives.</strong> One calendar-item type including meetings (privacy and lifecycle
+become optional fields everywhere); separate aggregates per kind (four grids).</p>
+<a id="d5"></a>
+<h2 id="8-decisions-d5-workspace-packages-as-the-boundary-mechanism" class="docmd-heading"><a href="#8-decisions-d5-workspace-packages-as-the-boundary-mechanism" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D5 · Workspace packages as the boundary mechanism</h2>
+<p><strong>Decision.</strong> <code>domain</code>, <code>contracts</code>, <code>api-client</code>, <code>server</code>, <code>web</code> as Bun
+workspace packages with TypeScript project references; dependency-cruiser and
+local ESLint rules for the boundaries inside <code>server</code> and <code>web</code>.</p>
+<p><strong>Alternative.</strong> Directories in one package with lint rules only: less tooling,
+every boundary exemptable.</p>
+<a id="d6"></a>
+<h2 id="8-decisions-d6-sqlite-only-behind-ports" class="docmd-heading"><a href="#8-decisions-d6-sqlite-only-behind-ports" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D6 · SQLite only, behind ports</h2>
+<p><strong>Decision.</strong> SQLite in WAL mode is the only supported database. Repositories are
+ports so a Postgres adapter is possible; it is not promised, and multi-replica
+deployment is a non-goal.</p>
+<p><strong>Alternatives.</strong> Both databases (double the persistence maintenance); Postgres
+only (a second container for self-hosters, harder backups).</p>
+<a id="d7"></a>
+<h2 id="8-decisions-d7-server-sent-events-not-websockets" class="docmd-heading"><a href="#8-decisions-d7-server-sent-events-not-websockets" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D7 · Server-Sent Events, not WebSockets</h2>
+<p><strong>Decision.</strong> The feed is SSE with <code>Last-Event-ID</code> resume. Mutations go over HTTP.</p>
+<p><strong>Why.</strong> The client never needs to push over the socket; SSE reconnects itself,
+works through HTTP/2 and ordinary proxies, and needs no library. WebSockets would
+be justified by a bidirectional need such as typing indicators, which nothing
+planned has.</p>
+<a id="d8"></a>
+<h2 id="8-decisions-d8-the-change-log-as-the-single-backbone" class="docmd-heading"><a href="#8-decisions-d8-the-change-log-as-the-single-backbone" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D8 · The change log as the single backbone</h2>
+<p><strong>Decision.</strong> Every use case records changes in the same transaction as its state.
+The log serves the feed, notifications, reactions between modules, scheduled work
+triggers and the audit trail.</p>
+<p><strong>Alternatives.</strong> Event sourcing (state rebuilt from events: a large mental-model
+cost for no need here); separate mechanisms per concern (an email outbox, a
+notification table, a pub/sub for the UI, no history), which is where the current
+code was heading.</p>
+<p><strong>Consequences.</strong> Payload shapes are part of the contract and versioned; retention
+is a setting; reactions must be idempotent.</p>
+<a id="d9"></a>
+<h2 id="8-decisions-d9-vite-tanstack-router-a-small-reactive-store" class="docmd-heading"><a href="#8-decisions-d9-vite-tanstack-router-a-small-reactive-store" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D9 · Vite, TanStack Router, a small reactive store</h2>
+<p><strong>Decision.</strong> Vite builds the SPA; TanStack Router for typed routes with search
+params (modals as URL state); a Zustand-style store for the replica with memoized
+selectors. Tailwind and the existing token system stay.</p>
+<p><strong>Why.</strong> Stable, widely known, minimal API surface. Any equivalent would do; the
+point is to pick boring tools and not revisit.</p>
+<a id="d10"></a>
+<h2 id="8-decisions-d10-one-jobs-loop-in-the-process" class="docmd-heading"><a href="#8-decisions-d10-one-jobs-loop-in-the-process" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D10 · One jobs loop in the process</h2>
+<p><strong>Decision.</strong> Reactions, scheduled jobs and deliveries run in one leased loop in
+the server process, reading from tables, idempotent, through the <code>Clock</code> port.</p>
+<p><strong>Alternatives.</strong> An external queue (something to operate for a self-hoster);
+a separate worker process (two things to run and a second database writer).</p>
+<a id="d11"></a>
+<h2 id="8-decisions-d11-node-in-the-image-bun-for-tooling" class="docmd-heading"><a href="#8-decisions-d11-node-in-the-image-bun-for-tooling" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>D11 · Node in the image, Bun for tooling</h2>
+<p><strong>Decision.</strong> The Docker image runs the server on Node. Bun stays the package
+manager and script runner; Vitest and Playwright stay the test runners.</p>
+<p><strong>Why.</strong> The SQLite driver and <code>sharp</code> are native modules with Node as their
+first-class target; Bun’s compatibility with them changes between releases.
+Revisit yearly.</p>
+<h2 id="8-decisions-resolved-product-questions" class="docmd-heading"><a href="#8-decisions-resolved-product-questions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Resolved product questions</h2>
+<p>Settled while reviewing this design, recorded so they are not reopened by
+accident:</p>
+<ul>
+<li>A new event defaults to identity mode <code>verified</code> (<a href="../05-security/#identity-and-assurance">05</a>).</li>
+<li>The vote breakdown is fetched on demand, not streamed (<a href="../02-domain/#proposal-vote">02</a>).</li>
+<li>Change payload retention defaults to 7 days (<a href="../03-server/#change-log">03</a>).</li>
+<li>Suggesting a 1-on-1 for a proposal that was never scheduled is <strong>not</strong> a feature.</li>
+<li>Fixtures may carry a capacity and take RSVPs (<a href="../02-domain/#session">02</a>).</li>
+<li>A public read-only schedule is a per-event setting, off by default
+(<a href="../03-server/#change-feed-and-snapshot">03</a>).</li>
+<li>Which chat channel to build first is a product question outside this design.</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#8-decisions" class="toc-link">8 · Decisions</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d1-api-server-plus-static-spa-no-server-side-rendering" class="toc-link">D1 · API server plus static SPA, no server-side rendering</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d2-persons-with-assurance-levels-picking-a-name-stays-viable" class="toc-link">D2 · Persons with assurance levels; picking a name stays viable</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d3-per-event-replica-kept-current-by-a-change-feed" class="toc-link">D3 · Per-event replica kept current by a change feed</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d4-session-kinds-plus-a-separate-meeting-aggregate" class="toc-link">D4 · Session kinds plus a separate Meeting aggregate</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d5-workspace-packages-as-the-boundary-mechanism" class="toc-link">D5 · Workspace packages as the boundary mechanism</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d6-sqlite-only-behind-ports" class="toc-link">D6 · SQLite only, behind ports</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d7-server-sent-events-not-websockets" class="toc-link">D7 · Server-Sent Events, not WebSockets</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d8-the-change-log-as-the-single-backbone" class="toc-link">D8 · The change log as the single backbone</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d9-vite-tanstack-router-a-small-reactive-store" class="toc-link">D9 · Vite, TanStack Router, a small reactive store</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d10-one-jobs-loop-in-the-process" class="toc-link">D10 · One jobs loop in the process</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-d11-node-in-the-image-bun-for-tooling" class="toc-link">D11 · Node in the image, Bun for tooling</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#8-decisions-resolved-product-questions" class="toc-link">Resolved product questions</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789625537000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789625537000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: propose a from-scratch target architecture">docs: propose a from-scratch target a...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789625537000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

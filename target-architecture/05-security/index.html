@@ -1,0 +1,1514 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      5 · Security : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/target-architecture/05-security/">
+<meta property="og:title" content="5 · Security - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/target-architecture/05-security/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="5 · Security - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/target-architecture/05-security.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  5 · Security
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%205%20%C2%B7%20Security%0A%0A%22Secure%20by%20default%22%20here%20means%20three%20concrete%20things%3A%20a%20fresh%20install%20has%20no%0Aunsafe%20defaults%20to%20fix%3B%20every%20sensitive%20operation%20is%20decided%20by%20one%20policy%20the%0Atests%20can%20name%3B%20and%20private%20data%20is%20private%20by%20construction%20of%20the%20audience%20model%2C%0Anot%20by%20remembering%20a%20filter.%0A%0A%23%23%20Threat%20model%0A%0A%7C%20Actor%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Wants%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Countered%20by%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------------------%20%7C%20--------------------------------------------------------%20%7C%20-----------------------------------------------------------------------------------------------------%20%7C%0A%7C%20Another%20attendee%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Act%20as%20me%2C%20read%20my%20marks%2Fvotes%2Fmeetings%2C%20edit%20my%20session%20%7C%20Assurance%20levels%20and%20protection%3B%20audience%20model%3B%20edit%20policies%20with%20version%20checks%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Someone%20with%20the%20event%20link%20only%20%7C%20Read%20the%20schedule%20and%20the%20people%20directory%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Participation%20required%20for%20any%20read%20beyond%20the%20event&#039;s%20%60publicSchedule%60%20setting%3B%20join%20code%20%2F%20links%20%20%20%20%7C%0A%7C%20A%20malicious%20link%20or%20page%20%20%20%20%20%20%20%20%20%7C%20CSRF%20a%20mutation%2C%20steal%20a%20session%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20SameSite%20cookies%2C%20Origin%20check%2C%20httpOnly%2C%20CSP%2C%20no%20token%20in%20URLs%20after%20the%20join%20redirect%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20A%20bot%20with%20a%20leaked%20token%20%20%20%20%20%20%20%20%7C%20Bulk-read%20or%20bulk-write%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Scoped%20tokens%2C%20rate%20limits%2C%20revocation%2C%20token%20events%20in%20the%20audit%20log%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20A%20hostile%20upload%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Stored%20XSS%2C%20oversized%20files%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Re-encode%20to%20fixed%20formats%2C%20no%20SVG%2C%20size%20caps%2C%20hash%20names%2C%20immutable%20serving%2C%20CSP%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20A%20self-hoster&#039;s%20mistake%20%20%20%20%20%20%20%20%20%20%7C%20Open%20admin%2C%20default%20secret%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20No%20admin%20password%3B%20secrets%20generated%20on%20first%20run%3B%20bootstrap%20link%20consumed%20once%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20The%20project%20itself%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Accidental%20data%20leak%20in%20a%20new%20endpoint%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Contracts%20define%20response%20shapes%3B%20snapshot%20and%20feed%20use%20stored%20audiences%3B%20tests%20assert%20per-role%20views%20%7C%0A%0A%23%23%20Identity%20and%20assurance%0A%0A-%20A%20**Person**%20may%20hold%20zero%20or%20more%20credentials%3A%20password%20(argon2id)%2C%20passkeys%0A%20%20(WebAuthn)%2C%20and%20a%20verified%20email%20for%20codes.%20**Join%20tokens**%20are%20per%20person%20per%0A%20%20event%2C%20single-use%2C%20expiring%2C%20delivered%20by%20the%20organizer%20as%20a%20link%20or%20QR%20code.%0A-%20A%20browser%20**login%20session**%20is%20a%20server-side%20row%20(%60login_sessions(id%2C%20person%2C%0Aevent%3F%2C%20assurance%2C%20created%2C%20expires%2C%20device)%60%3B%20%60sessions%60%20is%20the%20schedule&#039;s%0A%20%20table)%20referenced%20by%20an%20httpOnly%2C%20Secure%2C%20SameSite%3DLax%20cookie.%20Nothing%20about%20the%20person%20is%20in%20the%20cookie%3B%20revocation%20is%20a%0A%20%20row%20delete.%20Login%20sessions%20are%20listed%20and%20revocable%20in%20settings.%0A-%20**Assurance**%20is%20per%20login%20session%3A%20%60claimed%60%20(the%20person%20picked%20their%20name)%2C%0A%20%20%60verified%60%20(join%20token%2C%20emailed%20code%2C%20password%20or%20passkey).%20A%20verified%20session%0A%20%20is%20the%20only%20way%20to%20act%20as%20a%20person%20who%20has%20**protected**%20their%20name.%0A-%20The%20event&#039;s%20**identity%20mode**%20sets%20the%20minimum%20for%20acting%3A%0A%0A%20%20%7C%20Mode%20%20%20%20%20%20%20%7C%20Picking%20a%20name%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Verification%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Private%20features%20(marks%2C%20meetings%2C%20anonymous%20RSVPs)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%20%20%7C%20----------%20%7C%20---------------------------%20%7C%20------------------------------------------------------------%20%7C%20-------------------------------------------------------------------%20%7C%0A%20%20%7C%20%60open%60%20%20%20%20%20%7C%20enough%20to%20act%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20optional%2C%20per%20person%20(%22protect%20my%20name%22)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20available%2C%20with%20a%20one-time%20notice%20that%20a%20claimed%20name%20is%20not%20a%20lock%20%7C%0A%20%20%7C%20%60verified%60%20%7C%20shows%20the%20verification%20step%20%7C%20required%3B%20passwordless%20by%20default%20(join%20link%2C%20code%2C%20passkey)%20%7C%20available%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%20%20Organizers%20choose%20the%20mode%20per%20event.%20A%20new%20event%20defaults%20to%20%60verified%60%3A%20the%0A%20%20organizer%20imports%20the%20participants%20and%20sends%20everyone%20their%20join%20link%20(or%20a%0A%20%20QR%20sheet)%2C%20and%20can%20lower%20the%20mode%20to%20%60open%60%20for%20an%20event%20that%20wants%20zero%0A%20%20friction.%20Nobody%20has%20to%20remember%20a%20password%20in%20either%20mode%2C%20because%20a%20join%20link%0A%20%20or%20an%20emailed%20code%20is%20always%20an%20option.%0A%0A%3Clikec4-view%20view-id%3D%22flowJoin%22%20dynamic-variant%3D%22sequence%22%3E%3Ca%20href%3D%22https%3A%2F%2Fdevelopers.schellingboard.org%2Fdiagrams%2F%23%2Fview%2FflowJoin%22%3ESequence%20diagram%3A%20first%20login%20through%20a%20personal%20join%20link%3C%2Fa%3E%3C%2Flikec4-view%3E%0A%0A-%20**Roles**%3A%20%60siteAdmin%60%20on%20the%20person%3B%20%60organizer%60%20or%20%60attendee%60%20on%20the%0A%20%20participation.%20**Host**%20is%20derived%20from%20the%20session%20or%20proposal.%20Roles%20are%20data%2C%0A%20%20never%20inferred%20from%20a%20password.%0A-%20**API%20tokens**%20for%20bots%20and%20automation%3A%20hashed%20at%20rest%2C%20scoped%20(%60read%3Aevent%60%2C%0A%20%20%60write%3Asessions%60%2C%20%60admin%60)%2C%20tied%20to%20a%20person%20or%20to%20the%20site%2C%20revocable%2C%0A%20%20every%20use%20of%20%60admin%60%20scope%20recorded%20as%20a%20change%20with%20audience%20%60organizers%60.%0A%0A%23%23%20Authorization%0A%0A-%20Every%20use%20case%20calls%20a%20policy%20before%20it%20mutates%2C%20with%20the%20actor%20the%20middleware%0A%20%20resolved.%20A%20use%20case%20without%20a%20policy%20call%20fails%20a%20lint%20rule%0A%20%20(%5B07%5D(07-repo-and-rules.md%23enforced-rules)).%0A-%20UI%20gating%20is%20a%20convenience%20that%20uses%20the%20same%20policy%3B%20it%20is%20never%20the%20control.%0A-%20Read%20authorization%20is%20the%20audience%20model%3A%20%60audienceOf%60%20decides%20at%20write%20time%20who%0A%20%20may%20ever%20see%20a%20change%2C%20%60canView%60%20decides%20per%20query.%20The%20snapshot%20is%20assembled%0A%20%20through%20%60canView%60.%20Tests%20build%20a%20fixed%20world%20and%20assert%20the%20snapshot%20for%20each%0A%20%20role%20(attendee%2C%20host%2C%20organizer%2C%20site%20admin%2C%20bot)%20as%20a%20golden%20file%2C%20so%20a%20new%0A%20%20field%20that%20leaks%20shows%20up%20as%20a%20diff.%0A-%20Private%20subjects%20(marks%2C%20meetings%2C%20votes%2C%20notifications%2C%20channel%20bindings)%20have%0A%20%20no%20repository%20method%20that%20returns%20rows%20for%20anyone%20but%20the%20owner%3B%20the%20%22list%20all%22%0A%20%20method%20does%20not%20exist%2C%20so%20it%20cannot%20be%20called%20by%20mistake.%0A%0A%23%23%20Transport%20and%20browser%20hardening%0A%0A-%20Cookies%3A%20httpOnly%2C%20Secure%2C%20SameSite%3DLax%2C%20path-scoped.%20Mutations%20additionally%0A%20%20require%20%60Sec-Fetch-Site%60%20same-origin%20or%20a%20matching%20%60Origin%60%2C%20and%20token%20calls%0A%20%20require%20the%20%60Authorization%60%20header%20(never%20a%20cookie)%2C%20so%20a%20token%20cannot%20be%0A%20%20CSRF&#039;d%20and%20a%20cookie%20cannot%20be%20used%20cross-site.%0A-%20CSP%20with%20no%20inline%20scripts%20(the%20SPA%20is%20hashed%20static%20files)%2C%20%60frame-ancestors%0A&#039;none&#039;%60%2C%20%60object-src%20&#039;none&#039;%60%3B%20HSTS%20at%20the%20reverse%20proxy%2C%20documented.%0A-%20Rate%20limits%3A%20strict%20on%20%60%2Fauth%2F*%60%20and%20%60%2Fjoin%60%2C%20moderate%20per%20actor%20elsewhere%3B%0A%20%20responses%20carry%20%60Retry-After%60.%0A-%20Join%20links%20land%20on%20a%20page%20that%20exchanges%20the%20token%20for%20a%20session%20and%20then%0A%20%20redirects%2C%20so%20the%20token%20never%20sits%20in%20a%20referer%20or%20a%20history%20entry%20the%20next%0A%20%20person%20on%20a%20shared%20phone%20can%20reuse.%0A%0A%23%23%20Input%20and%20output%0A%0A-%20Every%20request%20body%20and%20query%20is%20parsed%20by%20its%20contract%20before%20the%20use%20case%0A%20%20sees%20it%3B%20unknown%20fields%20are%20rejected%2C%20strings%20have%20caps%2C%20markdown%20is%20rendered%0A%20%20with%20a%20fixed%20allowlist%20on%20the%20client%20and%20never%20as%20raw%20HTML.%0A-%20Every%20response%20is%20produced%20through%20its%20contract%2C%20which%20is%20a%20positive%20allowlist%0A%20%20of%20fields.%20A%20repository%20row%20never%20reaches%20the%20wire.%0A-%20Uploads%20are%20re-encoded%20(sharp)%20to%20WebP%2FJPEG%20at%20fixed%20sizes%2C%20capped%2C%20stored%20under%0A%20%20a%20content%20hash%2C%20served%20with%20%60Content-Type%60%20fixed%20and%20%60X-Content-Type-Options%3A%0Anosniff%60.%0A%0A%23%23%20Audit%20and%20observability%0A%0A-%20The%20change%20log%20is%20the%20audit%20trail%3A%20who%2C%20what%2C%20when%2C%20from%20which%20correlation.%0A%20%20Organizers%20can%20see%20it%20per%20event%3B%20site%20admins%20per%20site.%0A-%20Logs%20are%20structured%2C%20carry%20request%20and%20correlation%20ids%2C%20and%20hold%20no%20personal%0A%20%20data%20beyond%20ids.%20Errors%20optionally%20go%20to%20a%20self-hosted%20error%20tracker.%0A%0A%23%23%20Privacy%0A%0A-%20**Data%20minimization**%20in%20the%20schema%3A%20no%20field%20without%20a%20screen%20that%20shows%20it.%0A-%20A%20person%20can%20**export**%20their%20data%20and%20**delete**%20their%20account%3B%20deletion%0A%20%20anonymizes%20their%20changes%20(actor%20becomes%20%60deleted%60)%20rather%20than%20breaking%20the%20log%2C%0A%20%20and%20removes%20profile%2C%20credentials%2C%20marks%2C%20meetings%2C%20bindings.%0A-%20A%20per-site%20**data%20collection%20statement**%20page%20is%20generated%20from%20the%20schema&#039;s%0A%20%20data%20classes%20(%23801)%2C%20so%20it%20cannot%20drift.%0A-%20Retention%3A%20change%20payload%20pruning%2C%20delivery%20logs%20and%20idempotency%20keys%20expire%3B%0A%20%20all%20windows%20are%20settings%20with%20safe%20defaults.%0A%0A%23%23%20Dependencies%20and%20build%0A%0A-%20Lockfile%20committed%2C%20%60bun%20audit%60%20in%20CI%2C%20automated%20bump%20PRs%2C%20a%20single%20pinned%0A%20%20runtime%20version%20in%20the%20Dockerfile.%20The%20image%20runs%20as%20a%20non-root%20user%20with%20a%0A%20%20read-only%20filesystem%20except%20the%20data%20directory.%0A-%20Secrets%20never%20appear%20in%20the%20image%20or%20in%20compose%20defaults%3B%20the%20compose%20file%20ships%0A%20%20with%20the%20variables%20listed%20and%20empty%2C%20and%20the%20server%20refuses%20to%20start%20with%20a%0A%20%20public%20URL%20of%20%60localhost%60%20in%20production%20mode.%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="5-security" class="docmd-heading"><a href="#5-security" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5 · Security</h1>
+<p>“Secure by default” here means three concrete things: a fresh install has no
+unsafe defaults to fix; every sensitive operation is decided by one policy the
+tests can name; and private data is private by construction of the audience model,
+not by remembering a filter.</p>
+<h2 id="5-security-threat-model" class="docmd-heading"><a href="#5-security-threat-model" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Threat model</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Actor</th>
+<th>Wants</th>
+<th>Countered by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Another attendee</td>
+<td>Act as me, read my marks/votes/meetings, edit my session</td>
+<td>Assurance levels and protection; audience model; edit policies with version checks</td>
+</tr>
+<tr>
+<td>Someone with the event link only</td>
+<td>Read the schedule and the people directory</td>
+<td>Participation required for any read beyond the event’s <code>publicSchedule</code> setting; join code / links</td>
+</tr>
+<tr>
+<td>A malicious link or page</td>
+<td>CSRF a mutation, steal a session</td>
+<td>SameSite cookies, Origin check, httpOnly, CSP, no token in URLs after the join redirect</td>
+</tr>
+<tr>
+<td>A bot with a leaked token</td>
+<td>Bulk-read or bulk-write</td>
+<td>Scoped tokens, rate limits, revocation, token events in the audit log</td>
+</tr>
+<tr>
+<td>A hostile upload</td>
+<td>Stored XSS, oversized files</td>
+<td>Re-encode to fixed formats, no SVG, size caps, hash names, immutable serving, CSP</td>
+</tr>
+<tr>
+<td>A self-hoster’s mistake</td>
+<td>Open admin, default secret</td>
+<td>No admin password; secrets generated on first run; bootstrap link consumed once</td>
+</tr>
+<tr>
+<td>The project itself</td>
+<td>Accidental data leak in a new endpoint</td>
+<td>Contracts define response shapes; snapshot and feed use stored audiences; tests assert per-role views</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="5-security-identity-and-assurance" class="docmd-heading"><a href="#5-security-identity-and-assurance" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Identity and assurance</h2>
+<ul>
+<li><p>A <strong>Person</strong> may hold zero or more credentials: password (argon2id), passkeys
+(WebAuthn), and a verified email for codes. <strong>Join tokens</strong> are per person per
+event, single-use, expiring, delivered by the organizer as a link or QR code.</p>
+</li>
+<li><p>A browser <strong>login session</strong> is a server-side row (<code>login_sessions(id, person, event?, assurance, created, expires, device)</code>; <code>sessions</code> is the schedule’s
+table) referenced by an httpOnly, Secure, SameSite=Lax cookie. Nothing about the person is in the cookie; revocation is a
+row delete. Login sessions are listed and revocable in settings.</p>
+</li>
+<li><p><strong>Assurance</strong> is per login session: <code>claimed</code> (the person picked their name),
+<code>verified</code> (join token, emailed code, password or passkey). A verified session
+is the only way to act as a person who has <strong>protected</strong> their name.</p>
+</li>
+<li><p>The event’s <strong>identity mode</strong> sets the minimum for acting:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Picking a name</th>
+<th>Verification</th>
+<th>Private features (marks, meetings, anonymous RSVPs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>open</code></td>
+<td>enough to act</td>
+<td>optional, per person (“protect my name”)</td>
+<td>available, with a one-time notice that a claimed name is not a lock</td>
+</tr>
+<tr>
+<td><code>verified</code></td>
+<td>shows the verification step</td>
+<td>required; passwordless by default (join link, code, passkey)</td>
+<td>available</td>
+</tr>
+</tbody>
+</table>
+</div><p>Organizers choose the mode per event. A new event defaults to <code>verified</code>: the
+organizer imports the participants and sends everyone their join link (or a
+QR sheet), and can lower the mode to <code>open</code> for an event that wants zero
+friction. Nobody has to remember a password in either mode, because a join link
+or an emailed code is always an option.</p>
+</li>
+</ul>
+<likec4-view view-id="flowJoin" dynamic-variant="sequence"><a href="https://developers.schellingboard.org/diagrams/#/view/flowJoin">Sequence diagram: first login through a personal join link</a></likec4-view>
+<ul>
+<li><strong>Roles</strong>: <code>siteAdmin</code> on the person; <code>organizer</code> or <code>attendee</code> on the
+participation. <strong>Host</strong> is derived from the session or proposal. Roles are data,
+never inferred from a password.</li>
+<li><strong>API tokens</strong> for bots and automation: hashed at rest, scoped (<code>read:event</code>,
+<code>write:sessions</code>, <code>admin</code>), tied to a person or to the site, revocable,
+every use of <code>admin</code> scope recorded as a change with audience <code>organizers</code>.</li>
+</ul>
+<h2 id="5-security-authorization" class="docmd-heading"><a href="#5-security-authorization" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Authorization</h2>
+<ul>
+<li>Every use case calls a policy before it mutates, with the actor the middleware
+resolved. A use case without a policy call fails a lint rule
+(<a href="../07-repo-and-rules/#enforced-rules">07</a>).</li>
+<li>UI gating is a convenience that uses the same policy; it is never the control.</li>
+<li>Read authorization is the audience model: <code>audienceOf</code> decides at write time who
+may ever see a change, <code>canView</code> decides per query. The snapshot is assembled
+through <code>canView</code>. Tests build a fixed world and assert the snapshot for each
+role (attendee, host, organizer, site admin, bot) as a golden file, so a new
+field that leaks shows up as a diff.</li>
+<li>Private subjects (marks, meetings, votes, notifications, channel bindings) have
+no repository method that returns rows for anyone but the owner; the “list all”
+method does not exist, so it cannot be called by mistake.</li>
+</ul>
+<h2 id="5-security-transport-and-browser-hardening" class="docmd-heading"><a href="#5-security-transport-and-browser-hardening" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Transport and browser hardening</h2>
+<ul>
+<li>Cookies: httpOnly, Secure, SameSite=Lax, path-scoped. Mutations additionally
+require <code>Sec-Fetch-Site</code> same-origin or a matching <code>Origin</code>, and token calls
+require the <code>Authorization</code> header (never a cookie), so a token cannot be
+CSRF’d and a cookie cannot be used cross-site.</li>
+<li>CSP with no inline scripts (the SPA is hashed static files), <code>frame-ancestors 'none'</code>, <code>object-src 'none'</code>; HSTS at the reverse proxy, documented.</li>
+<li>Rate limits: strict on <code>/auth/*</code> and <code>/join</code>, moderate per actor elsewhere;
+responses carry <code>Retry-After</code>.</li>
+<li>Join links land on a page that exchanges the token for a session and then
+redirects, so the token never sits in a referer or a history entry the next
+person on a shared phone can reuse.</li>
+</ul>
+<h2 id="5-security-input-and-output" class="docmd-heading"><a href="#5-security-input-and-output" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Input and output</h2>
+<ul>
+<li>Every request body and query is parsed by its contract before the use case
+sees it; unknown fields are rejected, strings have caps, markdown is rendered
+with a fixed allowlist on the client and never as raw HTML.</li>
+<li>Every response is produced through its contract, which is a positive allowlist
+of fields. A repository row never reaches the wire.</li>
+<li>Uploads are re-encoded (sharp) to WebP/JPEG at fixed sizes, capped, stored under
+a content hash, served with <code>Content-Type</code> fixed and <code>X-Content-Type-Options: nosniff</code>.</li>
+</ul>
+<h2 id="5-security-audit-and-observability" class="docmd-heading"><a href="#5-security-audit-and-observability" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Audit and observability</h2>
+<ul>
+<li>The change log is the audit trail: who, what, when, from which correlation.
+Organizers can see it per event; site admins per site.</li>
+<li>Logs are structured, carry request and correlation ids, and hold no personal
+data beyond ids. Errors optionally go to a self-hosted error tracker.</li>
+</ul>
+<h2 id="5-security-privacy" class="docmd-heading"><a href="#5-security-privacy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Privacy</h2>
+<ul>
+<li><strong>Data minimization</strong> in the schema: no field without a screen that shows it.</li>
+<li>A person can <strong>export</strong> their data and <strong>delete</strong> their account; deletion
+anonymizes their changes (actor becomes <code>deleted</code>) rather than breaking the log,
+and removes profile, credentials, marks, meetings, bindings.</li>
+<li>A per-site <strong>data collection statement</strong> page is generated from the schema’s
+data classes (#801), so it cannot drift.</li>
+<li>Retention: change payload pruning, delivery logs and idempotency keys expire;
+all windows are settings with safe defaults.</li>
+</ul>
+<h2 id="5-security-dependencies-and-build" class="docmd-heading"><a href="#5-security-dependencies-and-build" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Dependencies and build</h2>
+<ul>
+<li>Lockfile committed, <code>bun audit</code> in CI, automated bump PRs, a single pinned
+runtime version in the Dockerfile. The image runs as a non-root user with a
+read-only filesystem except the data directory.</li>
+<li>Secrets never appear in the image or in compose defaults; the compose file ships
+with the variables listed and empty, and the server refuses to start with a
+public URL of <code>localhost</code> in production mode.</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#5-security" class="toc-link">5 · Security</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-threat-model" class="toc-link">Threat model</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-identity-and-assurance" class="toc-link">Identity and assurance</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-authorization" class="toc-link">Authorization</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-transport-and-browser-hardening" class="toc-link">Transport and browser hardening</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-input-and-output" class="toc-link">Input and output</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-audit-and-observability" class="toc-link">Audit and observability</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-privacy" class="toc-link">Privacy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#5-security-dependencies-and-build" class="toc-link">Dependencies and build</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789894100000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789894100000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: embed the C4 diagrams live, drop the committed PNG exports">docs: embed the C4 diagrams live, dro...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789894100000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: propose a from-scratch target architecture">docs: propose a from-scratch target a...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789625537000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

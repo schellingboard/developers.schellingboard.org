@@ -1,0 +1,1654 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      ADR 0002: Testing strategy : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/adr/0002-testing-strategy/">
+<meta property="og:title" content="ADR 0002: Testing strategy - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/adr/0002-testing-strategy/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ADR 0002: Testing strategy - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/adr/0002-testing-strategy.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  ADR 0002: Testing strategy
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200002%3A%20Testing%20strategy%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-04-23%0A%0A%23%23%20Context%0A%0AThe%20app%20has%20end-to-end%20tests%20(Playwright)%20against%20three%20seeded%20events%20and%20no%0Aother%20automated%20tests.%20Coverage%20of%20business%20rules%20%E2%80%94%20session%20overlap%0Avalidation%2C%20vote%20tallying%2C%20phase%20gating%2C%20timezone-aware%20session%20parsing%20%E2%80%94%20is%0Athin%20and%20lives%20only%20inside%20full%20browser%20flows.%20Several%20of%20these%20rules%20are%0Aexactly%20the%20kind%20of%20logic%20that%20breaks%20quietly%20under%20refactor.%0A%0AWe%20want%20more%20confidence%20without%20the%20usual%20failure%20mode%20of%20a%20growing%20test%0Asuite%3A%20tests%20that%20mirror%20implementation%2C%20fail%20on%20every%20rename%2C%20mock%20out%20the%0Ainteresting%20parts%2C%20and%20catch%20no%20real%20bugs.%20A%20test%20should%20fail%20when%20a%20user&#039;s%0Aoutcome%20changes%2C%20and%20ideally%20only%20then.%0A%0AConstraints%20that%20shape%20the%20decision%3A%0A%0A-%20Next.js%2016%20App%20Router%2C%20Drizzle%20%2B%20%60better-sqlite3%60%2C%20Bun%2C%20Playwright%2C%20strict%0A%20%20TS.%20Repositories%20are%20already%20behind%20interfaces%20in%0A%20%20%60db%2Frepositories%2Finterfaces.ts%60%2C%20which%20makes%20DB-backed%20tests%20cheap%20to%20set%0A%20%20up.%0A-%20SQLite%20is%20the%20only%20supported%20datastore%20(see%20ADR%200001)%20and%20can%20run%0A%20%20in-memory%20per%20test.%20There%20is%20no%20reason%20to%20mock%20it.%0A-%20Much%20of%20the%20interesting%20logic%20sits%20in%20server%20actions%20and%20API%20route%0A%20%20handlers%2C%20not%20in%20pure%20functions.%20A%20strategy%20that%20only%20tests%20pure%20units%0A%20%20will%20miss%20most%20of%20it.%0A%0A%23%23%20Decision%0A%0AThree%20test%20layers%2C%20each%20with%20a%20distinct%20role.%20Tests%20go%20into%20the%20layer%20where%0Athe%20behavior%20they%20protect%20actually%20lives.%0A%0A%23%23%23%201.%20Unit%20tests%20%E2%80%94%20Vitest%2C%20no%20I%2FO%0A%0AFor%20pure%20functions%20and%20isolated%20business%20rules%3A%20session%20overlap%2C%0Asession-time%20parsing%2C%20duration%2Fbreak%20math%2C%20slug%20helpers%2C%20vote%E2%86%92emoji%0Amapping%2C%20and%20similar.%20Fast%2C%20deterministic%2C%20no%20DB%2C%20no%20Next%20runtime.%0A%0A%23%23%23%202.%20Integration%20tests%20%E2%80%94%20Vitest%20%2B%20real%20SQLite%20%60%3Amemory%3A%60%0A%0AFor%20server%20actions%20and%20API%20route%20handlers.%20Tests%20import%20the%20handler%2C%0Aconstruct%20inputs%20a%20user&#039;s%20browser%20would%20produce%20(%60FormData%60%2C%20%60Request%60)%2C%0Ainvoke%20the%20handler%2C%20and%20assert%20on%20the%20returned%20response.%20The%20repository%0Alayer%2C%20validation%2C%20and%20the%20DB%20all%20run%20for%20real.%0A%0APost-condition%20state%20is%20verified%20through%20a%20read%20surface%2C%20not%20by%20inspecting%0ADB%20rows.%20In%20order%20of%20preference%3A%0A%0A1.%20The%20corresponding%20GET%20endpoint%20or%20read%20action%20a%20user&#039;s%20browser%20would%0A%20%20%20hit%20(e.g.%2C%20create%20via%20%60POST%20%2Fapi%2Fadd-vote%60%2C%20verify%20via%0A%20%20%20%60GET%20%2Fapi%2Fvotes%60).%0A2.%20The%20repository&#039;s%20read%20methods%20(e.g.%2C%20%60sessionsRepo.listByEvent%60)%20%E2%80%94%20the%0A%20%20%20same%20interface%20server%20components%20use%20to%20render%20the%20page.%20Use%20this%20when%0A%20%20%20no%20HTTP%20read%20surface%20exists.%0A3.%20Direct%20DB%20row%20inspection%20%E2%80%94%20last%20resort%2C%20reserved%20for%20state%20that%20has%20no%0A%20%20%20read%20surface%20at%20any%20layer.%0A%0AThis%20keeps%20tests%20coupled%20to%20externally%20observable%20behavior%2C%20not%20to%20the%0Atable%20schema.%20Asserting%20on%20raw%20rows%20means%20a%20schema%20rename%20breaks%20the%20test%0Aeven%20when%20user-visible%20behavior%20is%20unchanged%20%E2%80%94%20the%20failure%20mode%20this%20ADR%0Ais%20meant%20to%20avoid.%0A%0AThe%20only%20things%20mocked%20are%20email%20sending%2C%20and%20the%20Next.js%20boundary%20primitives%0Athat%20don&#039;t%20belong%20in%20a%20unit%20process%3A%20%60redirect()%60%20from%20%60next%2Fnavigation%60%0A(recorded%20instead%20of%20thrown)%20and%20%60revalidatePath()%60%20from%20%60next%2Fcache%60%20(no-op).%0AEverything%20else%20%E2%80%94%20repos%2C%20schema%2C%20migrations%2C%20Drizzle%2C%20%60better-sqlite3%60%20%E2%80%94%20is%20the%0Areal%20production%20code%20path.%0A%0A%23%23%23%203.%20End-to-end%20tests%20%E2%80%94%20Playwright%2C%20existing%20runner%0A%0AFor%20behavior%20that%20only%20manifests%20in%20a%20browser%3A%20routing%2C%20phase-dependent%20UI%0Arendering%2C%20modals%2C%20form%20interaction%2C%20mobile%20layout.%20Expanded%20to%20cover%0Auser-facing%20flows%20that%20are%20not%20adequately%20reached%20by%20the%20other%20layers%2C%20not%0Aused%20to%20duplicate%20what%20integration%20tests%20already%20check.%0A%0A%23%23%23%20Tooling%0A%0A-%20**Vitest**%20(%60bun%20x%20vitest%60)%20for%20layers%201%20and%202.%20Chosen%20over%20%60bun%20test%60%20for%0A%20%20a%20larger%20Next.js%2FTS%20ecosystem%2C%20mature%20mocking%20surface%20(%60vi.mock%60)%2C%20and%0A%20%20better%20editor%2FCI%20tooling.%20Run%20speed%20difference%20is%20not%20material%20at%20this%0A%20%20project&#039;s%20size.%20%60bun%20test%60%20would%20be%20reconsidered%20if%20Vitest&#039;s%20Next.js%0A%20%20integration%20ever%20becomes%20a%20drag.%0A-%20**Playwright**%20unchanged.%0A-%20**Directory%20layout%3A**%0A%20%20%60%60%60%0A%20%20tests%2F%0A%20%20%20%20e2e%2F%20%20%20%20%20%20%20%20%20%20%23%20Playwright%20(*.spec.ts)%20%E2%80%94%20existing%20specs%20moved%20here%0A%20%20%20%20unit%2F%20%20%20%20%20%20%20%20%20%23%20Vitest%20(*.test.ts)%20%E2%80%94%20pure%20functions%0A%20%20%20%20integration%2F%20%20%23%20Vitest%20(*.test.ts)%20%E2%80%94%20actions%20%2B%20API%20routes%20%2B%20real%20DB%0A%20%20%20%20helpers%2F%20%20%20%20%20%20%23%20shared%3A%20DB%20setup%2C%20factories%2C%20Next.js%20mocks%0A%20%20%60%60%60%0A%20%20Separating%20by%20directory%20makes%20it%20obvious%20which%20runner%20owns%20each%20file%20and%0A%20%20keeps%20Playwright%20config%20and%20Vitest%20config%20from%20having%20to%20share%20a%0A%20%20%60testMatch%60%20pattern.%20Playwright%20%60testDir%60%20points%20to%20%60tests%2Fe2e%2F%60%3B%0A%20%20Vitest%20%60include%60%20covers%20%60tests%2Funit%2F%60%20and%20%60tests%2Fintegration%2F%60.%0A-%20**DB%20setup%3A**%20Vitest%20integration%20tests%20open%20an%20in-memory%0A%20%20%60better-sqlite3%60%20DB%20and%20apply%20migrations%20from%20%60drizzle%2F%60%20at%20suite%20start.%0A%20%20State%20is%20reset%20between%20tests.%20No%20shared%20fixtures%20across%20tests%3B%20each%20test%0A%20%20builds%20the%20minimum%20entities%20it%20needs%20via%20a%20small%20factory%20helper.%0A%0A%23%23%23%20Coverage%20measurement%0A%0ACoverage%20is%20collected%20on%20the%20Vitest%20layers%20(%60%40vitest%2Fcoverage-v8%60).%20It%0Aserves%20two%20roles%3A%0A%0A1.%20**Discovery%20tool%20(always).**%20Run%20it%20to%20find%20completely%20uncovered%0A%20%20%20modules%20or%20code%20paths%20that%20look%20risky.%20Ask%20whether%20the%20gap%20represents%0A%20%20%20untested%20user-facing%20behavior.%20If%20yes%2C%20write%20a%20test%3B%20if%20no%2C%20move%20on.%0A%20%20%20The%20right%20question%20is%3A%20_%22What%20user-visible%20behavior%20would%20regress%0A%20%20%20silently%20if%20we%20deleted%20this%20test%3F%22_%20A%20number%20cannot%20answer%20that%3B%20it%0A%20%20%20can%20only%20point%20to%20places%20where%20we%20have%20not%20asked%20the%20question%20yet.%0A%0A2.%20**CI%20floor%20(introduced%20gradually).**%20A%20minimum%20threshold%20%E2%80%94%20targeting%0A%20%20%20roughly%2080%25%20line%20coverage%20%E2%80%94%20is%20added%20to%20CI%20once%20the%20initial%20test%0A%20%20%20suite%20is%20in%20place.%20The%20threshold%20starts%20low%20(wherever%20the%20suite%0A%20%20%20naturally%20lands%20after%20the%20first%20few%20rollout%20steps)%20and%20is%20raised%20in%0A%20%20%20small%20increments%20as%20real%20tests%20are%20added.%20Its%20purpose%20is%20to%20catch%0A%20%20%20obvious%20problems%3A%20a%20large%20new%20feature%20shipped%20with%20no%20tests%2C%20or%20tests%0A%20%20%20accidentally%20deleted.%20It%20is%20not%20a%20target%20to%20optimise%20toward.%0A%0AThe%20Goodhart&#039;s%20law%20failure%20mode%20%E2%80%94%20writing%20tests%20purely%20to%20raise%20the%0Anumber%20%E2%80%94%20is%20treated%20as%20a%20defect.%20A%20suite%20that%20hits%2090%25%20by%20exercising%0A%60voteChoiceToEmoji%60%20repeatedly%20while%20leaving%20%60validateSession%60%20branch%0Alogic%20uncovered%20has%20failed%20in%20the%20only%20way%20that%20matters.%20Code-review%0Ashould%20ask%20whether%20a%20test%20protects%20user-visible%20behaviour%2C%20not%20whether%0Ait%20moves%20the%20percentage.%0A%0A%23%23%23%20What%20we%20deliberately%20do%20not%20do%0A%0A-%20**No%20React%20component%20tests%20(RTL%2FJSDOM).**%20They%20tend%20to%20assert%20on%0A%20%20component%20internals%20and%20break%20under%20refactor%20without%20catching%0A%20%20user-visible%20regressions.%20Playwright%20covers%20UI%20behavior%20from%20the%20user&#039;s%0A%20%20side.%20Revisit%20only%20if%20the%20E2E%20layer%20becomes%20too%20slow%20or%20too%20flaky%20to%0A%20%20serve%20that%20role.%0A-%20**No%20mocked%20repositories%20in%20integration%20tests.**%20The%20point%20of%20the%0A%20%20integration%20layer%20is%20that%20action%20%E2%86%92%20repo%20%E2%86%92%20DB%20actually%20runs.%20Mocking%20the%0A%20%20repo%20interface%20turns%20these%20into%20slow%20unit%20tests%20that%20miss%20the%20bugs%20they%0A%20%20exist%20to%20catch%20(migration%2Fschema%20mismatches%2C%20wrong%20SQL%2C%20cascade%0A%20%20surprises).%0A-%20**No%20snapshot%20tests.**%20Easy%20to%20write%2C%20easy%20to%20rubber-stamp%2C%20poor%20signal.%0A-%20**No%20coverage-percentage%20target%20to%20optimise%20toward.**%20A%20CI%20floor%20exists%0A%20%20to%20catch%20obvious%20gaps%20(see%20%22Coverage%20measurement%22)%2C%20but%20raising%20the%20number%0A%20%20is%20not%20a%20valid%20reason%20to%20write%20a%20test.%20See%20%22Coverage%20measurement%22%20above.%0A%0A%23%23%20Alternatives%20considered%0A%0A%23%23%23%20Keep%20E2E-only%20and%20add%20more%20Playwright%20specs%0A%0A-%20**Pros%3A**%20One%20runner%2C%20one%20mental%20model.%20Tests%20exercise%20the%20real%20stack.%0A-%20**Cons%3A**%20E2E%20is%20slow%20(order%20of%20seconds%20per%20test)%2C%20flaky%20by%20nature%20of%0A%20%20browsers%2C%20and%20a%20bad%20shape%20for%20enumerating%20the%20rule%20matrix%20of%20a%0A%20%20validator.%20Driving%2030%20overlap%20cases%20through%20a%20browser%20is%20both%20painful%0A%20%20to%20write%20and%20painful%20to%20debug.%20Rejected.%0A%0A%23%23%23%20React%20Testing%20Library%20for%20component-level%20tests%0A%0A-%20**Pros%3A**%20Fast%20feedback%20on%20component%20logic%3B%20catches%20some%20bugs%20before%0A%20%20E2E.%0A-%20**Cons%3A**%20In%20a%20Next.js%20App%20Router%20codebase%20with%20lots%20of%20server%0A%20%20components%20and%20server%20actions%2C%20RTL%20forces%20mocking%20of%20%60next%2F*%60%20surfaces%0A%20%20and%20client%2Fserver%20seams%2C%20and%20the%20tests%20that%20result%20mostly%20re-describe%0A%20%20JSX%20rather%20than%20protect%20user-visible%20behavior.%20The%20failure%20mode%20we%20are%0A%20%20trying%20to%20avoid%20%E2%80%94%20tests%20that%20change%20on%20every%20refactor%20%E2%80%94%20is%20exactly%0A%20%20what%20RTL%20tends%20to%20produce%20here.%20Rejected%20for%20now%3B%20reconsider%20if%20E2E%0A%20%20flakiness%20or%20cost%20becomes%20the%20bottleneck.%0A%0A%23%23%23%20Mock%20the%20repository%20interface%20in%20integration%20tests%0A%0A-%20**Pros%3A**%20Faster%3B%20no%20DB%20setup.%0A-%20**Cons%3A**%20Hides%20some%20of%20the%20bugs%20the%20integration%20layer%20is%20meant%20to%0A%20%20catch%3A%20schema%20drift%2C%20wrong%20SQL%2C%20cascade%20behavior%2C%20JSON%2Fboolean%20encoding%0A%20%20quirks%2C%20migration%20gaps.%20With%20%60%3Amemory%3A%60%20SQLite%20available%2C%20the%20cost%20of%0A%20%20real%20DB%20is%20negligible.%20Rejected.%0A%0A%23%23%23%20%60bun%20test%60%20instead%20of%20Vitest%0A%0A-%20**Pros%3A**%20Native%20to%20the%20stack%3B%20zero%20config%3B%20fast.%0A-%20**Cons%3A**%20Smaller%20ecosystem%20for%20Next.js-shaped%20code%2C%20less%20mature%0A%20%20mocking%20ergonomics%2C%20thinner%20editor%2FCI%20integration.%20The%20speed%20edge%20is%0A%20%20immaterial%20at%20this%20project&#039;s%20size.%20Rejected%20as%20primary%3B%20would%0A%20%20reconsider%20on%20a%20project%20that%20is%20unit-heavy%20and%20Bun-exclusive.%0A%0A%23%23%23%20Full%20unit%20coverage%20with%20a%20mocked%20DB%20layer%0A%0A-%20**Pros%3A**%20Fastest%20possible%20suite.%0A-%20**Cons%3A**%20Pushes%20every%20bug%20class%20that%20crosses%20the%20action%2Frepo%2FDB%0A%20%20boundary%20out%20of%20the%20tested%20surface%20and%20into%20%22hope%20E2E%20caught%20it%22.%0A%20%20Rejected.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Business%20rules%20(overlap%2C%20phase%20gating%2C%20vote%20tallying)%20become%20cheap%20to%0A%20%20enumerate%20at%20the%20unit%2Fintegration%20layer%20instead%20of%20being%20locked%20inside%0A%20%20browser%20flows.%0A-%20Refactors%20are%20safer%3A%20unit%20tests%20pin%20rules%2C%20integration%20tests%20pin%0A%20%20action%E2%86%92DB%20contracts%2C%20E2E%20pins%20user-facing%20flows.%20Each%20layer%20fails%20for%0A%20%20a%20different%20reason%2C%20which%20is%20diagnostic%20signal%20rather%20than%20noise.%0A-%20Contributors%20get%20fast%20local%20feedback%3A%20%60bun%20x%20vitest%60%20in%20watch%20mode%20runs%0A%20%20in%20under%20a%20second%20for%20the%20unit%20layer%20and%20a%20few%20seconds%20for%20the%0A%20%20integration%20layer.%20Playwright%20stays%20for%20the%20full%20flow.%0A-%20The%20repository%20interface%20in%20%60db%2Frepositories%2Finterfaces.ts%60%20gains%20a%0A%20%20second%20consumer%20(tests)%2C%20which%20disciplines%20the%20interface%20itself.%0A%0A%23%23%23%20Negative%20%2F%20costs%0A%0A-%20Two%20test%20runners%20instead%20of%20one.%20Developers%20need%20to%20remember%20which%0A%20%20layer%20a%20given%20test%20belongs%20to.%20Mitigation%3A%20the%20%60*.spec.ts%60%20vs%0A%20%20%60*.test.ts%60%20convention%20and%20the%20rule%20%22if%20it%20talks%20to%20a%20browser%2C%20it&#039;s%20a%0A%20%20spec%3B%20otherwise%20it&#039;s%20a%20test%22%20resolve%20the%20common%20case.%0A-%20Integration%20tests%20have%20to%20set%20%60DATABASE_URL%60%20before%20the%0A%20%20%60getRepositories()%60%20singleton%20first%20reads%20it%2C%20and%20reset%20the%20singleton%0A%20%20between%20tests.%20Small%20helper%3B%20worth%20the%20extra%20plumbing.%20If%20this%20becomes%0A%20%20painful%2C%20a%20lightweight%20DI%20refactor%20of%20%60db%2Fcontainer.ts%60%20is%20cheap.%0A-%20Mocking%20%60next%2Fnavigation%60%20and%20%60next%2Fcache%60%20at%20the%20integration%20boundary%0A%20%20is%20a%20small%20source%20of%20friction%20and%20must%20be%20re-evaluated%20if%20the%20Next.js%0A%20%20App%20Router%20internals%20change%20materially%20in%20a%20future%20upgrade.%0A%0A%23%23%23%20Neutral%20%2F%20follow-ups%0A%0A-%20Pre-commit%20runs%20%60bun%20lint%60%2C%20%60bun%20format%60%2C%20%60bun%20typecheck%60%2C%20and%20gains%0A%20%20%60bun%20x%20vitest%20run%60.%20Playwright%20continues%20to%20run%20via%20%60bun%20test%3Ae2e%60%0A%20%20(heavier%2C%20not%20part%20of%20the%20fast%20feedback%20loop).%0A-%20The%20existing%20Playwright%20seed%20in%20%60tests%2Freset-database.ts%60%20stays%20for%0A%20%20E2E.%20Integration%20tests%20build%20per-test%20state%20and%20do%20not%20depend%20on%20it.%0A-%20When%20a%20bug%20is%20found%20in%20production%2C%20the%20default%20place%20to%20pin%20the%0A%20%20regression%20is%20the%20integration%20layer%20(cheapest%20that%20still%20exercises%20the%0A%20%20real%20stack)%2C%20unless%20the%20bug%20is%20purely%20UI%2C%20in%20which%20case%20E2E.%20Unit%20tests%0A%20%20are%20for%20rules%2C%20not%20for%20incident%20response.%0A%0A%23%23%20References%0A%0A-%20ADR%200001%20%E2%80%94%20datastore%20choice%20and%20repository%20interface%20shape.%0A-%20Vitest%3A%20%3Chttps%3A%2F%2Fvitest.dev%3E%0A-%20Playwright%3A%20%3Chttps%3A%2F%2Fplaywright.dev%3E%0A-%20%60better-sqlite3%60%20in-memory%20mode%3A%20%3Chttps%3A%2F%2Fgithub.com%2FWiseLibs%2Fbetter-sqlite3%2Fblob%2Fmaster%2Fdocs%2Fapi.md%3E%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="adr-0002-testing-strategy" class="docmd-heading"><a href="#adr-0002-testing-strategy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ADR 0002: Testing strategy</h1>
+<ul>
+<li><strong>Status:</strong> Accepted</li>
+<li><strong>Date:</strong> 2026-04-23</li>
+</ul>
+<h2 id="adr-0002-testing-strategy-context" class="docmd-heading"><a href="#adr-0002-testing-strategy-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
+<p>The app has end-to-end tests (Playwright) against three seeded events and no
+other automated tests. Coverage of business rules — session overlap
+validation, vote tallying, phase gating, timezone-aware session parsing — is
+thin and lives only inside full browser flows. Several of these rules are
+exactly the kind of logic that breaks quietly under refactor.</p>
+<p>We want more confidence without the usual failure mode of a growing test
+suite: tests that mirror implementation, fail on every rename, mock out the
+interesting parts, and catch no real bugs. A test should fail when a user’s
+outcome changes, and ideally only then.</p>
+<p>Constraints that shape the decision:</p>
+<ul>
+<li>Next.js 16 App Router, Drizzle + <code>better-sqlite3</code>, Bun, Playwright, strict
+TS. Repositories are already behind interfaces in
+<code>db/repositories/interfaces.ts</code>, which makes DB-backed tests cheap to set
+up.</li>
+<li>SQLite is the only supported datastore (see ADR 0001) and can run
+in-memory per test. There is no reason to mock it.</li>
+<li>Much of the interesting logic sits in server actions and API route
+handlers, not in pure functions. A strategy that only tests pure units
+will miss most of it.</li>
+</ul>
+<h2 id="adr-0002-testing-strategy-decision" class="docmd-heading"><a href="#adr-0002-testing-strategy-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
+<p>Three test layers, each with a distinct role. Tests go into the layer where
+the behavior they protect actually lives.</p>
+<h3 id="adr-0002-testing-strategy-decision-1-unit-tests-vitest-no-io" class="docmd-heading"><a href="#adr-0002-testing-strategy-decision-1-unit-tests-vitest-no-io" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Unit tests — Vitest, no I/O</h3>
+<p>For pure functions and isolated business rules: session overlap,
+session-time parsing, duration/break math, slug helpers, vote→emoji
+mapping, and similar. Fast, deterministic, no DB, no Next runtime.</p>
+<h3 id="adr-0002-testing-strategy-decision-2-integration-tests-vitest-real-sqlite-memory" class="docmd-heading"><a href="#adr-0002-testing-strategy-decision-2-integration-tests-vitest-real-sqlite-memory" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Integration tests — Vitest + real SQLite <code>:memory:</code></h3>
+<p>For server actions and API route handlers. Tests import the handler,
+construct inputs a user’s browser would produce (<code>FormData</code>, <code>Request</code>),
+invoke the handler, and assert on the returned response. The repository
+layer, validation, and the DB all run for real.</p>
+<p>Post-condition state is verified through a read surface, not by inspecting
+DB rows. In order of preference:</p>
+<ol>
+<li>The corresponding GET endpoint or read action a user’s browser would
+hit (e.g., create via <code>POST /api/add-vote</code>, verify via
+<code>GET /api/votes</code>).</li>
+<li>The repository’s read methods (e.g., <code>sessionsRepo.listByEvent</code>) — the
+same interface server components use to render the page. Use this when
+no HTTP read surface exists.</li>
+<li>Direct DB row inspection — last resort, reserved for state that has no
+read surface at any layer.</li>
+</ol>
+<p>This keeps tests coupled to externally observable behavior, not to the
+table schema. Asserting on raw rows means a schema rename breaks the test
+even when user-visible behavior is unchanged — the failure mode this ADR
+is meant to avoid.</p>
+<p>The only things mocked are email sending, and the Next.js boundary primitives
+that don’t belong in a unit process: <code>redirect()</code> from <code>next/navigation</code>
+(recorded instead of thrown) and <code>revalidatePath()</code> from <code>next/cache</code> (no-op).
+Everything else — repos, schema, migrations, Drizzle, <code>better-sqlite3</code> — is the
+real production code path.</p>
+<h3 id="adr-0002-testing-strategy-decision-3-end-to-end-tests-playwright-existing-runner" class="docmd-heading"><a href="#adr-0002-testing-strategy-decision-3-end-to-end-tests-playwright-existing-runner" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. End-to-end tests — Playwright, existing runner</h3>
+<p>For behavior that only manifests in a browser: routing, phase-dependent UI
+rendering, modals, form interaction, mobile layout. Expanded to cover
+user-facing flows that are not adequately reached by the other layers, not
+used to duplicate what integration tests already check.</p>
+<h3 id="adr-0002-testing-strategy-decision-tooling" class="docmd-heading"><a href="#adr-0002-testing-strategy-decision-tooling" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Tooling</h3>
+<ul>
+<li><strong>Vitest</strong> (<code>bun x vitest</code>) for layers 1 and 2. Chosen over <code>bun test</code> for
+a larger Next.js/TS ecosystem, mature mocking surface (<code>vi.mock</code>), and
+better editor/CI tooling. Run speed difference is not material at this
+project’s size. <code>bun test</code> would be reconsidered if Vitest’s Next.js
+integration ever becomes a drag.</li>
+<li><strong>Playwright</strong> unchanged.</li>
+<li><strong>Directory layout:</strong><pre class="hljs"><code>tests<span class="hljs-operator">/</span>
+  e2e<span class="hljs-operator">/</span>          <span class="hljs-comment"># Playwright (*.spec.ts) — existing specs moved here</span>
+  unit<span class="hljs-operator">/</span>         <span class="hljs-comment"># Vitest (*.test.ts) — pure functions</span>
+  integration<span class="hljs-operator">/</span>  <span class="hljs-comment"># Vitest (*.test.ts) — actions + API routes + real DB</span>
+  helpers<span class="hljs-operator">/</span>      <span class="hljs-comment"># shared: DB setup, factories, Next.js mocks</span>
+</code></pre>
+Separating by directory makes it obvious which runner owns each file and
+keeps Playwright config and Vitest config from having to share a
+<code>testMatch</code> pattern. Playwright <code>testDir</code> points to <code>tests/e2e/</code>;
+Vitest <code>include</code> covers <code>tests/unit/</code> and <code>tests/integration/</code>.</li>
+<li><strong>DB setup:</strong> Vitest integration tests open an in-memory
+<code>better-sqlite3</code> DB and apply migrations from <code>drizzle/</code> at suite start.
+State is reset between tests. No shared fixtures across tests; each test
+builds the minimum entities it needs via a small factory helper.</li>
+</ul>
+<h3 id="adr-0002-testing-strategy-decision-coverage-measurement" class="docmd-heading"><a href="#adr-0002-testing-strategy-decision-coverage-measurement" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Coverage measurement</h3>
+<p>Coverage is collected on the Vitest layers (<code>@vitest/coverage-v8</code>). It
+serves two roles:</p>
+<ol>
+<li><p><strong>Discovery tool (always).</strong> Run it to find completely uncovered
+modules or code paths that look risky. Ask whether the gap represents
+untested user-facing behavior. If yes, write a test; if no, move on.
+The right question is: <em>“What user-visible behavior would regress
+silently if we deleted this test?”</em> A number cannot answer that; it
+can only point to places where we have not asked the question yet.</p>
+</li>
+<li><p><strong>CI floor (introduced gradually).</strong> A minimum threshold — targeting
+roughly 80% line coverage — is added to CI once the initial test
+suite is in place. The threshold starts low (wherever the suite
+naturally lands after the first few rollout steps) and is raised in
+small increments as real tests are added. Its purpose is to catch
+obvious problems: a large new feature shipped with no tests, or tests
+accidentally deleted. It is not a target to optimise toward.</p>
+</li>
+</ol>
+<p>The Goodhart’s law failure mode — writing tests purely to raise the
+number — is treated as a defect. A suite that hits 90% by exercising
+<code>voteChoiceToEmoji</code> repeatedly while leaving <code>validateSession</code> branch
+logic uncovered has failed in the only way that matters. Code-review
+should ask whether a test protects user-visible behaviour, not whether
+it moves the percentage.</p>
+<h3 id="adr-0002-testing-strategy-decision-what-we-deliberately-do-not-do" class="docmd-heading"><a href="#adr-0002-testing-strategy-decision-what-we-deliberately-do-not-do" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>What we deliberately do not do</h3>
+<ul>
+<li><strong>No React component tests (RTL/JSDOM).</strong> They tend to assert on
+component internals and break under refactor without catching
+user-visible regressions. Playwright covers UI behavior from the user’s
+side. Revisit only if the E2E layer becomes too slow or too flaky to
+serve that role.</li>
+<li><strong>No mocked repositories in integration tests.</strong> The point of the
+integration layer is that action → repo → DB actually runs. Mocking the
+repo interface turns these into slow unit tests that miss the bugs they
+exist to catch (migration/schema mismatches, wrong SQL, cascade
+surprises).</li>
+<li><strong>No snapshot tests.</strong> Easy to write, easy to rubber-stamp, poor signal.</li>
+<li><strong>No coverage-percentage target to optimise toward.</strong> A CI floor exists
+to catch obvious gaps (see “Coverage measurement”), but raising the number
+is not a valid reason to write a test. See “Coverage measurement” above.</li>
+</ul>
+<h2 id="adr-0002-testing-strategy-alternatives-considered" class="docmd-heading"><a href="#adr-0002-testing-strategy-alternatives-considered" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Alternatives considered</h2>
+<h3 id="adr-0002-testing-strategy-alternatives-considered-keep-e2e-only-and-add-more-playwright-specs" class="docmd-heading"><a href="#adr-0002-testing-strategy-alternatives-considered-keep-e2e-only-and-add-more-playwright-specs" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Keep E2E-only and add more Playwright specs</h3>
+<ul>
+<li><strong>Pros:</strong> One runner, one mental model. Tests exercise the real stack.</li>
+<li><strong>Cons:</strong> E2E is slow (order of seconds per test), flaky by nature of
+browsers, and a bad shape for enumerating the rule matrix of a
+validator. Driving 30 overlap cases through a browser is both painful
+to write and painful to debug. Rejected.</li>
+</ul>
+<h3 id="adr-0002-testing-strategy-alternatives-considered-react-testing-library-for-component-level-tests" class="docmd-heading"><a href="#adr-0002-testing-strategy-alternatives-considered-react-testing-library-for-component-level-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>React Testing Library for component-level tests</h3>
+<ul>
+<li><strong>Pros:</strong> Fast feedback on component logic; catches some bugs before
+E2E.</li>
+<li><strong>Cons:</strong> In a Next.js App Router codebase with lots of server
+components and server actions, RTL forces mocking of <code>next/*</code> surfaces
+and client/server seams, and the tests that result mostly re-describe
+JSX rather than protect user-visible behavior. The failure mode we are
+trying to avoid — tests that change on every refactor — is exactly
+what RTL tends to produce here. Rejected for now; reconsider if E2E
+flakiness or cost becomes the bottleneck.</li>
+</ul>
+<h3 id="adr-0002-testing-strategy-alternatives-considered-mock-the-repository-interface-in-integration-tests" class="docmd-heading"><a href="#adr-0002-testing-strategy-alternatives-considered-mock-the-repository-interface-in-integration-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Mock the repository interface in integration tests</h3>
+<ul>
+<li><strong>Pros:</strong> Faster; no DB setup.</li>
+<li><strong>Cons:</strong> Hides some of the bugs the integration layer is meant to
+catch: schema drift, wrong SQL, cascade behavior, JSON/boolean encoding
+quirks, migration gaps. With <code>:memory:</code> SQLite available, the cost of
+real DB is negligible. Rejected.</li>
+</ul>
+<h3 id="adr-0002-testing-strategy-alternatives-considered-bun-test-instead-of-vitest" class="docmd-heading"><a href="#adr-0002-testing-strategy-alternatives-considered-bun-test-instead-of-vitest" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a><code>bun test</code> instead of Vitest</h3>
+<ul>
+<li><strong>Pros:</strong> Native to the stack; zero config; fast.</li>
+<li><strong>Cons:</strong> Smaller ecosystem for Next.js-shaped code, less mature
+mocking ergonomics, thinner editor/CI integration. The speed edge is
+immaterial at this project’s size. Rejected as primary; would
+reconsider on a project that is unit-heavy and Bun-exclusive.</li>
+</ul>
+<h3 id="adr-0002-testing-strategy-alternatives-considered-full-unit-coverage-with-a-mocked-db-layer" class="docmd-heading"><a href="#adr-0002-testing-strategy-alternatives-considered-full-unit-coverage-with-a-mocked-db-layer" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Full unit coverage with a mocked DB layer</h3>
+<ul>
+<li><strong>Pros:</strong> Fastest possible suite.</li>
+<li><strong>Cons:</strong> Pushes every bug class that crosses the action/repo/DB
+boundary out of the tested surface and into “hope E2E caught it”.
+Rejected.</li>
+</ul>
+<h2 id="adr-0002-testing-strategy-consequences" class="docmd-heading"><a href="#adr-0002-testing-strategy-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
+<h3 id="adr-0002-testing-strategy-consequences-positive" class="docmd-heading"><a href="#adr-0002-testing-strategy-consequences-positive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Positive</h3>
+<ul>
+<li>Business rules (overlap, phase gating, vote tallying) become cheap to
+enumerate at the unit/integration layer instead of being locked inside
+browser flows.</li>
+<li>Refactors are safer: unit tests pin rules, integration tests pin
+action→DB contracts, E2E pins user-facing flows. Each layer fails for
+a different reason, which is diagnostic signal rather than noise.</li>
+<li>Contributors get fast local feedback: <code>bun x vitest</code> in watch mode runs
+in under a second for the unit layer and a few seconds for the
+integration layer. Playwright stays for the full flow.</li>
+<li>The repository interface in <code>db/repositories/interfaces.ts</code> gains a
+second consumer (tests), which disciplines the interface itself.</li>
+</ul>
+<h3 id="adr-0002-testing-strategy-consequences-negative-costs" class="docmd-heading"><a href="#adr-0002-testing-strategy-consequences-negative-costs" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Negative / costs</h3>
+<ul>
+<li>Two test runners instead of one. Developers need to remember which
+layer a given test belongs to. Mitigation: the <code>*.spec.ts</code> vs
+<code>*.test.ts</code> convention and the rule “if it talks to a browser, it’s a
+spec; otherwise it’s a test” resolve the common case.</li>
+<li>Integration tests have to set <code>DATABASE_URL</code> before the
+<code>getRepositories()</code> singleton first reads it, and reset the singleton
+between tests. Small helper; worth the extra plumbing. If this becomes
+painful, a lightweight DI refactor of <code>db/container.ts</code> is cheap.</li>
+<li>Mocking <code>next/navigation</code> and <code>next/cache</code> at the integration boundary
+is a small source of friction and must be re-evaluated if the Next.js
+App Router internals change materially in a future upgrade.</li>
+</ul>
+<h3 id="adr-0002-testing-strategy-consequences-neutral-follow-ups" class="docmd-heading"><a href="#adr-0002-testing-strategy-consequences-neutral-follow-ups" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Neutral / follow-ups</h3>
+<ul>
+<li>Pre-commit runs <code>bun lint</code>, <code>bun format</code>, <code>bun typecheck</code>, and gains
+<code>bun x vitest run</code>. Playwright continues to run via <code>bun test:e2e</code>
+(heavier, not part of the fast feedback loop).</li>
+<li>The existing Playwright seed in <code>tests/reset-database.ts</code> stays for
+E2E. Integration tests build per-test state and do not depend on it.</li>
+<li>When a bug is found in production, the default place to pin the
+regression is the integration layer (cheapest that still exercises the
+real stack), unless the bug is purely UI, in which case E2E. Unit tests
+are for rules, not for incident response.</li>
+</ul>
+<h2 id="adr-0002-testing-strategy-references" class="docmd-heading"><a href="#adr-0002-testing-strategy-references" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>References</h2>
+<ul>
+<li>ADR 0001 — datastore choice and repository interface shape.</li>
+<li>Vitest: <a href="https://vitest.dev">https://vitest.dev</a></li>
+<li>Playwright: <a href="https://playwright.dev">https://playwright.dev</a></li>
+<li><code>better-sqlite3</code> in-memory mode: <a href="https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md">https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md</a></li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#adr-0002-testing-strategy" class="toc-link">ADR 0002: Testing strategy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0002-testing-strategy-context" class="toc-link">Context</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0002-testing-strategy-decision" class="toc-link">Decision</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-decision-1-unit-tests-vitest-no-io" class="toc-link">1. Unit tests — Vitest, no I/O</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-decision-2-integration-tests-vitest-real-sqlite-memory" class="toc-link">2. Integration tests — Vitest + real SQLite :memory:</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-decision-3-end-to-end-tests-playwright-existing-runner" class="toc-link">3. End-to-end tests — Playwright, existing runner</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-decision-tooling" class="toc-link">Tooling</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-decision-coverage-measurement" class="toc-link">Coverage measurement</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-decision-what-we-deliberately-do-not-do" class="toc-link">What we deliberately do not do</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0002-testing-strategy-alternatives-considered" class="toc-link">Alternatives considered</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-alternatives-considered-keep-e2e-only-and-add-more-playwright-specs" class="toc-link">Keep E2E-only and add more Playwright specs</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-alternatives-considered-react-testing-library-for-component-level-tests" class="toc-link">React Testing Library for component-level tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-alternatives-considered-mock-the-repository-interface-in-integration-tests" class="toc-link">Mock the repository interface in integration tests</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-alternatives-considered-bun-test-instead-of-vitest" class="toc-link">bun test instead of Vitest</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-alternatives-considered-full-unit-coverage-with-a-mocked-db-layer" class="toc-link">Full unit coverage with a mocked DB layer</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0002-testing-strategy-consequences" class="toc-link">Consequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-consequences-positive" class="toc-link">Positive</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-consequences-negative-costs" class="toc-link">Negative / costs</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0002-testing-strategy-consequences-neutral-follow-ups" class="toc-link">Neutral / follow-ups</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0002-testing-strategy-references" class="toc-link">References</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1785058311000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1785058311000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: move developers documentation to /docs/dev/">docs: move developers documentation t...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1785058311000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Phil Hazelden">
+                            
+                              PH
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: Basic email sending.">feat: Basic email sending.</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Phil Hazelden</span>
+                              <span class="git-commit-date" data-timestamp="1783003047000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="refactor: rename dev:test to test:e2e">refactor: rename dev:test to test:e2e</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1777050156000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: format files">docs: format files</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1776973257000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: add testing strategy ADR and coverage plan">docs: add testing strategy ADR and co...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1776971019000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

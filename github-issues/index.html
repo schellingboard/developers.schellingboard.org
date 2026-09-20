@@ -1,0 +1,1606 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      Creating and Reading GitHub Issues : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/github-issues/">
+<meta property="og:title" content="Creating and Reading GitHub Issues - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/github-issues/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Creating and Reading GitHub Issues - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/github-issues.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../" class="logo-link">
+              <img
+                src="../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active-parent expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../github-issues/" class="active "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Creating and Reading GitHub Issues
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Creating%20and%20Reading%20GitHub%20Issues%0A%0AThis%20repo%20uses%20two%20conventions%20beyond%20GitHub&#039;s%20built-in%20issue%20fields%3A%20an%20**Issue%20Type**%0A(%60Task%60%20%2F%20%60Bug%60%20%2F%20%60Feature%60)%20and%20a%20custom%20single-select%20**Priority**%20field%20(%60Urgent%60%20%2F%20%60High%60%20%2F%0A%60Medium%60%20%2F%20%60Low%60).%20Type%20and%20Priority%20carry%20that%20information%20instead%20of%20labels%20%E2%80%94%20the%20only%20labels%0Ain%20regular%20use%20are%20the%20%60component%3A%20*%60%20ones%20below.%0A%0A%23%23%20Component%20labels%0A%0AEach%20issue%20should%20get%20one%20%60component%3A%20*%60%20label%20indicating%20the%20area%20it%20touches%3A%0A%0A%7C%20Label%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Scope%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------------%20%7C%20----------------------------------------------%20%7C%0A%7C%20%60component%3A%20proposals%60%20%20%20%20%20%7C%20Proposal%20creation%2Flisting%2Fediting%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20voting%60%20%20%20%20%20%20%20%20%7C%20Voting%20(table%20%2B%20Quick%20Voting)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20scheduling%60%20%20%20%20%7C%20Sessions%2C%20session%20grid%2C%20scheduling%20phase%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20admin%60%20%20%20%20%20%20%20%20%20%7C%20%60%2Fadmin%60%20backend%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20attendees%60%20%20%20%20%20%7C%20Attendee%20list%2C%20profiles%2C%20RSVPs%20on%20profiles%20%20%20%20%20%7C%0A%7C%20%60component%3A%201-on-1s%60%20%20%20%20%20%20%20%7C%201-on-1%20meetings%3A%20booking%2C%20availability%2C%20column%20%7C%0A%7C%20%60component%3A%20auth%60%20%20%20%20%20%20%20%20%20%20%7C%20Login%2C%20passwords%2C%20protected%20accounts%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20infra%20%26%20dev%60%20%20%20%7C%20CI%2C%20testing%2C%20tooling%2C%20perf%2C%20security%2C%20upgrades%20%7C%0A%7C%20%60component%3A%20notifications%60%20%7C%20Email%20and%20in-app%20notifications%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20ui%2Fux%60%20%20%20%20%20%20%20%20%20%7C%20Cross-cutting%20styling%2Flayout%2Faccessibility%20%20%20%20%20%7C%0A%7C%20%60component%3A%20other%60%20%20%20%20%20%20%20%20%20%7C%20Reviewed%2C%20no%20suitable%20component%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%60gh%20issue%20create%60%2F%60edit%60%20can%20set%20labels%20directly%20(no%20GraphQL%20needed)%3A%0A%0A%60%60%60bash%0Agh%20issue%20edit%20123%20--add-label%20%22component%3A%20scheduling%22%0A%60%60%60%0A%0ANeither%20field%20is%20exposed%20by%20%60gh%20issue%20create%60%2F%60gh%20issue%20edit%60%2F%60gh%20issue%20view%60%20%E2%80%94%20both%20require%20the%0AGraphQL%20API%20(%60gh%20api%20graphql%60).%0A%0A%23%23%20Reading%20an%20issue&#039;s%20type%20and%20priority%0A%0A%60gh%20issue%20view%20--json%60%20doesn&#039;t%20expose%20either%20field.%20Use%20REST%20instead%3A%0A%0A%60%60%60bash%0Agh%20api%20repos%2Fschellingboard%2Fschellingboard%2Fissues%2F123%20--jq%20%5C%0A%20%20&#039;%7Btype%3A%20.type.name%2C%20priority%3A%20(.issue_field_values%5B%5D%3F%20%7C%20select(.issue_field_name%3D%3D%22Priority%22)%20%7C%20.single_select_option.name)%7D&#039;%0A%60%60%60%0A%0A%23%23%20IDs%20needed%20for%20mutations%0A%0ARepo%20id%2C%20issue%20type%20ids%2C%20and%20the%20Priority%20field%2Foption%20ids%20(stable%2C%20but%20re-fetch%20if%20unsure)%3A%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%0A%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%0A%20%20%20%20id%0A%20%20%20%20issueTypes(first%3A%2010)%20%7B%20nodes%20%7B%20id%20name%20%7D%20%7D%0A%7D%20%7D&#039;%0A%0Agh%20api%20graphql%20-f%20query%3D&#039;%0A%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%0A%20%20%20%20issueFields(first%3A%2020)%20%7B%20nodes%20%7B%20...%20on%20IssueFieldSingleSelect%20%7B%20id%20name%20options%20%7B%20id%20name%20%7D%20%7D%20%7D%20%7D%0A%7D%20%7D&#039;%0A%60%60%60%0A%0AKnown%20values%20as%20of%202026-07-22%20(double-check%20if%20a%20query%20above%20disagrees)%3A%0A%0A%7C%20Name%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20ID%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------%20%7C%20---------------------%20%7C%0A%7C%20Repo%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60R_kgDOO4ASpA%60%20%20%20%20%20%20%20%20%7C%0A%7C%20Type%3A%20Task%20%20%20%20%20%20%20%7C%20%60IT_kwDODU0pG84Bqq5u%60%20%7C%0A%7C%20Type%3A%20Bug%20%20%20%20%20%20%20%20%7C%20%60IT_kwDODU0pG84Bqq5v%60%20%7C%0A%7C%20Type%3A%20Feature%20%20%20%20%7C%20%60IT_kwDODU0pG84Bqq5w%60%20%7C%0A%7C%20Priority%20field%20%20%20%7C%20%60IFSS_kgDOAhz4lg%60%20%20%20%20%20%7C%0A%7C%20Priority%3A%20Urgent%20%7C%20%60IFSSO_kgDOA7KbIA%60%20%20%20%20%7C%0A%7C%20Priority%3A%20High%20%20%20%7C%20%60IFSSO_kgDOA7KbIQ%60%20%20%20%20%7C%0A%7C%20Priority%3A%20Medium%20%7C%20%60IFSSO_kgDOA7KbIg%60%20%20%20%20%7C%0A%7C%20Priority%3A%20Low%20%20%20%20%7C%20%60IFSSO_kgDOA7KbIw%60%20%20%20%20%7C%0A%0A%23%23%20Creating%20an%20issue%20with%20type%20and%20priority%20set%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24repo%3A%20ID!%2C%20%24title%3A%20String!%2C%20%24body%3A%20String!%2C%20%24type%3A%20ID!%2C%20%24prioField%3A%20ID!%2C%20%24prioOpt%3A%20ID!)%20%7B%0A%20%20createIssue(input%3A%20%7B%0A%20%20%20%20repositoryId%3A%20%24repo%2C%20title%3A%20%24title%2C%20body%3A%20%24body%2C%20issueTypeId%3A%20%24type%2C%0A%20%20%20%20issueFields%3A%20%5B%7B%20fieldId%3A%20%24prioField%2C%20singleSelectOptionId%3A%20%24prioOpt%20%7D%5D%0A%20%20%7D)%20%7B%20issue%20%7B%20number%20url%20%7D%20%7D%0A%7D&#039;%20%5C%0A%20%20-f%20repo%3DR_kgDOO4ASpA%20%5C%0A%20%20-f%20title%3D%22Issue%20title%22%20%5C%0A%20%20-f%20body%3D%22%24(cat%20body.md)%22%20%5C%0A%20%20-f%20type%3DIT_kwDODU0pG84Bqq5w%20%5C%0A%20%20-f%20prioField%3DIFSS_kgDOAhz4lg%20%5C%0A%20%20-f%20prioOpt%3DIFSSO_kgDOA7KbIw%0A%60%60%60%0A%0A%23%23%20Changing%20type%2Fpriority%20on%20an%20existing%20issue%0A%0AGet%20the%20issue&#039;s%20node%20id%20first%20(%60number%60%20is%20not%20a%20valid%20GraphQL%20id)%3A%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%20issue(number%3A%20123)%20%7B%20id%20%7D%20%7D%20%7D&#039;%0A%60%60%60%0A%0AThen%3A%0A%0A%60%60%60bash%0A%23%20Type%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24issue%3A%20ID!%2C%20%24type%3A%20ID!)%20%7B%0A%20%20updateIssueIssueType(input%3A%20%7B%20issueId%3A%20%24issue%2C%20issueTypeId%3A%20%24type%20%7D)%20%7B%20issue%20%7B%20number%20%7D%20%7D%0A%7D&#039;%20-f%20issue%3D%3Cissue%20node%20id%3E%20-f%20type%3D%3Ctype%20id%3E%0A%0A%23%20Priority%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24issue%3A%20ID!%2C%20%24field%3A%20ID!%2C%20%24opt%3A%20ID!)%20%7B%0A%20%20setIssueFieldValue(input%3A%20%7B%20issueId%3A%20%24issue%2C%20issueFields%3A%20%5B%7B%20fieldId%3A%20%24field%2C%20singleSelectOptionId%3A%20%24opt%20%7D%5D%20%7D)%20%7B%20issue%20%7B%20number%20%7D%20%7D%0A%7D&#039;%20-f%20issue%3D%3Cissue%20node%20id%3E%20-f%20field%3DIFSS_kgDOAhz4lg%20-f%20opt%3D%3Cpriority%20option%20id%3E%0A%60%60%60%0A%0A%23%23%20Body%20format%20conventions%0A%0AMatch%20existing%20issues&#039;%20style%3A%0A%0A-%20Sections%20as%20needed%2C%20in%20this%20rough%20order%3A%20%60%23%23%20Overview%60%20%2F%20%60%23%23%20Current%20behavior%60%20%2F%20%60%23%23%20Proposed%0Abehavior%60%20(or%20%60%23%23%20Proposed%20change%60%2F%60%23%23%20Proposed%20fix%60)%20%2F%20%60%23%23%20Why%60%20%2F%20%60%23%23%20Impact%60%20%2F%20%60%23%23%20Notes%60%0A-%20Small%20bugs%2Ftasks%20can%20just%20be%20a%20short%20paragraph%20%E2%80%94%20headers%20aren&#039;t%20mandatory.%0A-%20Reference%20file%3Aline%20for%20code-specific%20bugs%20(e.g.%20%60%60%20%60app%2Factions%2Fuser-auth.ts%3A130%60%20%60%60).%0A-%20Keep%20it%20succinct%3B%20this%20is%20a%20scheduling%20app%20issue%20tracker%2C%20not%20a%20spec%20document.%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Reference</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>GitHub issues</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="creating-and-reading-github-issues" class="docmd-heading"><a href="#creating-and-reading-github-issues" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Creating and Reading GitHub Issues</h1>
+<p>This repo uses two conventions beyond GitHub’s built-in issue fields: an <strong>Issue Type</strong>
+(<code>Task</code> / <code>Bug</code> / <code>Feature</code>) and a custom single-select <strong>Priority</strong> field (<code>Urgent</code> / <code>High</code> /
+<code>Medium</code> / <code>Low</code>). Type and Priority carry that information instead of labels — the only labels
+in regular use are the <code>component: *</code> ones below.</p>
+<h2 id="creating-and-reading-github-issues-component-labels" class="docmd-heading"><a href="#creating-and-reading-github-issues-component-labels" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Component labels</h2>
+<p>Each issue should get one <code>component: *</code> label indicating the area it touches:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>component: proposals</code></td>
+<td>Proposal creation/listing/editing</td>
+</tr>
+<tr>
+<td><code>component: voting</code></td>
+<td>Voting (table + Quick Voting)</td>
+</tr>
+<tr>
+<td><code>component: scheduling</code></td>
+<td>Sessions, session grid, scheduling phase</td>
+</tr>
+<tr>
+<td><code>component: admin</code></td>
+<td><code>/admin</code> backend</td>
+</tr>
+<tr>
+<td><code>component: attendees</code></td>
+<td>Attendee list, profiles, RSVPs on profiles</td>
+</tr>
+<tr>
+<td><code>component: 1-on-1s</code></td>
+<td>1-on-1 meetings: booking, availability, column</td>
+</tr>
+<tr>
+<td><code>component: auth</code></td>
+<td>Login, passwords, protected accounts</td>
+</tr>
+<tr>
+<td><code>component: infra &amp; dev</code></td>
+<td>CI, testing, tooling, perf, security, upgrades</td>
+</tr>
+<tr>
+<td><code>component: notifications</code></td>
+<td>Email and in-app notifications</td>
+</tr>
+<tr>
+<td><code>component: ui/ux</code></td>
+<td>Cross-cutting styling/layout/accessibility</td>
+</tr>
+<tr>
+<td><code>component: other</code></td>
+<td>Reviewed, no suitable component</td>
+</tr>
+</tbody>
+</table>
+</div><p><code>gh issue create</code>/<code>edit</code> can set labels directly (no GraphQL needed):</p>
+<pre class="hljs"><code class="language-bash">gh issue edit <span class="hljs-number">123</span> <span class="hljs-operator">--</span>add<span class="hljs-operator">-</span>label <span class="hljs-string">&quot;component: scheduling&quot;</span>
+</code></pre>
+<p>Neither field is exposed by <code>gh issue create</code>/<code>gh issue edit</code>/<code>gh issue view</code> — both require the
+GraphQL API (<code>gh api graphql</code>).</p>
+<h2 id="creating-and-reading-github-issues-reading-an-issues-type-and-priority" class="docmd-heading"><a href="#creating-and-reading-github-issues-reading-an-issues-type-and-priority" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Reading an issue’s type and priority</h2>
+<p><code>gh issue view --json</code> doesn’t expose either field. Use REST instead:</p>
+<pre class="hljs"><code class="language-bash">gh api repos<span class="hljs-operator">/</span>schellingboard<span class="hljs-operator">/</span>schellingboard<span class="hljs-operator">/</span>issues<span class="hljs-operator">/</span><span class="hljs-number">123</span> <span class="hljs-operator">--</span>jq \
+  <span class="hljs-string">&#039;{type: .type.name, priority: (.issue_field_values[]? | select(.issue_field_name==&quot;Priority&quot;) | .single_select_option.name)}&#039;</span>
+</code></pre>
+<h2 id="creating-and-reading-github-issues-ids-needed-for-mutations" class="docmd-heading"><a href="#creating-and-reading-github-issues-ids-needed-for-mutations" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>IDs needed for mutations</h2>
+<p>Repo id, issue type ids, and the Priority field/option ids (stable, but re-fetch if unsure):</p>
+<pre class="hljs"><code class="language-bash">gh api graphql <span class="hljs-operator">-</span>f query<span class="hljs-operator">=</span><span class="hljs-string">&#039;
+{ repository(owner: &quot;schellingboard&quot;, name: &quot;schellingboard&quot;) {
+    id
+    issueTypes(first: 10) { nodes { id name } }
+} }&#039;</span>
+
+gh api graphql <span class="hljs-operator">-</span>f query<span class="hljs-operator">=</span><span class="hljs-string">&#039;
+{ repository(owner: &quot;schellingboard&quot;, name: &quot;schellingboard&quot;) {
+    issueFields(first: 20) { nodes { ... on IssueFieldSingleSelect { id name options { id name } } } }
+} }&#039;</span>
+</code></pre>
+<p>Known values as of 2026-07-22 (double-check if a query above disagrees):</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Repo</td>
+<td><code>R_kgDOO4ASpA</code></td>
+</tr>
+<tr>
+<td>Type: Task</td>
+<td><code>IT_kwDODU0pG84Bqq5u</code></td>
+</tr>
+<tr>
+<td>Type: Bug</td>
+<td><code>IT_kwDODU0pG84Bqq5v</code></td>
+</tr>
+<tr>
+<td>Type: Feature</td>
+<td><code>IT_kwDODU0pG84Bqq5w</code></td>
+</tr>
+<tr>
+<td>Priority field</td>
+<td><code>IFSS_kgDOAhz4lg</code></td>
+</tr>
+<tr>
+<td>Priority: Urgent</td>
+<td><code>IFSSO_kgDOA7KbIA</code></td>
+</tr>
+<tr>
+<td>Priority: High</td>
+<td><code>IFSSO_kgDOA7KbIQ</code></td>
+</tr>
+<tr>
+<td>Priority: Medium</td>
+<td><code>IFSSO_kgDOA7KbIg</code></td>
+</tr>
+<tr>
+<td>Priority: Low</td>
+<td><code>IFSSO_kgDOA7KbIw</code></td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="creating-and-reading-github-issues-creating-an-issue-with-type-and-priority-set" class="docmd-heading"><a href="#creating-and-reading-github-issues-creating-an-issue-with-type-and-priority-set" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Creating an issue with type and priority set</h2>
+<pre class="hljs"><code class="language-bash">gh api graphql <span class="hljs-operator">-</span>f query<span class="hljs-operator">=</span><span class="hljs-string">&#039;
+mutation($repo: ID!, $title: String!, $body: String!, $type: ID!, $prioField: ID!, $prioOpt: ID!) {
+  createIssue(input: {
+    repositoryId: $repo, title: $title, body: $body, issueTypeId: $type,
+    issueFields: [{ fieldId: $prioField, singleSelectOptionId: $prioOpt }]
+  }) { issue { number url } }
+}&#039;</span> \
+  <span class="hljs-operator">-</span>f repo<span class="hljs-operator">=</span>R_kgDOO4ASpA \
+  <span class="hljs-operator">-</span>f title<span class="hljs-operator">=</span><span class="hljs-string">&quot;Issue title&quot;</span> \
+  <span class="hljs-operator">-</span>f body<span class="hljs-operator">=</span><span class="hljs-string">&quot;$(cat body.md)&quot;</span> \
+  <span class="hljs-operator">-</span>f <span class="hljs-keyword">type</span><span class="hljs-operator">=</span>IT_kwDODU0pG84Bqq5w \
+  <span class="hljs-operator">-</span>f prioField<span class="hljs-operator">=</span>IFSS_kgDOAhz4lg \
+  <span class="hljs-operator">-</span>f prioOpt<span class="hljs-operator">=</span>IFSSO_kgDOA7KbIw
+</code></pre>
+<h2 id="creating-and-reading-github-issues-changing-typepriority-on-an-existing-issue" class="docmd-heading"><a href="#creating-and-reading-github-issues-changing-typepriority-on-an-existing-issue" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Changing type/priority on an existing issue</h2>
+<p>Get the issue’s node id first (<code>number</code> is not a valid GraphQL id):</p>
+<pre class="hljs"><code class="language-bash">gh api graphql <span class="hljs-operator">-</span>f query<span class="hljs-operator">=</span><span class="hljs-string">&#039;{ repository(owner: &quot;schellingboard&quot;, name: &quot;schellingboard&quot;) { issue(number: 123) { id } } }&#039;</span>
+</code></pre>
+<p>Then:</p>
+<pre class="hljs"><code class="language-bash"><span class="hljs-comment"># Type</span>
+gh api graphql <span class="hljs-operator">-</span>f query<span class="hljs-operator">=</span><span class="hljs-string">&#039;
+mutation($issue: ID!, $type: ID!) {
+  updateIssueIssueType(input: { issueId: $issue, issueTypeId: $type }) { issue { number } }
+}&#039;</span> <span class="hljs-operator">-</span>f issue<span class="hljs-operator">=&lt;</span>issue <span class="hljs-keyword">node</span> <span class="hljs-keyword">id</span><span class="hljs-operator">&gt;</span> <span class="hljs-operator">-</span>f <span class="hljs-keyword">type</span><span class="hljs-operator">=&lt;</span><span class="hljs-keyword">type</span> <span class="hljs-keyword">id</span><span class="hljs-operator">&gt;</span>
+
+<span class="hljs-comment"># Priority</span>
+gh api graphql <span class="hljs-operator">-</span>f query<span class="hljs-operator">=</span><span class="hljs-string">&#039;
+mutation($issue: ID!, $field: ID!, $opt: ID!) {
+  setIssueFieldValue(input: { issueId: $issue, issueFields: [{ fieldId: $field, singleSelectOptionId: $opt }] }) { issue { number } }
+}&#039;</span> <span class="hljs-operator">-</span>f issue<span class="hljs-operator">=&lt;</span>issue <span class="hljs-keyword">node</span> <span class="hljs-keyword">id</span><span class="hljs-operator">&gt;</span> <span class="hljs-operator">-</span>f field<span class="hljs-operator">=</span>IFSS_kgDOAhz4lg <span class="hljs-operator">-</span>f opt<span class="hljs-operator">=&lt;</span>priority option <span class="hljs-keyword">id</span><span class="hljs-operator">&gt;</span>
+</code></pre>
+<h2 id="creating-and-reading-github-issues-body-format-conventions" class="docmd-heading"><a href="#creating-and-reading-github-issues-body-format-conventions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Body format conventions</h2>
+<p>Match existing issues’ style:</p>
+<ul>
+<li>Sections as needed, in this rough order: <code>## Overview</code> / <code>## Current behavior</code> / <code>## Proposed behavior</code> (or <code>## Proposed change</code>/<code>## Proposed fix</code>) / <code>## Why</code> / <code>## Impact</code> / <code>## Notes</code></li>
+<li>Small bugs/tasks can just be a short paragraph — headers aren’t mandatory.</li>
+<li>Reference file:line for code-specific bugs (e.g. <code>`app/actions/user-auth.ts:130`</code>).</li>
+<li>Keep it succinct; this is a scheduling app issue tracker, not a spec document.</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../releasing/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Releasing
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../adr/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Decision records
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#creating-and-reading-github-issues" class="toc-link">Creating and Reading GitHub Issues</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#creating-and-reading-github-issues-component-labels" class="toc-link">Component labels</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#creating-and-reading-github-issues-reading-an-issues-type-and-priority" class="toc-link">Reading an issue’s type and priority</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#creating-and-reading-github-issues-ids-needed-for-mutations" class="toc-link">IDs needed for mutations</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#creating-and-reading-github-issues-creating-an-issue-with-type-and-priority-set" class="toc-link">Creating an issue with type and priority set</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#creating-and-reading-github-issues-changing-typepriority-on-an-existing-issue" class="toc-link">Changing type/priority on an existing issue</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#creating-and-reading-github-issues-body-format-conventions" class="toc-link">Body format conventions</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789885892000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789885892000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Patrick Gruban">
+                            
+                              PG
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: add the 1-on-1s component label to the issue conventions">docs: add the 1-on-1s component label...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Patrick Gruban</span>
+                              <span class="git-commit-date" data-timestamp="1789502009000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: document component labels for GitHub issues">docs: document component labels for G...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1786261287000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: move developers documentation to /docs/dev/">docs: move developers documentation t...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1785058311000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

@@ -1,0 +1,1648 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      ADR 0001: Replace Airtable with a SQL database : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/adr/0001-replace-airtable-with-sql-database/">
+<meta property="og:title" content="ADR 0001: Replace Airtable with a SQL database - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/adr/0001-replace-airtable-with-sql-database/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ADR 0001: Replace Airtable with a SQL database - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/adr/0001-replace-airtable-with-sql-database.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  ADR 0001: Replace Airtable with a SQL database
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200001%3A%20Replace%20Airtable%20with%20a%20SQL%20database%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-04-16%0A-%20**Tracking%20issue%3A**%20%5B%23367%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F367)%0A%0A%23%23%20Context%0A%0AThe%20app%20currently%20uses%20Airtable%20as%20its%20primary%20datastore.%20Airtable%20was%20a%20good%0Afit%20when%20the%20project%20began%3A%20no%20backend%20to%20run%2C%20a%20usable%20admin%20UI%20for%20free%2C%20and%0Aquick%20schema%20tweaks%20through%20a%20spreadsheet.%20As%20the%20project%20has%20grown%20%E2%80%94%20and%20as%0Athis%20fork%20moves%20away%20from%20Vercel%20toward%20self-hosted%20Docker%2FVPS%20deployment%20%E2%80%94%0AAirtable%20has%20become%20a%20net%20drag.%0A%0AConcrete%20problems%20we%20hit%20regularly%3A%0A%0A-%20**No%20local%20instance.**%20There%20is%20no%20way%20to%20spin%20up%20Airtable%20locally.%20Tests%0A%20%20hit%20a%20shared%20remote%20base%2C%20which%20makes%20them%20slow%2C%20flaky%20and%20hard%20to%20isolate.%0A%20%20Parallel%20test%20runs%20fight%20over%20the%20same%20rows.%0A-%20**Account%20and%20quota%20friction%20for%20contributors.**%20Every%20developer%20needs%20an%0A%20%20Airtable%20account.%20The%20free%20tier%20is%20quickly%20exhausted%2C%20which%20is%20a%20real%0A%20%20barrier%20for%20new%20contributors%20and%20for%20anyone%20running%20the%20app%20on%20their%20own.%0A-%20**No%20programmatic%20schema%20migrations.**%20Schema%20changes%20have%20to%20be%20made%20by%0A%20%20hand%20in%20the%20Airtable%20UI.%20Our%20%60migrations%2Fversions%2F*.ts%60%20files%20can%20only%0A%20%20_document_%20what%20a%20human%20needs%20to%20click%20through%3B%20they%20cannot%20apply%20a%0A%20%20change.%20%60migrations%2Frunner.ts%60%20is%20largely%20an%20elaborate%20check%20that%20the%0A%20%20human%20did%20the%20right%20thing%2C%20with%20a%20long%20error-message%20path%20for%20when%20they%0A%20%20did%20not.%0A-%20**No%20automated%20deployment%20path.**%20Standing%20up%20a%20new%20instance%20of%20the%20app%0A%20%20requires%20manually%20creating%20a%20base%2C%20creating%20every%20table%2C%20and%20configuring%0A%20%20every%20field.%20This%20is%20a%20significant%20barrier%20to%20self-hosting%20and%20has%20been%0A%20%20raised%20by%20downstream%20users.%0A-%20**Rate%20limiting.**%20Airtable%20enforces%20per-base%20request%20limits%20that%20bite%0A%20%20under%20test%20load%20and%20under%20moderate%20real%20traffic.%0A-%20**Query%20model%20mismatch.**%20We%20already%20work%20around%20Airtable&#039;s%20%60filterByFormula%60%0A%20%20by%20building%20query%20strings%20with%20untrusted%20input%20(see%20%60db%2Fvotes.ts%60%2C%0A%20%20%60db%2Fguests.ts%60%2C%20and%20the%20inline%20queries%20in%20%60app%2Fapi%2Ftoggle-rsvp%2Froute.ts%60%0A%20%20and%20%60app%2Fapi%2Fdelete-session%2Froute.ts%60)%20%E2%80%94%20a%20shape%20that%20would%20be%20a%20straight%0A%20%20SQL%20injection%20in%20any%20real%20database.%20Lookups%20and%20rollups%20(%60Host%20name%60%2C%20%60Num%20RSVPs%60%2C%20%60votesCount%60%2C%0A%20%20%60guestId%60%2C%20%60proposalId%60%2C%20%E2%80%A6)%20exist%20only%20to%20compensate%20for%20Airtable&#039;s%20lack%0A%20%20of%20joins.%0A-%20**Vendor%20lock-in%20to%20a%20service%20we%20are%20leaving.**%20The%20move%20to%20self-hosting%0A%20%20removes%20the%20main%20reason%20the%20project%20tolerated%20Airtable%20in%20the%20first%20place%0A%20%20(not%20running%20infrastructure).%0A%0AAirtable&#039;s%20remaining%20value%20for%20us%20is%20the%20admin%20UI%20%E2%80%94%20editing%20event%20phase%0Adates%2C%20inspecting%20records%2C%20fixing%20bad%20data.%20That%20is%20a%20real%20loss%2C%20but%20it%20is%0Ascoped%20and%20can%20be%20replaced%20independently%3B%20see%20%22Consequences%22%20below.%0A%0A%23%23%20Decision%0A%0AReplace%20Airtable%20with%20a%20SQL%20database%20accessed%20through%20an%20ORM.%20The%20initial%0Aand%20only%20supported%20target%20is%20**SQLite**%20via%20**Drizzle%20ORM**.%20The%20data%0Alayer%20is%20structured%20so%20that%20adding%20**PostgreSQL**%20later%20is%20a%20contained%0Achange%20(single%20schema%20file%2C%20single%20client%20module%2C%20no%20dialect-specific%0ASQL%20bleeding%20into%20call%20sites)%2C%20but%20we%20do%20not%20ship%20or%20test%20Postgres%20in%0Athis%20change.%0A%0ARationale%20for%20each%20piece%3A%0A%0A-%20**SQL%2C%20not%20another%20hosted%20document%20store.**%20We%20need%20joins%2C%20transactions%2C%0A%20%20real%20migrations%2C%20and%20a%20local-first%20story.%20SQL%20databases%20are%20the%20obvious%0A%20%20shape%20for%20this%20data%20(events%2C%20sessions%2C%20guests%2C%20RSVPs%2C%20votes%20%E2%80%94%20all%0A%20%20relational).%0A-%20**SQLite%20as%20the%20only%20target%20for%20now.**%20Zero-dependency%2C%20file-based%2C%0A%20%20trivial%20to%20set%20up%20locally%20and%20in%20CI%2C%20and%20perfectly%20adequate%20for%20the%0A%20%20load%20this%20app%20sees.%20It%20makes%20self-hosting%20a%20%60docker%20run%60%20with%20a%0A%20%20mounted%20volume.%0A-%20**Postgres-friendly%20structure%2C%20deferred%20implementation.**%20Drizzle%0A%20%20supports%20Postgres%20through%20a%20parallel%20ORM%20surface%20(%60pg-core%60%20vs%0A%20%20%60sqlite-core%60)%2C%20so%20adding%20it%20later%20should%20be%20a%20contained%20change%3A%20a%0A%20%20second%20schema%20file%2C%20a%20branch%20in%20%60db%2Fclient.ts%60%2C%20a%20second%20migrations%0A%20%20directory.%20We%20do%20not%20pay%20for%20that%20now%20%E2%80%94%20no%20second%20schema%2C%20no%20second%0A%20%20CI%20job%2C%20no%20half-tested%20code%20path%20%E2%80%94%20but%20we%20avoid%20SQLite-only%20query%0A%20%20idioms%20in%20call%20sites%20so%20the%20future%20port%20is%20contained%2C%20not%20a%20rewrite.%0A%20%20We%20explicitly%20do%20not%20claim%20it%20will%20be%20_mechanical_%3A%20column%20types%2C%0A%20%20defaults%2C%20JSON%20handling%2C%20%60returning()%60%20semantics%2C%20and%20boolean%0A%20%20representation%20all%20differ%20between%20the%20two%20dialects%20and%20will%20need%0A%20%20per-column%20review.%0A-%20**Drizzle%20ORM.**%20TS-first%20schema%20as%20the%20single%20source%20of%20truth%20(no%0A%20%20%60prisma%20generate%60-style%20codegen%20step)%2C%20SQL-file%20migrations%20via%0A%20%20%60drizzle-kit%60%2C%20small%20bundle%2C%20good%20fit%20for%20Next.js%20App%20Router%2C%20and%20%E2%80%94%0A%20%20via%20the%20%60better-sqlite3%60%20driver%20%E2%80%94%20a%20natural%20match%20for%20the%20Node-based%0A%20%20Docker%2FVPS%20deployment%20we%20are%20moving%20to.%20The%20cross-dialect%20story%20is%20a%0A%20%20latent%20option%2C%20not%20something%20we%20use%20today.%20Known%20rough%20edges%20we%0A%20%20accept%3A%20SQLite&#039;s%20limited%20%60ALTER%20TABLE%60%20forces%20%60drizzle-kit%60%20into%0A%20%20table-rebuild%20statements%20for%20some%20schema%20changes%20(documented%2C%20not%0A%20%20hidden)%3B%20the%20community%20and%20ecosystem%20are%20smaller%20than%20Prisma&#039;s%3B%0A%20%20type-checking%20is%20heavier%20than%20Prisma&#039;s%20in%20very%20large%20schemas.%20None%0A%20%20are%20blocking%20at%20this%20project&#039;s%20size.%0A%0A%23%23%20Alternatives%20considered%0A%0A%23%23%23%20Stay%20on%20Airtable%0A%0A-%20**Pros%3A**%20Zero%20migration%20work.%20Keeps%20the%20free%20admin%20UI.%20No%20new%20moving%0A%20%20parts%20in%20deployment.%0A-%20**Cons%3A**%20All%20the%20problems%20listed%20in%20%22Context%22%20remain%20%E2%80%94%20and%20get%20worse%20as%0A%20%20the%20test%20suite%20and%20contributor%20base%20grow.%20Blocks%20the%20self-hosting%20goal.%0A-%20**Verdict%3A**%20Rejected.%20The%20reasons%20the%20project%20originally%20chose%20Airtable%0A%20%20(no%20ops%2C%20free%20UI)%20no%20longer%20outweigh%20the%20friction.%0A%0A%23%23%23%20Another%20spreadsheet-style%20DB%20(NocoDB%2C%20Baserow%2C%20Supabase%20tables%2C%20Google%20Sheets)%0A%0A-%20**Pros%3A**%20Preserves%20the%20%22edit%20rows%20in%20a%20web%20UI%22%20affordance.%20Some%20are%0A%20%20self-hostable%20and%20free.%0A-%20**Cons%3A**%20Adds%20a%20second%20service%20to%20run%20and%20back%20up.%20Still%20a%20coarse%20API%0A%20%20on%20top%20of%20SQL%20%E2%80%94%20we%20would%20inherit%20the%20same%20lookup%2Frollup%20workarounds%2C%20or%0A%20%20end%20up%20bypassing%20the%20UI%20and%20talking%20to%20the%20underlying%20Postgres%20directly%2C%0A%20%20at%20which%20point%20we%20have%20chosen%20Postgres%20with%20extra%20steps.%20Specific%0A%20%20notes%3A%20**NocoDB**%20relicensed%20from%20AGPLv3%20to%20BSL%201.1%20in%20late%202024%2C%20which%0A%20%20is%20not%20an%20OSI-approved%20open-source%20license%3B%20**Baserow**%20targets%0A%20%20spreadsheet-style%20end%20users%20rather%20than%20apps%20that%20just%20need%20a%0A%20%20relational%20DB%2C%20and%20is%20comparatively%20heavy%20to%20run%20locally%20and%20in%0A%20%20production.%0A-%20**Verdict%3A**%20Rejected%20as%20a%20_primary_%20datastore%2C%20and%20not%20recommended%20as%0A%20%20a%20bundled%20admin%20UI%20either.%20See%20%22Consequences%22%20for%20the%20alternatives%20we%0A%20%20do%20recommend%20for%20ad-hoc%20data%20editing.%0A%0A%23%23%23%20MongoDB%20%2F%20other%20document%20DB%0A%0A-%20**Pros%3A**%20Schemaless%20feels%20closer%20to%20Airtable&#039;s%20%22just%20add%20a%20field%22%0A%20%20ergonomics.%0A-%20**Cons%3A**%20Our%20data%20is%20clearly%20relational%3B%20we%20would%20reinvent%20joins%20and%0A%20%20lose%20referential%20integrity.%20Another%20service%20to%20run.%20No%20win%20over%20SQL%0A%20%20here.%0A-%20**Verdict%3A**%20Rejected.%0A%0A%23%23%23%20Alternative%20SQL%20databases%0A%0A-%20**MySQL%2FMariaDB%3A**%20Fine%2C%20but%20offers%20nothing%20the%20SQLite-now%20%2F%0A%20%20Postgres-later%20path%20does%20not%2C%20and%20the%20TS%20ecosystem%20around%20SQLite%20and%0A%20%20Postgres%20is%20noticeably%20better.%0A-%20**DuckDB%3A**%20Excellent%20for%20analytics%2C%20wrong%20shape%20for%20an%20OLTP%20web%20app.%0A-%20**Verdict%3A**%20Stick%20with%20SQLite%2C%20leave%20room%20for%20Postgres.%0A%0A%23%23%23%20Alternative%20ORMs%20%2F%20query%20layers%0A%0A-%20**Prisma.**%20Mature%2C%20great%20DX%2C%20largest%20community%20and%20tooling%20ecosystem%0A%20%20of%20the%20options%20here.%20Historically%20we%20would%20have%20rejected%20it%20on%20the%0A%20%20Rust%20query-engine%20binary%20(large%20client%2C%20cold-start%20and%20bundling%20pain)%2C%0A%20%20but%20Prisma%207%20(late%202025)%20replaced%20that%20with%20a%20pure%20TS%2FWASM%20Query%0A%20%20Compiler%2C%20which%20closes%20most%20of%20that%20gap.%20Remaining%20cons%20vs%20Drizzle%3A%0A%20%20%60schema.prisma%60%20is%20a%20separate%20DSL%20that%20duplicates%20the%20TS%20types%20and%0A%20%20requires%20a%20%60prisma%20generate%60%20step%20to%20keep%20them%20in%20sync%20(a%20recurring%0A%20%20source%20of%20%22why%20are%20my%20types%20wrong%3F%22)%3B%20the%20client%20is%20still%20several%0A%20%20times%20larger%20than%20Drizzle&#039;s%3B%20and%20the%20%60prisma%20migrate%20dev%60%20%2F%20%60deploy%60%0A%20%20workflow%20is%20heavier%20machinery%20than%20a%20single-file%20SQLite%20app%20needs.%0A%20%20Rejected%20on%20fit%2C%20not%20on%20disqualification%20%E2%80%94%20Prisma%20is%20a%20credible%0A%20%20alternative%20we%20could%20live%20with.%0A-%20**Kysely.**%20Excellent%20type-safe%20SQL%20query%20builder.%20It%20_does_%20ship%20a%0A%20%20programmatic%20migrator%20(%60Kysely.Migrator%60)%2C%20so%20%22no%20migration%20tool%22%20is%0A%20%20not%20quite%20fair%20%E2%80%94%20but%20it%20is%20deliberately%20not%20an%20ORM%2C%20so%20there%20is%20no%0A%20%20schema%20DSL%20acting%20as%20source%20of%20truth.%20Table-row%20types%20must%20be%0A%20%20hand-maintained%20or%20generated%20from%20the%20live%20database%20via%20a%20third-party%0A%20%20codegen%20tool%20(e.g.%20%60kysely-codegen%60)%2C%20and%20we%20would%20lose%20the%20automatic%0A%20%20schema-diff%20%E2%86%92%20SQL%20flow%20that%20%60drizzle-kit%20generate%60%20gives%20us.%20Rejected%0A%20%20as%20primary%3B%20reconsider%20if%20Drizzle%20disappoints%2C%20since%20Kysely&#039;s%0A%20%20query-builder%20ergonomics%20are%20genuinely%20good.%0A-%20**TypeORM.**%20Decorator-heavy%2C%20weaker%20TS%20inference%2C%20relies%20on%0A%20%20experimental%20decorators%2C%20and%20development%20pace%20has%20visibly%20slowed.%0A%20%20Rejected.%0A-%20**MikroORM.**%20Actively%20maintained%20and%20arguably%20the%20most%20%22correct%22%20TS%0A%20%20ORM%20(Data%20Mapper%20%2B%20Unit%20of%20Work%20%2B%20Identity%20Map).%20But%20the%20entity%20%2F%0A%20%20decorator%20%2F%20%60em.flush()%60%20model%20is%20heavier%20than%20this%20app%20needs%2C%20and%0A%20%20the%20runtime%20footprint%20is%20larger%20than%20Drizzle&#039;s.%20Rejected%20on%20fit.%0A-%20**Raw%20SQL%20%2B%20%60better-sqlite3%60%2F%60postgres%60.**%20Minimal%20dependencies%2C%0A%20%20maximum%20control.%20Tempting%20for%20a%20project%20this%20size%2C%20but%20we%20would%0A%20%20hand-write%20types%20for%20every%20row%20shape%20and%20lose%20the%20cross-dialect%0A%20%20story.%20Rejected%3B%20if%20Drizzle%20is%20ever%20removed%2C%20this%20is%20the%20fallback.%0A%0A%23%23%23%20ID%20strategy%0A%0A-%20**Switch%20to%20plain%20nanoid.**%20Chosen.%20This%20is%20a%20clean%20break%3A%20the%20project%0A%20%20has%20no%20production%20deployment%20with%20durable%20external%20links%20to%20preserve%2C%0A%20%20and%20keeping%20the%20%60rec%E2%80%A6%60%20prefix%20would%20be%20cargo-culted%20Airtable%20vocabulary%0A%20%20in%20a%20codebase%20that%20no%20longer%20uses%20Airtable.%0A-%20**Keep%20Airtable-style%20%60rec%E2%80%A6%60%20IDs.**%20Rejected%20%E2%80%94%20preserves%20no%20value%20once%0A%20%20we%20accept%20a%20clean-break%20migration.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Tests%20run%20fully%20locally%20against%20a%20fresh%20SQLite%20file.%20No%20shared%20state%2C%0A%20%20no%20rate%20limits%2C%20no%20secrets%20in%20CI.%0A-%20Contributors%20can%20clone%2C%20%60bun%20install%60%2C%20and%20run%20the%20app%20with%20no%0A%20%20Airtable%20account.%0A-%20Real%2C%20automated%20schema%20migrations.%20%60dev%3Amigrate%3Aup%60%20actually%20applies%0A%20%20changes%20instead%20of%20printing%20instructions.%0A-%20Self-hosting%20becomes%20%60docker%20run%60%20%2B%20a%20mounted%20volume.%20Deployment%20docs%0A%20%20shrink.%0A-%20%60filterByFormula%60%20string%20interpolation%20goes%20away%3B%20queries%20use%0A%20%20parameterised%20Drizzle%20%60where%60%20clauses.%0A-%20Lookups%2Frollups%20collapse%20into%20ordinary%20joins%3B%20the%20fallback%20logic%20in%0A%20%20%60db%2Fevents.ts%60%20and%20the%20error-distinguishing%20gymnastics%20in%0A%20%20%60migrations%2Frunner.ts%60%20are%20deleted.%0A%0A%23%23%23%20Negative%20%2F%20costs%0A%0A-%20**One-time%20migration%20effort.**%20Every%20file%20in%20%60db%2F%60%20and%20every%20API%20route%0A%20%20that%20calls%20%60getBase()%60%20has%20to%20be%20rewritten.%0A-%20**Loss%20of%20the%20free%20admin%20UI.**%20This%20is%20the%20real%20cost.%20Mitigations%2C%20in%0A%20%20order%20of%20preference%3A%20(a)%20a%20minimal%20custom%20%60%2Fadmin%60%20route%20in%20the%20Next.js%0A%20%20app%20for%20the%20handful%20of%20fields%20that%20actually%20need%20editing%20(event%20phase%0A%20%20dates%2C%20occasional%20record%20fixes)%3B%20(b)%20for%20operators%20who%20want%20generic%0A%20%20row-level%20access%2C%20any%20standard%20SQLite%20tool%20works%20against%20the%20database%0A%20%20file%20%E2%80%94%20e.g.%20%60sqlite3%60%20CLI%2C%20sqlite-web%2C%20DB%20Browser%20for%20SQLite%2C%20or%0A%20%20DBeaver.%20Tracked%20in%20%5B%23368%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F368).%0A-%20**Operators%20now%20run%20a%20database.**%20For%20SQLite%20this%20is%20%22a%20file%20in%20a%0A%20%20volume%22%20and%20is%20close%20to%20free.%0A-%20**No%20live%20multi-user%20editing%20of%20raw%20data.**%20Airtable%20let%20multiple%20admins%0A%20%20poke%20at%20rows%20simultaneously.%20In%20practice%20this%20has%20not%20been%20used%20much%2C%0A%20%20and%20the%20replacement%20admin%20UI%20can%20cover%20the%20cases%20that%20matter.%0A-%20**Backups%20are%20now%20our%20problem.**%20Document%20%60sqlite3%20.backup%60%20(or%20a%0A%20%20volume%20snapshot)%20in%20the%20deploy%20docs.%0A%0A%23%23%23%20Neutral%20%2F%20follow-ups%0A%0A-%20%60docs%2FSCHEMA.md%60%20is%20deleted%3B%20%60db%2Fschema.ts%60%20becomes%20the%20source%20of%20truth.%0A-%20The%20existing%20%60migrations%2Fversions%2F*.ts%60%20files%20and%0A%20%20%60migrations%2Frunner.ts%60%20%2F%20%60schema-validator.ts%60%20are%20deleted.%20Their%0A%20%20only%20purpose%20was%20documenting%20Airtable%20schema%20changes%20a%20human%20had%20to%0A%20%20apply%20by%20hand%3B%20git%20history%20preserves%20them%20for%20anyone%20who%20wants%20the%0A%20%20archaeology.%20The%20new%20Drizzle%20migration%20history%20starts%20from%20the%0A%20%20current-state%20schema%20as%20a%20single%20initial%20migration%20%E2%80%94%20we%20do%20not%0A%20%20replay%20the%20Airtable-era%20migration%20sequence.%0A-%20The%20admin%20backend%20replacement%20is%20explicitly%20out%20of%20scope%20for%20this%20ADR%0A%20%20and%20is%20tracked%20in%20%5B%23368%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F368).%0A%0A%23%23%20References%0A%0A-%20Issue%20%5B%23367%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F367)%0A-%20Drizzle%20ORM%3A%20%3Chttps%3A%2F%2Form.drizzle.team%3E%0A-%20Drizzle%20Kit%20migration%20system%20(SQLite%20%60ALTER%20TABLE%60%20limitations%20%E2%86%92%20table-rebuild%20statements)%3A%20%3Chttps%3A%2F%2Fdeepwiki.com%2Fdrizzle-team%2Fdrizzle-orm%2F3.2-migration-system%3E%0A-%20%60better-sqlite3%60%3A%20%3Chttps%3A%2F%2Fgithub.com%2FWiseLibs%2Fbetter-sqlite3%3E%0A-%20Prisma%207%20TS%2FWASM%20rewrite%20%E2%80%94%20architecture%20shift%20announcement%3A%20%3Chttps%3A%2F%2Fwww.prisma.io%2Fblog%2Ffrom-rust-to-typescript-a-new-chapter-for-prisma-orm%3E%0A-%20Prisma%207%20performance%20benchmarks%20after%20removing%20the%20Rust%20engine%3A%20%3Chttps%3A%2F%2Fwww.prisma.io%2Fblog%2Fprisma-orm-without-rust-latest-performance-benchmarks%3E%0A-%20Kysely%20migrations%20(built-in%20programmatic%20%60Migrator%60)%3A%20%3Chttps%3A%2F%2Fkysely.dev%2Fdocs%2Fmigrations%3E%0A-%20Kysely%20vs%20Drizzle%20comparison%20(typed%20query%20builders)%3A%20%3Chttps%3A%2F%2Fmarmelab.com%2Fblog%2F2025%2F06%2F26%2Fkysely-vs-drizzle.html%3E%0A-%20MikroORM%20competitive%20landscape%20(2026%20self-assessment)%3A%20%3Chttps%3A%2F%2Fgithub.com%2Fmikro-orm%2Fmikro-orm%2Fissues%2F7170%3E%0A-%202026%20TypeScript%20ORM%20survey%20%E2%80%94%20Encore%3A%20%3Chttps%3A%2F%2Fencore.cloud%2Fresources%2Ftypescript-orms%3E%0A-%202026%20Drizzle%20%2F%20Prisma%20%2F%20Kysely%20tier%20list%3A%20%3Chttps%3A%2F%2Fwww.pkgpulse.com%2Fblog%2Fprisma-vs-drizzle-vs-kysely-typescript-orm-tier-list%3E%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="adr-0001-replace-airtable-with-a-sql-database" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ADR 0001: Replace Airtable with a SQL database</h1>
+<ul>
+<li><strong>Status:</strong> Accepted</li>
+<li><strong>Date:</strong> 2026-04-16</li>
+<li><strong>Tracking issue:</strong> <a href="https://github.com/schellingboard/schellingboard/issues/367">#367</a></li>
+</ul>
+<h2 id="adr-0001-replace-airtable-with-a-sql-database-context" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
+<p>The app currently uses Airtable as its primary datastore. Airtable was a good
+fit when the project began: no backend to run, a usable admin UI for free, and
+quick schema tweaks through a spreadsheet. As the project has grown — and as
+this fork moves away from Vercel toward self-hosted Docker/VPS deployment —
+Airtable has become a net drag.</p>
+<p>Concrete problems we hit regularly:</p>
+<ul>
+<li><strong>No local instance.</strong> There is no way to spin up Airtable locally. Tests
+hit a shared remote base, which makes them slow, flaky and hard to isolate.
+Parallel test runs fight over the same rows.</li>
+<li><strong>Account and quota friction for contributors.</strong> Every developer needs an
+Airtable account. The free tier is quickly exhausted, which is a real
+barrier for new contributors and for anyone running the app on their own.</li>
+<li><strong>No programmatic schema migrations.</strong> Schema changes have to be made by
+hand in the Airtable UI. Our <code>migrations/versions/*.ts</code> files can only
+<em>document</em> what a human needs to click through; they cannot apply a
+change. <code>migrations/runner.ts</code> is largely an elaborate check that the
+human did the right thing, with a long error-message path for when they
+did not.</li>
+<li><strong>No automated deployment path.</strong> Standing up a new instance of the app
+requires manually creating a base, creating every table, and configuring
+every field. This is a significant barrier to self-hosting and has been
+raised by downstream users.</li>
+<li><strong>Rate limiting.</strong> Airtable enforces per-base request limits that bite
+under test load and under moderate real traffic.</li>
+<li><strong>Query model mismatch.</strong> We already work around Airtable’s <code>filterByFormula</code>
+by building query strings with untrusted input (see <code>db/votes.ts</code>,
+<code>db/guests.ts</code>, and the inline queries in <code>app/api/toggle-rsvp/route.ts</code>
+and <code>app/api/delete-session/route.ts</code>) — a shape that would be a straight
+SQL injection in any real database. Lookups and rollups (<code>Host name</code>, <code>Num RSVPs</code>, <code>votesCount</code>,
+<code>guestId</code>, <code>proposalId</code>, …) exist only to compensate for Airtable’s lack
+of joins.</li>
+<li><strong>Vendor lock-in to a service we are leaving.</strong> The move to self-hosting
+removes the main reason the project tolerated Airtable in the first place
+(not running infrastructure).</li>
+</ul>
+<p>Airtable’s remaining value for us is the admin UI — editing event phase
+dates, inspecting records, fixing bad data. That is a real loss, but it is
+scoped and can be replaced independently; see “Consequences” below.</p>
+<h2 id="adr-0001-replace-airtable-with-a-sql-database-decision" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
+<p>Replace Airtable with a SQL database accessed through an ORM. The initial
+and only supported target is <strong>SQLite</strong> via <strong>Drizzle ORM</strong>. The data
+layer is structured so that adding <strong>PostgreSQL</strong> later is a contained
+change (single schema file, single client module, no dialect-specific
+SQL bleeding into call sites), but we do not ship or test Postgres in
+this change.</p>
+<p>Rationale for each piece:</p>
+<ul>
+<li><strong>SQL, not another hosted document store.</strong> We need joins, transactions,
+real migrations, and a local-first story. SQL databases are the obvious
+shape for this data (events, sessions, guests, RSVPs, votes — all
+relational).</li>
+<li><strong>SQLite as the only target for now.</strong> Zero-dependency, file-based,
+trivial to set up locally and in CI, and perfectly adequate for the
+load this app sees. It makes self-hosting a <code>docker run</code> with a
+mounted volume.</li>
+<li><strong>Postgres-friendly structure, deferred implementation.</strong> Drizzle
+supports Postgres through a parallel ORM surface (<code>pg-core</code> vs
+<code>sqlite-core</code>), so adding it later should be a contained change: a
+second schema file, a branch in <code>db/client.ts</code>, a second migrations
+directory. We do not pay for that now — no second schema, no second
+CI job, no half-tested code path — but we avoid SQLite-only query
+idioms in call sites so the future port is contained, not a rewrite.
+We explicitly do not claim it will be <em>mechanical</em>: column types,
+defaults, JSON handling, <code>returning()</code> semantics, and boolean
+representation all differ between the two dialects and will need
+per-column review.</li>
+<li><strong>Drizzle ORM.</strong> TS-first schema as the single source of truth (no
+<code>prisma generate</code>-style codegen step), SQL-file migrations via
+<code>drizzle-kit</code>, small bundle, good fit for Next.js App Router, and —
+via the <code>better-sqlite3</code> driver — a natural match for the Node-based
+Docker/VPS deployment we are moving to. The cross-dialect story is a
+latent option, not something we use today. Known rough edges we
+accept: SQLite’s limited <code>ALTER TABLE</code> forces <code>drizzle-kit</code> into
+table-rebuild statements for some schema changes (documented, not
+hidden); the community and ecosystem are smaller than Prisma’s;
+type-checking is heavier than Prisma’s in very large schemas. None
+are blocking at this project’s size.</li>
+</ul>
+<h2 id="adr-0001-replace-airtable-with-a-sql-database-alternatives-considered" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Alternatives considered</h2>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-stay-on-airtable" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-stay-on-airtable" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Stay on Airtable</h3>
+<ul>
+<li><strong>Pros:</strong> Zero migration work. Keeps the free admin UI. No new moving
+parts in deployment.</li>
+<li><strong>Cons:</strong> All the problems listed in “Context” remain — and get worse as
+the test suite and contributor base grow. Blocks the self-hosting goal.</li>
+<li><strong>Verdict:</strong> Rejected. The reasons the project originally chose Airtable
+(no ops, free UI) no longer outweigh the friction.</li>
+</ul>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-another-spreadsheet-style-db-nocodb-baserow-supabase-tables-google-sheets" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-another-spreadsheet-style-db-nocodb-baserow-supabase-tables-google-sheets" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Another spreadsheet-style DB (NocoDB, Baserow, Supabase tables, Google Sheets)</h3>
+<ul>
+<li><strong>Pros:</strong> Preserves the “edit rows in a web UI” affordance. Some are
+self-hostable and free.</li>
+<li><strong>Cons:</strong> Adds a second service to run and back up. Still a coarse API
+on top of SQL — we would inherit the same lookup/rollup workarounds, or
+end up bypassing the UI and talking to the underlying Postgres directly,
+at which point we have chosen Postgres with extra steps. Specific
+notes: <strong>NocoDB</strong> relicensed from AGPLv3 to BSL 1.1 in late 2024, which
+is not an OSI-approved open-source license; <strong>Baserow</strong> targets
+spreadsheet-style end users rather than apps that just need a
+relational DB, and is comparatively heavy to run locally and in
+production.</li>
+<li><strong>Verdict:</strong> Rejected as a <em>primary</em> datastore, and not recommended as
+a bundled admin UI either. See “Consequences” for the alternatives we
+do recommend for ad-hoc data editing.</li>
+</ul>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-mongodb-other-document-db" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-mongodb-other-document-db" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>MongoDB / other document DB</h3>
+<ul>
+<li><strong>Pros:</strong> Schemaless feels closer to Airtable’s “just add a field”
+ergonomics.</li>
+<li><strong>Cons:</strong> Our data is clearly relational; we would reinvent joins and
+lose referential integrity. Another service to run. No win over SQL
+here.</li>
+<li><strong>Verdict:</strong> Rejected.</li>
+</ul>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-alternative-sql-databases" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-alternative-sql-databases" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Alternative SQL databases</h3>
+<ul>
+<li><strong>MySQL/MariaDB:</strong> Fine, but offers nothing the SQLite-now /
+Postgres-later path does not, and the TS ecosystem around SQLite and
+Postgres is noticeably better.</li>
+<li><strong>DuckDB:</strong> Excellent for analytics, wrong shape for an OLTP web app.</li>
+<li><strong>Verdict:</strong> Stick with SQLite, leave room for Postgres.</li>
+</ul>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-alternative-orms-query-layers" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-alternative-orms-query-layers" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Alternative ORMs / query layers</h3>
+<ul>
+<li><strong>Prisma.</strong> Mature, great DX, largest community and tooling ecosystem
+of the options here. Historically we would have rejected it on the
+Rust query-engine binary (large client, cold-start and bundling pain),
+but Prisma 7 (late 2025) replaced that with a pure TS/WASM Query
+Compiler, which closes most of that gap. Remaining cons vs Drizzle:
+<code>schema.prisma</code> is a separate DSL that duplicates the TS types and
+requires a <code>prisma generate</code> step to keep them in sync (a recurring
+source of “why are my types wrong?”); the client is still several
+times larger than Drizzle’s; and the <code>prisma migrate dev</code> / <code>deploy</code>
+workflow is heavier machinery than a single-file SQLite app needs.
+Rejected on fit, not on disqualification — Prisma is a credible
+alternative we could live with.</li>
+<li><strong>Kysely.</strong> Excellent type-safe SQL query builder. It <em>does</em> ship a
+programmatic migrator (<code>Kysely.Migrator</code>), so “no migration tool” is
+not quite fair — but it is deliberately not an ORM, so there is no
+schema DSL acting as source of truth. Table-row types must be
+hand-maintained or generated from the live database via a third-party
+codegen tool (e.g. <code>kysely-codegen</code>), and we would lose the automatic
+schema-diff → SQL flow that <code>drizzle-kit generate</code> gives us. Rejected
+as primary; reconsider if Drizzle disappoints, since Kysely’s
+query-builder ergonomics are genuinely good.</li>
+<li><strong>TypeORM.</strong> Decorator-heavy, weaker TS inference, relies on
+experimental decorators, and development pace has visibly slowed.
+Rejected.</li>
+<li><strong>MikroORM.</strong> Actively maintained and arguably the most “correct” TS
+ORM (Data Mapper + Unit of Work + Identity Map). But the entity /
+decorator / <code>em.flush()</code> model is heavier than this app needs, and
+the runtime footprint is larger than Drizzle’s. Rejected on fit.</li>
+<li><strong>Raw SQL + <code>better-sqlite3</code>/<code>postgres</code>.</strong> Minimal dependencies,
+maximum control. Tempting for a project this size, but we would
+hand-write types for every row shape and lose the cross-dialect
+story. Rejected; if Drizzle is ever removed, this is the fallback.</li>
+</ul>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-id-strategy" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-id-strategy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ID strategy</h3>
+<ul>
+<li><strong>Switch to plain nanoid.</strong> Chosen. This is a clean break: the project
+has no production deployment with durable external links to preserve,
+and keeping the <code>rec…</code> prefix would be cargo-culted Airtable vocabulary
+in a codebase that no longer uses Airtable.</li>
+<li><strong>Keep Airtable-style <code>rec…</code> IDs.</strong> Rejected — preserves no value once
+we accept a clean-break migration.</li>
+</ul>
+<h2 id="adr-0001-replace-airtable-with-a-sql-database-consequences" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-consequences-positive" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-consequences-positive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Positive</h3>
+<ul>
+<li>Tests run fully locally against a fresh SQLite file. No shared state,
+no rate limits, no secrets in CI.</li>
+<li>Contributors can clone, <code>bun install</code>, and run the app with no
+Airtable account.</li>
+<li>Real, automated schema migrations. <code>dev:migrate:up</code> actually applies
+changes instead of printing instructions.</li>
+<li>Self-hosting becomes <code>docker run</code> + a mounted volume. Deployment docs
+shrink.</li>
+<li><code>filterByFormula</code> string interpolation goes away; queries use
+parameterised Drizzle <code>where</code> clauses.</li>
+<li>Lookups/rollups collapse into ordinary joins; the fallback logic in
+<code>db/events.ts</code> and the error-distinguishing gymnastics in
+<code>migrations/runner.ts</code> are deleted.</li>
+</ul>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-consequences-negative-costs" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-consequences-negative-costs" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Negative / costs</h3>
+<ul>
+<li><strong>One-time migration effort.</strong> Every file in <code>db/</code> and every API route
+that calls <code>getBase()</code> has to be rewritten.</li>
+<li><strong>Loss of the free admin UI.</strong> This is the real cost. Mitigations, in
+order of preference: (a) a minimal custom <code>/admin</code> route in the Next.js
+app for the handful of fields that actually need editing (event phase
+dates, occasional record fixes); (b) for operators who want generic
+row-level access, any standard SQLite tool works against the database
+file — e.g. <code>sqlite3</code> CLI, sqlite-web, DB Browser for SQLite, or
+DBeaver. Tracked in <a href="https://github.com/schellingboard/schellingboard/issues/368">#368</a>.</li>
+<li><strong>Operators now run a database.</strong> For SQLite this is “a file in a
+volume” and is close to free.</li>
+<li><strong>No live multi-user editing of raw data.</strong> Airtable let multiple admins
+poke at rows simultaneously. In practice this has not been used much,
+and the replacement admin UI can cover the cases that matter.</li>
+<li><strong>Backups are now our problem.</strong> Document <code>sqlite3 .backup</code> (or a
+volume snapshot) in the deploy docs.</li>
+</ul>
+<h3 id="adr-0001-replace-airtable-with-a-sql-database-consequences-neutral-follow-ups" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-consequences-neutral-follow-ups" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Neutral / follow-ups</h3>
+<ul>
+<li><code>docs/SCHEMA.md</code> is deleted; <code>db/schema.ts</code> becomes the source of truth.</li>
+<li>The existing <code>migrations/versions/*.ts</code> files and
+<code>migrations/runner.ts</code> / <code>schema-validator.ts</code> are deleted. Their
+only purpose was documenting Airtable schema changes a human had to
+apply by hand; git history preserves them for anyone who wants the
+archaeology. The new Drizzle migration history starts from the
+current-state schema as a single initial migration — we do not
+replay the Airtable-era migration sequence.</li>
+<li>The admin backend replacement is explicitly out of scope for this ADR
+and is tracked in <a href="https://github.com/schellingboard/schellingboard/issues/368">#368</a>.</li>
+</ul>
+<h2 id="adr-0001-replace-airtable-with-a-sql-database-references" class="docmd-heading"><a href="#adr-0001-replace-airtable-with-a-sql-database-references" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>References</h2>
+<ul>
+<li>Issue <a href="https://github.com/schellingboard/schellingboard/issues/367">#367</a></li>
+<li>Drizzle ORM: <a href="https://orm.drizzle.team">https://orm.drizzle.team</a></li>
+<li>Drizzle Kit migration system (SQLite <code>ALTER TABLE</code> limitations → table-rebuild statements): <a href="https://deepwiki.com/drizzle-team/drizzle-orm/3.2-migration-system">https://deepwiki.com/drizzle-team/drizzle-orm/3.2-migration-system</a></li>
+<li><code>better-sqlite3</code>: <a href="https://github.com/WiseLibs/better-sqlite3">https://github.com/WiseLibs/better-sqlite3</a></li>
+<li>Prisma 7 TS/WASM rewrite — architecture shift announcement: <a href="https://www.prisma.io/blog/from-rust-to-typescript-a-new-chapter-for-prisma-orm">https://www.prisma.io/blog/from-rust-to-typescript-a-new-chapter-for-prisma-orm</a></li>
+<li>Prisma 7 performance benchmarks after removing the Rust engine: <a href="https://www.prisma.io/blog/prisma-orm-without-rust-latest-performance-benchmarks">https://www.prisma.io/blog/prisma-orm-without-rust-latest-performance-benchmarks</a></li>
+<li>Kysely migrations (built-in programmatic <code>Migrator</code>): <a href="https://kysely.dev/docs/migrations">https://kysely.dev/docs/migrations</a></li>
+<li>Kysely vs Drizzle comparison (typed query builders): <a href="https://marmelab.com/blog/2025/06/26/kysely-vs-drizzle.html">https://marmelab.com/blog/2025/06/26/kysely-vs-drizzle.html</a></li>
+<li>MikroORM competitive landscape (2026 self-assessment): <a href="https://github.com/mikro-orm/mikro-orm/issues/7170">https://github.com/mikro-orm/mikro-orm/issues/7170</a></li>
+<li>2026 TypeScript ORM survey — Encore: <a href="https://encore.cloud/resources/typescript-orms">https://encore.cloud/resources/typescript-orms</a></li>
+<li>2026 Drizzle / Prisma / Kysely tier list: <a href="https://www.pkgpulse.com/blog/prisma-vs-drizzle-vs-kysely-typescript-orm-tier-list">https://www.pkgpulse.com/blog/prisma-vs-drizzle-vs-kysely-typescript-orm-tier-list</a></li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database" class="toc-link">ADR 0001: Replace Airtable with a SQL database</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-context" class="toc-link">Context</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-decision" class="toc-link">Decision</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered" class="toc-link">Alternatives considered</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-stay-on-airtable" class="toc-link">Stay on Airtable</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-another-spreadsheet-style-db-nocodb-baserow-supabase-tables-google-sheets" class="toc-link">Another spreadsheet-style DB (NocoDB, Baserow, Supabase tables, Google Sheets)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-mongodb-other-document-db" class="toc-link">MongoDB / other document DB</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-alternative-sql-databases" class="toc-link">Alternative SQL databases</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-alternative-orms-query-layers" class="toc-link">Alternative ORMs / query layers</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-alternatives-considered-id-strategy" class="toc-link">ID strategy</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-consequences" class="toc-link">Consequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-consequences-positive" class="toc-link">Positive</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-consequences-negative-costs" class="toc-link">Negative / costs</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-consequences-neutral-follow-ups" class="toc-link">Neutral / follow-ups</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0001-replace-airtable-with-a-sql-database-references" class="toc-link">References</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789885892000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789885892000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: move developers documentation to /docs/dev/">docs: move developers documentation t...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1785058311000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="rebrand: update schelling-board to schellingboard in URLs and package name">rebrand: update schelling-board to sc...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1778405857000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="rebrand: rename project to SchellingBoard">rebrand: rename project to SchellingB...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1778359081000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

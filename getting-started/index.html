@@ -1,0 +1,1480 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      Getting started : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/getting-started/">
+<meta property="og:title" content="Getting started - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/getting-started/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Getting started - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/getting-started.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../" class="logo-link">
+              <img
+                src="../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../getting-started/" class="active "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Getting started
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Getting%20started%0A%0A%23%23%20Technology%20stack%0A%0A-%20**Framework**%3A%20Next.js%2016%20(App%20Router)%0A-%20**Language**%3A%20TypeScript%20(strict%20mode)%0A-%20**Styling**%3A%20Tailwind%20CSS%0A-%20**Database**%3A%20SQLite%20(better-sqlite3)%20with%20Drizzle%20ORM%0A-%20**Testing**%3A%20Vitest%20and%20Playwright%0A-%20**Package%20manager**%3A%20Bun%0A%0AWhere%20things%20live%3A%0A%0A-%20**Frontend**%3A%20React%20components%20in%20%60app%2F%60%20using%20App%20Router%0A-%20**Database%20layer**%3A%20%60db%2F%60%20%E2%80%94%20%60schema.ts%60%2C%20%60container.ts%60%2C%20repositories%20in%20%60db%2Frepositories%2Fsqlite%2F%60%0A-%20**API%20routes**%3A%20Server%20actions%20in%20%60app%2Factions%2F%60%2C%20API%20routes%20in%20%60app%2Fapi%2F%60%0A-%20**Utils**%3A%20Shared%20utilities%20in%20%60utils%2F%60%0A-%20**Migrations**%3A%20Drizzle-managed%20SQL%20migrations%20in%20%60drizzle%2F%60%0A%0AThe%20design%20the%20codebase%20is%20moving%20towards%20is%20written%20up%20separately%20in%0A%5BTarget%20architecture%5D(target-architecture%2FREADME.md)%3B%20the%20rules%20the%20build%0Aenforces%20today%20are%20in%20%5BArchitecture%20rules%5D(architecture-rules.md).%0A%0A%23%23%20Prerequisites%0A%0A-%20**Bun**%20(package%20manager%20and%20script%20runner)%0A-%20**Node.js%2022**%20(or%20higher)%2C%20installed%20and%20on%20your%20%60PATH%60.%20Although%20Bun%20runs%0A%20%20the%20app%2C%20the%20tooling%20shells%20out%20to%20a%20real%20%60node%60%20%E2%80%94%20%60bun%20x%20tsx%60%20for%0A%20%20migrations%2Fscripts%2C%20and%20Vitest&#039;s%20test%20workers%20%E2%80%94%20so%20%60node%60%20must%20be%20directly%20on%0A%20%20your%20%60PATH%60.%20Check%20with%20%60node%20-v%60.%0A%0A%23%23%20Setup%0A%0A1.%20Clone%20the%20repo%20and%20install%20dependencies%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20install%0A%20%20%20%60%60%60%0A%0A2.%20(Optional)%20Create%20%60.env.dev.local%60%20to%20customize%20environment%20variables%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20DATABASE_URL%3Dfile%3A.%2Fdata.db%0A%20%20%20SITE_PASSWORD%3Dyour-password%0A%20%20%20ADMIN_PASSWORD%3Dyour-admin-password%0A%20%20%20AUTH_SECRET%3D%3Cgenerated%20via%20openssl%20rand%20-base64%2032%3E%0A%20%20%20%60%60%60%0A%0A%20%20%20See%20%5BEnvironment%20variables%5D(%23environment-variables)%20below%20for%20all%20options.%0A%20%20%20Note%3A%20%60AUTH_SECRET%60%20is%20required%20only%20when%20%60SITE_PASSWORD%60%20or%0A%20%20%20%60ADMIN_PASSWORD%60%20is%20set%20or%20guests%20protect%20their%20name%20(it%20signs%20their%20session%0A%20%20%20cookies).%20Omitting%20this%20file%20uses%20sensible%20defaults.%0A%0A3.%20(Optional)%20Seed%20the%20database%20with%20test%20data%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev-db-seed%0A%20%20%20%60%60%60%0A%0A%20%20%20This%20seeds%20the%20%60large%60%20profile%3A%20the%20hand-curated%20fixtures%20the%20E2E%20suite%0A%20%20%20uses%20plus%20a%20few%20hundred%20generated%20guests%2C%20proposals%20and%20sessions%20for%0A%20%20%20realistic%20manual%20testing.%20%60SEED_PROFILE%3Dsmall%20make%20dev-db-seed%60%20seeds%20only%0A%20%20%20the%20curated%20fixtures%20(what%20the%20E2E%20suite%20always%20runs%20against).%0A%0A4.%20Start%20the%20dev%20server%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev%0A%20%20%20%60%60%60%0A%0A%20%20%20Open%20%5Bhttp%3A%2F%2Flocalhost%3A3000%5D(http%3A%2F%2Flocalhost%3A3000)%20in%20your%20browser.%0A%0A%23%23%20Development%20commands%0A%0ARun%20%60make%60%20to%20see%20all%20available%20commands%3A%0A%0A%60%60%60bash%0Amake%20%20%20%20%20%20%20%20%20%20%23%20List%20all%20commands%0Amake%20dev%20%20%20%20%20%20%23%20Start%20dev%20server%0Amake%20test%20%20%20%20%20%23%20Run%20tests%0Amake%20lint%20%20%20%20%20%23%20Lint%20code%0Amake%20format%20%20%20%23%20Format%20code%0A%60%60%60%0A%0ABefore%20committing%20or%20pushing%2C%20run%3A%0A%0A%60%60%60bash%0Amake%20precommit%20%20%23%20Format%2C%20lint%2C%20type%20check%2C%20and%20run%20all%20tests%20(incl.%20e2e)%0A%60%60%60%0A%0A%23%23%20Admin%20UI%0A%0AA%20web%20admin%20UI%20is%20available%20at%20%60%2Fadmin%60%20for%20managing%20all%20core%20records%3A%20events%0A(basic%20info%2C%20phases%2C%20days)%2C%20the%20global%20pools%20of%20users%20and%20locations%2C%20event%E2%86%94guest%0Aand%20event%E2%86%94location%20assignments%2C%20moderation%20of%20proposals%2C%20sessions%2C%20and%20RSVPs%2C%20and%0Asite%20settings%20(title%2C%20description%2C%20and%20the%20optional%20venue%20map).%0AIt%20requires%20%60ADMIN_PASSWORD%60%20(and%20%60AUTH_SECRET%60)%20to%20be%20set%3B%20without%0A%60ADMIN_PASSWORD%60%20the%20admin%20routes%20are%20disabled%20and%20return%20a%20diagnostic%20message%0Aexplaining%20how%20to%20enable%20them.%20It%20is%20fully%20separate%20from%20the%20normal%20user%20UI%3A%20it%0Ahas%20its%20own%20layout%20and%20only%20requires%20the%20admin%20password%20(not%20%60SITE_PASSWORD%60).%0A%0A%23%23%20Dev%20fake%20clock%0A%0ASet%20%60SB_ENABLE_DEV_TOOLS%3D1%60%20and%20visit%20any%20event%20page%20with%20%60%3Fdev%3D1%60%20to%20get%20a%0Atoolbar%20for%20time-traveling%20the%20app%20(real%20time%20%2F%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%20%60%2B7d%60%20%2F%20pick%20a%0Adate)%2C%20so%20you%20can%20walk%20an%20event%20through%20its%20proposal%20%E2%86%92%20voting%20%E2%86%92%20scheduling%0Aphases%20without%20editing%20dates%20in%20the%20database.%20It&#039;s%20a%20request-scoped%20cookie%2C%0Ainert%20unless%20the%20env%20var%20is%20set%20%E2%80%94%20safe%20to%20enable%20on%20a%20shared%20staging%2Fdemo%0Ainstance.%20See%20%5BADR%200004%5D(adr%2F0004-dev-fake-clock.md)%20for%20details.%0A%0A%23%23%20Environment%20variables%0A%0ASee%0A%5BConfiguration%5D(https%3A%2F%2Fdocs.schellingboard.org%2Fself-hosting%2Fconfiguration%2F%23environment-variables)%0Afor%20the%20full%20list%20and%20descriptions.%0A%0AFor%20local%20development%2C%20%60DATABASE_URL%60%20is%20the%20only%20required%20variable%20%E2%80%94%20unlike%0ADocker%2C%20no%20default%20is%20provided%20(e.g.%20%60file%3A.%2Fdata.db%60).%20%60AUTH_SECRET%60%20is%0Aadditionally%20required%20when%20%60SITE_PASSWORD%60%20or%20%60ADMIN_PASSWORD%60%20is%20set%20or%0Aguests%20protect%20their%20name%20(it%20signs%20their%20session%20cookies)%3B%20generate%20one%0Awith%3A%0A%0A%60%60%60bash%0Aopenssl%20rand%20-base64%2032%0A%60%60%60%0A%0A%60NEXT_PUBLIC_%60%20variables%20are%20exposed%20to%20the%20browser%3B%20all%20others%20are%20server-side%20only.%0A%0AA%20new%20variable%20a%20self-hoster%20can%20set%20has%20to%20reach%20three%20files%3A%20the%20reference%0Atable%20above%2C%20%60docker-compose.yml%60%20(which%20forwards%20it%20into%20the%20container)%20and%0A%60.env.docker.example%60%20(where%20they%20fill%20it%20in).%20Nothing%20runs%20%60docker-compose.yml%60%0A%E2%80%94%20it%20is%20the%20one%20file%20here%20whose%20only%20user%20is%20a%20stranger%20%E2%80%94%20so%0A%60tests%2Funit%2Fdocker-compose-env.test.ts%60%20compares%20the%20three%20and%20names%20whichever%0Avariable%20fell%20out%20of%20step.%20If%20a%20variable%20deliberately%20doesn&#039;t%20go%20through%0Acompose%2C%20record%20the%20reason%20in%20that%20test%20instead.%0A%0A%23%23%20Running%20multiple%20instances%0A%0ASeveral%20clones%20or%20%60jj%60%20workspaces%20on%20one%20machine%20compete%20for%20the%20same%20ports.%0AGive%20each%20clone%20explicit%2C%20distinct%20ports%20in%20%60.env.dev.local%60%20and%0A%60.env.test.local%60%20%E2%80%94%20see%20%5BRunning%20multiple%20instances%5D(multiple-instances.md)%20for%0Awhich%20variable%20does%20what%20and%20a%20worked%20two-clone%20example.%0A%0A%23%23%20Database%20migrations%0A%0A%60make%20dev-migrate-create%60%20(%60drizzle-kit%20generate%60)%20diffs%20%60db%2Fschema.ts%60%20against%0Athe%20latest%20snapshot%20in%20%60drizzle%2Fmeta%2F%60%20and%20writes%20a%20new%20migration%20plus%20updated%0Ameta%20files.%20When%20two%20branches%20each%20add%20one%2C%20the%20meta%20files%20conflict%20%E2%80%94%20don&#039;t%0Ahand-edit%20them%2C%20regenerate%20as%20described%20in%0A%5BDatabase%20migrations%5D(migrations.md%23resolving-migration-conflicts).%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Getting started</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="getting-started" class="docmd-heading"><a href="#getting-started" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Getting started</h1>
+<h2 id="getting-started-technology-stack" class="docmd-heading"><a href="#getting-started-technology-stack" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Technology stack</h2>
+<ul>
+<li><strong>Framework</strong>: Next.js 16 (App Router)</li>
+<li><strong>Language</strong>: TypeScript (strict mode)</li>
+<li><strong>Styling</strong>: Tailwind CSS</li>
+<li><strong>Database</strong>: SQLite (better-sqlite3) with Drizzle ORM</li>
+<li><strong>Testing</strong>: Vitest and Playwright</li>
+<li><strong>Package manager</strong>: Bun</li>
+</ul>
+<p>Where things live:</p>
+<ul>
+<li><strong>Frontend</strong>: React components in <code>app/</code> using App Router</li>
+<li><strong>Database layer</strong>: <code>db/</code> — <code>schema.ts</code>, <code>container.ts</code>, repositories in <code>db/repositories/sqlite/</code></li>
+<li><strong>API routes</strong>: Server actions in <code>app/actions/</code>, API routes in <code>app/api/</code></li>
+<li><strong>Utils</strong>: Shared utilities in <code>utils/</code></li>
+<li><strong>Migrations</strong>: Drizzle-managed SQL migrations in <code>drizzle/</code></li>
+</ul>
+<p>The design the codebase is moving towards is written up separately in
+<a href="../target-architecture/">Target architecture</a>; the rules the build
+enforces today are in <a href="../architecture-rules/">Architecture rules</a>.</p>
+<h2 id="getting-started-prerequisites" class="docmd-heading"><a href="#getting-started-prerequisites" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Prerequisites</h2>
+<ul>
+<li><strong>Bun</strong> (package manager and script runner)</li>
+<li><strong>Node.js 22</strong> (or higher), installed and on your <code>PATH</code>. Although Bun runs
+the app, the tooling shells out to a real <code>node</code> — <code>bun x tsx</code> for
+migrations/scripts, and Vitest’s test workers — so <code>node</code> must be directly on
+your <code>PATH</code>. Check with <code>node -v</code>.</li>
+</ul>
+<h2 id="getting-started-setup" class="docmd-heading"><a href="#getting-started-setup" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Setup</h2>
+<ol>
+<li><p>Clone the repo and install dependencies:</p>
+<pre class="hljs"><code class="language-bash">make install
+</code></pre>
+</li>
+<li><p>(Optional) Create <code>.env.dev.local</code> to customize environment variables:</p>
+<pre class="hljs"><code class="language-bash">DATABASE_URL<span class="hljs-operator">=</span>file<span class="hljs-operator">:</span>.<span class="hljs-operator">/</span>data.<span class="hljs-attr">db</span>
+SITE_PASSWORD<span class="hljs-operator">=</span>your<span class="hljs-operator">-</span>password
+ADMIN_PASSWORD<span class="hljs-operator">=</span>your<span class="hljs-operator">-</span>admin<span class="hljs-operator">-</span>password
+AUTH_SECRET<span class="hljs-operator">=&lt;</span>generated via openssl rand <span class="hljs-operator">-</span>base64 <span class="hljs-number">32</span><span class="hljs-operator">&gt;</span>
+</code></pre>
+<p>See <a href="#environment-variables">Environment variables</a> below for all options.
+Note: <code>AUTH_SECRET</code> is required only when <code>SITE_PASSWORD</code> or
+<code>ADMIN_PASSWORD</code> is set or guests protect their name (it signs their session
+cookies). Omitting this file uses sensible defaults.</p>
+</li>
+<li><p>(Optional) Seed the database with test data:</p>
+<pre class="hljs"><code class="language-bash">make dev<span class="hljs-operator">-</span>db<span class="hljs-operator">-</span>seed
+</code></pre>
+<p>This seeds the <code>large</code> profile: the hand-curated fixtures the E2E suite
+uses plus a few hundred generated guests, proposals and sessions for
+realistic manual testing. <code>SEED_PROFILE=small make dev-db-seed</code> seeds only
+the curated fixtures (what the E2E suite always runs against).</p>
+</li>
+<li><p>Start the dev server:</p>
+<pre class="hljs"><code class="language-bash">make dev
+</code></pre>
+<p>Open <a href="http://localhost:3000">http://localhost:3000</a> in your browser.</p>
+</li>
+</ol>
+<h2 id="getting-started-development-commands" class="docmd-heading"><a href="#getting-started-development-commands" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Development commands</h2>
+<p>Run <code>make</code> to see all available commands:</p>
+<pre class="hljs"><code class="language-bash">make          <span class="hljs-comment"># List all commands</span>
+make dev      <span class="hljs-comment"># Start dev server</span>
+make test     <span class="hljs-comment"># Run tests</span>
+make lint     <span class="hljs-comment"># Lint code</span>
+make format   <span class="hljs-comment"># Format code</span>
+</code></pre>
+<p>Before committing or pushing, run:</p>
+<pre class="hljs"><code class="language-bash">make precommit  <span class="hljs-comment"># Format, lint, type check, and run all tests (incl. e2e)</span>
+</code></pre>
+<h2 id="getting-started-admin-ui" class="docmd-heading"><a href="#getting-started-admin-ui" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Admin UI</h2>
+<p>A web admin UI is available at <code>/admin</code> for managing all core records: events
+(basic info, phases, days), the global pools of users and locations, event↔guest
+and event↔location assignments, moderation of proposals, sessions, and RSVPs, and
+site settings (title, description, and the optional venue map).
+It requires <code>ADMIN_PASSWORD</code> (and <code>AUTH_SECRET</code>) to be set; without
+<code>ADMIN_PASSWORD</code> the admin routes are disabled and return a diagnostic message
+explaining how to enable them. It is fully separate from the normal user UI: it
+has its own layout and only requires the admin password (not <code>SITE_PASSWORD</code>).</p>
+<h2 id="getting-started-dev-fake-clock" class="docmd-heading"><a href="#getting-started-dev-fake-clock" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Dev fake clock</h2>
+<p>Set <code>SB_ENABLE_DEV_TOOLS=1</code> and visit any event page with <code>?dev=1</code> to get a
+toolbar for time-traveling the app (real time / <code>+1h</code> / <code>+1d</code> / <code>+7d</code> / pick a
+date), so you can walk an event through its proposal → voting → scheduling
+phases without editing dates in the database. It’s a request-scoped cookie,
+inert unless the env var is set — safe to enable on a shared staging/demo
+instance. See <a href="../adr/0004-dev-fake-clock/">ADR 0004</a> for details.</p>
+<h2 id="getting-started-environment-variables" class="docmd-heading"><a href="#getting-started-environment-variables" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Environment variables</h2>
+<p>See
+<a href="https://docs.schellingboard.org/self-hosting/configuration/#environment-variables">Configuration</a>
+for the full list and descriptions.</p>
+<p>For local development, <code>DATABASE_URL</code> is the only required variable — unlike
+Docker, no default is provided (e.g. <code>file:./data.db</code>). <code>AUTH_SECRET</code> is
+additionally required when <code>SITE_PASSWORD</code> or <code>ADMIN_PASSWORD</code> is set or
+guests protect their name (it signs their session cookies); generate one
+with:</p>
+<pre class="hljs"><code class="language-bash">openssl rand <span class="hljs-operator">-</span>base64 <span class="hljs-number">32</span>
+</code></pre>
+<p><code>NEXT_PUBLIC_</code> variables are exposed to the browser; all others are server-side only.</p>
+<p>A new variable a self-hoster can set has to reach three files: the reference
+table above, <code>docker-compose.yml</code> (which forwards it into the container) and
+<code>.env.docker.example</code> (where they fill it in). Nothing runs <code>docker-compose.yml</code>
+— it is the one file here whose only user is a stranger — so
+<code>tests/unit/docker-compose-env.test.ts</code> compares the three and names whichever
+variable fell out of step. If a variable deliberately doesn’t go through
+compose, record the reason in that test instead.</p>
+<h2 id="getting-started-running-multiple-instances" class="docmd-heading"><a href="#getting-started-running-multiple-instances" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Running multiple instances</h2>
+<p>Several clones or <code>jj</code> workspaces on one machine compete for the same ports.
+Give each clone explicit, distinct ports in <code>.env.dev.local</code> and
+<code>.env.test.local</code> — see <a href="../multiple-instances/">Running multiple instances</a> for
+which variable does what and a worked two-clone example.</p>
+<h2 id="getting-started-database-migrations" class="docmd-heading"><a href="#getting-started-database-migrations" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Database migrations</h2>
+<p><code>make dev-migrate-create</code> (<code>drizzle-kit generate</code>) diffs <code>db/schema.ts</code> against
+the latest snapshot in <code>drizzle/meta/</code> and writes a new migration plus updated
+meta files. When two branches each add one, the meta files conflict — don’t
+hand-edit them, regenerate as described in
+<a href="../migrations/#resolving-migration-conflicts">Database migrations</a>.</p>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Overview
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../coding-guidelines/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Coding guidelines
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#getting-started" class="toc-link">Getting started</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-technology-stack" class="toc-link">Technology stack</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-prerequisites" class="toc-link">Prerequisites</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-setup" class="toc-link">Setup</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-development-commands" class="toc-link">Development commands</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-admin-ui" class="toc-link">Admin UI</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-dev-fake-clock" class="toc-link">Dev fake clock</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-environment-variables" class="toc-link">Environment variables</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-running-multiple-instances" class="toc-link">Running multiple instances</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#getting-started-database-migrations" class="toc-link">Database migrations</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789892736000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789892736000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: split CONTRIBUTING.md into developer-docs chapters">docs: split CONTRIBUTING.md into deve...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789892736000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

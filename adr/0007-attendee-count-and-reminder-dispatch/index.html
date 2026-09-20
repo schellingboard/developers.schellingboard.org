@@ -1,0 +1,1593 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      ADR 0007: Attendee count storage and in-process reminder dispatch : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/">
+<meta property="og:title" content="ADR 0007: Attendee count storage and in-process reminder dispatch - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ADR 0007: Attendee count storage and in-process reminder dispatch - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/adr/0007-attendee-count-and-reminder-dispatch.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  ADR 0007: Attendee count storage and in-process reminder dispatch
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200007%3A%20Attendee%20count%20storage%20and%20in-process%20reminder%20dispatch%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-08-25%2C%20amended%202026-09-02%20(see%20%5BAmendment%5D(%23amendment-2026-09-02--the-in-app-channel))%0A%0A%23%23%20Context%0A%0AHosts%20record%20how%20many%20people%20attended%20a%20session%20of%20theirs%20once%20it%20has%20finished%2C%0Aand%20are%20reminded%20to%20do%20so%20by%20two%20emails%3A%20a%20heads-up%20an%20hour%20before%20the%20session%0Astarts%2C%20and%20a%20follow-up%20fifteen%20minutes%20after%20it%20ends.%0A%0AThree%20parts%20of%20that%20constrain%20future%20work%20well%20beyond%20the%20feature%20itself%2C%20and%0Anone%20of%20them%20is%20covered%20by%20an%20existing%20ADR%3A%0A%0A1.%20The%20emails%20must%20go%20out%20unattended%2C%20which%20means%20this%20codebase%20acquires%20its%0A%20%20%20first%20background%20job.%0A2.%20Sessions%20get%20rescheduled.%20A%20reminder%20that%20was%20already%20sent%20for%20one%20schedule%0A%20%20%20may%20be%20owed%20again%20for%20another%2C%20and%20must%20never%20be%20sent%20twice%20for%20the%20same%0A%20%20%20one%20%E2%80%94%20including%20when%20two%20dispatch%20runs%20overlap.%0A3.%20The%20count%20is%20host-only%20data%20living%20on%20a%20record%20that%20is%20otherwise%20published%0A%20%20%20to%20every%20visitor&#039;s%20browser.%0A%0A%23%23%20Decision%0A%0A%23%23%23%201.%20Dispatch%20runs%20in-process%2C%20on%20an%20interval%20from%20%60instrumentation.ts%60%0A%0A%60utils%2Freminder-scheduler.ts%60%20starts%20a%20%60setInterval%60%20from%20%60register()%60%20in%0A%60instrumentation.ts%60%2C%20guarded%20to%20%60NEXT_RUNTIME%20%3D%3D%3D%20%22nodejs%22%60%20and%20stored%20on%0A%60globalThis%60%20%E2%80%94%20the%20pattern%20%60utils%2Fmailer.ts%60%20already%20uses%2C%20for%20the%20reason%20in%0A%5Bvercel%2Fnext.js%2368572%5D(https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Fdiscussions%2F68572).%0AThe%20period%20comes%20from%20%60REMINDER_DISPATCH_INTERVAL_MS%60%20(default%20%6060000%60%3B%20%600%60%0Adisables%20the%20scheduler%20entirely).%20The%20timer%20is%20%60unref()%60d%2C%20an%20in-process%20guard%0Askips%20a%20tick%20while%20the%20previous%20run%20is%20still%20in%20flight%2C%20and%20a%20throw%20from%20a%20run%0Ais%20logged%20and%20swallowed.%0A%0A%60instrumentation.ts%60%20is%20the%20only%20hook%20that%20runs%20once%20per%20server%20process%0Aregardless%20of%20traffic%2C%20and%20the%20mailer%20is%20initialised%20there%20already%3A%20the%20two%20have%0Aidentical%20lifecycles%20and%20the%20same%20%22Node%20runtime%20only%22%20constraint.%0A%0ARejected%3A%0A%0A-%20**External%20cron%20or%20a%20systemd%20timer%20hitting%20an%20API%20route.**%20It%20puts%20setup%20work%0A%20%20on%20every%20self-hoster%20and%20needs%20an%20authenticated%20trigger%20endpoint%20%E2%80%94%20new%20attack%0A%20%20surface%20for%20no%20gain.%0A-%20**Next.js%20%60after()%60%20on%20ordinary%20requests.**%20Request-driven%3A%20an%20event%20with%20no%0A%20%20overnight%20traffic%20would%20send%20nothing%20until%20someone%20visited%2C%20which%20is%20exactly%0A%20%20when%20hosts%20are%20asleep%20and%20reminders%20matter.%0A-%20**A%20cron%20library%20(%60node-cron%60%2C%20%60croner%60).**%20A%20dependency%20to%20express%20%22every%2060%0A%20%20seconds%22.%0A%0AConsequence%3A%20behind%20a%20load%20balancer%20every%20instance%20ticks.%20That%20is%20safe%20because%0Aof%20decision%202%2C%20which%20concurrency-safety%20requires%20anyway.%0A%0ABecause%20the%20interval%20is%20disabled%20outright%20in%20both%20E2E%20tiers%20%E2%80%94%20a%20live%20tick%20against%0Athe%20wall-clock-relative%20seed%20data%20drops%20stray%20mail%20into%20the%20mailbox%20the%20delivery%0Aassertions%20search%20%E2%80%94%20the%20dev%20toolbar%20carries%20a%20**Send%20due%20reminders**%20button%2C%20and%0A%60app%2Factions%2Fdev-reminders.ts%60%20refuses%20unless%20%60SB_ENABLE_DEV_TOOLS%60%20is%20set.%20It%0Aruns%20one%20tick%20against%20the%20dev%20clock%2C%20which%20is%20what%20lets%20the%20E2E%20suite%20reach%20a%0Areal%20follow-up%20email%20and%20follow%20the%20link%20out%20of%20it%20(SC-001)%20rather%20than%0Ahand-building%20a%20%60%3FviewSession%3D%60%20URL.%20Nothing%20about%20it%20exists%20on%20a%20real%0Adeployment.%0A%0A%23%23%23%202.%20Reminder%20state%20is%20keyed%20by%20the%20reminder&#039;s%20due%20time%2C%20not%20a%20sent%20flag%0A%0AOne%20row%20per%20%60(session_id%2C%20guest_id%2C%20kind)%60%20in%20%60session_reminders%60%2C%20carrying%20the%0Adue%20time%20it%20was%20last%20claimed%20for.%20That%20single%20column%20is%20simultaneously%20the%0Aidempotency%20key%20and%20the%20re-arm%20signal%3A%0A%0A-%20an%20unchanged%20schedule%20computes%20the%20same%20due%20time%2C%20so%20a%20repeated%20or%20concurrent%0A%20%20run%20finds%20it%20already%20sent%20and%20skips%3B%0A-%20a%20moved%20start%20computes%20a%20different%20heads-up%20due%20time%20and%20re-arms%20only%20that%0A%20%20kind%3B%20a%20moved%20end%20re-arms%20only%20the%20follow-up%3B%20editing%20the%20title%20or%20the%20host%0A%20%20list%20moves%20neither.%0A%0ANo%20boolean%20%22sent%22%20flag%20can%20express%20that%20without%20also%20storing%20the%20time%20it%20was%0Asent%20for.%0A%0ADispatch%20**claims%20before%20sending**%3A%20one%20write%20transaction%20sets%20the%20due%20time%20and%0A%60sent_at%60%2C%20and%20reports%20whether%20this%20process%20won.%20Only%20one%20transaction%20can%20flip%0A%60sent_at%60%20from%20NULL%20for%20a%20given%20due%20time%2C%20and%20%60better-sqlite3%60%20serialises%0Awriters%20through%20SQLite&#039;s%20own%20write%20lock%2C%20so%20overlapping%20ticks%20cannot%20both%20send.%0A%0A**The%2090-minute%20reschedule%20guard**%20compares%20the%20new%20displayed%20start%20against%20the%0Adue%20time%20the%20host&#039;s%20existing%20heads-up%20was%20sent%20for%3A%20it%20is%20suppressed%20when%20that%0Aemail%20went%20out%2090%20minutes%20or%20less%20before%20the%20new%20start%2C%20because%20it%20is%20still%20a%0Auseful%20warning%20for%20the%20new%20slot.%20%60research.md%60%20%C2%A75%20sketched%20the%20guard%20as%0A%60now%20%3E%3D%20displayedStart%20%E2%88%92%2090%20min%60%2C%20which%20does%20not%20work%20%E2%80%94%20a%20heads-up%20is%20only%20ever%0Adue%20from%20%60displayedStart%20%E2%88%92%2060%20min%60%20onwards%2C%20so%20that%20condition%20holds%20every%20time%0Ait%20is%20evaluated%20and%20would%20suppress%20every%20re-send%2C%20including%20the%0Athree-hours-later%20move%20the%20spec%20requires%20to%20re-arm.%0A%0A**Accepted%20limitation%3A**%20a%20process%20that%20crashes%20between%20the%20claim%20and%20the%20send%0Adrops%20that%20reminder%20for%20that%20due%20time.%20The%20window%20is%20milliseconds%20and%20the%0Afailure%20mode%20is%20one%20missing%20email%20rather%20than%20a%20duplicate%20%E2%80%94%20the%20opposite%0Atrade-off%2C%20send-then-mark%2C%20produces%20duplicates%20on%20the%20same%20crash%2C%20which%20is%20the%0Aone%20outcome%20the%20spec%20forbids.%20A%20lease%20column%20with%20an%20expiry%20that%20a%20later%20tick%0Areclaims%20would%20close%20the%20window%2C%20and%20is%20more%20machinery%20than%20a%20single-process%0Aself-hosted%20app%20warrants.%20Recorded%20here%20rather%20than%20left%20to%20be%20rediscovered.%0A%0A%23%23%23%203.%20The%20attendee%20count%20is%20deliberately%20absent%20from%20the%20%60Session%60%20type%0A%0A%60sessions.attendee_count%60%20is%20a%20nullable%20column%20with%20**no%20default**%2C%20so%20%60NULL%60%0A(%22not%20recorded%22)%20stays%20distinguishable%20from%20%600%60%20(%22held%2C%20nobody%20came%22).%20It%20is%0Aread%20and%20written%20through%20host-scoped%20methods%20on%20%60SessionsRepository%60%2C%20and%20it%0A**must%20not**%20be%20added%20to%20%60Session%60%2C%20%60SessionCreateInput%60%2C%20or%0A%60SessionUpdateInput%60.%0A%0A%60Session%60%20is%20loaded%20by%20the%20%60%5BeventSlug%5D%60%20layout%20and%20serialised%20into%20the%20client%0Abundle%20for%20every%20visitor%20%E2%80%94%20that%20is%20how%20%60view-session.tsx%60%20receives%20its%20data.%20A%0Afield%20there%20publishes%20the%20count%20to%20every%20attendee&#039;s%20browser%20no%20matter%20what%20the%0AJSX%20renders%2C%20which%20is%20the%20one%20way%20of%20leaking%20it%20that%20cannot%20be%20spotted%20by%0Areading%20the%20component.%20Keeping%20it%20off%20the%20type%20makes%20the%20leak%20impossible%20to%0Awrite%20by%20accident%20rather%20than%20something%20a%20reviewer%20has%20to%20remember%3B%20an%0Aintegration%20test%20asserts%20that%20a%20non-host&#039;s%20event%20payload%20and%20the%20admin%20session%0Aread%20surface%20carry%20no%20count%20anywhere.%0A%0AThe%20dispatch%20candidate%20projection%20in%20%60db%2Frepositories%2Fsqlite%2Freminders.ts%60%20does%0Aread%20%60sessions.attendee_count%60%20directly%2C%20and%20exposes%20it%20as%20a%0A%60hasRecordedCount%60%20boolean%20rather%20than%20the%20number.%20That%20is%20compatible%20with%20this%0Aposture%20precisely%20because%20the%20projection%20is%20server-only%20and%20never%20serialised%20%E2%80%94%0Athe%20dispatcher%20decides%20suppression%20and%20has%20no%20business%20holding%20the%20value.%0A%0ARejected%3A%20adding%20%60attendeeCount%60%20to%20%60Session%60%20and%20stripping%20it%20during%0Aserialisation.%20A%20strip%20step%20is%20a%20rule%20enforced%20by%20memory%2C%20and%20every%20new%20read%0Apath%20has%20to%20remember%20it.%0A%0A**Scope%20of%20the%20protection%3A**%20this%20is%20host-scoping%2C%20not%20secrecy.%20Guest%20switching%0Aon%20%60(site)%60%20pages%20is%20unauthenticated%2C%20so%20a%20determined%20visitor%20can%20select%20a%0Ahost&#039;s%20name%20and%20see%20the%20count%20%E2%80%94%20as%20they%20can%20with%20every%20other%20host-only%20control.%0AThe%20requirement%20is%20that%20the%20number%20stays%20out%20of%20ordinary%20attendees&#039;%20way%20and%20out%0Aof%20exports%20and%20listings.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Reminders%20work%20out%20of%20the%20box%20for%20a%20self-hoster%20with%20SMTP%20configured%3B%20no%0A%20%20external%20scheduler%20to%20set%20up.%0A-%20Rescheduling%2C%20repetition%2C%20and%20concurrency%20are%20all%20answered%20by%20one%20column.%0A-%20FR-005%20(the%20count%20never%20reaches%20a%20non-host)%20is%20a%20type-level%20property%2C%20not%20a%0A%20%20convention.%0A%0A%23%23%23%20Negative%0A%0A-%20A%20background%20timer%20inside%20the%20web%20process%20is%20a%20new%20kind%20of%20moving%20part.%20It%20is%0A%20%20confined%20to%20one%20module%2C%20~~inert%20without%20SMTP~~%20(**superseded%20by%20the%202026-09-02%0A%20%20amendment**%3A%20it%20delivers%20in-app%20notifications%20whether%20or%20not%20mail%20is%0A%20%20configured)%2C%20and%20disabled%20in%20both%20E2E%20tiers.%0A-%20The%20count%20cannot%20be%20read%20alongside%20a%20session%20in%20one%20call%3B%20host-scoped%20reads%0A%20%20are%20separate%20round%20trips.%20At%20conference%20scale%20that%20is%20one%20extra%20query%20on%20a%0A%20%20modal%20open.%0A-%20A%20crash%20in%20the%20claim-then-send%20window%20loses%20one%20email%20(above).%0A%0A%23%23%23%20Neutral%0A%0A-%20%60REMINDER_DISPATCH_INTERVAL_MS%60%20is%20a%20real%20configuration%20variable%2C%20not%20a%0A%20%20test-only%20back%20door%2C%20so%20it%20must%20reach%20the%20configuration%20reference%2C%0A%20%20%60docker-compose.yml%60%2C%20and%20%60.env.docker.example%60%20%E2%80%94%20%60tests%2Funit%2Fdocker-compose-env.test.ts%60%0A%20%20enforces%20that.%0A%0A%23%23%20Amendment%2C%202026-09-02%20%E2%80%94%20the%20in-app%20channel%0A%0AThe%20spec&#039;s%20second%20clarification%20session%20(FR-021%20%E2%80%93%20FR-025)%20makes%20the%20reminder%20a%0Atwo-channel%20delivery.%20Nothing%20above%20is%20withdrawn%20except%20where%20marked%3B%20three%0Afurther%20decisions%20constrain%20future%20work.%0A%0A%23%23%23%204.%20A%20reminder%20is%20delivered%20on%20two%20channels%2C%20not%20sent%20as%20an%20email%0A%0A%22Sending%20a%20reminder%22%20is%20no%20longer%20synonymous%20with%20%22sending%20mail%22.%20Every%20due%0Areminder%20creates%20an%20in-app%20notification%20for%20its%20host%20unconditionally%3B%20the%20email%0Ais%20a%20second%2C%20conditional%20half%20that%20goes%20out%20only%20when%20the%20host%20is%20opted%20in%20and%0Areachable%20and%20the%20instance%20has%20mail%20configured.%20Dispatch%20therefore%20no%20longer%0Abails%20out%20when%20SMTP%20is%20missing%20%E2%80%94%20an%20instance%20with%20no%20mail%20still%20reminds%20its%0Ahosts%2C%20which%20is%20the%20whole%20of%20FR-021.%0A%0AA%20future%20third%20channel%2C%20or%20a%20second%20reminder%20feature%2C%20inherits%20that%20shape%3A%0Aclaim%20the%20reminder%20once%2C%20then%20deliver%20on%20each%20channel%20independently%2C%20and%20let%0Athe%20per-channel%20state%20decide%20what%20is%20still%20owed.%0A%0ARejected%3A%20routing%20dispatch%20through%20%60notifyGuest%60%20in%20%60utils%2Fnotifications.ts%60%2C%0Awhich%20already%20pairs%20%22write%20the%20notification%2C%20then%20mail%20if%20opted%20in%22.%20It%20sends%0Athe%20mail%20inside%20the%20same%20call%2C%20so%20dispatch%20could%20not%20tell%20a%20failed%20send%20from%20a%0Awritten%20notification%20%E2%80%94%20and%20the%20retry%20lifecycle%20is%20the%20one%20thing%20dispatch%20owns.%0AWhat%20is%20shared%20instead%20is%20the%20smaller%20piece%3A%20%60sessionPath%60%20is%20exported%20and%20used%0Afor%20all%20three%20deep%20links%20rather%20than%20copied%20a%20third%20time.%0A%0A%23%23%23%205.%20The%20email%20settings%20govern%20the%20emails%2C%20never%20the%20notifications%0A%0A%60EmailSettings.sessionHeadsUp%60%20and%20%60EmailSettings.attendeeCountReminder%60%20gate%0Athe%20two%20reminder%20**emails**%20and%20nothing%20else.%20A%20host%20who%20turns%20both%20off%20still%0Afinds%20both%20reminders%20in%20their%20notification%20list.%0A%0AOne%20key%20per%20kind%2C%20not%20one%20for%20the%20pair%3A%20the%20two%20mails%20answer%20different%0Aquestions.%20%22Your%20session%20starts%20in%20an%20hour%22%20is%20worth%20having%20on%20its%20own%20even%20to%20a%0Ahost%20who%20never%20counts%20the%20room%2C%20and%20a%20host%20who%20finds%20the%20pre-session%20mail%0Aredundant%20should%20not%20have%20to%20give%20up%20the%20link%20that%20records%20the%20count.%20Dispatch%0Atherefore%20reads%20the%20key%20for%20the%20candidate&#039;s%20kind%2C%20%60reminderOptIn%60%20on%0A%60DueReminderCandidate%60%20being%20whichever%20one%20applies.%0A%0AThis%20is%20the%20house%20rule%20already%20stated%20at%20%60notifyGuest%60%20%E2%80%94%20%22opting%20out%20of%20the%20mail%0Ais%20a%20request%20not%20to%20be%20interrupted%20outside%20the%20app%2C%20not%20a%20request%20to%20be%0Auninformed%20inside%20it%22%20%E2%80%94%20now%20binding%20on%20reminders%20too%2C%20which%20had%20been%20the%20one%0Anotification%20type%20that%20read%20the%20setting%20before%20deciding%20whether%20to%20act%20at%20all.%0AThe%20settings%20checkboxes%20are%20worded%20as%20email%20switches%20to%20match%2C%20and%20every%20other%0Akey%20in%20%60EmailSettings%60%20already%20works%20this%20way.%0A%0A%23%23%23%206.%20Each%20channel%20gets%20its%20own%20column%20on%20%60session_reminders%60%0A%0A%60notified_at%60%20records%20the%20in-app%20notification%20for%20the%20current%20due%20time%3B%0A%60sent_at%60%20records%20a%20confirmed%20email%3B%20%60claimed_at%60%20is%20the%20concurrency%20and%0Asettlement%20guard.%20Three%20columns%20because%20the%20two%20channels%20have%20different%20failure%0Amodes%3A%20a%20mail%20retry%20must%20resend%20without%20re-notifying%20(FR-016)%2C%20while%20a%0Areschedule%20must%20do%20both%20(FR-024)%2C%20and%20a%20reminder%20settled%20with%20nothing%20to%20mail%0Amust%20still%20block%20reprocessing%20without%20ever%20claiming%20to%20have%20sent%20mail.%0A%0AThe%20last%20of%20those%20is%20why%20%60claimed_at%60%20exists%20at%20all.%20Decision%202%20above%20used%0A%60sent_at%60%20as%20both%20%22this%20due%20time%20is%20spoken%20for%22%20and%20%22an%20email%20went%20out%22%2C%20which%0Acannot%20both%20be%20true%20once%20a%20reminder%20can%20settle%20with%20no%20mail%20to%20send.%20%60claim%60%0Anow%20guards%20on%20%60claimed_at%60%2C%20%60markSent%60%20is%20the%20only%20writer%20of%20%60sent_at%60%2C%20and%0A%60markFailed%60%20clears%20%60claimed_at%60%20to%20re-arm%20the%20retry.%20%60claim%60%20clears%0A%60notified_at%60%20whenever%20it%20advances%20the%20row%20to%20a%20new%20due%20time%2C%20which%20is%20what%0Amakes%20a%20reschedule%20re-notify%20while%20a%20retry%20does%20not.%0A%0ARejected%3A%0A%0A-%20**Deriving%20%22already%20notified%22%20from%20the%20%60notifications%60%20table.**%20It%20stores%0A%20%20type%2C%20text%2C%20url%20and%20timestamps%20only%3B%20answering%20%22was%20this%20host%20notified%20for%0A%20%20_this_%20due%20time%22%20would%20mean%20matching%20on%20a%20URL%20string%20or%20a%20time%20window%2C%20and%0A%20%20neither%20survives%20a%20reschedule%20that%20lands%20on%20the%20same%20session.%0A-%20**A%20second%20row%20per%20channel.**%20Doubles%20the%20table%20and%20makes%20a%20reschedule%20re-arm%0A%20%20two%20rows%20atomically%2C%20for%20state%20that%20belongs%20to%20one%20reminder.%0A-%20**Overloading%20%60sent_at%60%20to%20mean%20%22delivered%20on%20whatever%20channels%20applied%22.**%0A%20%20It%20makes%20the%20field%20lie%20for%20every%20row%20it%20is%20true%20of%2C%20and%20breaks%20the%20guarantee%0A%20%20that%20a%20host%20who%20opts%20back%20in%20before%20the%20next%20tick%20still%20gets%20their%20mail.%0A%0A%23%23%23%207.%20The%20migration%20settles%20the%20follow-up%20for%20sessions%20that%20had%20already%20finished%0A%0AA%20follow-up%20is%20deliberately%20never%20dropped%20for%20being%20late%20(FR-011)%2C%20so%20on%20an%0Aexisting%20installation%20the%20first%20tick%20after%20the%20upgrade%20would%20find%20every%0Auncounted%20session%20in%20the%20event%20history%20owed%20one%20%E2%80%94%20a%20notification%20and%20an%20email%0Aper%20host%20per%20session%2C%20about%20sessions%20that%20finished%20months%20ago.%0A%0A%60drizzle%2F0034_session_attendee_count.sql%60%20therefore%20ends%20with%20a%20hand-written%0Abackfill%3A%20one%20settled%20%60followUp%60%20row%20(%60claimed_at%60%20and%20%60notified_at%60%20set%2C%0A%60sent_at%60%20left%20NULL%20%E2%80%94%20nothing%20was%20mailed)%20for%20every%20host%20of%20every%20session%20whose%0Afollow-up%20was%20already%20due%20when%20the%20migration%20ran.%20The%20due%20time%20is%20computed%20in%0ASQL%20to%20match%20%60followUpDueTime%60%20to%20the%20millisecond%3B%20anything%20else%20would%20read%20as%0Aa%20reschedule%20and%20re-arm%20the%20very%20reminder%20it%20suppresses.%0A%0AThe%20line%20is%20%22already%20due%22%2C%20not%20%22already%20finished%22%3A%20a%20session%20that%20ended%20two%0Aminutes%20before%20the%20upgrade%20still%20gets%20its%20follow-up%20on%20the%20next%20tick%2C%20which%20is%0Awhat%20a%20host%20would%20expect.%0A%0ARejected%3A%20a%20staleness%20cutoff%20in%20%60followUpEligible%60.%20It%20would%20also%20drop%20the%0Areminders%20an%20instance%20owes%20after%20a%20few%20hours%20of%20downtime%2C%20which%20is%20exactly%20the%0Acase%20FR-011%20is%20written%20for.%0A%0A%23%23%23%20The%20banner%20is%20withdrawn%0A%0A%60listUncountedFinishedByHost%60%20and%20the%20schedule%20prompt%20it%20fed%20are%20deleted%0A(FR-025)%3A%20the%20notification%20list%20says%20the%20same%20thing%20in%20the%20place%20hosts%20already%0Alook.%20The%20host-only%20control%20and%20the%20%60%3Frecord%3Dcount%60%20deep%20link%20stay.%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ADR 0007: Attendee count storage and in-process reminder dispatch</h1>
+<ul>
+<li><strong>Status:</strong> Accepted</li>
+<li><strong>Date:</strong> 2026-08-25, amended 2026-09-02 (see <a href="#amendment-2026-09-02--the-in-app-channel">Amendment</a>)</li>
+</ul>
+<h2 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-context" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
+<p>Hosts record how many people attended a session of theirs once it has finished,
+and are reminded to do so by two emails: a heads-up an hour before the session
+starts, and a follow-up fifteen minutes after it ends.</p>
+<p>Three parts of that constrain future work well beyond the feature itself, and
+none of them is covered by an existing ADR:</p>
+<ol>
+<li>The emails must go out unattended, which means this codebase acquires its
+first background job.</li>
+<li>Sessions get rescheduled. A reminder that was already sent for one schedule
+may be owed again for another, and must never be sent twice for the same
+one — including when two dispatch runs overlap.</li>
+<li>The count is host-only data living on a record that is otherwise published
+to every visitor’s browser.</li>
+</ol>
+<h2 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-1-dispatch-runs-in-process-on-an-interval-from-instrumentationts" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-1-dispatch-runs-in-process-on-an-interval-from-instrumentationts" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Dispatch runs in-process, on an interval from <code>instrumentation.ts</code></h3>
+<p><code>utils/reminder-scheduler.ts</code> starts a <code>setInterval</code> from <code>register()</code> in
+<code>instrumentation.ts</code>, guarded to <code>NEXT_RUNTIME === &quot;nodejs&quot;</code> and stored on
+<code>globalThis</code> — the pattern <code>utils/mailer.ts</code> already uses, for the reason in
+<a href="https://github.com/vercel/next.js/discussions/68572">vercel/next.js#68572</a>.
+The period comes from <code>REMINDER_DISPATCH_INTERVAL_MS</code> (default <code>60000</code>; <code>0</code>
+disables the scheduler entirely). The timer is <code>unref()</code>d, an in-process guard
+skips a tick while the previous run is still in flight, and a throw from a run
+is logged and swallowed.</p>
+<p><code>instrumentation.ts</code> is the only hook that runs once per server process
+regardless of traffic, and the mailer is initialised there already: the two have
+identical lifecycles and the same “Node runtime only” constraint.</p>
+<p>Rejected:</p>
+<ul>
+<li><strong>External cron or a systemd timer hitting an API route.</strong> It puts setup work
+on every self-hoster and needs an authenticated trigger endpoint — new attack
+surface for no gain.</li>
+<li><strong>Next.js <code>after()</code> on ordinary requests.</strong> Request-driven: an event with no
+overnight traffic would send nothing until someone visited, which is exactly
+when hosts are asleep and reminders matter.</li>
+<li><strong>A cron library (<code>node-cron</code>, <code>croner</code>).</strong> A dependency to express “every 60
+seconds”.</li>
+</ul>
+<p>Consequence: behind a load balancer every instance ticks. That is safe because
+of decision 2, which concurrency-safety requires anyway.</p>
+<p>Because the interval is disabled outright in both E2E tiers — a live tick against
+the wall-clock-relative seed data drops stray mail into the mailbox the delivery
+assertions search — the dev toolbar carries a <strong>Send due reminders</strong> button, and
+<code>app/actions/dev-reminders.ts</code> refuses unless <code>SB_ENABLE_DEV_TOOLS</code> is set. It
+runs one tick against the dev clock, which is what lets the E2E suite reach a
+real follow-up email and follow the link out of it (SC-001) rather than
+hand-building a <code>?viewSession=</code> URL. Nothing about it exists on a real
+deployment.</p>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-2-reminder-state-is-keyed-by-the-reminders-due-time-not-a-sent-flag" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-2-reminder-state-is-keyed-by-the-reminders-due-time-not-a-sent-flag" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Reminder state is keyed by the reminder’s due time, not a sent flag</h3>
+<p>One row per <code>(session_id, guest_id, kind)</code> in <code>session_reminders</code>, carrying the
+due time it was last claimed for. That single column is simultaneously the
+idempotency key and the re-arm signal:</p>
+<ul>
+<li>an unchanged schedule computes the same due time, so a repeated or concurrent
+run finds it already sent and skips;</li>
+<li>a moved start computes a different heads-up due time and re-arms only that
+kind; a moved end re-arms only the follow-up; editing the title or the host
+list moves neither.</li>
+</ul>
+<p>No boolean “sent” flag can express that without also storing the time it was
+sent for.</p>
+<p>Dispatch <strong>claims before sending</strong>: one write transaction sets the due time and
+<code>sent_at</code>, and reports whether this process won. Only one transaction can flip
+<code>sent_at</code> from NULL for a given due time, and <code>better-sqlite3</code> serialises
+writers through SQLite’s own write lock, so overlapping ticks cannot both send.</p>
+<p><strong>The 90-minute reschedule guard</strong> compares the new displayed start against the
+due time the host’s existing heads-up was sent for: it is suppressed when that
+email went out 90 minutes or less before the new start, because it is still a
+useful warning for the new slot. <code>research.md</code> §5 sketched the guard as
+<code>now &gt;= displayedStart − 90 min</code>, which does not work — a heads-up is only ever
+due from <code>displayedStart − 60 min</code> onwards, so that condition holds every time
+it is evaluated and would suppress every re-send, including the
+three-hours-later move the spec requires to re-arm.</p>
+<p><strong>Accepted limitation:</strong> a process that crashes between the claim and the send
+drops that reminder for that due time. The window is milliseconds and the
+failure mode is one missing email rather than a duplicate — the opposite
+trade-off, send-then-mark, produces duplicates on the same crash, which is the
+one outcome the spec forbids. A lease column with an expiry that a later tick
+reclaims would close the window, and is more machinery than a single-process
+self-hosted app warrants. Recorded here rather than left to be rediscovered.</p>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-3-the-attendee-count-is-deliberately-absent-from-the-session-type" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-3-the-attendee-count-is-deliberately-absent-from-the-session-type" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. The attendee count is deliberately absent from the <code>Session</code> type</h3>
+<p><code>sessions.attendee_count</code> is a nullable column with <strong>no default</strong>, so <code>NULL</code>
+(“not recorded”) stays distinguishable from <code>0</code> (“held, nobody came”). It is
+read and written through host-scoped methods on <code>SessionsRepository</code>, and it
+<strong>must not</strong> be added to <code>Session</code>, <code>SessionCreateInput</code>, or
+<code>SessionUpdateInput</code>.</p>
+<p><code>Session</code> is loaded by the <code>[eventSlug]</code> layout and serialised into the client
+bundle for every visitor — that is how <code>view-session.tsx</code> receives its data. A
+field there publishes the count to every attendee’s browser no matter what the
+JSX renders, which is the one way of leaking it that cannot be spotted by
+reading the component. Keeping it off the type makes the leak impossible to
+write by accident rather than something a reviewer has to remember; an
+integration test asserts that a non-host’s event payload and the admin session
+read surface carry no count anywhere.</p>
+<p>The dispatch candidate projection in <code>db/repositories/sqlite/reminders.ts</code> does
+read <code>sessions.attendee_count</code> directly, and exposes it as a
+<code>hasRecordedCount</code> boolean rather than the number. That is compatible with this
+posture precisely because the projection is server-only and never serialised —
+the dispatcher decides suppression and has no business holding the value.</p>
+<p>Rejected: adding <code>attendeeCount</code> to <code>Session</code> and stripping it during
+serialisation. A strip step is a rule enforced by memory, and every new read
+path has to remember it.</p>
+<p><strong>Scope of the protection:</strong> this is host-scoping, not secrecy. Guest switching
+on <code>(site)</code> pages is unauthenticated, so a determined visitor can select a
+host’s name and see the count — as they can with every other host-only control.
+The requirement is that the number stays out of ordinary attendees’ way and out
+of exports and listings.</p>
+<h2 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-positive" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-positive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Positive</h3>
+<ul>
+<li>Reminders work out of the box for a self-hoster with SMTP configured; no
+external scheduler to set up.</li>
+<li>Rescheduling, repetition, and concurrency are all answered by one column.</li>
+<li>FR-005 (the count never reaches a non-host) is a type-level property, not a
+convention.</li>
+</ul>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-negative" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-negative" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Negative</h3>
+<ul>
+<li>A background timer inside the web process is a new kind of moving part. It is
+confined to one module, <s>inert without SMTP</s> (<strong>superseded by the 2026-09-02
+amendment</strong>: it delivers in-app notifications whether or not mail is
+configured), and disabled in both E2E tiers.</li>
+<li>The count cannot be read alongside a session in one call; host-scoped reads
+are separate round trips. At conference scale that is one extra query on a
+modal open.</li>
+<li>A crash in the claim-then-send window loses one email (above).</li>
+</ul>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-neutral" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-neutral" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Neutral</h3>
+<ul>
+<li><code>REMINDER_DISPATCH_INTERVAL_MS</code> is a real configuration variable, not a
+test-only back door, so it must reach the configuration reference,
+<code>docker-compose.yml</code>, and <code>.env.docker.example</code> — <code>tests/unit/docker-compose-env.test.ts</code>
+enforces that.</li>
+</ul>
+<h2 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Amendment, 2026-09-02 — the in-app channel</h2>
+<p>The spec’s second clarification session (FR-021 – FR-025) makes the reminder a
+two-channel delivery. Nothing above is withdrawn except where marked; three
+further decisions constrain future work.</p>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-4-a-reminder-is-delivered-on-two-channels-not-sent-as-an-email" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-4-a-reminder-is-delivered-on-two-channels-not-sent-as-an-email" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. A reminder is delivered on two channels, not sent as an email</h3>
+<p>“Sending a reminder” is no longer synonymous with “sending mail”. Every due
+reminder creates an in-app notification for its host unconditionally; the email
+is a second, conditional half that goes out only when the host is opted in and
+reachable and the instance has mail configured. Dispatch therefore no longer
+bails out when SMTP is missing — an instance with no mail still reminds its
+hosts, which is the whole of FR-021.</p>
+<p>A future third channel, or a second reminder feature, inherits that shape:
+claim the reminder once, then deliver on each channel independently, and let
+the per-channel state decide what is still owed.</p>
+<p>Rejected: routing dispatch through <code>notifyGuest</code> in <code>utils/notifications.ts</code>,
+which already pairs “write the notification, then mail if opted in”. It sends
+the mail inside the same call, so dispatch could not tell a failed send from a
+written notification — and the retry lifecycle is the one thing dispatch owns.
+What is shared instead is the smaller piece: <code>sessionPath</code> is exported and used
+for all three deep links rather than copied a third time.</p>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-5-the-email-settings-govern-the-emails-never-the-notifications" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-5-the-email-settings-govern-the-emails-never-the-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. The email settings govern the emails, never the notifications</h3>
+<p><code>EmailSettings.sessionHeadsUp</code> and <code>EmailSettings.attendeeCountReminder</code> gate
+the two reminder <strong>emails</strong> and nothing else. A host who turns both off still
+finds both reminders in their notification list.</p>
+<p>One key per kind, not one for the pair: the two mails answer different
+questions. “Your session starts in an hour” is worth having on its own even to a
+host who never counts the room, and a host who finds the pre-session mail
+redundant should not have to give up the link that records the count. Dispatch
+therefore reads the key for the candidate’s kind, <code>reminderOptIn</code> on
+<code>DueReminderCandidate</code> being whichever one applies.</p>
+<p>This is the house rule already stated at <code>notifyGuest</code> — “opting out of the mail
+is a request not to be interrupted outside the app, not a request to be
+uninformed inside it” — now binding on reminders too, which had been the one
+notification type that read the setting before deciding whether to act at all.
+The settings checkboxes are worded as email switches to match, and every other
+key in <code>EmailSettings</code> already works this way.</p>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-6-each-channel-gets-its-own-column-on-sessionreminders" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-6-each-channel-gets-its-own-column-on-sessionreminders" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Each channel gets its own column on <code>session_reminders</code></h3>
+<p><code>notified_at</code> records the in-app notification for the current due time;
+<code>sent_at</code> records a confirmed email; <code>claimed_at</code> is the concurrency and
+settlement guard. Three columns because the two channels have different failure
+modes: a mail retry must resend without re-notifying (FR-016), while a
+reschedule must do both (FR-024), and a reminder settled with nothing to mail
+must still block reprocessing without ever claiming to have sent mail.</p>
+<p>The last of those is why <code>claimed_at</code> exists at all. Decision 2 above used
+<code>sent_at</code> as both “this due time is spoken for” and “an email went out”, which
+cannot both be true once a reminder can settle with no mail to send. <code>claim</code>
+now guards on <code>claimed_at</code>, <code>markSent</code> is the only writer of <code>sent_at</code>, and
+<code>markFailed</code> clears <code>claimed_at</code> to re-arm the retry. <code>claim</code> clears
+<code>notified_at</code> whenever it advances the row to a new due time, which is what
+makes a reschedule re-notify while a retry does not.</p>
+<p>Rejected:</p>
+<ul>
+<li><strong>Deriving “already notified” from the <code>notifications</code> table.</strong> It stores
+type, text, url and timestamps only; answering “was this host notified for
+<em>this</em> due time” would mean matching on a URL string or a time window, and
+neither survives a reschedule that lands on the same session.</li>
+<li><strong>A second row per channel.</strong> Doubles the table and makes a reschedule re-arm
+two rows atomically, for state that belongs to one reminder.</li>
+<li><strong>Overloading <code>sent_at</code> to mean “delivered on whatever channels applied”.</strong>
+It makes the field lie for every row it is true of, and breaks the guarantee
+that a host who opts back in before the next tick still gets their mail.</li>
+</ul>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-7-the-migration-settles-the-follow-up-for-sessions-that-had-already-finished" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-7-the-migration-settles-the-follow-up-for-sessions-that-had-already-finished" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. The migration settles the follow-up for sessions that had already finished</h3>
+<p>A follow-up is deliberately never dropped for being late (FR-011), so on an
+existing installation the first tick after the upgrade would find every
+uncounted session in the event history owed one — a notification and an email
+per host per session, about sessions that finished months ago.</p>
+<p><code>drizzle/0034_session_attendee_count.sql</code> therefore ends with a hand-written
+backfill: one settled <code>followUp</code> row (<code>claimed_at</code> and <code>notified_at</code> set,
+<code>sent_at</code> left NULL — nothing was mailed) for every host of every session whose
+follow-up was already due when the migration ran. The due time is computed in
+SQL to match <code>followUpDueTime</code> to the millisecond; anything else would read as
+a reschedule and re-arm the very reminder it suppresses.</p>
+<p>The line is “already due”, not “already finished”: a session that ended two
+minutes before the upgrade still gets its follow-up on the next tick, which is
+what a host would expect.</p>
+<p>Rejected: a staleness cutoff in <code>followUpEligible</code>. It would also drop the
+reminders an instance owes after a few hours of downtime, which is exactly the
+case FR-011 is written for.</p>
+<h3 id="adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-the-banner-is-withdrawn" class="docmd-heading"><a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-the-banner-is-withdrawn" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The banner is withdrawn</h3>
+<p><code>listUncountedFinishedByHost</code> and the schedule prompt it fed are deleted
+(FR-025): the notification list says the same thing in the place hosts already
+look. The host-only control and the <code>?record=count</code> deep link stay.</p>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch" class="toc-link">ADR 0007: Attendee count storage and in-process reminder dispatch</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-context" class="toc-link">Context</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision" class="toc-link">Decision</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-1-dispatch-runs-in-process-on-an-interval-from-instrumentationts" class="toc-link">1. Dispatch runs in-process, on an interval from instrumentation.ts</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-2-reminder-state-is-keyed-by-the-reminders-due-time-not-a-sent-flag" class="toc-link">2. Reminder state is keyed by the reminder’s due time, not a sent flag</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-decision-3-the-attendee-count-is-deliberately-absent-from-the-session-type" class="toc-link">3. The attendee count is deliberately absent from the Session type</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences" class="toc-link">Consequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-positive" class="toc-link">Positive</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-negative" class="toc-link">Negative</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-consequences-neutral" class="toc-link">Neutral</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel" class="toc-link">Amendment, 2026-09-02 — the in-app channel</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-4-a-reminder-is-delivered-on-two-channels-not-sent-as-an-email" class="toc-link">4. A reminder is delivered on two channels, not sent as an email</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-5-the-email-settings-govern-the-emails-never-the-notifications" class="toc-link">5. The email settings govern the emails, never the notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-6-each-channel-gets-its-own-column-on-sessionreminders" class="toc-link">6. Each channel gets its own column on session_reminders</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-7-the-migration-settles-the-follow-up-for-sessions-that-had-already-finished" class="toc-link">7. The migration settles the follow-up for sessions that had already finished</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0007-attendee-count-storage-and-in-process-reminder-dispatch-amendment-2026-09-02-the-in-app-channel-the-banner-is-withdrawn" class="toc-link">The banner is withdrawn</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1788882251000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1788882251000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="fixup: review findings on the attendee-count reminders">fixup: review findings on the attende...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1788882251000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: let hosts record how many people attended their session">feat: let hosts record how many peopl...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1788690634000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

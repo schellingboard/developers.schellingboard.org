@@ -1,0 +1,1709 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      Documentation and the sites : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/documentation/">
+<meta property="og:title" content="Documentation and the sites - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/documentation/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Documentation and the sites - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/documentation.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../" class="logo-link">
+              <img
+                src="../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active-parent expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../documentation/" class="active "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Documentation and the sites
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Documentation%20and%20the%20sites%0A%0AThree%20sites%2C%20three%20audiences%2C%20three%20publishing%20rules%3A%0A%0A%7C%20Site%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Built%20from%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Published%20when%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------------------------%20%7C%20----------------------------%20%7C%20--------------------------------%20%7C%0A%7C%20%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60docs%2Fpublic%2F%60%2C%20at%20each%20tag%20%20%7C%20a%20release%20is%20tagged%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5Bdevelopers.schellingboard.org%5D(https%3A%2F%2Fdevelopers.schellingboard.org)%20%7C%20%60docs%2Fdev%2F%60%2C%20on%20%60main%60%20%20%20%20%20%20%20%7C%20%60docs%2Fdev%2F%60%20changes%20on%20%60main%60%20%20%20%20%7C%0A%7C%20%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60www%2F%60%20%2B%20%60docs%2Fscreenshots%2F%60%20%7C%20%60www%2F%60%20or%20the%20screenshots%20change%20%7C%0A%0AThe%20split%20of%20audiences%20is%20the%20point%3A%20attendees%20and%20organizers%20read%20the%20first%2C%0Acontributors%20the%20second%2C%20and%20nobody%20should%20land%20on%20the%20wrong%20one.%20Keeping%20the%0Adeveloper%20docs%20unversioned%20and%20the%20user%20docs%20versioned%20follows%20from%20the%20same%0Asplit%20%E2%80%94%20user%20docs%20must%20describe%20the%20release%20someone%20is%20running%2C%20while%20developer%0Adocs%20must%20describe%20the%20branch%20they%20are%20working%20on.%0A%0A%23%23%20The%20public%20docs%20site%0A%0ABuilt%20with%20%5Bdocmd%5D(https%3A%2F%2Fdocmd.io)%20from%20%60docs%2Fpublic%2F%60%2C%20which%20holds%20one%20copy%0Aof%20the%20documentation%20and%20no%20snapshots.%20Published%20versions%20are%20reconstructed%0Afrom%20git%3A%20%60scripts%2Fbuild-docs.sh%60%20walks%20the%20release%20tags%2C%20checks%20each%20one%20out%0Ainto%20a%20temporary%20worktree%2C%20and%20builds%20it%20as%20a%20version.%20The%20newest%20is%20served%20at%0Athe%20site%20root%2C%20older%20ones%20under%20%60%2F%3Cmajor.minor%3E%2F%60%2C%20all%20listed%20in%20the%20version%0Adropdown.%0A%0ASo%20%60docs%2Fpublic%2F%60%20is%20the%20_next_%20release&#039;s%20documentation.%20Edit%20it%20in%20the%20same%0Acommit%20as%20the%20change%20it%20describes%3B%20it%20is%20published%20when%20that%20release%20is%0Atagged.%0A%0A%7C%20Command%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20does%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20--------------------------------------------%20%7C%0A%7C%20%60make%20docs%60%20%20%20%20%20%20%20%20%20%20%7C%20Live%20preview%20of%20%60docs%2Fpublic%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-build%60%20%20%20%20%7C%20Build%20the%20published%20site%20into%20%60site%2F%60%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-validate%60%20%7C%20Check%20for%20broken%20internal%20links%20(runs%20in%20CI)%20%7C%0A%0A%60.github%2Fworkflows%2Fdocs.yml%60%20deploys%20on%20tag%20pushes%20and%20on%20pushes%20to%20%60release%2F*%60%0Abranches.%20Pushing%20to%20%60main%60%20deliberately%20publishes%20nothing%20%E2%80%94%20until%20a%20release%20is%0Atagged%2C%20%60make%20docs%60%20is%20the%20only%20place%20the%20new%20documentation%20exists.%0A%0ATwo%20consequences%20worth%20knowing%3A%0A%0A-%20**Releasing%20documentation%20is%20tagging%20the%20repository.**%20There%20is%20no%20snapshot%0A%20%20step%2C%20so%20nothing%20can%20drift%20out%20of%20sync%20with%20the%20release%20it%20documents.%0A-%20**A%20release%20tag%20that%20predates%20the%20docs%20site%20publishes%20nothing.**%20The%20build%0A%20%20skips%20any%20tag%20without%20%60docs%2Fpublic%2Findex.md%60%2C%20which%20is%20why%20%60v3.0.0%60%20and%0A%20%20%60v3.1.0%60%20never%20appear%20on%20the%20site.%0A%0A%60robots.txt%60%2C%20%60sitemap.xml%60%20and%20%60404.html%60%20are%20generated%20by%20docmd%20from%20the%0Aconfig&#039;s%20%60url%60%3B%20don&#039;t%20hand-write%20them.%0A%0A%23%23%23%20Dating%20each%20page%0A%0AEvery%20page%20ends%20with%20%22Last%20updated%22%2C%20and%20the%20commits%20that%20touched%20it%20in%20a%0Atooltip.%20docmd&#039;s%20own%20git%20plugin%20cannot%20produce%20that%20here%3A%20it%20delegates%20to%20its%0Abuild%20engine%2C%20which%20runs%20%60git%20log%60%20in%20the%20process%20working%20directory%2C%20so%20the%0Aworktrees%20the%20versions%20are%20built%20from%20are%20all%20%22outside%20repository%22%20%E2%80%94%20the%20error%0Ais%20swallowed%20and%20the%20site%20publishes%20undated.%20%60scripts%2Fdocmd-git-history.js%60%0A(loaded%20from%20%60docmd.config.json%60%20as%20a%20local%20plugin)%20resolves%20the%20repository%20per%0Apage%20instead%2C%20which%20also%20means%20each%20version%20is%20dated%20from%20its%20own%20ref%20rather%0Athan%20from%20%60main%60.%20Contributor%20avatars%20are%20deliberately%20left%20off%2C%20so%20no%20reader&#039;s%0Abrowser%20is%20sent%20to%20Gravatar.%20%60build-docs.sh%60%20fails%20the%20build%20if%20any%20page%20comes%0Aout%20undated.%0A%0A%23%23%23%20Hosting%20setup%20for%20the%20docs%20site%0A%0ATwo%20things%20live%20outside%20the%20repository%2C%20so%20a%20fresh%20fork%20or%20a%20moved%20domain%20needs%0Athem%20set%20up%20again%20before%20the%20first%20tag%20push%20can%20publish%20anything%3A%0A%0A-%20**GitHub%20Pages**%3A%20repository%20Settings%20%E2%86%92%20Pages%20%E2%86%92%20Source%20must%20be%20_GitHub%0A%20%20Actions_.%20%60actions%2Fdeploy-pages%60%20fails%20without%20it.%0A-%20**DNS**%3A%20a%20%60CNAME%60%20record%20for%20%60docs.schellingboard.org%60%20pointing%20at%0A%20%20%60schellingboard.github.io%60.%20The%20domain%20itself%20comes%20from%20%60url%60%20in%0A%20%20%60docmd.config.json%60%20%E2%80%94%20the%20build%20writes%20it%20to%20%60site%2FCNAME%60%20from%20there.%0A%0AUntil%20both%20are%20in%20place%20and%20%60v3.2.0%60%20is%20tagged%2C%20the%0A%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20links%20in%0A%5B%60README.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FREADME.md)%0Aare%20dead%3B%20the%20same%20pages%20are%20readable%20in%20%60docs%2Fpublic%2F%60.%0A%0A%23%23%23%20Correcting%20published%20documentation%0A%0ATo%20fix%20published%20docs%20without%20cutting%20a%20release%2C%20commit%20to%20the%20release%20branch%0Aof%20that%20version%20%E2%80%94%20%60release%2F3.2%60%20for%20the%203.2%20docs.%20The%20build%20prefers%20that%20branch%0Aover%20the%20tag%2C%20so%20pushing%20it%20republishes%20that%20version%2C%20and%20the%20deploy%20log%20names%0Athe%20ref%20each%20version%20came%20from%20(%60Version%203.2%20%E2%86%90%20release%2F3.2%60).%0A%0ARelease%20branches%20don&#039;t%20exist%20until%20something%20needs%20one.%20Create%20it%20from%20the%0Arelease%20tag%20the%20first%20time%20that%20minor%20release%20has%20to%20be%20corrected%20%E2%80%94%20a%20release%0Athat%20never%20needs%20a%20fix%20never%20gets%20a%20branch%20%E2%80%94%20and%20merge%20it%20back%20into%20%60main%60%20so%0Athe%20fix%20reaches%20the%20next%20release%20too.%20The%20same%20branch%20carries%20the%20commits%20of%20a%0Apatch%20release%2C%20so%20this%20is%20where%20a%20fix%20to%20an%20older%20version%20lives%20in%20general%2C%20not%0Aonly%20a%20documentation%20one%3B%20see%20%5BReleasing%20a%20new%20version%5D(releasing.md).%0A%0A%60%60%60bash%0Ajj%20new%20v3.2.0%0Ajj%20bookmark%20create%20release%2F3.2%20%20%20%23%20git%3A%20git%20switch%20-c%20release%2F3.2%20v3.2.0%0A%23%20fix%2C%20commit%2C%20push%20%E2%80%94%20the%20docs%20site%20redeploys%0A%60%60%60%0A%0ABecause%20the%20branch%20tip%20wins%20over%20the%20tag%2C%20anything%20committed%20to%20it%20is%20published%0Aas%20that%20version&#039;s%20documentation%20the%20moment%20it%20is%20pushed%2C%20released%20or%20not.%20Land%0Awork%20that%20isn&#039;t%20ready%20to%20be%20read%20on%20a%20separate%20branch.%0A%0A%23%23%20The%20developer%20docs%20site%0A%0AThe%20site%20you%20are%20reading.%20%60docmd.dev.config.json%60%20builds%20%60docs%2Fdev%2F%60%20into%0A%60dev-site%2F%60%20with%20its%20own%20title%2C%20navigation%20and%20search%20index%20%E2%80%94%20a%20second%20docmd%0Aproject%20in%20the%20same%20repository%2C%20sharing%20nothing%20with%20the%20user%20site%20but%20the%0Atheme%20and%20the%20logo.%20%5BADR%200008%5D(adr%2F0008-publish-developer-docs.md)%20has%20the%0Areasoning%2C%20including%20why%20it%20isn&#039;t%20a%20path%20under%20docs.schellingboard.org.%0A%0A%7C%20Command%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20does%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20------------------------%20%7C%20----------------------------------------------------%20%7C%0A%7C%20%60make%20docs-dev%60%20%20%20%20%20%20%20%20%20%20%7C%20Live%20preview%20of%20%60docs%2Fdev%60%20(no%20diagrams%20%E2%80%94%20see%20below)%20%7C%0A%7C%20%60make%20docs-dev-build%60%20%20%20%20%7C%20Build%20the%20published%20site%20into%20%60dev-site%2F%60%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-dev-validate%60%20%7C%20Check%20for%20broken%20internal%20links%20(runs%20in%20CI)%20%20%20%20%20%20%20%20%20%7C%0A%0AIt%20is%20not%20versioned.%20%60.github%2Fworkflows%2Fdevelopers.yml%60%20publishes%20on%20pushes%20to%0A%60main%60%20that%20touch%20%60docs%2Fdev%2F%60%2C%20so%20the%20site%20always%20describes%20the%20default%20branch%3B%0Aa%20contributor%20on%20a%20release%20branch%20reads%20that%20branch&#039;s%20%60docs%2Fdev%2F%60%20in%20the%0Arepository%20instead.%0A%0A**Links%20out%20of%20%60docs%2Fdev%2F%60%20must%20be%20absolute%20GitHub%20URLs.**%20The%20site&#039;s%20root%20is%0A%60docs%2Fdev%2F%60%2C%20so%20a%20relative%20%60..%2F..%2FCONTRIBUTING.md%60%20resolves%20to%20nothing%20once%0Apublished.%20%60make%20docs-dev-validate%60%20catches%20those%2C%20and%20is%20the%20reason%20to%20run%20it%0Aafter%20moving%20a%20file.%20Links%20to%20user%20documentation%20go%20to%0Adocs.schellingboard.org%20rather%20than%20to%20%60docs%2Fpublic%2F%60%20in%20the%20repository.%0A%0A%60docs%2Fdev%2FREADME.md%60%20is%20both%20the%20site&#039;s%20home%20page%20and%20the%20folder&#039;s%20index%20on%0AGitHub%2C%20which%20is%20what%20keeps%20the%20repository%20copy%20navigable.%0A%0A%23%23%23%20Why%20it%20deploys%20to%20a%20second%20repository%0A%0AThe%20same%20reason%20as%20the%20landing%20page%20below%3A%20GitHub%20Pages%20serves%20one%20custom%0Adomain%20per%20repository%2C%20and%20this%20one%20already%20serves%20docs.schellingboard.org.%20The%0Abuild%20is%20pushed%20to%0A%5Bschellingboard%2Fdevelopers.schellingboard.org%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fdevelopers.schellingboard.org)%2C%0Awhich%20holds%20nothing%20else%2C%20using%20the%20same%20organization-owned%20deploy%20app%20the%0Alanding%20page%20uses%20%E2%80%94%20see%0A%5BHosting%20setup%20for%20the%20pushed%20sites%5D(%23hosting-setup-for-the-pushed-sites).%0A%0A%23%23%23%20The%20architecture%20diagrams%0A%0AThe%20C4%20model%20in%20%60docs%2Fdev%2Ftarget-architecture%2Fdiagrams%2F%60%20reaches%20the%20site%20twice%3A%0A%0A-%20**%60%2Fdiagrams%2F%60**%20%E2%80%94%20the%20full%20LikeC4%20explorer%2C%20every%20view%20with%20drill-down%0A%20%20between%20levels%2C%20built%20by%20%60likec4%20build%60.%20It%20uses%20hash%20history%20(%60%2Fdiagrams%2F%23%2F%E2%80%A6%60)%0A%20%20because%20GitHub%20Pages%20can&#039;t%20route%20deep%20links%20into%20a%20single-page%20app.%0A-%20**%60%3Clikec4-view%20view-id%3D%22%E2%80%A6%22%3E%60**%20%E2%80%94%20chapters%20embed%20a%20single%20view%20inline%2C%20rendered%0A%20%20by%20the%20web%20component%20%60likec4%20gen%20webcomponent%60%20produces.%0A%0AThere%20are%20no%20committed%20PNG%20exports%2C%20so%20a%20diagram%20cannot%20go%20stale%3A%20the%20site%0Arenders%20from%20the%20%60.c4%60%20sources%20on%20every%20build.%20The%20cost%20is%20that%20GitHub%20shows%20no%0Adiagram%20at%20all%20when%20reading%20the%20chapters%20in%20the%20repository%2C%20and%20that%0A%60make%20docs-dev%60%20%E2%80%94%20plain%20%60docmd%20dev%60%2C%20with%20none%20of%20the%20LikeC4%20steps%20%E2%80%94%20doesn&#039;t%0Aeither.%20Use%20%60make%20arch-diagrams%60%20for%20the%20explorer%20while%20editing%20the%20model%2C%20and%0A%60make%20docs-dev-build%60%20to%20see%20an%20embedded%20view%20rendered.%0A%0AThe%20web%20component%20bundle%20is%20~2.5%20MB%2C%20which%20is%20why%20%60scripts%2Flikec4-embed.js%60%2C%0Anot%20the%20bundle%2C%20is%20the%20site-wide%20%60customJs%60%3A%20it%20loads%20the%20bundle%20only%20on%20pages%0Athat%20actually%20contain%20a%20%60%3Clikec4-view%3E%60%2C%20and%20mirrors%20docmd&#039;s%20theme%20onto%20each%0Aelement&#039;s%20%60color-scheme%60.%0A%0A%60build-dev-docs.sh%60%20fails%20if%20a%20chapter%20embeds%20a%20%60view-id%60%20that%20%60views.c4%60%0Adoesn&#039;t%20define.%20The%20element%20renders%20an%20empty%20box%20otherwise%2C%20which%20is%20the%20same%0Asilent%20staleness%20the%20PNGs%20had.%0A%0A%23%23%20The%20landing%20page%0A%0A%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20is%20hand-written%20HTML%20in%0A%60www%2F%60%20%E2%80%94%20a%20landing%20page%20and%20a%20screenshot%20gallery.%20%60make%20www%60%20copies%20it%2C%20plus%0A%60docs%2Fscreenshots%2F%60%2C%20into%20%60www-site%2F%60%3B%20open%20%60www-site%2Findex.html%60%20to%20preview.%0AThere%20is%20no%20generator%2C%20on%20purpose%3A%20the%20pages%20are%20two%20bespoke%20layouts%2C%20and%0Arendering%20them%20through%20docmd%20would%20mean%20custom%20templates%20to%20make%20a%20docs%20tool%0Astop%20looking%20like%20one.%0A%0A%60.github%2Fworkflows%2Fwww.yml%60%20publishes%20on%20pushes%20to%20%60main%60%20that%20touch%20%60www%2F%60%2C%0A%60docs%2Fscreenshots%2F%60%20or%20the%20build%20script.%20It%20does%20not%20follow%20the%20documentation%0Asite&#039;s%20release-tag%20rule%2C%20because%20the%20page%20describes%20the%20project%20rather%20than%20a%0Aversion%20%E2%80%94%20with%20the%20consequence%20that%20its%20screenshots%20can%20show%20interface%20changes%0Athat%20are%20merged%20but%20not%20yet%20released.%0A%0A%23%23%23%20Why%20it%20deploys%20to%20another%20repository%0A%0AGitHub%20Pages%20serves%20one%20custom%20domain%20per%20repository%20and%20this%20one%20already%0Aserves%20%60docs.schellingboard.org%60%2C%20so%20the%20built%20site%20is%20pushed%20to%0A%5Bschellingboard%2Fschellingboard.org%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard.org)%2C%0Awhich%20holds%20nothing%20but%20that%20output%20and%20is%20never%20edited%20directly.%20Its%20Pages%0Asource%20is%20the%20default%20branch%2C%20so%20the%20site%20keeps%20working%20even%20if%20the%20workflow%20is%0Adisabled.%0A%0A%23%23%23%20Screenshots%0A%0A%60docs%2Fscreenshots%2F%60%20is%20the%20only%20copy%20of%20the%20screenshots.%20The%20landing%20page%0Auses%20them%20directly%20and%20the%20documentation%20site%20can%20use%20them%20too%20%E2%80%94%20see%0A%5B%60docs%2Fscreenshots%2FREADME.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2Fdocs%2Fscreenshots%2FREADME.md)%0Afor%20the%20capture%20checklist%20and%20how%20to%20reference%20them%20from%20markdown.%0A%0AThey%20are%20not%20under%20%60docs%2Fpublic%2F%60%2C%20and%20cannot%20usefully%20be%3A%20docmd%20discovers%0Amarkdown%20and%20nothing%20else%2C%20so%20a%20PNG%20placed%20there%20is%20not%20copied%20to%20the%20output.%0ABoth%20build%20scripts%20do%20the%20copying%20themselves.%20One%20consequence%3A%20images%20appear%20in%0A%60make%20docs-build%60%20output%20but%20not%20in%20the%20%60make%20docs%60%20live%20preview%2C%20which%20serves%0Awhat%20docmd%20produced.%0A%0A%23%23%23%20Hosting%20setup%20for%20the%20pushed%20sites%0A%0ABoth%20the%20landing%20page%20and%20the%20developer%20docs%20are%20pushed%20into%20a%20repository%20of%0Atheir%20own%2C%20and%20both%20use%20the%20same%20setup.%0A%0A-%20**GitHub%20App**%3A%20these%20workflows%20write%20to%20a%20repository%20that%20is%20not%20their%20own%2C%0A%20%20so%20they%20mint%20a%20token%20from%20an%20organization-owned%20app%20rather%20than%20carrying%20a%0A%20%20standing%20credential.%20The%20token%20expires%20within%20the%20hour%2C%20the%20app%20belongs%20to%0A%20%20the%20organization%20instead%20of%20a%20person%2C%20and%20it%20is%20installed%20on%20the%20site%0A%20%20repositories%20alone.%0A%0A%20%201.%20Under%20the%20organization&#039;s%20Settings%20%E2%86%92%20Developer%20settings%20%E2%86%92%20GitHub%20Apps%2C%0A%20%20%20%20%20create%20an%20app%20with%20the%20repository%20permission%20**Contents%3A%20Read%20and%20write**%0A%20%20%20%20%20and%20nothing%20else.%20It%20needs%20no%20webhook%20and%20no%20account%20permissions.%0A%20%202.%20Install%20it%20on%20%60schellingboard%2Fschellingboard.org%60%20and%0A%20%20%20%20%20%60schellingboard%2Fdevelopers.schellingboard.org%60%20only.%20Each%20workflow%20still%0A%20%20%20%20%20narrows%20its%20own%20token%20to%20the%20one%20repository%20it%20publishes%2C%20so%20installing%0A%20%20%20%20%20the%20app%20on%20both%20does%20not%20let%20either%20job%20touch%20the%20other&#039;s%20site.%0A%20%203.%20In%20this%20repository%2C%20add%20the%20app&#039;s%20**Client%20ID**%20as%20the%0A%20%20%20%20%20%60PAGES_DEPLOY_APP_CLIENT_ID%60%20variable%20and%20a%20generated%20private%20key%20as%20the%0A%20%20%20%20%20%60PAGES_DEPLOY_APP_PRIVATE_KEY%60%20secret.%0A%0A%20%20To%20rotate%2C%20generate%20a%20new%20private%20key%20on%20the%20app%20and%20replace%20the%20secret%3B%20the%0A%20%20client%20ID%20does%20not%20change.%0A%0A-%20**DNS**%3A%20%60schellingboard.org%60%20and%20%60developers.schellingboard.org%60%20each%0A%20%20pointing%20at%20%60schellingboard.github.io%60%2C%20and%20each%20site%20repository&#039;s%20Pages%0A%20%20source%20set%20to%20its%20default%20branch%20%E2%80%94%20not%20_GitHub%20Actions_%2C%20which%20would%20ignore%0A%20%20the%20pushed%20files.%20The%20domain%20comes%20from%20%60www%2FCNAME%60%20for%20the%20landing%20page%2C%0A%20%20which%20the%20build%20copies%20verbatim%2C%20and%20from%20%60url%60%20in%20%60docmd.dev.config.json%60%0A%20%20for%20the%20developer%20site%2C%20which%20%60build-dev-docs.sh%60%20writes%20to%20%60dev-site%2FCNAME%60.%0A%0A-%20**A%20first%20commit**%3A%20the%20workflow%20clones%20the%20site%20repository%20before%20writing%20to%0A%20%20it%2C%20so%20an%20entirely%20empty%20one%20fails.%20Any%20initial%20commit%20does.%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Reference</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Documentation</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="documentation-and-the-sites" class="docmd-heading"><a href="#documentation-and-the-sites" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Documentation and the sites</h1>
+<p>Three sites, three audiences, three publishing rules:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Site</th>
+<th>Built from</th>
+<th>Published when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://docs.schellingboard.org">docs.schellingboard.org</a></td>
+<td><code>docs/public/</code>, at each tag</td>
+<td>a release is tagged</td>
+</tr>
+<tr>
+<td><a href="https://developers.schellingboard.org">developers.schellingboard.org</a></td>
+<td><code>docs/dev/</code>, on <code>main</code></td>
+<td><code>docs/dev/</code> changes on <code>main</code></td>
+</tr>
+<tr>
+<td><a href="https://schellingboard.org">schellingboard.org</a></td>
+<td><code>www/</code> + <code>docs/screenshots/</code></td>
+<td><code>www/</code> or the screenshots change</td>
+</tr>
+</tbody>
+</table>
+</div><p>The split of audiences is the point: attendees and organizers read the first,
+contributors the second, and nobody should land on the wrong one. Keeping the
+developer docs unversioned and the user docs versioned follows from the same
+split — user docs must describe the release someone is running, while developer
+docs must describe the branch they are working on.</p>
+<h2 id="documentation-and-the-sites-the-public-docs-site" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The public docs site</h2>
+<p>Built with <a href="https://docmd.io">docmd</a> from <code>docs/public/</code>, which holds one copy
+of the documentation and no snapshots. Published versions are reconstructed
+from git: <code>scripts/build-docs.sh</code> walks the release tags, checks each one out
+into a temporary worktree, and builds it as a version. The newest is served at
+the site root, older ones under <code>/&lt;major.minor&gt;/</code>, all listed in the version
+dropdown.</p>
+<p>So <code>docs/public/</code> is the <em>next</em> release’s documentation. Edit it in the same
+commit as the change it describes; it is published when that release is
+tagged.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make docs</code></td>
+<td>Live preview of <code>docs/public</code></td>
+</tr>
+<tr>
+<td><code>make docs-build</code></td>
+<td>Build the published site into <code>site/</code></td>
+</tr>
+<tr>
+<td><code>make docs-validate</code></td>
+<td>Check for broken internal links (runs in CI)</td>
+</tr>
+</tbody>
+</table>
+</div><p><code>.github/workflows/docs.yml</code> deploys on tag pushes and on pushes to <code>release/*</code>
+branches. Pushing to <code>main</code> deliberately publishes nothing — until a release is
+tagged, <code>make docs</code> is the only place the new documentation exists.</p>
+<p>Two consequences worth knowing:</p>
+<ul>
+<li><strong>Releasing documentation is tagging the repository.</strong> There is no snapshot
+step, so nothing can drift out of sync with the release it documents.</li>
+<li><strong>A release tag that predates the docs site publishes nothing.</strong> The build
+skips any tag without <code>docs/public/index.md</code>, which is why <code>v3.0.0</code> and
+<code>v3.1.0</code> never appear on the site.</li>
+</ul>
+<p><code>robots.txt</code>, <code>sitemap.xml</code> and <code>404.html</code> are generated by docmd from the
+config’s <code>url</code>; don’t hand-write them.</p>
+<h3 id="documentation-and-the-sites-the-public-docs-site-dating-each-page" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site-dating-each-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Dating each page</h3>
+<p>Every page ends with “Last updated”, and the commits that touched it in a
+tooltip. docmd’s own git plugin cannot produce that here: it delegates to its
+build engine, which runs <code>git log</code> in the process working directory, so the
+worktrees the versions are built from are all “outside repository” — the error
+is swallowed and the site publishes undated. <code>scripts/docmd-git-history.js</code>
+(loaded from <code>docmd.config.json</code> as a local plugin) resolves the repository per
+page instead, which also means each version is dated from its own ref rather
+than from <code>main</code>. Contributor avatars are deliberately left off, so no reader’s
+browser is sent to Gravatar. <code>build-docs.sh</code> fails the build if any page comes
+out undated.</p>
+<h3 id="documentation-and-the-sites-the-public-docs-site-hosting-setup-for-the-docs-site" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site-hosting-setup-for-the-docs-site" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Hosting setup for the docs site</h3>
+<p>Two things live outside the repository, so a fresh fork or a moved domain needs
+them set up again before the first tag push can publish anything:</p>
+<ul>
+<li><strong>GitHub Pages</strong>: repository Settings → Pages → Source must be <em>GitHub
+Actions</em>. <code>actions/deploy-pages</code> fails without it.</li>
+<li><strong>DNS</strong>: a <code>CNAME</code> record for <code>docs.schellingboard.org</code> pointing at
+<code>schellingboard.github.io</code>. The domain itself comes from <code>url</code> in
+<code>docmd.config.json</code> — the build writes it to <code>site/CNAME</code> from there.</li>
+</ul>
+<p>Until both are in place and <code>v3.2.0</code> is tagged, the
+<a href="https://docs.schellingboard.org">docs.schellingboard.org</a> links in
+<a href="https://github.com/schellingboard/schellingboard/blob/main/README.md"><code>README.md</code></a>
+are dead; the same pages are readable in <code>docs/public/</code>.</p>
+<h3 id="documentation-and-the-sites-the-public-docs-site-correcting-published-documentation" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site-correcting-published-documentation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Correcting published documentation</h3>
+<p>To fix published docs without cutting a release, commit to the release branch
+of that version — <code>release/3.2</code> for the 3.2 docs. The build prefers that branch
+over the tag, so pushing it republishes that version, and the deploy log names
+the ref each version came from (<code>Version 3.2 ← release/3.2</code>).</p>
+<p>Release branches don’t exist until something needs one. Create it from the
+release tag the first time that minor release has to be corrected — a release
+that never needs a fix never gets a branch — and merge it back into <code>main</code> so
+the fix reaches the next release too. The same branch carries the commits of a
+patch release, so this is where a fix to an older version lives in general, not
+only a documentation one; see <a href="../releasing/">Releasing a new version</a>.</p>
+<pre class="hljs"><code class="language-bash">jj <span class="hljs-keyword">new</span> v3.<span class="hljs-number">2.0</span>
+jj bookmark create release<span class="hljs-operator">/</span><span class="hljs-number">3.2</span>   <span class="hljs-comment"># git: git switch -c release/3.2 v3.2.0</span>
+<span class="hljs-comment"># fix, commit, push — the docs site redeploys</span>
+</code></pre>
+<p>Because the branch tip wins over the tag, anything committed to it is published
+as that version’s documentation the moment it is pushed, released or not. Land
+work that isn’t ready to be read on a separate branch.</p>
+<h2 id="documentation-and-the-sites-the-developer-docs-site" class="docmd-heading"><a href="#documentation-and-the-sites-the-developer-docs-site" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The developer docs site</h2>
+<p>The site you are reading. <code>docmd.dev.config.json</code> builds <code>docs/dev/</code> into
+<code>dev-site/</code> with its own title, navigation and search index — a second docmd
+project in the same repository, sharing nothing with the user site but the
+theme and the logo. <a href="../adr/0008-publish-developer-docs/">ADR 0008</a> has the
+reasoning, including why it isn’t a path under <a href="http://docs.schellingboard.org">docs.schellingboard.org</a>.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make docs-dev</code></td>
+<td>Live preview of <code>docs/dev</code> (no diagrams — see below)</td>
+</tr>
+<tr>
+<td><code>make docs-dev-build</code></td>
+<td>Build the published site into <code>dev-site/</code></td>
+</tr>
+<tr>
+<td><code>make docs-dev-validate</code></td>
+<td>Check for broken internal links (runs in CI)</td>
+</tr>
+</tbody>
+</table>
+</div><p>It is not versioned. <code>.github/workflows/developers.yml</code> publishes on pushes to
+<code>main</code> that touch <code>docs/dev/</code>, so the site always describes the default branch;
+a contributor on a release branch reads that branch’s <code>docs/dev/</code> in the
+repository instead.</p>
+<p><strong>Links out of <code>docs/dev/</code> must be absolute GitHub URLs.</strong> The site’s root is
+<code>docs/dev/</code>, so a relative <code>../../CONTRIBUTING.md</code> resolves to nothing once
+published. <code>make docs-dev-validate</code> catches those, and is the reason to run it
+after moving a file. Links to user documentation go to
+<a href="http://docs.schellingboard.org">docs.schellingboard.org</a> rather than to <code>docs/public/</code> in the repository.</p>
+<p><code>docs/dev/README.md</code> is both the site’s home page and the folder’s index on
+GitHub, which is what keeps the repository copy navigable.</p>
+<h3 id="documentation-and-the-sites-the-developer-docs-site-why-it-deploys-to-a-second-repository" class="docmd-heading"><a href="#documentation-and-the-sites-the-developer-docs-site-why-it-deploys-to-a-second-repository" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Why it deploys to a second repository</h3>
+<p>The same reason as the landing page below: GitHub Pages serves one custom
+domain per repository, and this one already serves <a href="http://docs.schellingboard.org">docs.schellingboard.org</a>. The
+build is pushed to
+<a href="https://github.com/schellingboard/developers.schellingboard.org">schellingboard/developers.schellingboard.org</a>,
+which holds nothing else, using the same organization-owned deploy app the
+landing page uses — see
+<a href="#hosting-setup-for-the-pushed-sites">Hosting setup for the pushed sites</a>.</p>
+<h3 id="documentation-and-the-sites-the-developer-docs-site-the-architecture-diagrams" class="docmd-heading"><a href="#documentation-and-the-sites-the-developer-docs-site-the-architecture-diagrams" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The architecture diagrams</h3>
+<p>The C4 model in <code>docs/dev/target-architecture/diagrams/</code> reaches the site twice:</p>
+<ul>
+<li><strong><code>/diagrams/</code></strong> — the full LikeC4 explorer, every view with drill-down
+between levels, built by <code>likec4 build</code>. It uses hash history (<code>/diagrams/#/…</code>)
+because GitHub Pages can’t route deep links into a single-page app.</li>
+<li><strong><code>&lt;likec4-view view-id=&quot;…&quot;&gt;</code></strong> — chapters embed a single view inline, rendered
+by the web component <code>likec4 gen webcomponent</code> produces.</li>
+</ul>
+<p>There are no committed PNG exports, so a diagram cannot go stale: the site
+renders from the <code>.c4</code> sources on every build. The cost is that GitHub shows no
+diagram at all when reading the chapters in the repository, and that
+<code>make docs-dev</code> — plain <code>docmd dev</code>, with none of the LikeC4 steps — doesn’t
+either. Use <code>make arch-diagrams</code> for the explorer while editing the model, and
+<code>make docs-dev-build</code> to see an embedded view rendered.</p>
+<p>The web component bundle is ~2.5 MB, which is why <code>scripts/likec4-embed.js</code>,
+not the bundle, is the site-wide <code>customJs</code>: it loads the bundle only on pages
+that actually contain a <code>&lt;likec4-view&gt;</code>, and mirrors docmd’s theme onto each
+element’s <code>color-scheme</code>.</p>
+<p><code>build-dev-docs.sh</code> fails if a chapter embeds a <code>view-id</code> that <code>views.c4</code>
+doesn’t define. The element renders an empty box otherwise, which is the same
+silent staleness the PNGs had.</p>
+<h2 id="documentation-and-the-sites-the-landing-page" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The landing page</h2>
+<p><a href="https://schellingboard.org">schellingboard.org</a> is hand-written HTML in
+<code>www/</code> — a landing page and a screenshot gallery. <code>make www</code> copies it, plus
+<code>docs/screenshots/</code>, into <code>www-site/</code>; open <code>www-site/index.html</code> to preview.
+There is no generator, on purpose: the pages are two bespoke layouts, and
+rendering them through docmd would mean custom templates to make a docs tool
+stop looking like one.</p>
+<p><code>.github/workflows/www.yml</code> publishes on pushes to <code>main</code> that touch <code>www/</code>,
+<code>docs/screenshots/</code> or the build script. It does not follow the documentation
+site’s release-tag rule, because the page describes the project rather than a
+version — with the consequence that its screenshots can show interface changes
+that are merged but not yet released.</p>
+<h3 id="documentation-and-the-sites-the-landing-page-why-it-deploys-to-another-repository" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page-why-it-deploys-to-another-repository" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Why it deploys to another repository</h3>
+<p>GitHub Pages serves one custom domain per repository and this one already
+serves <code>docs.schellingboard.org</code>, so the built site is pushed to
+<a href="https://github.com/schellingboard/schellingboard.org">schellingboard/schellingboard.org</a>,
+which holds nothing but that output and is never edited directly. Its Pages
+source is the default branch, so the site keeps working even if the workflow is
+disabled.</p>
+<h3 id="documentation-and-the-sites-the-landing-page-screenshots" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page-screenshots" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Screenshots</h3>
+<p><code>docs/screenshots/</code> is the only copy of the screenshots. The landing page
+uses them directly and the documentation site can use them too — see
+<a href="https://github.com/schellingboard/schellingboard/blob/main/docs/screenshots/README.md"><code>docs/screenshots/README.md</code></a>
+for the capture checklist and how to reference them from markdown.</p>
+<p>They are not under <code>docs/public/</code>, and cannot usefully be: docmd discovers
+markdown and nothing else, so a PNG placed there is not copied to the output.
+Both build scripts do the copying themselves. One consequence: images appear in
+<code>make docs-build</code> output but not in the <code>make docs</code> live preview, which serves
+what docmd produced.</p>
+<h3 id="documentation-and-the-sites-the-landing-page-hosting-setup-for-the-pushed-sites" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page-hosting-setup-for-the-pushed-sites" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Hosting setup for the pushed sites</h3>
+<p>Both the landing page and the developer docs are pushed into a repository of
+their own, and both use the same setup.</p>
+<ul>
+<li><p><strong>GitHub App</strong>: these workflows write to a repository that is not their own,
+so they mint a token from an organization-owned app rather than carrying a
+standing credential. The token expires within the hour, the app belongs to
+the organization instead of a person, and it is installed on the site
+repositories alone.</p>
+<ol>
+<li>Under the organization’s Settings → Developer settings → GitHub Apps,
+create an app with the repository permission <strong>Contents: Read and write</strong>
+and nothing else. It needs no webhook and no account permissions.</li>
+<li>Install it on <code>schellingboard/schellingboard.org</code> and
+<code>schellingboard/developers.schellingboard.org</code> only. Each workflow still
+narrows its own token to the one repository it publishes, so installing
+the app on both does not let either job touch the other’s site.</li>
+<li>In this repository, add the app’s <strong>Client ID</strong> as the
+<code>PAGES_DEPLOY_APP_CLIENT_ID</code> variable and a generated private key as the
+<code>PAGES_DEPLOY_APP_PRIVATE_KEY</code> secret.</li>
+</ol>
+<p>To rotate, generate a new private key on the app and replace the secret; the
+client ID does not change.</p>
+</li>
+<li><p><strong>DNS</strong>: <code>schellingboard.org</code> and <code>developers.schellingboard.org</code> each
+pointing at <code>schellingboard.github.io</code>, and each site repository’s Pages
+source set to its default branch — not <em>GitHub Actions</em>, which would ignore
+the pushed files. The domain comes from <code>www/CNAME</code> for the landing page,
+which the build copies verbatim, and from <code>url</code> in <code>docmd.dev.config.json</code>
+for the developer site, which <code>build-dev-docs.sh</code> writes to <code>dev-site/CNAME</code>.</p>
+</li>
+<li><p><strong>A first commit</strong>: the workflow clones the site repository before writing to
+it, so an entirely empty one fails. Any initial commit does.</p>
+</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../multiple-instances/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Running multiple instances
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../releasing/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Releasing
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#documentation-and-the-sites" class="toc-link">Documentation and the sites</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#documentation-and-the-sites-the-public-docs-site" class="toc-link">The public docs site</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-public-docs-site-dating-each-page" class="toc-link">Dating each page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-public-docs-site-hosting-setup-for-the-docs-site" class="toc-link">Hosting setup for the docs site</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-public-docs-site-correcting-published-documentation" class="toc-link">Correcting published documentation</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#documentation-and-the-sites-the-developer-docs-site" class="toc-link">The developer docs site</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-developer-docs-site-why-it-deploys-to-a-second-repository" class="toc-link">Why it deploys to a second repository</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-developer-docs-site-the-architecture-diagrams" class="toc-link">The architecture diagrams</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#documentation-and-the-sites-the-landing-page" class="toc-link">The landing page</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-landing-page-why-it-deploys-to-another-repository" class="toc-link">Why it deploys to another repository</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-landing-page-screenshots" class="toc-link">Screenshots</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#documentation-and-the-sites-the-landing-page-hosting-setup-for-the-pushed-sites" class="toc-link">Hosting setup for the pushed sites</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789894068000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789894068000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat(docs): publish the developer docs at developers.schellingboard.org">feat(docs): publish the developer doc...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789894068000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: replace some missing lwcw-europe references">docs: replace some missing lwcw-europ...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789887658000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: publish corrections from release/&lt;major.minor&gt; branches">docs: publish corrections from releas...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1786216553000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

@@ -1,0 +1,320 @@
+okf_version: 0.9.5
+bundle:
+  name: schellingboard-developers
+  title: "SchellingBoard Developers"
+  description: ""
+  url: "https://developers.schellingboard.org"
+  generated_by: "@docmd/plugin-okf"
+  generated_at: "2026-09-20T09:10:43.831Z"
+  default_type: concept
+stats:
+  concepts: 38
+  by_type:
+    concept: 38
+  locales: 
+  versions: 
+concepts:
+  - id: root
+    type: concept
+    title: "SchellingBoard developer documentation"
+    path: /
+    file: concepts/root.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0001-replace-airtable-with-sql-database
+    type: concept
+    title: "ADR 0001: Replace Airtable with a SQL database"
+    path: /adr/0001-replace-airtable-with-sql-database/
+    file: concepts/adr-0001-replace-airtable-with-sql-database.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0002-testing-strategy
+    type: concept
+    title: "ADR 0002: Testing strategy"
+    path: /adr/0002-testing-strategy/
+    file: concepts/adr-0002-testing-strategy.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0003-form-field-validation-with-zod
+    type: concept
+    title: "ADR 0003: Form handling and validation with React Hook Form and Zod"
+    path: /adr/0003-form-field-validation-with-zod/
+    file: concepts/adr-0003-form-field-validation-with-zod.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0004-dev-fake-clock
+    type: concept
+    title: "ADR 0004: Dev fake clock for time-traveling event phases"
+    path: /adr/0004-dev-fake-clock/
+    file: concepts/adr-0004-dev-fake-clock.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0005-dark-mode
+    type: concept
+    title: "ADR 0005: Dark mode via semantic tokens and a per-device cookie"
+    path: /adr/0005-dark-mode/
+    file: concepts/adr-0005-dark-mode.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0006-push-notifications
+    type: concept
+    title: "ADR 0006: Push notifications through an installable web app"
+    path: /adr/0006-push-notifications/
+    file: concepts/adr-0006-push-notifications.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0007-attendee-count-and-reminder-dispatch
+    type: concept
+    title: "ADR 0007: Attendee count storage and in-process reminder dispatch"
+    path: /adr/0007-attendee-count-and-reminder-dispatch/
+    file: concepts/adr-0007-attendee-count-and-reminder-dispatch.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0008-publish-developer-docs
+    type: concept
+    title: "ADR 0008: Publish the developer docs at developers.schellingboard.org"
+    path: /adr/0008-publish-developer-docs/
+    file: concepts/adr-0008-publish-developer-docs.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr
+    type: concept
+    title: "Architecture decision records"
+    path: /adr/
+    file: concepts/adr.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: architecture-rules
+    type: concept
+    title: "Architecture rules"
+    path: /architecture-rules/
+    file: concepts/architecture-rules.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: attendance-model
+    type: concept
+    title: "Attendance prediction from voting results"
+    path: /attendance-model/
+    file: concepts/attendance-model.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: attendance-model-attendance-2025
+    type: concept
+    title: "Predicting session attendance from voting results"
+    path: /attendance-model/attendance-2025/
+    file: concepts/attendance-model-attendance-2025.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: changelog
+    type: concept
+    title: "Changelog and release notes"
+    path: /changelog/
+    file: concepts/changelog.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: coding-guidelines
+    type: concept
+    title: "Coding Guidelines"
+    path: /coding-guidelines/
+    file: concepts/coding-guidelines.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: documentation
+    type: concept
+    title: "Documentation and the sites"
+    path: /documentation/
+    file: concepts/documentation.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: exploration-matrix-chat
+    type: concept
+    title: "Matrix chat integration — feasibility notes"
+    path: /exploration/matrix-chat/
+    file: concepts/exploration-matrix-chat.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: getting-started
+    type: concept
+    title: "Getting started"
+    path: /getting-started/
+    file: concepts/getting-started.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: github-issues
+    type: concept
+    title: "Creating and Reading GitHub Issues"
+    path: /github-issues/
+    file: concepts/github-issues.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: migrations
+    type: concept
+    title: "Database Migrations"
+    path: /migrations/
+    file: concepts/migrations.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: multiple-instances
+    type: concept
+    title: "Running Multiple Instances"
+    path: /multiple-instances/
+    file: concepts/multiple-instances.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: releasing
+    type: concept
+    title: "Releasing a New Version"
+    path: /releasing/
+    file: concepts/releasing.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-01-overview
+    type: concept
+    title: "1 · Overview"
+    path: /target-architecture/01-overview/
+    file: concepts/target-architecture-01-overview.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-02-domain
+    type: concept
+    title: "2 · Domain"
+    path: /target-architecture/02-domain/
+    file: concepts/target-architecture-02-domain.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-03-server
+    type: concept
+    title: "3 · Server"
+    path: /target-architecture/03-server/
+    file: concepts/target-architecture-03-server.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-04-client
+    type: concept
+    title: "4 · Web app"
+    path: /target-architecture/04-client/
+    file: concepts/target-architecture-04-client.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-05-security
+    type: concept
+    title: "5 · Security"
+    path: /target-architecture/05-security/
+    file: concepts/target-architecture-05-security.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-06-data-and-time
+    type: concept
+    title: "6 · Data and time"
+    path: /target-architecture/06-data-and-time/
+    file: concepts/target-architecture-06-data-and-time.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-07-repo-and-rules
+    type: concept
+    title: "7 · Repository, enforced rules, testing, agents"
+    path: /target-architecture/07-repo-and-rules/
+    file: concepts/target-architecture-07-repo-and-rules.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-08-decisions
+    type: concept
+    title: "8 · Decisions"
+    path: /target-architecture/08-decisions/
+    file: concepts/target-architecture-08-decisions.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-09-feedback-map
+    type: concept
+    title: "9 · Feedback and issues, mapped to the design"
+    path: /target-architecture/09-feedback-map/
+    file: concepts/target-architecture-09-feedback-map.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-10-path-from-here
+    type: concept
+    title: "10 · A path from the current code"
+    path: /target-architecture/10-path-from-here/
+    file: concepts/target-architecture-10-path-from-here.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture
+    type: concept
+    title: "Target architecture"
+    path: /target-architecture/
+    file: concepts/target-architecture.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-diagrams
+    type: concept
+    title: Diagrams
+    path: /target-architecture/diagrams/
+    file: concepts/target-architecture-diagrams.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-glossary
+    type: concept
+    title: Glossary
+    path: /target-architecture/glossary/
+    file: concepts/target-architecture-glossary.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: target-architecture-open-questions
+    type: concept
+    title: "Open questions"
+    path: /target-architecture/open-questions/
+    file: concepts/target-architecture-open-questions.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: testing
+    type: concept
+    title: Testing
+    path: /testing/
+    file: concepts/testing.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: version-control
+    type: concept
+    title: "Version control and pull requests"
+    path: /version-control/
+    file: concepts/version-control.md
+    locale: ""
+    version: ""
+    tags: 

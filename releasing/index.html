@@ -1,0 +1,1560 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      Releasing a New Version : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/releasing/">
+<meta property="og:title" content="Releasing a New Version - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/releasing/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Releasing a New Version - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/releasing.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../" class="logo-link">
+              <img
+                src="../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active-parent expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../releasing/" class="active "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Releasing a New Version
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Releasing%20a%20New%20Version%0A%0APushing%20the%20tag%20is%20the%20whole%20release%3A%20it%20triggers%0A%5B%60.github%2Fworkflows%2Frelease.yml%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2F.github%2Fworkflows%2Frelease.yml)%2C%20which%0Abuilds%20the%20image%2C%20runs%20the%20E2E%20suite%20against%20it%2C%20publishes%20it%20to%20Docker%20Hub%20and%0Aopens%20the%20GitHub%20release%20%E2%80%94%20and%20%5B%60docs.yml%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2F.github%2Fworkflows%2Fdocs.yml)%2C%0Awhich%20rebuilds%20the%20docs%20site%20and%20serves%20%60docs%2Fpublic%2F%60%20as%20of%20that%20tag%20at%20its%0Aroot.%20Docs%20are%20versioned%20per%20minor%20release%2C%20so%20%60v3.2.1%60%20republishes%20the%20%603.2%60%0Adocumentation.%0A%0A1.%20**Finalize%20the%20changelog**%20%E2%80%94%20in%20%60CHANGELOG.md%60%2C%20rename%20%60%23%23%20%5BUnreleased%5D%60%20to%20%60%23%23%20%5BX.Y.Z%5D%20-%20YYYY-MM-DD%60%20(no%20%60v%60%20prefix%20in%20the%20header)%2C%20and%20replace%20the%20%60%5BUnreleased%5D%60%20compare%20link%20at%20the%20bottom%20of%20the%20file%20with%20the%20new%20version&#039;s%2C%20pointing%20from%20the%20previous%20release&#039;s%20endpoint%20to%20the%20new%20tag%20(%60vX.Y.Z%60).%20Do%20_not_%20add%20a%20fresh%20%60%23%23%20%5BUnreleased%5D%60%20section%20here%20%E2%80%94%20the%20released%20tag%20should%20carry%20no%20empty%20section%2C%20since%20that%20is%20what%20the%20documentation%20site%20publishes.%20Step%204%20reopens%20it%20afterwards.%0A%0A%20%20%20**Release%20the%20in-app%20notes%20in%20the%20same%20commit**%20%E2%80%94%20in%20%60app%2Frelease-notes.ts%60%2C%20the%20first%20entry%20of%20%60releaseNotes%60%20is%20the%20one%20being%20prepared%3A%20replace%20its%20%60version%3A%20%22Unreleased%22%60%20with%20this%20version%20and%20add%20the%20%60date%60.%20Nothing%20else%20moves.%20%60make%20test%60%20fails%20until%20the%20newest%20release%20the%20changelog%20names%20has%20an%20entry.%0A%0A%20%20%20**Re-read%20those%20highlights%20against%20the%20finalized%20changelog%20first.**%20They%20were%20written%20one%20at%20a%20time%2C%20before%20it%20was%20known%20what%20else%20the%20release%20would%20hold%2C%20so%20they%20are%20a%20draft%2C%20not%20a%20record%3A%20check%20that%20they%20are%20still%20the%203-5%20changes%20an%20attendee%20or%20organizer%20would%20call%20this%20release&#039;s%20highlights%2C%20and%20rewrite%20or%20replace%20any%20that%20are%20not.%0A%0A%20%20%20**Record%20the%20release&#039;s%20database%20in%20the%20same%20commit**%2C%20so%20future%20releases%20are%20tested%20against%20an%20upgrade%20from%20it%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dump-release-db%20VERSION%3DvX.Y.Z%0A%20%20%20%60%60%60%0A%0A%20%20%20It%20writes%20no%20dump%20when%20the%20release%20ships%20no%20migration%2C%20only%20the%20%60tests%2Ffixtures%2Fupgrade%2Freleases.json%60%20entry%20pointing%20at%20the%20dump%20that%20already%20covers%20the%20upgrade.%20%60make%20test%60%20fails%20until%20the%20version%20the%20changelog%20now%20names%20appears%20there%2C%20so%20the%20fixture%20cannot%20be%20forgotten%20%E2%80%94%20and%20being%20in%20the%20release%20commit%2C%20it%20is%20inside%20the%20tag%2C%20where%20a%20patch%20release%20branched%20off%20that%20tag%20needs%20it.%20See%20%5BRelease-upgrade%20tests%5D(testing.md%23release-upgrade-tests).%0A%0A%20%20%20Commit%20and%20merge%20this%20like%20any%20other%20change.%0A%0A2.%20**Tag%20the%20resulting%20commit%20on%20%60main%60%20and%20push%20the%20tag**%20%E2%80%94%20the%20point%20of%20no%0A%20%20%20return%2C%20since%20it%20publishes%20the%20documentation%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20jj%20git%20fetch%0A%20%20%20jj%20tag%20set%20v3.0.0%20-r%20main%40origin%0A%20%20%20jj%20git%20push%20--tag%20v3.0.0%0A%20%20%20%23%20git%3A%20git%20fetch%20origin%20main%0A%20%20%20%23%20%20%20%20%20%20git%20tag%20v3.0.0%20origin%2Fmain%0A%20%20%20%23%20%20%20%20%20%20git%20push%20origin%20v3.0.0%0A%20%20%20%60%60%60%0A%0A%20%20%20Optionally%20run%20%60make%20test-e2e-docker%60%20on%20the%20release%20commit%20first.%20The%0A%20%20%20release%20workflow%20runs%20it%20too%2C%20and%20refuses%20to%20publish%20anything%20if%20it%20fails%20%E2%80%94%0A%20%20%20running%20it%20locally%20only%20buys%20you%20the%20chance%20to%20fix%20a%20failure%20before%20the%20tag%0A%20%20%20is%20public.%0A%0A3.%20**Watch%20the%20release%20workflow.**%20It%20takes%20around%20fifteen%20minutes%2C%20most%20of%20it%0A%20%20%20the%20E2E%20suite%20against%20the%20image.%0A%0A4.%20**Reopen%20the%20changelog**%20%E2%80%94%20in%20a%20follow-up%20commit%20on%20%60main%60%2C%20add%20an%20empty%0A%20%20%20%60%23%23%20%5BUnreleased%5D%60%20section%20above%20%60%23%23%20%5BX.Y.Z%5D%60%20and%20an%20%60%5BUnreleased%5D%60%20compare%0A%20%20%20link%20from%20%60vX.Y.Z%60%20to%20%60HEAD%60.%20**Reopen%20the%20in-app%20notes%20too**%20%E2%80%94%20in%0A%20%20%20%60app%2Frelease-notes.ts%60%2C%20add%20a%20new%20first%20entry%20with%20%60version%3A%20%22Unreleased%22%60%0A%20%20%20and%20no%20%60date%60%2C%20above%20the%20one%20just%20released.%0A%0A%23%23%20What%20the%20release%20workflow%20does%0A%0ATriggered%20by%20a%20%60v*.*.*%60%20tag%2C%20in%20one%20job%2C%20so%20nothing%20is%20published%20until%0Aeverything%20before%20it%20has%20passed%3A%0A%0A-%20**Builds%20the%20image**%20through%20%60scripts%2Fdocker-build.sh%60%20%E2%80%94%20the%20same%20script%0A%20%20%60make%20docker-build%60%20runs%20%E2%80%94%20with%20%60APP_VERSION%60%20taken%20from%20the%20tag%20rather%20than%0A%20%20from%20%60scripts%2Fapp-version.js%60%2C%20which%20asks%20%60jj%60%20or%20%60git%20describe%60%20and%20can&#039;t%20be%0A%20%20trusted%20on%20a%20CI%20checkout.%0A-%20**Runs%20the%20E2E%20suite%20against%20that%20image**%20(%60make%20test-e2e-docker%60%2C%20with%0A%20%20%60IMAGE%60%20naming%20the%20image%20just%20built%2C%20so%20it%20is%20not%20rebuilt).%20This%20is%20the%20only%0A%20%20tier%20that%20runs%20the%20artifact%20we%20ship%2C%20and%20the%20last%20chance%20to%20catch%20a%20fault%20that%0A%20%20exists%20only%20in%20it%20%E2%80%94%20a%20file%20the%20standalone%20build%20didn&#039;t%20copy%2C%20a%20path%20that%0A%20%20resolves%20differently%20under%20%60%2Fdata%60%2C%20a%20date%20rendered%20in%20the%20server&#039;s%20timezone%0A%20%20rather%20than%20the%20event&#039;s.%20See%0A%20%20%5BTesting%20the%20Docker%20image%5D(testing.md%23testing-the-docker-image).%20The%20report%0A%20%20and%20the%20traces%20of%20failed%20attempts%20are%20uploaded%20as%20an%20artifact.%0A-%20**Pushes%20four%20tags**%20to%20%60schellingboard%2Fschellingboard%60%3A%20the%20full%20version%2C%0A%20%20%60major.minor%60%2C%20%60major%60%2C%20and%20%60latest%60.%20%60scripts%2Frelease-tags.ts%60%20decides%20the%0A%20%20last%20one%20from%20the%20repository&#039;s%20tags%20%E2%80%94%20%60%3Alatest%60%20has%20to%20keep%20meaning%20the%20newest%0A%20%20published%20release%2C%20so%20a%20patch%20cut%20from%20an%20older%20line%20(%60v3.3.2%60%20released%20after%0A%20%20%60v3.4.0%60)%20publishes%20its%20own%20three%20tags%20and%20leaves%20%60%3Alatest%60%20alone.%0A-%20**Creates%20the%20GitHub%20release**%2C%20last%2C%20so%20a%20release%20exists%20only%20once%20its%20images%0A%20%20do.%20It%20is%20marked%20as%20GitHub&#039;s%20%22latest%22%20on%20the%20same%20condition%20as%20the%20%60%3Alatest%60%0A%20%20tag.%0A%0AImages%20are%20%60linux%2Famd64%60%20only%2C%20which%20is%20what%20has%20always%20been%20published.%0A%0A%23%23%23%20Repository%20configuration%0A%0AThe%20workflow%20needs%20two%20repository%20secrets%3A%0A%0A%7C%20Secret%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Value%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20------------------------------------------------------------------------------------------------------------------------------------------------------------%20%7C%0A%7C%20%60DOCKERHUB_USERNAME%60%20%7C%20The%20Docker%20Hub%20account%20that%20can%20push%20to%20%60schellingboard%2Fschellingboard%60.%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60DOCKERHUB_TOKEN%60%20%20%20%20%7C%20A%20Docker%20Hub%20%5Baccess%20token%5D(https%3A%2F%2Fapp.docker.com%2Fsettings%2Fpersonal-access-tokens)%20for%20that%20account%20with%20**Read%20%26%20Write**%20scope%20%E2%80%94%20not%20the%20account%20password.%20%7C%0A%0ANothing%20else%3A%20the%20GitHub%20release%20is%20created%20with%20the%20automatic%20%60GITHUB_TOKEN%60%2C%0Awhich%20the%20workflow%20grants%20%60contents%3A%20write%60.%0A%0A%23%23%23%20If%20it%20fails%0A%0ANothing%20has%20been%20published%20unless%20the%20run%20reached%20the%20%22Publish%20the%20image%22%20step%2C%0Aso%20a%20failing%20build%20or%20E2E%20gate%20leaves%20Docker%20Hub%20and%20the%20releases%20page%0Auntouched.%20The%20tag%20and%20the%20documentation%20are%20out%2C%20though%2C%20and%20re-cutting%20a%20tag%0Athat%20people%20may%20already%20have%20fetched%20is%20worse%20than%20moving%20on%3A%20fix%20the%20problem%20on%0A%60main%60%20and%20release%20the%20next%20patch%20version.%0A%0AA%20failure%20_after_%20the%20gate%20%E2%80%94%20a%20Docker%20Hub%20outage%2C%20a%20flake%20%E2%80%94%20is%20different%3A%20the%0Atag%20is%20fine%20and%20only%20the%20publishing%20didn&#039;t%20happen.%20Re-run%20the%20workflow%20(or%0Adispatch%20it%20against%20the%20tag).%20Every%20step%20in%20it%20can%20be%20repeated%20safely.%0A%0A%23%23%23%20Publishing%20by%20hand%0A%0AOnly%20if%20the%20workflow%20itself%20is%20unavailable.%20%60scripts%2Frelease-tags.ts%60%20prints%0Aexactly%20what%20would%20be%20pushed%3A%0A%0A%60%60%60bash%0AVERSION%3Dv3.0.0%0A%0Adocker%20login%0Ajj%20new%20%24VERSION%20%20%20%20%20%20%23%20git%3A%20git%20checkout%20%24VERSION%0Amake%20clean%0AIMAGE%3D%22%24(APP_VERSION%3D%24VERSION%20bash%20scripts%2Fdocker-build.sh)%22%0Afor%20ref%20in%20%24(bun%20scripts%2Frelease-tags.ts%20%22%24IMAGE%22)%3B%20do%0A%20%20docker%20tag%20%22%24IMAGE%22%20%22%24ref%22%0A%20%20docker%20push%20%22%24ref%22%0Adone%0A%60%60%60%0A%0A%23%23%20Patch%20Releases%0A%0AA%20patch%20release%20is%20cut%20from%20the%20release%20branch%20of%20its%20minor%20version%2C%0A%60release%2F%3Cmajor.minor%3E%60%20%E2%80%94%20%60release%2F3.2%60%20for%20%60v3.2.1%60.%20These%20branches%20don&#039;t%20have%0Ato%20exist%3A%20create%20one%20from%20the%20release%20tag%20the%20first%20time%20that%20version%20needs%20a%0Afix%2C%20and%20a%20minor%20release%20that%20never%20needs%20one%20never%20gets%20a%20branch.%0A%0A%60%60%60bash%0Ajj%20new%20v3.2.0%0Ajj%20bookmark%20create%20release%2F3.2%20%20%20%23%20git%3A%20git%20switch%20-c%20release%2F3.2%20v3.2.0%0A%60%60%60%0A%0ACommit%20the%20fix%20there%20(cherry-picking%20it%20from%20%60main%60%20if%20it%20landed%20there%20first)%2C%0Athen%20run%20the%20steps%20above%20against%20the%20branch%20instead%20of%20%60main%60%2C%20and%20merge%20the%0Abranch%20back%20into%20%60main%60%20so%20the%20fix%20is%20not%20lost.%20Whether%20the%20patch%20takes%20over%0A%60%3Alatest%60%20is%20not%20a%20decision%20to%20make%3A%20the%20workflow%20works%20it%20out%20from%20the%20tags.%0A%0APushing%20the%20branch%20republishes%20that%20version&#039;s%20documentation%20on%20its%20own%2C%20without%0Aa%20tag%20%E2%80%94%20the%20docs%20build%20prefers%20%60release%2F%3Cmajor.minor%3E%60%20over%20the%20tag%20for%20that%0Aversion%2C%20which%20is%20also%20how%20published%20docs%20are%20corrected%20between%20releases.%20See%0A%5BCorrecting%20published%20documentation%5D(documentation.md%23correcting-published-documentation).%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Reference</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Releasing</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="releasing-a-new-version" class="docmd-heading"><a href="#releasing-a-new-version" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Releasing a New Version</h1>
+<p>Pushing the tag is the whole release: it triggers
+<a href="https://github.com/schellingboard/schellingboard/blob/main/.github/workflows/release.yml"><code>.github/workflows/release.yml</code></a>, which
+builds the image, runs the E2E suite against it, publishes it to Docker Hub and
+opens the GitHub release — and <a href="https://github.com/schellingboard/schellingboard/blob/main/.github/workflows/docs.yml"><code>docs.yml</code></a>,
+which rebuilds the docs site and serves <code>docs/public/</code> as of that tag at its
+root. Docs are versioned per minor release, so <code>v3.2.1</code> republishes the <code>3.2</code>
+documentation.</p>
+<ol>
+<li><p><strong>Finalize the changelog</strong> — in <code>CHANGELOG.md</code>, rename <code>## [Unreleased]</code> to <code>## [X.Y.Z] - YYYY-MM-DD</code> (no <code>v</code> prefix in the header), and replace the <code>[Unreleased]</code> compare link at the bottom of the file with the new version’s, pointing from the previous release’s endpoint to the new tag (<code>vX.Y.Z</code>). Do <em>not</em> add a fresh <code>## [Unreleased]</code> section here — the released tag should carry no empty section, since that is what the documentation site publishes. Step 4 reopens it afterwards.</p>
+<p><strong>Release the in-app notes in the same commit</strong> — in <code>app/release-notes.ts</code>, the first entry of <code>releaseNotes</code> is the one being prepared: replace its <code>version: &quot;Unreleased&quot;</code> with this version and add the <code>date</code>. Nothing else moves. <code>make test</code> fails until the newest release the changelog names has an entry.</p>
+<p><strong>Re-read those highlights against the finalized changelog first.</strong> They were written one at a time, before it was known what else the release would hold, so they are a draft, not a record: check that they are still the 3-5 changes an attendee or organizer would call this release’s highlights, and rewrite or replace any that are not.</p>
+<p><strong>Record the release’s database in the same commit</strong>, so future releases are tested against an upgrade from it:</p>
+<pre class="hljs"><code class="language-bash">make dump<span class="hljs-operator">-</span>release<span class="hljs-operator">-</span>db VERSION<span class="hljs-operator">=</span>vX.<span class="hljs-attr">Y</span>.<span class="hljs-attr">Z</span>
+</code></pre>
+<p>It writes no dump when the release ships no migration, only the <code>tests/fixtures/upgrade/releases.json</code> entry pointing at the dump that already covers the upgrade. <code>make test</code> fails until the version the changelog now names appears there, so the fixture cannot be forgotten — and being in the release commit, it is inside the tag, where a patch release branched off that tag needs it. See <a href="../testing/#release-upgrade-tests">Release-upgrade tests</a>.</p>
+<p>Commit and merge this like any other change.</p>
+</li>
+<li><p><strong>Tag the resulting commit on <code>main</code> and push the tag</strong> — the point of no
+return, since it publishes the documentation:</p>
+<pre class="hljs"><code class="language-bash">jj <span class="hljs-keyword">git</span> fetch
+jj tag <span class="hljs-keyword">set</span> v3.<span class="hljs-number">0.0</span> <span class="hljs-operator">-</span>r main@origin
+jj <span class="hljs-keyword">git</span> push <span class="hljs-operator">--</span>tag v3.<span class="hljs-number">0.0</span>
+<span class="hljs-comment"># git: git fetch origin main</span>
+<span class="hljs-comment">#      git tag v3.0.0 origin/main</span>
+<span class="hljs-comment">#      git push origin v3.0.0</span>
+</code></pre>
+<p>Optionally run <code>make test-e2e-docker</code> on the release commit first. The
+release workflow runs it too, and refuses to publish anything if it fails —
+running it locally only buys you the chance to fix a failure before the tag
+is public.</p>
+</li>
+<li><p><strong>Watch the release workflow.</strong> It takes around fifteen minutes, most of it
+the E2E suite against the image.</p>
+</li>
+<li><p><strong>Reopen the changelog</strong> — in a follow-up commit on <code>main</code>, add an empty
+<code>## [Unreleased]</code> section above <code>## [X.Y.Z]</code> and an <code>[Unreleased]</code> compare
+link from <code>vX.Y.Z</code> to <code>HEAD</code>. <strong>Reopen the in-app notes too</strong> — in
+<code>app/release-notes.ts</code>, add a new first entry with <code>version: &quot;Unreleased&quot;</code>
+and no <code>date</code>, above the one just released.</p>
+</li>
+</ol>
+<h2 id="releasing-a-new-version-what-the-release-workflow-does" class="docmd-heading"><a href="#releasing-a-new-version-what-the-release-workflow-does" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>What the release workflow does</h2>
+<p>Triggered by a <code>v*.*.*</code> tag, in one job, so nothing is published until
+everything before it has passed:</p>
+<ul>
+<li><strong>Builds the image</strong> through <code>scripts/docker-build.sh</code> — the same script
+<code>make docker-build</code> runs — with <code>APP_VERSION</code> taken from the tag rather than
+from <code>scripts/app-version.js</code>, which asks <code>jj</code> or <code>git describe</code> and can’t be
+trusted on a CI checkout.</li>
+<li><strong>Runs the E2E suite against that image</strong> (<code>make test-e2e-docker</code>, with
+<code>IMAGE</code> naming the image just built, so it is not rebuilt). This is the only
+tier that runs the artifact we ship, and the last chance to catch a fault that
+exists only in it — a file the standalone build didn’t copy, a path that
+resolves differently under <code>/data</code>, a date rendered in the server’s timezone
+rather than the event’s. See
+<a href="../testing/#testing-the-docker-image">Testing the Docker image</a>. The report
+and the traces of failed attempts are uploaded as an artifact.</li>
+<li><strong>Pushes four tags</strong> to <code>schellingboard/schellingboard</code>: the full version,
+<code>major.minor</code>, <code>major</code>, and <code>latest</code>. <code>scripts/release-tags.ts</code> decides the
+last one from the repository’s tags — <code>:latest</code> has to keep meaning the newest
+published release, so a patch cut from an older line (<code>v3.3.2</code> released after
+<code>v3.4.0</code>) publishes its own three tags and leaves <code>:latest</code> alone.</li>
+<li><strong>Creates the GitHub release</strong>, last, so a release exists only once its images
+do. It is marked as GitHub’s “latest” on the same condition as the <code>:latest</code>
+tag.</li>
+</ul>
+<p>Images are <code>linux/amd64</code> only, which is what has always been published.</p>
+<h3 id="releasing-a-new-version-what-the-release-workflow-does-repository-configuration" class="docmd-heading"><a href="#releasing-a-new-version-what-the-release-workflow-does-repository-configuration" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Repository configuration</h3>
+<p>The workflow needs two repository secrets:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Secret</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DOCKERHUB_USERNAME</code></td>
+<td>The Docker Hub account that can push to <code>schellingboard/schellingboard</code>.</td>
+</tr>
+<tr>
+<td><code>DOCKERHUB_TOKEN</code></td>
+<td>A Docker Hub <a href="https://app.docker.com/settings/personal-access-tokens">access token</a> for that account with <strong>Read &amp; Write</strong> scope — not the account password.</td>
+</tr>
+</tbody>
+</table>
+</div><p>Nothing else: the GitHub release is created with the automatic <code>GITHUB_TOKEN</code>,
+which the workflow grants <code>contents: write</code>.</p>
+<h3 id="releasing-a-new-version-what-the-release-workflow-does-if-it-fails" class="docmd-heading"><a href="#releasing-a-new-version-what-the-release-workflow-does-if-it-fails" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>If it fails</h3>
+<p>Nothing has been published unless the run reached the “Publish the image” step,
+so a failing build or E2E gate leaves Docker Hub and the releases page
+untouched. The tag and the documentation are out, though, and re-cutting a tag
+that people may already have fetched is worse than moving on: fix the problem on
+<code>main</code> and release the next patch version.</p>
+<p>A failure <em>after</em> the gate — a Docker Hub outage, a flake — is different: the
+tag is fine and only the publishing didn’t happen. Re-run the workflow (or
+dispatch it against the tag). Every step in it can be repeated safely.</p>
+<h3 id="releasing-a-new-version-what-the-release-workflow-does-publishing-by-hand" class="docmd-heading"><a href="#releasing-a-new-version-what-the-release-workflow-does-publishing-by-hand" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Publishing by hand</h3>
+<p>Only if the workflow itself is unavailable. <code>scripts/release-tags.ts</code> prints
+exactly what would be pushed:</p>
+<pre class="hljs"><code class="language-bash">VERSION<span class="hljs-operator">=</span>v3.<span class="hljs-number">0.0</span>
+
+<span class="hljs-keyword">docker</span> login
+jj <span class="hljs-keyword">new</span> <span class="hljs-variable">$VERSION</span>      <span class="hljs-comment"># git: git checkout $VERSION</span>
+make clean
+IMAGE<span class="hljs-operator">=</span><span class="hljs-string">&quot;$(APP_VERSION=$VERSION bash scripts/docker-build.sh)&quot;</span>
+<span class="hljs-keyword">for</span> ref <span class="hljs-keyword">in</span> <span class="hljs-title function_">$</span>(bun scripts<span class="hljs-operator">/</span>release<span class="hljs-operator">-</span>tags.<span class="hljs-attr">ts</span> <span class="hljs-string">&quot;$IMAGE&quot;</span>); <span class="hljs-keyword">do</span>
+  <span class="hljs-keyword">docker</span> tag <span class="hljs-string">&quot;$IMAGE&quot;</span> <span class="hljs-string">&quot;$ref&quot;</span>
+  <span class="hljs-keyword">docker</span> push <span class="hljs-string">&quot;$ref&quot;</span>
+done
+</code></pre>
+<h2 id="releasing-a-new-version-patch-releases" class="docmd-heading"><a href="#releasing-a-new-version-patch-releases" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Patch Releases</h2>
+<p>A patch release is cut from the release branch of its minor version,
+<code>release/&lt;major.minor&gt;</code> — <code>release/3.2</code> for <code>v3.2.1</code>. These branches don’t have
+to exist: create one from the release tag the first time that version needs a
+fix, and a minor release that never needs one never gets a branch.</p>
+<pre class="hljs"><code class="language-bash">jj <span class="hljs-keyword">new</span> v3.<span class="hljs-number">2.0</span>
+jj bookmark create release<span class="hljs-operator">/</span><span class="hljs-number">3.2</span>   <span class="hljs-comment"># git: git switch -c release/3.2 v3.2.0</span>
+</code></pre>
+<p>Commit the fix there (cherry-picking it from <code>main</code> if it landed there first),
+then run the steps above against the branch instead of <code>main</code>, and merge the
+branch back into <code>main</code> so the fix is not lost. Whether the patch takes over
+<code>:latest</code> is not a decision to make: the workflow works it out from the tags.</p>
+<p>Pushing the branch republishes that version’s documentation on its own, without
+a tag — the docs build prefers <code>release/&lt;major.minor&gt;</code> over the tag for that
+version, which is also how published docs are corrected between releases. See
+<a href="../documentation/#correcting-published-documentation">Correcting published documentation</a>.</p>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../documentation/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Documentation
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../github-issues/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            GitHub issues
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#releasing-a-new-version" class="toc-link">Releasing a New Version</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#releasing-a-new-version-what-the-release-workflow-does" class="toc-link">What the release workflow does</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#releasing-a-new-version-what-the-release-workflow-does-repository-configuration" class="toc-link">Repository configuration</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#releasing-a-new-version-what-the-release-workflow-does-if-it-fails" class="toc-link">If it fails</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#releasing-a-new-version-what-the-release-workflow-does-publishing-by-hand" class="toc-link">Publishing by hand</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#releasing-a-new-version-patch-releases" class="toc-link">Patch Releases</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789892736000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789892736000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: split CONTRIBUTING.md into developer-docs chapters">docs: split CONTRIBUTING.md into deve...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789892736000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: cap changelog and release-note verbosity, and prune what is unreleased">docs: cap changelog and release-note ...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1788641876000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: reopen the in-app release notes when reopening the changelog">docs: reopen the in-app release notes...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1788097198000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: show recent release notes when the footer&#039;s version is clicked">feat: show recent release notes when ...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1788091923000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="ci: release by pushing a tag">ci: release by pushing a tag</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1788092625000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

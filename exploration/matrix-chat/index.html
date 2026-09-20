@@ -1,0 +1,1545 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      Matrix chat integration — feasibility notes : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/exploration/matrix-chat/">
+<meta property="og:title" content="Matrix chat integration — feasibility notes - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/exploration/matrix-chat/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Matrix chat integration — feasibility notes - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/exploration/matrix-chat.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../exploration/matrix-chat/" class="active "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Matrix chat integration — feasibility notes
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Matrix%20chat%20integration%20%E2%80%94%20feasibility%20notes%0A%0A**Status%3A**%20exploratory%2C%20not%20decided.%20This%20is%20not%20an%20ADR%20%E2%80%94%20no%20decision%20has%20been%20made%0Ato%20build%20any%20of%20this.%20It%20records%20what&#039;s%20technically%20possible%20and%20what%20it%20costs%2C%20as%0Ainput%20to%20that%20decision.%0A%0A%23%23%20Goal%0A%0ALet%20attendees%20jump%20from%20a%20profile%2Fsession%20in%20SchellingBoard%20to%20a%20chat%20with%20that%0Aperson%2C%20without%20requiring%20an%20existing%20Signal%2FTelegram%2FWhatsApp%20contact.%20Scope%0Aagreed%20so%20far%3A%0A%0A-%20One%20chat%20server%20per%20event%2C%20not%20shared%20across%20events%2C%20not%20federated%20with%20the%0A%20%20public%20Matrix%20network.%0A-%20Accounts%20auto-provisioned%2Fsynced%20from%20event%20participants.%0A-%201%3A1%20chats%20and%20group%20chats%20(subset%20or%20all%20attendees).%0A-%20Rooms%20with%20elevated%20permissions%20(e.g.%20an%20orga-only%20room).%0A-%20A%20no-install%20web%20client%20is%20required%3B%20native%2Fdesktop%20clients%20are%20a%20bonus%2C%20not%20a%0A%20%20replacement%20for%20it.%0A-%20Chat%20is%20reached%20via%20a%20link%20to%20a%20separate%20URL%20(e.g.%20%60chat.sb.example.com%60)%20%E2%80%94%20it%20does%0A%20%20**not**%20need%20to%20be%20embedded%20in%20the%20SchellingBoard%20UI%20itself.%0A-%20Voice%2Fvideo%3A%20opt-in%20only%2C%20useful%20mainly%20for%20organizers%2C%20not%20part%20of%20the%20default%0A%20%20feature.%0A-%20Server-initiated%20notifications%20(e.g.%20%22session%20moved%20to%20a%20different%20slot%22)%20sent%0A%20%20into%20Matrix%2C%20targeted%20at%20attendees%20who%20RSVP&#039;d.%0A%0A%23%23%20Architecture%0A%0A**Server%3A**%20%5BSynapse%5D(https%3A%2F%2Fgithub.com%2Felement-hq%2Fsynapse)%20(Matrix&#039;s%20reference%0Ahomeserver%2C%20AGPL-3.0%2C%20open%20source)%2C%20one%20container%20per%20event%2C%20alongside%20the%20existing%0A%60app%60%20container.%20Isolation%20from%20the%20public%20Matrix%20network%3A%20remove%2Ffirewall%20the%0Afederation%20listener%20(port%208448)%20and%20set%20%60federation_domain_whitelist%3A%20%5B%5D%60.%20No%20single%0Aconfig%20flag%20does%20this%3B%20it&#039;s%20a%20combination%2C%20and%20Synapse%20may%20still%20be%20able%20to%20originate%0Asome%20outbound%20federation%20traffic%20unless%20the%20listener%20is%20actually%20blocked%20at%20the%0Anetwork%20level.%20(%5Bsynapse%236401%5D(https%3A%2F%2Fgithub.com%2Fmatrix-org%2Fsynapse%2Fissues%2F6401))%0A%0A**Provisioning%3A**%20SchellingBoard&#039;s%20server%20calls%20Synapse&#039;s%20admin%20API%0A(%60%2F_synapse%2Fadmin%2Fv1%2Fregister%60%2C%20HMAC-signed%20with%20a%20shared%20secret%20held%20only%20by%20the%0Aapp%20container)%20to%20create%2Fsync%20a%20Matrix%20account%20when%20a%20guest%20is%20created.%20This%20is%20a%0Aserver-to-server%20call%3B%20the%20shared%20secret%20is%20never%20exposed%20to%20a%20browser.%0A(%5BRegister%20API%5D(https%3A%2F%2Fmatrix-org.github.io%2Fsynapse%2Flatest%2Fadmin_api%2Fregister_api.html))%0A%0A**1%3A1%20chat%3A**%20a%20%5B%60matrix.to%60%5D(https%3A%2F%2Fmatrix.to)%20link%0A(%60https%3A%2F%2Fmatrix.to%2F%23%2F%40alice%3Asb.example.com%60)%20on%20the%20attendee&#039;s%20profile%20opens%0Awhatever%20Matrix%20client%20the%20visitor%20is%20signed%20into%20and%20starts%2Fopens%20a%20DM.%20No%0Aembedding%20needed%20to%20satisfy%20%22jump%20from%20a%20profile%20to%20a%20chat.%22%0A%0A**Group%20%2F%20orga%20rooms%3A**%20created%20via%20the%20Client-Server%20API%3B%20membership%20managed%20by%0Ainviting%2Fremoving%20the%20mapped%20Matrix%20IDs%20of%20the%20guests%20in%20the%20group.%20Elevated%0Apermissions%20(who%20can%20invite%2C%20redact%2C%20change%20room%20settings)%20are%20native%20Matrix%0Aroom%20%5Bpower%20levels%5D(https%3A%2F%2Fspec.matrix.org%2Fv1.12%2Fclient-server-api%2F%23permissions)%0A%E2%80%94%20no%20extra%20tooling%20required.%0A%0A**Server-initiated%20notifications%3A**%20a%20bot%2Fservice%20account%20(created%20the%20same%20way%20as%0Aregular%20accounts)%20posts%20into%20either%20a%20per-attendee%20DM%20or%20a%20per-session%20room%2C%20using%0Athe%20RSVP%20list%20SchellingBoard%20already%20has%20server-side%20to%20decide%20who&#039;s%20invited%2F%0Atargeted.%20This%20slots%20in%20next%20to%20the%20existing%20%60sessionHeadsUp%60%20email%20trigger%20in%0A%60model%2Fguest.ts%60%20%E2%80%94%20same%20trigger%20point%2C%20an%20additional%20send%20instead%20of%2Falongside%20the%0Aemail.%0A%0A%23%23%20Hosting%20under%20%60sb.example.com%2Fmessaging%60%3F%0A%0A**Not%20for%20the%20homeserver%20API.**%20Synapse&#039;s%20client%2Fserver%20API%20paths%20are%20hardcoded%20to%0Astart%20at%20%60%2F_matrix%60%20and%20%60%2F_synapse%2Fclient%60%20from%20the%20root%20of%20whatever%20(sub)domain%20it&#039;s%0Aserved%20on%3B%20the%20official%20reverse-proxy%20docs%20explicitly%20warn%20against%20inserting%20a%20path%0Aprefix%20in%20%60proxy_pass%60%2C%20since%20it%20breaks%20URL%20canonicalisation%20(and%2C%20when%20federation%20is%0Aon%2C%20signature%20verification).%0A(%5Breverse_proxy.html%5D(https%3A%2F%2Fmatrix-org.github.io%2Fsynapse%2Flatest%2Freverse_proxy.html))%0AA%20subdirectory%20setup%20is%20DIY%2C%20undocumented%2C%20and%20risks%20subtly%20breaking%20media%20URLs%20and%0A%60.well-known%60%20discovery.%20The%20supported%20shape%20is%20a%20dedicated%20(sub)domain%2C%20e.g.%0A%60chat.sb.example.com%60.%0A%0A**Clean-looking%20Matrix%20IDs%20are%20still%20possible**%20via%0A%5Bwell-known%20delegation%5D(https%3A%2F%2Fmatrix-org.github.io%2Fsynapse%2Fdevelop%2Fdelegate.html)%3A%0A%60sb.example.com%60%20can%20serve%20a%20static%20%60%2F.well-known%2Fmatrix%2Fclient%60%20(and%20%60%2Fserver%60%2C%20if%0Afederation%20were%20ever%20wanted)%20JSON%20file%20pointing%20%60base_url%60%20at%0A%60https%3A%2F%2Fchat.sb.example.com%60%2C%20giving%20IDs%20like%20%60%40alice%3Asb.example.com%60%20while%20the%0Aactual%20homeserver%20runs%20on%20its%20own%20subdomain.%20This%20is%20a%20static%20file%20the%20Next.js%20app%20(or%0Athe%20reverse%20proxy%20in%20front%20of%20it)%20can%20serve%20trivially%2C%20and%20doesn&#039;t%20conflict%20with%0Aanything%20else%20on%20the%20main%20domain.%0A%0A**The%20web%20client%20UI**%20(Element%20Web%20or%20similar)%20is%20a%20static%20SPA%20and%20_can_%20be%20built%20for%0Aa%20subpath%20(%60%3Cbase%20href%3E%60%20%2B%20matching%20web-server%20root)%2C%20but%20the%20simplest%20and%20best-tested%0Aoption%20is%20to%20serve%20it%20from%20the%20same%20subdomain%20as%20the%20homeserver%0A(%60chat.sb.example.com%60)%20rather%20than%20fight%20subpath%20rewriting%20for%20no%20real%20benefit%2C%20given%0Aembedding%20isn&#039;t%20required.%0A%0A%23%23%20Embedding%20a%20chat%20UI%20directly%20in%20SchellingBoard%20(not%20required%2C%20but%20asked%20about)%0A%0APossible%2C%20but%20a%20real%20subproject%2C%20not%20a%20dependency%20you%20add%3A%0A%0A-%20%5B%60matrix-js-sdk%60%5D(https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fmatrix-js-sdk)%20is%20headless%0A%20%20(protocol%2Fsync%2FE2EE%20only)%20%E2%80%94%20a%20custom%20message%20list%2C%20composer%2C%20and%20room%20list%20would%0A%20%20need%20to%20be%20built%20on%20top%20of%20it.%0A-%20%5B%60matrix-react-sdk%60%5D(https%3A%2F%2Fgithub.com%2Fmatrix-org%2Fmatrix-react-sdk)%20is%20**not**%20an%0A%20%20embeddable%20component%20library%20%E2%80%94%20by%20its%20own%20docs%20it%20only%20works%20as%20part%20of%20Element%0A%20%20Web&#039;s%20own%20%22skin%22%20and%20isn&#039;t%20usable%20standalone.%0A%0AGiven%20chat%20can%20live%20at%20its%20own%20URL%2C%20this%20is%20not%20worth%20building%20unless%20attendees%0Aspecifically%20ask%20for%20it%20after%20using%20the%20link-out%20version.%0A%0A%23%23%20Can%20this%20replace%20Signal%2FTelegram%3F%0A%0AMostly%2C%20with%20real%20gaps%3A%0A%0A%7C%20Area%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Status%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------------------------%20%7C%20-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%20%7C%0A%7C%201%3A1%2Fgroup%20text%2C%20files%2C%20reactions%2C%20E2EE%20%7C%20Works%20out%20of%20the%20box%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Search%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Weaker%20%E2%80%94%20encrypted%20rooms%20aren&#039;t%20server-searchable%2C%20client-side%20only%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Voice%2Fvideo%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Opt-in%20(per%20current%20scope)%3A%20Element%20Call%20is%20now%20production-grade%20(MatrixRTC%20%2B%20LiveKit%20SFU)%2C%20but%20needs%20its%20own%20LiveKit%20%2B%20JWT-auth-sidecar%20%2B%20TURN%2FUDP%20relay%20%E2%80%94%20a%20second%20stateful%20service%2C%20not%20just%20Synapse%20%7C%0A%7C%20Push%20notifications%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20See%20below%20%E2%80%94%20the%20hard%20part%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Mobile%20client%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Element%2FElement%20X%20work%2C%20but%20are%20heavier%20UX%20than%20Signal%2FTelegram%2C%20and%20users%20must%20point%20them%20at%20a%20non-default%20homeserver%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%23%23%23%20Push%20notifications%20collide%20with%20an%20existing%2C%20deliberate%20project%20decision%0A%0A%5BADR%200006%5D(..%2Fadr%2F0006-push-notifications.md)%20chose%20Web%20Push%20over%20a%20native%20app%0Aspecifically%20to%20avoid%20**any%20relay%20a%20self-hoster%20doesn&#039;t%20control**%3A%20no%20Apple%0ADeveloper%20account%2C%20no%20App%20Store%2C%20%22nothing%20for%20a%20self-hoster%20to%20configure.%22%20Matrix%0Amobile%20push%20normally%20goes%20through%20a%20push%20gateway%20(Sygnal%2FUnifiedPush)%20wired%20to%0AFCM%2FAPNs%2C%20which%20is%20either%20a%20third-party%20relay%20(often%20Element&#039;s%20own%20%60sygnal.im%60)%20or%0Aanother%20service%20every%20self-hoster%20has%20to%20stand%20up%20and%20configure%20themselves.%20Either%0Away%20it%20reintroduces%20the%20exact%20problem%20ADR%200006%20solved.%20Without%20it%2C%20messages%20still%0Aarrive%20next%20time%20the%20client%20is%20opened%20%E2%80%94%20just%20no%20OS-level%20alert.%0A%0AThis%20is%20the%20main%20reason%20%22fully%20replace%20Signal%2FTelegram%22%20is%20a%20materially%20bigger%0Aproject%20than%20%22stand%20up%20a%20chat%20container%22%3A%20it%20needs%20either%20accepting%20the%20relay%0Adependency%20ADR%200006%20rejected%2C%20or%20shipping%20text-only-when-open%20as%20the%20default%20and%0Atreating%20real%20push%20as%20a%20distinct%2C%20later%20increment.%0A%0A%23%23%20Tradeoffs%20worth%20weighing%20before%20deciding%0A%0A-%20**Deployment%20model%20mismatch%3A**%20%60docker-compose.yml%60%20is%20deliberately%20one%20app%0A%20%20container%20%2B%20SQLite%20%E2%80%94%20the%20whole%20self-hosting%20pitch.%20Synapse%20(and%2C%20if%20ever%20added%2C%0A%20%20LiveKit%2FTURN)%20makes%20every%20self-hoster%20run%20and%20maintain%20a%20second%20(or%20third)%0A%20%20stateful%20service%2C%20not%20just%20this%20project&#039;s%20own%20deployments.%0A-%20**Data%20lifecycle%3A**%20chat%20history%20and%20media%20accumulate%20in%20Synapse&#039;s%20own%20store%2C%20with%0A%20%20no%20existing%20end-of-event%20policy%20(wipe%3F%20export%3F%20keep%20running%3F).%20This%20becomes%20a%0A%20%20retention%2FGDPR%20question%20the%20moment%20real%20conversations%20happen%20in%20it.%0A-%20**Onboarding%20friction%3A**%20attendees%20already%20have%20Signal%2FTelegram%20installed%3B%20a%20new%0A%20%20per-event%20account%20(and%20possibly%20a%20new%20app)%20is%20friction%20those%20don&#039;t%20have.%20The%0A%20%20win%20%E2%80%94%20auto-linked%20contacts%2C%20orga%20rooms%20%E2%80%94%20has%20to%20outweigh%20that%20for%20adoption.%0A-%20**Identity%20is%20only%20as%20strong%20as%20SchellingBoard&#039;s%20own%3A**%20most%20guests%20are%0A%20%20unauthenticated%20by%20default%20(an%20unsigned%20cookie%20lets%20anyone%20%22become%22%20any%0A%20%20unprotected%20guest%20%E2%80%94%20see%20%60utils%2Facting-guest.ts%60).%20A%20Matrix%20login%20minted%20from%0A%20%20%22current%20guest%22%20inherits%20that%20weakness.%20Fine%20for%20casual%20chat%20matching%20the%20app&#039;s%0A%20%20existing%20trust%20level%3B%20gating%20the%20orga%20room%20specifically%20behind%0A%20%20%60isVerifiedAsGuest%60%20(the%20signed-cookie%20path)%20avoids%20letting%20that%20weakness%20reach%0A%20%20the%20one%20room%20where%20it%20matters.%0A-%20**%22Must%20not%20sync%20with%20other%20servers%22%20doesn&#039;t%20fully%20hold%20once%20mobile%20push%20is%20in%0A%20%20scope%3A**%20even%20with%20federation%20off%2C%20third-party%20push%20gateways%2FAPNs%2FFCM%20still%20see%0A%20%20device%20tokens%20and%20notification%20metadata%20(though%20not%20room%20content%2C%20if%20E2EE&#039;d).%0A-%20**Per-event%20ops%20burden%20compounds%3A**%20one%20more%20container%20to%20patch%20and%20monitor%2C%0A%20%20multiplied%20by%20however%20many%20events%20run.%0A%0A%23%23%20Open%20Questions%0A%0A-%20Is%20this%20an%20opt-in%20feature%20per%20event%2C%20or%20something%20every%20deployment%20gets%20by%0A%20%20default%3F%20(Given%20the%20deployment-model%20mismatch%20above%2C%20opt-in%20seems%20necessary.)%0A-%20Is%20text-only%20(no%20push%2C%20no%20calls)%20an%20acceptable%20v1%2C%20with%20push%20treated%20as%20a%0A%20%20separate%20later%20decision%3F%0A-%20What&#039;s%20the%20retention%2Fdeletion%20policy%20for%20chat%20data%20after%20an%20event%20ends%3F%0A-%20Is%20a%20wildcard-DNS%2Fone-subdomain-per-event%20setup%20(%22chat.sb.example.com%22)%20acceptable%0A%20%20operationally%2C%20or%20does%20each%20event%20need%20its%20own%20domain%3F%0A-%20Does%20the%20orga-room%20use%20case%20justify%20the%20isolation%2Fpermissions%20work%20on%20its%20own%2C%0A%20%20independent%20of%20whether%20general%20attendee%20chat%20ships%3F%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Matrix chat feasibility</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="matrix-chat-integration-feasibility-notes" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Matrix chat integration — feasibility notes</h1>
+<p><strong>Status:</strong> exploratory, not decided. This is not an ADR — no decision has been made
+to build any of this. It records what’s technically possible and what it costs, as
+input to that decision.</p>
+<h2 id="matrix-chat-integration-feasibility-notes-goal" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-goal" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Goal</h2>
+<p>Let attendees jump from a profile/session in SchellingBoard to a chat with that
+person, without requiring an existing Signal/Telegram/WhatsApp contact. Scope
+agreed so far:</p>
+<ul>
+<li>One chat server per event, not shared across events, not federated with the
+public Matrix network.</li>
+<li>Accounts auto-provisioned/synced from event participants.</li>
+<li>1:1 chats and group chats (subset or all attendees).</li>
+<li>Rooms with elevated permissions (e.g. an orga-only room).</li>
+<li>A no-install web client is required; native/desktop clients are a bonus, not a
+replacement for it.</li>
+<li>Chat is reached via a link to a separate URL (e.g. <code>chat.sb.example.com</code>) — it does
+<strong>not</strong> need to be embedded in the SchellingBoard UI itself.</li>
+<li>Voice/video: opt-in only, useful mainly for organizers, not part of the default
+feature.</li>
+<li>Server-initiated notifications (e.g. “session moved to a different slot”) sent
+into Matrix, targeted at attendees who RSVP’d.</li>
+</ul>
+<h2 id="matrix-chat-integration-feasibility-notes-architecture" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-architecture" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Architecture</h2>
+<p><strong>Server:</strong> <a href="https://github.com/element-hq/synapse">Synapse</a> (Matrix’s reference
+homeserver, AGPL-3.0, open source), one container per event, alongside the existing
+<code>app</code> container. Isolation from the public Matrix network: remove/firewall the
+federation listener (port 8448) and set <code>federation_domain_whitelist: []</code>. No single
+config flag does this; it’s a combination, and Synapse may still be able to originate
+some outbound federation traffic unless the listener is actually blocked at the
+network level. (<a href="https://github.com/matrix-org/synapse/issues/6401">synapse#6401</a>)</p>
+<p><strong>Provisioning:</strong> SchellingBoard’s server calls Synapse’s admin API
+(<code>/_synapse/admin/v1/register</code>, HMAC-signed with a shared secret held only by the
+app container) to create/sync a Matrix account when a guest is created. This is a
+server-to-server call; the shared secret is never exposed to a browser.
+(<a href="https://matrix-org.github.io/synapse/latest/admin_api/register_api.html">Register API</a>)</p>
+<p><strong>1:1 chat:</strong> a <a href="https://matrix.to"><code>matrix.to</code></a> link
+(<code>https://matrix.to/#/@alice:sb.example.com</code>) on the attendee’s profile opens
+whatever Matrix client the visitor is signed into and starts/opens a DM. No
+embedding needed to satisfy “jump from a profile to a chat.”</p>
+<p><strong>Group / orga rooms:</strong> created via the Client-Server API; membership managed by
+inviting/removing the mapped Matrix IDs of the guests in the group. Elevated
+permissions (who can invite, redact, change room settings) are native Matrix
+room <a href="https://spec.matrix.org/v1.12/client-server-api/#permissions">power levels</a>
+— no extra tooling required.</p>
+<p><strong>Server-initiated notifications:</strong> a bot/service account (created the same way as
+regular accounts) posts into either a per-attendee DM or a per-session room, using
+the RSVP list SchellingBoard already has server-side to decide who’s invited/
+targeted. This slots in next to the existing <code>sessionHeadsUp</code> email trigger in
+<code>model/guest.ts</code> — same trigger point, an additional send instead of/alongside the
+email.</p>
+<h2 id="matrix-chat-integration-feasibility-notes-hosting-under-sbexamplecommessaging" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-hosting-under-sbexamplecommessaging" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Hosting under <code>sb.example.com/messaging</code>?</h2>
+<p><strong>Not for the homeserver API.</strong> Synapse’s client/server API paths are hardcoded to
+start at <code>/_matrix</code> and <code>/_synapse/client</code> from the root of whatever (sub)domain it’s
+served on; the official reverse-proxy docs explicitly warn against inserting a path
+prefix in <code>proxy_pass</code>, since it breaks URL canonicalisation (and, when federation is
+on, signature verification).
+(<a href="https://matrix-org.github.io/synapse/latest/reverse_proxy.html">reverse_proxy.html</a>)
+A subdirectory setup is DIY, undocumented, and risks subtly breaking media URLs and
+<code>.well-known</code> discovery. The supported shape is a dedicated (sub)domain, e.g.
+<code>chat.sb.example.com</code>.</p>
+<p><strong>Clean-looking Matrix IDs are still possible</strong> via
+<a href="https://matrix-org.github.io/synapse/develop/delegate.html">well-known delegation</a>:
+<code>sb.example.com</code> can serve a static <code>/.well-known/matrix/client</code> (and <code>/server</code>, if
+federation were ever wanted) JSON file pointing <code>base_url</code> at
+<code>https://chat.sb.example.com</code>, giving IDs like <code>@alice:sb.example.com</code> while the
+actual homeserver runs on its own subdomain. This is a static file the Next.js app (or
+the reverse proxy in front of it) can serve trivially, and doesn’t conflict with
+anything else on the main domain.</p>
+<p><strong>The web client UI</strong> (Element Web or similar) is a static SPA and <em>can</em> be built for
+a subpath (<code>&lt;base href&gt;</code> + matching web-server root), but the simplest and best-tested
+option is to serve it from the same subdomain as the homeserver
+(<code>chat.sb.example.com</code>) rather than fight subpath rewriting for no real benefit, given
+embedding isn’t required.</p>
+<h2 id="matrix-chat-integration-feasibility-notes-embedding-a-chat-ui-directly-in-schellingboard-not-required-but-asked-about" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-embedding-a-chat-ui-directly-in-schellingboard-not-required-but-asked-about" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Embedding a chat UI directly in SchellingBoard (not required, but asked about)</h2>
+<p>Possible, but a real subproject, not a dependency you add:</p>
+<ul>
+<li><a href="https://www.npmjs.com/package/matrix-js-sdk"><code>matrix-js-sdk</code></a> is headless
+(protocol/sync/E2EE only) — a custom message list, composer, and room list would
+need to be built on top of it.</li>
+<li><a href="https://github.com/matrix-org/matrix-react-sdk"><code>matrix-react-sdk</code></a> is <strong>not</strong> an
+embeddable component library — by its own docs it only works as part of Element
+Web’s own “skin” and isn’t usable standalone.</li>
+</ul>
+<p>Given chat can live at its own URL, this is not worth building unless attendees
+specifically ask for it after using the link-out version.</p>
+<h2 id="matrix-chat-integration-feasibility-notes-can-this-replace-signaltelegram" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-can-this-replace-signaltelegram" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Can this replace Signal/Telegram?</h2>
+<p>Mostly, with real gaps:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1:1/group text, files, reactions, E2EE</td>
+<td>Works out of the box</td>
+</tr>
+<tr>
+<td>Search</td>
+<td>Weaker — encrypted rooms aren’t server-searchable, client-side only</td>
+</tr>
+<tr>
+<td>Voice/video</td>
+<td>Opt-in (per current scope): Element Call is now production-grade (MatrixRTC + LiveKit SFU), but needs its own LiveKit + JWT-auth-sidecar + TURN/UDP relay — a second stateful service, not just Synapse</td>
+</tr>
+<tr>
+<td>Push notifications</td>
+<td>See below — the hard part</td>
+</tr>
+<tr>
+<td>Mobile client</td>
+<td>Element/Element X work, but are heavier UX than Signal/Telegram, and users must point them at a non-default homeserver</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="matrix-chat-integration-feasibility-notes-can-this-replace-signaltelegram-push-notifications-collide-with-an-existing-deliberate-project-decision" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-can-this-replace-signaltelegram-push-notifications-collide-with-an-existing-deliberate-project-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Push notifications collide with an existing, deliberate project decision</h3>
+<p><a href="../../adr/0006-push-notifications/">ADR 0006</a> chose Web Push over a native app
+specifically to avoid <strong>any relay a self-hoster doesn’t control</strong>: no Apple
+Developer account, no App Store, “nothing for a self-hoster to configure.” Matrix
+mobile push normally goes through a push gateway (Sygnal/UnifiedPush) wired to
+FCM/APNs, which is either a third-party relay (often Element’s own <code>sygnal.im</code>) or
+another service every self-hoster has to stand up and configure themselves. Either
+way it reintroduces the exact problem ADR 0006 solved. Without it, messages still
+arrive next time the client is opened — just no OS-level alert.</p>
+<p>This is the main reason “fully replace Signal/Telegram” is a materially bigger
+project than “stand up a chat container”: it needs either accepting the relay
+dependency ADR 0006 rejected, or shipping text-only-when-open as the default and
+treating real push as a distinct, later increment.</p>
+<h2 id="matrix-chat-integration-feasibility-notes-tradeoffs-worth-weighing-before-deciding" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-tradeoffs-worth-weighing-before-deciding" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Tradeoffs worth weighing before deciding</h2>
+<ul>
+<li><strong>Deployment model mismatch:</strong> <code>docker-compose.yml</code> is deliberately one app
+container + SQLite — the whole self-hosting pitch. Synapse (and, if ever added,
+LiveKit/TURN) makes every self-hoster run and maintain a second (or third)
+stateful service, not just this project’s own deployments.</li>
+<li><strong>Data lifecycle:</strong> chat history and media accumulate in Synapse’s own store, with
+no existing end-of-event policy (wipe? export? keep running?). This becomes a
+retention/GDPR question the moment real conversations happen in it.</li>
+<li><strong>Onboarding friction:</strong> attendees already have Signal/Telegram installed; a new
+per-event account (and possibly a new app) is friction those don’t have. The
+win — auto-linked contacts, orga rooms — has to outweigh that for adoption.</li>
+<li><strong>Identity is only as strong as SchellingBoard’s own:</strong> most guests are
+unauthenticated by default (an unsigned cookie lets anyone “become” any
+unprotected guest — see <code>utils/acting-guest.ts</code>). A Matrix login minted from
+“current guest” inherits that weakness. Fine for casual chat matching the app’s
+existing trust level; gating the orga room specifically behind
+<code>isVerifiedAsGuest</code> (the signed-cookie path) avoids letting that weakness reach
+the one room where it matters.</li>
+<li><strong>“Must not sync with other servers” doesn’t fully hold once mobile push is in
+scope:</strong> even with federation off, third-party push gateways/APNs/FCM still see
+device tokens and notification metadata (though not room content, if E2EE’d).</li>
+<li><strong>Per-event ops burden compounds:</strong> one more container to patch and monitor,
+multiplied by however many events run.</li>
+</ul>
+<h2 id="matrix-chat-integration-feasibility-notes-open-questions" class="docmd-heading"><a href="#matrix-chat-integration-feasibility-notes-open-questions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Open Questions</h2>
+<ul>
+<li>Is this an opt-in feature per event, or something every deployment gets by
+default? (Given the deployment-model mismatch above, opt-in seems necessary.)</li>
+<li>Is text-only (no push, no calls) an acceptable v1, with push treated as a
+separate later decision?</li>
+<li>What’s the retention/deletion policy for chat data after an event ends?</li>
+<li>Is a wildcard-DNS/one-subdomain-per-event setup (“<a href="http://chat.sb.example.com">chat.sb.example.com</a>”) acceptable
+operationally, or does each event need its own domain?</li>
+<li>Does the orga-room use case justify the isolation/permissions work on its own,
+independent of whether general attendee chat ships?</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../attendance-model/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Attendance model
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <div class="next-page-placeholder">
+                      </div>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#matrix-chat-integration-feasibility-notes" class="toc-link">Matrix chat integration — feasibility notes</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#matrix-chat-integration-feasibility-notes-goal" class="toc-link">Goal</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#matrix-chat-integration-feasibility-notes-architecture" class="toc-link">Architecture</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#matrix-chat-integration-feasibility-notes-hosting-under-sbexamplecommessaging" class="toc-link">Hosting under sb.example.com/messaging?</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#matrix-chat-integration-feasibility-notes-embedding-a-chat-ui-directly-in-schellingboard-not-required-but-asked-about" class="toc-link">Embedding a chat UI directly in SchellingBoard (not required, but asked about)</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#matrix-chat-integration-feasibility-notes-can-this-replace-signaltelegram" class="toc-link">Can this replace Signal/Telegram?</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#matrix-chat-integration-feasibility-notes-can-this-replace-signaltelegram-push-notifications-collide-with-an-existing-deliberate-project-decision" class="toc-link">Push notifications collide with an existing, deliberate project decision</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#matrix-chat-integration-feasibility-notes-tradeoffs-worth-weighing-before-deciding" class="toc-link">Tradeoffs worth weighing before deciding</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#matrix-chat-integration-feasibility-notes-open-questions" class="toc-link">Open Questions</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789892736000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789892736000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: split CONTRIBUTING.md into developer-docs chapters">docs: split CONTRIBUTING.md into deve...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789892736000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: add feasibility notes on a Matrix chat integration">docs: add feasibility notes on a Matr...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789625639000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

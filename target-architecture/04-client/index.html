@@ -1,0 +1,1467 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      4 · Web app : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/target-architecture/04-client/">
+<meta property="og:title" content="4 · Web app - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/target-architecture/04-client/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="4 · Web app - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/target-architecture/04-client.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  4 · Web app
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%204%20%C2%B7%20Web%20app%0A%0A%60apps%2Fweb%60%3A%20a%20static%20single-page%20app%20built%20with%20Vite%2C%20React%20and%20TypeScript%2C%20served%20by%0Athe%20server%20as%20files%2C%20installable%20as%20a%20PWA.%20View%20%60web%60%20in%20the%0A%5Bdiagrams%5D(diagrams%2FREADME.md).%0A%0A%3Clikec4-view%20view-id%3D%22web%22%3E%3Ca%20href%3D%22https%3A%2F%2Fdevelopers.schellingboard.org%2Fdiagrams%2F%23%2Fview%2Fweb%22%3EL3%20web%20app%20components%3C%2Fa%3E%3C%2Flikec4-view%3E%0A%0A%23%23%20Layout%0A%0A%60%60%60%0Aapps%2Fweb%2Fsrc%2F%0A%20%20app%2F%20%20%20%20%20%20%20%20%20%20%20%20router%2C%20layout%20shell%2C%20auth%20gate%2C%20theme%2C%20error%20boundary.%20Knows%20no%20domain.%0A%20%20replica%2F%20%20%20%20%20%20%20%20store%20(applies%20changes%20with%20domain&#039;s%20apply)%2C%20snapshot%20loader%2C%20feed%20client%2C%20IndexedDB%20persistence%2C%20sync%20status%0A%20%20commands%2F%20%20%20%20%20%20%20one%20file%20per%20mutation%3A%20predict%20%E2%86%92%20call%20api-client%20%E2%86%92%20reconcile%20%2F%20roll%20back%0A%20%20features%2F%20%20%20%20%20%20%20one%20folder%20per%20screen%20family%3A%20schedule%2C%20agenda%2C%20proposals%2C%20voting%2C%20people%2C%20meetings%2C%20notifications%2C%20settings%2C%20admin%2C%20venue%0A%20%20ui%2F%20%20%20%20%20%20%20%20%20%20%20%20%20design%20system%3A%20tokens%2C%20primitives%2C%20form%20fields%2C%20modal%20stack%2C%20toasts%0A%20%20pwa%2F%20%20%20%20%20%20%20%20%20%20%20%20service%20worker%2C%20install%20prompt%2C%20push%20subscription%2C%20kiosk%20keep-awake%0A%20%20i18n%2F%20%20%20%20%20%20%20%20%20%20%20catalogs%20and%20formatting%20helpers%20that%20wrap%20domain%2Ftime%0A%60%60%60%0A%0ARules%3A%20%60features%60%20read%20from%20%60replica%60%20and%20%60domain%60%20and%20call%20%60commands%60%3B%20they%20never%0Acall%20%60api-client%60%20directly.%20%60replica%60%20and%20%60commands%60%20know%20nothing%20about%20React%0Acomponents.%20%60app%60%20imports%20%60features%60%3B%20nothing%20imports%20%60app%60.%0A%0A%23%23%20The%20replica%0A%0AOne%20event%20at%20a%20time.%20Shape%20mirrors%20the%20snapshot%20contract%3A%0A%0A%60%60%60ts%0Atype%20Replica%20%3D%20%7B%0A%20%20seq%3A%20number%3B%0A%20%20event%3A%20Event%3B%0A%20%20days%3A%20Map%3CId%2C%20Day%3E%3B%0A%20%20places%3A%20Map%3CId%2C%20Place%3E%3B%0A%20%20sessions%3A%20Map%3CId%2C%20Session%3E%3B%0A%20%20rsvps%3A%20Map%3CId%2C%20Rsvp%3E%3B%0A%20%20proposals%3A%20Map%3CId%2C%20ProposalPublic%3E%3B%0A%20%20people%3A%20Map%3CId%2C%20ProfilePublic%3E%3B%0A%20%20me%3A%20%7B%0A%20%20%20%20participation%3B%0A%20%20%20%20votes%3A%20Map%3B%0A%20%20%20%20marks%3A%20Map%3B%0A%20%20%20%20meetings%3A%20Map%3B%0A%20%20%20%20notifications%3A%20Map%3B%0A%20%20%20%20availability%3B%0A%20%20%20%20preferences%3B%0A%20%20%7D%3B%0A%20%20sync%3A%20%7B%0A%20%20%20%20state%3A%20%22live%22%20%7C%20%22reconnecting%22%20%7C%20%22offline%22%20%7C%20%22stale%22%3B%0A%20%20%20%20lastSyncedAt%3A%20Instant%3B%0A%20%20%7D%3B%0A%7D%3B%0A%60%60%60%0A%0A-%20**Loading**%3A%20%60GET%20snapshot%60%20%E2%86%92%20store%20%E2%86%92%20%60GET%20feed%3Fsince%3Dseq%60.%20If%20a%20persisted%0A%20%20replica%20exists%2C%20render%20it%20first%20with%20%60sync.state%20%3D%20&#039;stale&#039;%60%2C%20then%20resume%20the%0A%20%20feed%20from%20its%20%60seq%60%3B%20the%20snapshot%20is%20only%20refetched%20on%20%60410%20Gone%60.%0A-%20**%60apply(replica%2C%20change)%60**%20is%20a%20pure%20reducer%20in%20%60domain%60%20(it%20is%20also%20how%20the%0A%20%20server&#039;s%20tests%20check%20that%20a%20change%20payload%20is%20sufficient).%20It%20upserts%20the%0A%20%20subject%20from%20the%20payload%2C%20deletes%20on%20%60*Deleted%60%2C%20and%20bumps%20%60seq%60.%20Changes%20with%0A%20%20%60seq%20%E2%89%A4%20replica.seq%60%20are%20ignored%2C%20which%20makes%20replay%20after%20a%20reconnect%20safe.%0A-%20**Persistence**%3A%20the%20replica%20is%20written%20to%20IndexedDB%20(debounced)%20keyed%20by%0A%20%20%60(event%2C%20person)%60%3B%20cleared%20on%20logout.%20A%20different%20person%20on%20the%20same%20browser%0A%20%20never%20sees%20a%20previous%20person&#039;s%20replica.%0A-%20The%20store%20is%20a%20small%20reactive%20store%20(Zustand-style)%20with%20memoized%20selectors%3B%0A%20%20derived%20views%20(%60agenda%60%2C%20%60grid%60%2C%20%60shiftsBelowMinimum%60%2C%20filters)%20come%20from%0A%20%20%60domain%60%20and%20are%20memoized%20per%20input%20identity.%20Components%20subscribe%20to%20selectors%2C%0A%20%20so%20a%20change%20to%20one%20session%20re-renders%20the%20blocks%20that%20show%20it%2C%20not%20the%20grid.%0A%0AThis%20answers%20the%20reservation%20in%20ADR%200006%20that%20a%20stale%20schedule%20is%20worse%20than%20none%3A%0Athe%20replica%20is%20never%20presented%20as%20current%20unless%20the%20feed%20is%20live%2C%20and%20once%20it%20is%2C%0Astaleness%20lasts%20as%20long%20as%20the%20reconnect.%0A%0A%3Clikec4-view%20view-id%3D%22flowReconnect%22%20dynamic-variant%3D%22sequence%22%3E%3Ca%20href%3D%22https%3A%2F%2Fdevelopers.schellingboard.org%2Fdiagrams%2F%23%2Fview%2FflowReconnect%22%3ESequence%20diagram%3A%20back%20online%20after%20a%20wifi%20drop%3C%2Fa%3E%3C%2Flikec4-view%3E%0A%0A%23%23%20Commands%20and%20optimistic%20updates%0A%0A%60%60%60ts%0Aexport%20const%20rsvp%20%3D%20command(%7B%0A%20%20predict%3A%20(replica%2C%20actor%2C%20input)%20%3D%3E%20%7B%0A%20%20%20%20const%20verdict%20%3D%20policies.scheduling.canRsvp(actor%2C%20input%2C%20contextFrom(replica)%2C%20clock)%3B%0A%20%20%20%20return%20verdict.allow%20%3F%20%5Bchanges.RsvpAdded.predict(input%2C%20actor)%5D%20%3A%20deny(verdict)%3B%0A%20%20%7D%2C%0A%20%20call%3A%20(api%2C%20input%2C%20key)%20%3D%3E%20api.POST(&#039;%2Fevents%2F%7Bslug%7D%2Fsessions%2F%7Bid%7D%2Frsvp&#039;%2C%20%7B%20...%2C%20headers%3A%20%7B%20&#039;Idempotency-Key&#039;%3A%20key%20%7D%20%7D)%2C%0A%7D)%3B%0A%60%60%60%0A%0A1.%20**Predict**%20with%20the%20same%20policy%20the%20server%20will%20run.%20A%20denial%20disables%20the%0A%20%20%20control%20and%20shows%20the%20reason%20code%20translated%3B%20nothing%20is%20sent.%0A2.%20**Apply**%20the%20predicted%20change%20locally%2C%20keyed%20by%20a%20client-generated%0A%20%20%20idempotency%20key%20and%20flagged%20%60pending%60.%20The%20UI%20shows%20it%20at%20once.%0A3.%20**Call**%20the%20API%20with%20that%20key.%20The%20confirmed%20change%20carries%20the%20key%0A%20%20%20(%60command_key%60)%2C%20so%20whichever%20arrives%20first%2C%20the%20feed%20message%20or%20the%20response%2C%0A%20%20%20%60apply%60%20replaces%20the%20pending%20change%20with%20the%20real%20one.%20On%20a%20network%20error%20the%0A%20%20%20command%20retries%20with%20the%20same%20key%3B%20on%20a%20%604xx%60%20it%20removes%20the%20prediction%20and%0A%20%20%20shows%20the%20problem&#039;s%20code.%0A4.%20Only%20%60commands%2F%60%20may%20write%20to%20the%20replica%20outside%20%60apply%60.%20There%20is%20exactly%20one%0A%20%20%20optimistic%20mechanism%2C%20used%20by%20every%20mutation%2C%20which%20is%20what%20ends%20the%20class%20of%0A%20%20%20bugs%20in%20%23463.%0A%0AEdits%20carry%20%60expectedVersion%60%3B%20a%20%60409%60%20shows%20%22changed%20by%20someone%20else%22%20with%20the%0Acurrent%20values.%0A%0A%23%23%20Screens%20as%20functions%20of%20the%20replica%0A%0AEvery%20feature%20renders%20from%20selectors%20plus%20local%20UI%20state%20(open%20modal%2C%20filter%2C%0Ascroll).%20Notable%20consequences%3A%0A%0A-%20**Schedule%20grid%20and%20agenda**%20are%20two%20projections%20of%20the%20same%20%60sessions%60%2C%0A%20%20%60rsvps%60%2C%20%60marks%60%2C%20%60meetings%60.%20The%20**clash%20view**%20attendees%20asked%20for%20is%0A%20%20%60agenda().clashGroups%60%3B%20the%20**unfilled%20shifts**%20list%20is%0A%20%20%60shiftsBelowMinimum()%60%3B%20**filters**%20(mine%2C%20starred%2C%20not%20hidden%2C%20place%2C%20tag%2C%0A%20%20text)%20are%20pure%20and%20instant.%20No%20endpoint%20is%20added%20for%20any%20of%20them.%0A-%20The%20**grid%20on%20a%20phone**%20uses%20a%20column-count%20strategy%20(visible%20places%20chosen%20by%0A%20%20the%20viewer%2C%20saved%20as%20a%20preference)%20and%20wraps%20titles%2C%20instead%20of%20a%20fixed%20column%0A%20%20width%3B%20a%20%22now%22%20strip%20shows%20what%20is%20running%20across%20all%20places%20at%20this%20minute.%0A-%20**Modals**%20are%20routes%20(%60%3Fsession%3D%7Bid%7D%60%20as%20a%20search%20param%20over%20the%20current%0A%20%20screen)%2C%20so%20back%20returns%20to%20the%20previous%20modal%20and%20deep%20links%20open%20the%0A%20%20right%20screen%20behind%20them%20(%23856%2C%20%23994).%0A-%20**Venue**%3A%20a%20place%20popover%20shows%20floor%20and%20directions%3B%20the%20venue%20screen%20shows%20the%0A%20%20map%20with%20pins%3B%20a%20session%20block&#039;s%20place%20chip%20opens%20the%20popover.%0A-%20**Kiosk**%20is%20%60%3Fkiosk%3D1%60%20on%20the%20schedule%3A%20the%20same%20replica%2C%20auto-scroll%20to%20now%2C%0A%20%20keep-awake%2C%20a%20place%20filter.%20It%20never%20needs%20a%20page%20refresh%20because%20the%20feed%20keeps%0A%20%20it%20current.%0A-%20**Admin**%20is%20a%20section%20of%20the%20same%20app%2C%20shown%20when%20the%20actor%20has%20an%20organizer%20or%0A%20%20site-admin%20role.%20It%20uses%20the%20same%20commands.%0A%0A%23%23%20PWA%0A%0A-%20Service%20worker%20precaches%20the%20shell%20(hashed%20assets)%20and%20serves%20it%20offline%3B%0A%20%20API%20responses%20are%20never%20cached%20by%20the%20worker%2C%20because%20the%20replica%20already%20is%20the%0A%20%20cache%20and%20knows%20its%20own%20staleness.%0A-%20Push%3A%20one%20subscription%20per%20device%2C%20bound%20to%20the%20person%2C%20listed%20in%20settings.%0A%20%20A%20push%20carries%20only%20a%20notification%20id%3B%20the%20app%20fetches%20the%20record%20when%20opened%2C%0A%20%20so%20push%20payloads%20hold%20no%20content.%0A-%20An%20update%20check%20compares%20the%20served%20version%20with%20the%20running%20one%20and%20offers%20a%0A%20%20reload%20(%23788).%0A%0A%23%23%20UI%20foundations%0A%0A-%20Design%20tokens%20(surface%2C%20fg%2C%20line%2C%20brand%2C%20semantic%2C%20chrome)%20as%20today%2C%20contrast-%0A%20%20tested%20in%20both%20themes%3B%20state%20never%20encoded%20by%20colour%20alone.%0A-%20Every%20control%20has%20an%20accessible%20name%3B%20E2E%20tests%20locate%20by%20role%20and%20name.%0A-%20Time%20is%20formatted%20only%20through%20%60i18n%2Fformat%60%2C%20which%20wraps%20%60domain%2Ftime%60%20with%20the%0A%20%20person&#039;s%20zone%2C%20locale%20and%2012%2F24-hour%20preference.%0A-%20Forms%20validate%20against%20the%20same%20zod%20contract%20the%20server%20uses%2C%20per%20field%2C%20with%0A%20%20the%20server&#039;s%20problem%20details%20mapped%20back%20onto%20fields%20(%23639).%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="4-web-app" class="docmd-heading"><a href="#4-web-app" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4 · Web app</h1>
+<p><code>apps/web</code>: a static single-page app built with Vite, React and TypeScript, served by
+the server as files, installable as a PWA. View <code>web</code> in the
+<a href="../diagrams/">diagrams</a>.</p>
+<likec4-view view-id="web"><a href="https://developers.schellingboard.org/diagrams/#/view/web">L3 web app components</a></likec4-view>
+<h2 id="4-web-app-layout" class="docmd-heading"><a href="#4-web-app-layout" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Layout</h2>
+<pre class="hljs"><code>apps<span class="hljs-operator">/</span>web<span class="hljs-operator">/</span>src<span class="hljs-operator">/</span>
+  app<span class="hljs-operator">/</span>            router, layout shell, auth gate, theme, error boundary. Knows no domain.
+  replica<span class="hljs-operator">/</span>        <span class="hljs-title function_">store</span> (applies changes <span class="hljs-keyword">with</span> domain&#039;s apply), snapshot loader, feed client, IndexedDB persistence, sync status
+  commands<span class="hljs-operator">/</span>       one file per mutation<span class="hljs-operator">:</span> predict → call api<span class="hljs-operator">-</span>client → reconcile <span class="hljs-operator">/</span> roll back
+  features<span class="hljs-operator">/</span>       one folder per screen family<span class="hljs-operator">:</span> schedule, agenda, proposals, voting, people, meetings, notifications, settings, admin, venue
+  ui<span class="hljs-operator">/</span>             design system<span class="hljs-operator">:</span> tokens, primitives, form fields, modal stack, toasts
+  pwa<span class="hljs-operator">/</span>            service worker, install prompt, push subscription, kiosk keep<span class="hljs-operator">-</span>awake
+  i18n<span class="hljs-operator">/</span>           catalogs and formatting helpers that wrap domain<span class="hljs-operator">/</span>time
+</code></pre>
+<p>Rules: <code>features</code> read from <code>replica</code> and <code>domain</code> and call <code>commands</code>; they never
+call <code>api-client</code> directly. <code>replica</code> and <code>commands</code> know nothing about React
+components. <code>app</code> imports <code>features</code>; nothing imports <code>app</code>.</p>
+<h2 id="4-web-app-the-replica" class="docmd-heading"><a href="#4-web-app-the-replica" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The replica</h2>
+<p>One event at a time. Shape mirrors the snapshot contract:</p>
+<pre class="hljs"><code class="language-ts"><span class="hljs-keyword">type</span> Replica <span class="hljs-operator">=</span> {
+  seq<span class="hljs-operator">:</span> number;
+  event<span class="hljs-operator">:</span> Event;
+  days<span class="hljs-operator">:</span> Map<span class="hljs-operator">&lt;</span>Id, Day<span class="hljs-operator">&gt;</span>;
+  places<span class="hljs-operator">:</span> Map<span class="hljs-operator">&lt;</span>Id, Place<span class="hljs-operator">&gt;</span>;
+  sessions<span class="hljs-operator">:</span> Map<span class="hljs-operator">&lt;</span>Id, Session<span class="hljs-operator">&gt;</span>;
+  rsvps<span class="hljs-operator">:</span> Map<span class="hljs-operator">&lt;</span>Id, Rsvp<span class="hljs-operator">&gt;</span>;
+  proposals<span class="hljs-operator">:</span> Map<span class="hljs-operator">&lt;</span>Id, ProposalPublic<span class="hljs-operator">&gt;</span>;
+  people<span class="hljs-operator">:</span> Map<span class="hljs-operator">&lt;</span>Id, ProfilePublic<span class="hljs-operator">&gt;</span>;
+  me<span class="hljs-operator">:</span> {
+    participation;
+    votes<span class="hljs-operator">:</span> Map;
+    marks<span class="hljs-operator">:</span> Map;
+    meetings<span class="hljs-operator">:</span> Map;
+    notifications<span class="hljs-operator">:</span> Map;
+    availability;
+    preferences;
+  };
+  sync<span class="hljs-operator">:</span> {
+    state<span class="hljs-operator">:</span> <span class="hljs-string">&quot;live&quot;</span> <span class="hljs-operator">|</span> <span class="hljs-string">&quot;reconnecting&quot;</span> <span class="hljs-operator">|</span> <span class="hljs-string">&quot;offline&quot;</span> <span class="hljs-operator">|</span> <span class="hljs-string">&quot;stale&quot;</span>;
+    lastSyncedAt<span class="hljs-operator">:</span> Instant;
+  };
+};
+</code></pre>
+<ul>
+<li><strong>Loading</strong>: <code>GET snapshot</code> → store → <code>GET feed?since=seq</code>. If a persisted
+replica exists, render it first with <code>sync.state = 'stale'</code>, then resume the
+feed from its <code>seq</code>; the snapshot is only refetched on <code>410 Gone</code>.</li>
+<li><strong><code>apply(replica, change)</code></strong> is a pure reducer in <code>domain</code> (it is also how the
+server’s tests check that a change payload is sufficient). It upserts the
+subject from the payload, deletes on <code>*Deleted</code>, and bumps <code>seq</code>. Changes with
+<code>seq ≤ replica.seq</code> are ignored, which makes replay after a reconnect safe.</li>
+<li><strong>Persistence</strong>: the replica is written to IndexedDB (debounced) keyed by
+<code>(event, person)</code>; cleared on logout. A different person on the same browser
+never sees a previous person’s replica.</li>
+<li>The store is a small reactive store (Zustand-style) with memoized selectors;
+derived views (<code>agenda</code>, <code>grid</code>, <code>shiftsBelowMinimum</code>, filters) come from
+<code>domain</code> and are memoized per input identity. Components subscribe to selectors,
+so a change to one session re-renders the blocks that show it, not the grid.</li>
+</ul>
+<p>This answers the reservation in ADR 0006 that a stale schedule is worse than none:
+the replica is never presented as current unless the feed is live, and once it is,
+staleness lasts as long as the reconnect.</p>
+<likec4-view view-id="flowReconnect" dynamic-variant="sequence"><a href="https://developers.schellingboard.org/diagrams/#/view/flowReconnect">Sequence diagram: back online after a wifi drop</a></likec4-view>
+<h2 id="4-web-app-commands-and-optimistic-updates" class="docmd-heading"><a href="#4-web-app-commands-and-optimistic-updates" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Commands and optimistic updates</h2>
+<pre class="hljs"><code class="language-ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> rsvp <span class="hljs-operator">=</span> <span class="hljs-title function_">command</span>({
+  predict<span class="hljs-operator">:</span> (replica, actor, input) <span class="hljs-operator">=&gt;</span> {
+    <span class="hljs-keyword">const</span> verdict <span class="hljs-operator">=</span> policies.<span class="hljs-attr">scheduling</span>.<span class="hljs-title function_">canRsvp</span>(actor, input, <span class="hljs-title function_">contextFrom</span>(replica), clock);
+    <span class="hljs-keyword">return</span> verdict.<span class="hljs-attr">allow</span> <span class="hljs-operator">?</span> [changes.<span class="hljs-attr">RsvpAdded</span>.<span class="hljs-title function_">predict</span>(input, actor)] <span class="hljs-operator">:</span> <span class="hljs-title function_">deny</span>(verdict);
+  },
+  call<span class="hljs-operator">:</span> (api, input, key) <span class="hljs-operator">=&gt;</span> api.<span class="hljs-title function_">POST</span>(<span class="hljs-string">&#039;/events/{slug}/sessions/{id}/rsvp&#039;</span>, { ..., headers<span class="hljs-operator">:</span> { <span class="hljs-string">&#039;Idempotency-Key&#039;</span><span class="hljs-operator">:</span> key } }),
+});
+</code></pre>
+<ol>
+<li><strong>Predict</strong> with the same policy the server will run. A denial disables the
+control and shows the reason code translated; nothing is sent.</li>
+<li><strong>Apply</strong> the predicted change locally, keyed by a client-generated
+idempotency key and flagged <code>pending</code>. The UI shows it at once.</li>
+<li><strong>Call</strong> the API with that key. The confirmed change carries the key
+(<code>command_key</code>), so whichever arrives first, the feed message or the response,
+<code>apply</code> replaces the pending change with the real one. On a network error the
+command retries with the same key; on a <code>4xx</code> it removes the prediction and
+shows the problem’s code.</li>
+<li>Only <code>commands/</code> may write to the replica outside <code>apply</code>. There is exactly one
+optimistic mechanism, used by every mutation, which is what ends the class of
+bugs in #463.</li>
+</ol>
+<p>Edits carry <code>expectedVersion</code>; a <code>409</code> shows “changed by someone else” with the
+current values.</p>
+<h2 id="4-web-app-screens-as-functions-of-the-replica" class="docmd-heading"><a href="#4-web-app-screens-as-functions-of-the-replica" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Screens as functions of the replica</h2>
+<p>Every feature renders from selectors plus local UI state (open modal, filter,
+scroll). Notable consequences:</p>
+<ul>
+<li><strong>Schedule grid and agenda</strong> are two projections of the same <code>sessions</code>,
+<code>rsvps</code>, <code>marks</code>, <code>meetings</code>. The <strong>clash view</strong> attendees asked for is
+<code>agenda().clashGroups</code>; the <strong>unfilled shifts</strong> list is
+<code>shiftsBelowMinimum()</code>; <strong>filters</strong> (mine, starred, not hidden, place, tag,
+text) are pure and instant. No endpoint is added for any of them.</li>
+<li>The <strong>grid on a phone</strong> uses a column-count strategy (visible places chosen by
+the viewer, saved as a preference) and wraps titles, instead of a fixed column
+width; a “now” strip shows what is running across all places at this minute.</li>
+<li><strong>Modals</strong> are routes (<code>?session={id}</code> as a search param over the current
+screen), so back returns to the previous modal and deep links open the
+right screen behind them (#856, #994).</li>
+<li><strong>Venue</strong>: a place popover shows floor and directions; the venue screen shows the
+map with pins; a session block’s place chip opens the popover.</li>
+<li><strong>Kiosk</strong> is <code>?kiosk=1</code> on the schedule: the same replica, auto-scroll to now,
+keep-awake, a place filter. It never needs a page refresh because the feed keeps
+it current.</li>
+<li><strong>Admin</strong> is a section of the same app, shown when the actor has an organizer or
+site-admin role. It uses the same commands.</li>
+</ul>
+<h2 id="4-web-app-pwa" class="docmd-heading"><a href="#4-web-app-pwa" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>PWA</h2>
+<ul>
+<li>Service worker precaches the shell (hashed assets) and serves it offline;
+API responses are never cached by the worker, because the replica already is the
+cache and knows its own staleness.</li>
+<li>Push: one subscription per device, bound to the person, listed in settings.
+A push carries only a notification id; the app fetches the record when opened,
+so push payloads hold no content.</li>
+<li>An update check compares the served version with the running one and offers a
+reload (#788).</li>
+</ul>
+<h2 id="4-web-app-ui-foundations" class="docmd-heading"><a href="#4-web-app-ui-foundations" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>UI foundations</h2>
+<ul>
+<li>Design tokens (surface, fg, line, brand, semantic, chrome) as today, contrast-
+tested in both themes; state never encoded by colour alone.</li>
+<li>Every control has an accessible name; E2E tests locate by role and name.</li>
+<li>Time is formatted only through <code>i18n/format</code>, which wraps <code>domain/time</code> with the
+person’s zone, locale and 12/24-hour preference.</li>
+<li>Forms validate against the same zod contract the server uses, per field, with
+the server’s problem details mapped back onto fields (#639).</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#4-web-app" class="toc-link">4 · Web app</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#4-web-app-layout" class="toc-link">Layout</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#4-web-app-the-replica" class="toc-link">The replica</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#4-web-app-commands-and-optimistic-updates" class="toc-link">Commands and optimistic updates</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#4-web-app-screens-as-functions-of-the-replica" class="toc-link">Screens as functions of the replica</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#4-web-app-pwa" class="toc-link">PWA</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#4-web-app-ui-foundations" class="toc-link">UI foundations</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1789894100000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1789894100000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: embed the C4 diagrams live, drop the committed PNG exports">docs: embed the C4 diagrams live, dro...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789894100000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: propose a from-scratch target architecture">docs: propose a from-scratch target a...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1789625537000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>

@@ -1,0 +1,1522 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>
+      ADR 0004: Dev fake clock for time-traveling event phases : SchellingBoard Developers
+    </title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9lj5ju">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9lj5ju">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9lj5ju" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9lj5ju" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/adr/0004-dev-fake-clock/">
+<meta property="og:title" content="ADR 0004: Dev fake clock for time-traveling event phases - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/adr/0004-dev-fake-clock/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ADR 0004: Dev fake clock for time-traveling event phases - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9lj5ju" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9lj5ju" >
+
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/adr/0004-dev-fake-clock.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/" class=" "
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/" class=" "
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../attendance-model/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  ADR 0004: Dev fake clock for time-traveling event phases
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200004%3A%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-07-23%0A%0A%23%23%20Context%0A%0AAn%20event%20moves%20through%20three%20time-gated%20phases%20%E2%80%94%20proposal%20%E2%86%92%20voting%20%E2%86%92%0Ascheduling%20%E2%80%94%20plus%20time-dependent%20UI%20such%20as%20bookable-slot%20checks%2C%20the%20schedule%0A%22now%22%20line%2C%20and%20the%20kiosk%20display.%20Previewing%20any%20of%20this%20used%20to%20require%0Aediting%20phase%20dates%20in%20the%20database%2C%20which%20is%20slow%2C%20error-prone%2C%20and%20can&#039;t%20be%0Adone%20on%20a%20shared%20staging%2Fdemo%20instance%20without%20disrupting%20other%20viewers.%0A%0AWe%20want%20a%20development-only%20way%20to%20make%20the%20app%20believe%20it%20is%20at%20a%20different%0Apoint%20in%20time%20so%20an%20organizer%20can%20walk%20an%20event%20through%20its%20phases%20and%20see%20the%0Atime-dependent%20UI%2C%20without%20touching%20the%20data.%20Constraints%20that%20shape%20the%0Adecision%3A%0A%0A-%20It%20must%20work%20on%20a%20**deployed**%20staging%2Fdemo%20instance%2C%20which%20runs%20in%0A%20%20production%20mode%20%E2%80%94%20so%20gating%20on%20%60NODE_ENV%20!%3D%3D%20%22production%22%60%20would%20be%20wrong.%0A-%20Next.js%20serves%20concurrent%20requests%2C%20so%20the%20simulated%20time%20of%20one%20viewer%20must%0A%20%20never%20leak%20into%20another&#039;s%20request.%0A-%20Time-dependent%20decisions%20are%20spread%20across%20Server%20Components%2C%20Server%20Actions%2C%0A%20%20Route%20Handlers%2C%20and%20client%20components%2C%20each%20of%20which%20reads%20request%20state%0A%20%20differently.%0A%0A%23%23%20Decision%0A%0AAdd%20a%20fake%20clock%20gated%20by%20the%20%60SB_ENABLE_DEV_TOOLS%60%20env%20var%20(not%20%60NODE_ENV%60).%0AWhen%20it%20is%20unset%20the%20override%20is%20ignored%20server-side%20and%20the%20toolbar%20never%0Arenders%2C%20so%20the%20feature%20is%20inert%20in%20production%20even%20if%20a%20client%20forges%20the%0Acookie.%0A%0A%23%23%23%20A%20single%20time%20offset%0A%0AThe%20override%20is%20one%20number%3A%20%60offsetMs%60%2C%20an%20integer%20stored%20in%20the%0A%60time-override%60%20cookie.%20Effective%20time%20is%20always%20%60Date.now()%20%2B%20offsetMs%60.%0A%0A-%20Real%20time%20%E2%86%92%20no%20cookie%20(offset%20%600%60).%0A-%20Jump%20forward%20%E2%86%92%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%20%60%2B7d%60%20add%20to%20the%20current%20offset.%0A-%20Pick%20a%20date%2Ftime%20%E2%86%92%20%60offset%20%3D%20target%20%E2%88%92%20Date.now()%60%3B%20time%20then%20keeps%20ticking%0A%20%20forward%20from%20there.%0A%0AWe%20deliberately%20do%20**not**%20implement%20a%20separate%20%22frozen%22%20mode.%20Freezing%20only%0Amatters%20for%20exact-boundary%20assertions%2C%20which%20belong%20in%20automated%20tests%0A(Vitest&#039;s%20%60vi.setSystemTime%60)%2C%20not%20this%20manual%20toolbar.%20A%20single%20offset%20keeps%0Athe%20client%20ticker%20trivial%20%E2%80%94%20it%20just%20adds%20%60offsetMs%60.%0A%0A%23%23%23%20Request-scoped%2C%20never%20a%20global%20%60Date%60%20mock%0A%0ABecause%20requests%20are%20concurrent%2C%20we%20never%20mock%20%60Date%60%20globally%3B%20a%20shared%0Amutable%20clock%20would%20leak%20one%20viewer&#039;s%20simulated%20time%20into%20another%20request.%20The%0Aoverride%20is%20request-scoped%20(read%20from%20the%20cookie%20per%20request)%20and%2C%20on%20the%0Aclient%2C%20a%20per-tab%20offset.%0A%0A%60utils%2Fdev-clock.ts%60%20(client-safe%20%E2%80%94%20no%20%60next%2Fheaders%60)%20holds%20the%20cookie%20name%2C%0Athe%20%60SB_ENABLE_DEV_TOOLS%60%20gate%2C%20offset%20parsing%2C%20and%20the%20Route%20Handler%20reader.%0A%60utils%2Fdev-clock-server.ts%60%20adds%20the%20Server%20Component%20%2F%20Server%20Action%20reader%0Athat%20pulls%20the%20cookie%20via%20%60next%2Fheaders%60.%0A%0A%23%23%23%20Thread%20%60now%60%20into%20the%20phase%20logic%0A%0AThe%20phase%20helpers%20in%20%60app%2F(site)%2Futils%2Fevents.ts%60%20take%20a%20**required**%0A%60now%3A%20Date%60%20parameter%20instead%20of%20calling%20%60Date.now()%60%20internally.%20A%20required%0Aparameter%20(rather%20than%20an%20optional%20%60%3D%20new%20Date()%60%20default)%20is%20intentional%3A%20the%0Acompiler%20then%20forces%20every%20call%20site%20to%20supply%20the%20effective%20clock%2C%20so%20faking%0Acan%20never%20be%20silently%20ignored.%20Callers%20obtain%20%60now%60%20from%3A%0A%0A-%20Server%20Components%20%2F%20Server%20Actions%3A%20%60serverNow()%60.%0A-%20Route%20Handlers%3A%20%60requestNow(req)%60.%0A-%20Client%20components%3A%20%60EventContext.now%60.%0A%0A%23%23%23%20Enforced%20by%20lint%2C%20not%20by%20habit%0A%0AThreading%20%60now%60%20only%20works%20if%20nothing%20quietly%20reads%20an%20ambient%20clock%20instead%2C%20so%0A%60eslint.config.mjs%60%20bans%20the%20zero-argument%20clock%20reads%20%E2%80%94%20%60new%20Date()%60%2C%0A%60Date.now()%60%2C%20%60DateTime.now()%2Flocal()%2Futc()%60%20%E2%80%94%20across%20%60app%2F%60%2C%20%60db%2F%60%2C%20%60emails%2F%60%2C%0A%60model%2F%60%20and%20%60utils%2F%60.%20Zero-argument%20only%3A%20%60new%20Date(iso)%60%20parses%20a%20value%2C%20it%0Adoes%20not%20read%20a%20clock.%0A%0ATwo%20consequences%20worth%20stating%3A%0A%0A-%20**Repositories%20never%20generate%20time.**%20They%20are%20inside%20the%20linted%20scope%2C%20so%20a%0A%20%20stored%20timestamp%20has%20to%20arrive%20as%20a%20required%20field%20on%20the%20input%20type%0A%20%20(%60createdTime%60%2C%20%60readAt%60%2C%20%60editedTime%60).%20A%20repository%20that%20reads%20a%20clock%20is%0A%20%20now%20a%20lint%20error%20rather%20than%20a%20code-review%20catch.%0A-%20**%60now%20%3D%20new%20Date()%60%20defaults%20are%20caught%20too**%2C%20since%20the%20default%20is%20itself%20a%0A%20%20zero-argument%20%60new%20Date()%60.%20That%20is%20deliberate%3A%20an%20optional%20parameter%20makes%20a%0A%20%20missed%20call%20site%20silent%2C%20a%20required%20one%20makes%20it%20a%20compile%20error.%0A%0AExemptions%20are%20per-line%20%60eslint-disable-next-line%20no-restricted-syntax%60%0Acomments%2C%20each%20carrying%20its%20own%20reason%2C%20rather%20than%20file-wide%20%60ignores%60%3A%20a%20file%0Athat%20legitimately%20reads%20the%20real%20clock%20in%20one%20place%20keeps%20every%20other%20line%0Achecked.%20They%20fall%20into%20two%20groups%3A%0A%0A1.%20The%20fake%20clock%20itself%20and%20the%20pieces%20that%20turn%20real%20time%20into%20effective%20time%0A%20%20%20(%60dev-clock.ts%60%2C%20%60now-ticker.ts%60%2C%20the%20toolbar%2C%20%60EventProvider%60&#039;s%20offset).%0A2.%20Real%20time%20by%20design%3A%20the%20auth%20cookie&#039;s%20age%2C%20auth-code%20expiry%2C%20and%20the%0A%20%20%20login%2Femail%20throttles%20(%60utils%2Fauth.ts%60%2C%20%60utils%2Flogin-rate-limit.ts%60%2C%0A%20%20%20%60app%2Factions%2Fuser-auth.ts%60)%2C%20plus%20cache-busting%20%60%3Fv%3D%60%20query%20strings.%20These%0A%20%20%20must%20_not_%20follow%20the%20offset%2C%20or%20anyone%20who%20can%20set%20the%20%60time-override%60%0A%20%20%20cookie%20could%20jump%20past%20a%20lockout.%0A%0A**Elapsed%20time%20and%20idle%20timers**%20need%20no%20exemption%3A%20they%20measure%20a%20duration%2C%20not%0A%22now%22%2C%20so%20they%20use%20%60performance.now()%60%2C%20which%20is%20monotonic%20and%20unaffected%20by%20the%0Aoffset.%20Under%20a%20%60%2B7d%60%20jump%20a%20faked%20clock%20would%20otherwise%20make%20the%20kiosk%20think%20it%0Ahad%20been%20idle%20for%20a%20week%20and%20reset%20immediately.%0A%0A%60scripts%2F%60%20and%20%60tests%2F%60%20are%20outside%20the%20linted%20scope%20entirely.%0A%0A%23%23%23%20Reuse%20the%20existing%20client%20clock%0A%0A%60EventContext%60%20already%20carries%20%60now%60%2C%20seeded%20from%20the%20server%20and%20ticked%20forward%0Aby%20%60startNowTicker%60.%20It%20is%20now%20seeded%20from%20the%20override%20(via%20%60serverNow()%60)%2C%20and%0Athe%20ticker%20is%20offset-aware%20so%20it%20keeps%20the%20fake%20time%20instead%20of%20snapping%20back%20to%0Areal%20time%20on%20the%20next%20tick.%20%60EventProvider%60%20derives%20the%20offset%20once%20from%20the%0Aserver-seeded%20value%20(%60value.now.getTime()%20%E2%88%92%20Date.now()%60)%20%E2%80%94%20~0%20in%20normal%0Aoperation%2C%20the%20simulated%20jump%20under%20an%20override.%20Because%20all%20client%20phase%20checks%0Aalready%20read%20%60EventContext.now%60%2C%20they%20follow%20the%20fake%20clock%20for%20free%20after%20a%0A%60router.refresh()%60.%0A%0A%23%23%23%20Toolbar%0A%0AA%20client%20component%20(%60app%2F(site)%2Fdev-toolbar.tsx%60)%20gated%20by%20%60SB_ENABLE_DEV_TOOLS%60%0A(checked%20in%20the%20server%20layout%2C%20so%20no%20%60NEXT_PUBLIC_%60%20is%20needed)%20and%20shown%20when%0A%60%3Fdev%3D1%60%20is%20present.%20It%20offers%20_real%20time_%20(clear%20cookie)%2C%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%0A%60%2B7d%60%2C%20a%20date%2Ftime%20picker%2C%20and%20dismiss%20(to%20hide%20for%20screenshots).%20Each%20control%0Awrites%20the%20%60time-override%60%20cookie%20via%20%60document.cookie%60%20and%20calls%0A%60router.refresh()%60%20so%20Server%20Components%20re-render%20with%20the%20new%20time.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20An%20organizer%20can%20preview%20any%20phase%20and%20time-dependent%20UI%20on%20staging%2Fdemo%0A%20%20without%20editing%20the%20database.%0A-%20A%20required%20%60now%60%20parameter%20makes%20it%20a%20compile%20error%20to%20bypass%20the%20effective%0A%20%20clock%20in%20phase%20logic.%0A-%20The%20client%20reuses%20the%20existing%20%60EventContext%60%20clock%20rather%20than%20adding%20a%0A%20%20parallel%20one.%0A%0A%23%23%23%20Negative%0A%0A-%20Every%20phase-logic%20call%20site%20must%20now%20supply%20%60now%60%2C%20a%20small%20amount%20of%20extra%0A%20%20threading.%0A-%20The%20override%20only%20shifts%20%22now%22%3B%20it%20does%20not%20accelerate%20%60setTimeout%60%20and%20does%0A%20%20not%20affect%20real-time%20systems%20(see%20below).%0A%0A%23%23%23%20Neutral%0A%0A-%20The%20offset%20itself%20is%20timezone-agnostic%3B%20the%20picker%20stores%2Fdisplays%20UTC%20ISO.%0A%0A%23%23%20Caveats%0A%0A-%20**SQLite%20%2F%20%60NOW()%60**%3A%20the%20DB%20uses%20real%20time.%20Time-dependent%20queries%20must%20take%0A%20%20the%20effective%20time%20as%20a%20parameter%20rather%20than%20relying%20on%20DB%20time.%20Today%20the%0A%20%20phase%20logic%20runs%20in%20app%20code%2C%20not%20SQL%2C%20so%20this%20is%20a%20note%20for%20future%20queries.%0A-%20**External%20services**%20(email%2C%20etc.)%20still%20use%20real%20time.%0A-%20**Caching**%3A%20force-dynamic%20on%20time-sensitive%20routes%20so%20cached%20output%20doesn&#039;t%0A%20%20preserve%20a%20stale%20clock.%20The%20affected%20phase%20routes%20already%20set%0A%20%20%60dynamic%20%3D%20%22force-dynamic%22%60.%0A-%20**Timers%20don&#039;t%20accelerate**%3A%20an%20offset%20shifts%20%22now%22%20but%20does%20not%20make%0A%20%20%60setTimeout%60%20fire%20faster.%20Fine%20for%20phase%20testing.%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                    </div>
+                  
+                </div>
+                
+                <h1 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ADR 0004: Dev fake clock for time-traveling event phases</h1>
+<ul>
+<li><strong>Status:</strong> Accepted</li>
+<li><strong>Date:</strong> 2026-07-23</li>
+</ul>
+<h2 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-context" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
+<p>An event moves through three time-gated phases — proposal → voting →
+scheduling — plus time-dependent UI such as bookable-slot checks, the schedule
+“now” line, and the kiosk display. Previewing any of this used to require
+editing phase dates in the database, which is slow, error-prone, and can’t be
+done on a shared staging/demo instance without disrupting other viewers.</p>
+<p>We want a development-only way to make the app believe it is at a different
+point in time so an organizer can walk an event through its phases and see the
+time-dependent UI, without touching the data. Constraints that shape the
+decision:</p>
+<ul>
+<li>It must work on a <strong>deployed</strong> staging/demo instance, which runs in
+production mode — so gating on <code>NODE_ENV !== &quot;production&quot;</code> would be wrong.</li>
+<li>Next.js serves concurrent requests, so the simulated time of one viewer must
+never leak into another’s request.</li>
+<li>Time-dependent decisions are spread across Server Components, Server Actions,
+Route Handlers, and client components, each of which reads request state
+differently.</li>
+</ul>
+<h2 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
+<p>Add a fake clock gated by the <code>SB_ENABLE_DEV_TOOLS</code> env var (not <code>NODE_ENV</code>).
+When it is unset the override is ignored server-side and the toolbar never
+renders, so the feature is inert in production even if a client forges the
+cookie.</p>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-a-single-time-offset" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-a-single-time-offset" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>A single time offset</h3>
+<p>The override is one number: <code>offsetMs</code>, an integer stored in the
+<code>time-override</code> cookie. Effective time is always <code>Date.now() + offsetMs</code>.</p>
+<ul>
+<li>Real time → no cookie (offset <code>0</code>).</li>
+<li>Jump forward → <code>+1h</code> / <code>+1d</code> / <code>+7d</code> add to the current offset.</li>
+<li>Pick a date/time → <code>offset = target − Date.now()</code>; time then keeps ticking
+forward from there.</li>
+</ul>
+<p>We deliberately do <strong>not</strong> implement a separate “frozen” mode. Freezing only
+matters for exact-boundary assertions, which belong in automated tests
+(Vitest’s <code>vi.setSystemTime</code>), not this manual toolbar. A single offset keeps
+the client ticker trivial — it just adds <code>offsetMs</code>.</p>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-request-scoped-never-a-global-date-mock" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-request-scoped-never-a-global-date-mock" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Request-scoped, never a global <code>Date</code> mock</h3>
+<p>Because requests are concurrent, we never mock <code>Date</code> globally; a shared
+mutable clock would leak one viewer’s simulated time into another request. The
+override is request-scoped (read from the cookie per request) and, on the
+client, a per-tab offset.</p>
+<p><code>utils/dev-clock.ts</code> (client-safe — no <code>next/headers</code>) holds the cookie name,
+the <code>SB_ENABLE_DEV_TOOLS</code> gate, offset parsing, and the Route Handler reader.
+<code>utils/dev-clock-server.ts</code> adds the Server Component / Server Action reader
+that pulls the cookie via <code>next/headers</code>.</p>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-thread-now-into-the-phase-logic" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-thread-now-into-the-phase-logic" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Thread <code>now</code> into the phase logic</h3>
+<p>The phase helpers in <code>app/(site)/utils/events.ts</code> take a <strong>required</strong>
+<code>now: Date</code> parameter instead of calling <code>Date.now()</code> internally. A required
+parameter (rather than an optional <code>= new Date()</code> default) is intentional: the
+compiler then forces every call site to supply the effective clock, so faking
+can never be silently ignored. Callers obtain <code>now</code> from:</p>
+<ul>
+<li>Server Components / Server Actions: <code>serverNow()</code>.</li>
+<li>Route Handlers: <code>requestNow(req)</code>.</li>
+<li>Client components: <code>EventContext.now</code>.</li>
+</ul>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-enforced-by-lint-not-by-habit" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-enforced-by-lint-not-by-habit" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Enforced by lint, not by habit</h3>
+<p>Threading <code>now</code> only works if nothing quietly reads an ambient clock instead, so
+<code>eslint.config.mjs</code> bans the zero-argument clock reads — <code>new Date()</code>,
+<code>Date.now()</code>, <code>DateTime.now()/local()/utc()</code> — across <code>app/</code>, <code>db/</code>, <code>emails/</code>,
+<code>model/</code> and <code>utils/</code>. Zero-argument only: <code>new Date(iso)</code> parses a value, it
+does not read a clock.</p>
+<p>Two consequences worth stating:</p>
+<ul>
+<li><strong>Repositories never generate time.</strong> They are inside the linted scope, so a
+stored timestamp has to arrive as a required field on the input type
+(<code>createdTime</code>, <code>readAt</code>, <code>editedTime</code>). A repository that reads a clock is
+now a lint error rather than a code-review catch.</li>
+<li><strong><code>now = new Date()</code> defaults are caught too</strong>, since the default is itself a
+zero-argument <code>new Date()</code>. That is deliberate: an optional parameter makes a
+missed call site silent, a required one makes it a compile error.</li>
+</ul>
+<p>Exemptions are per-line <code>eslint-disable-next-line no-restricted-syntax</code>
+comments, each carrying its own reason, rather than file-wide <code>ignores</code>: a file
+that legitimately reads the real clock in one place keeps every other line
+checked. They fall into two groups:</p>
+<ol>
+<li>The fake clock itself and the pieces that turn real time into effective time
+(<code>dev-clock.ts</code>, <code>now-ticker.ts</code>, the toolbar, <code>EventProvider</code>’s offset).</li>
+<li>Real time by design: the auth cookie’s age, auth-code expiry, and the
+login/email throttles (<code>utils/auth.ts</code>, <code>utils/login-rate-limit.ts</code>,
+<code>app/actions/user-auth.ts</code>), plus cache-busting <code>?v=</code> query strings. These
+must <em>not</em> follow the offset, or anyone who can set the <code>time-override</code>
+cookie could jump past a lockout.</li>
+</ol>
+<p><strong>Elapsed time and idle timers</strong> need no exemption: they measure a duration, not
+“now”, so they use <code>performance.now()</code>, which is monotonic and unaffected by the
+offset. Under a <code>+7d</code> jump a faked clock would otherwise make the kiosk think it
+had been idle for a week and reset immediately.</p>
+<p><code>scripts/</code> and <code>tests/</code> are outside the linted scope entirely.</p>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-reuse-the-existing-client-clock" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-reuse-the-existing-client-clock" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Reuse the existing client clock</h3>
+<p><code>EventContext</code> already carries <code>now</code>, seeded from the server and ticked forward
+by <code>startNowTicker</code>. It is now seeded from the override (via <code>serverNow()</code>), and
+the ticker is offset-aware so it keeps the fake time instead of snapping back to
+real time on the next tick. <code>EventProvider</code> derives the offset once from the
+server-seeded value (<code>value.now.getTime() − Date.now()</code>) — ~0 in normal
+operation, the simulated jump under an override. Because all client phase checks
+already read <code>EventContext.now</code>, they follow the fake clock for free after a
+<code>router.refresh()</code>.</p>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-toolbar" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-toolbar" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Toolbar</h3>
+<p>A client component (<code>app/(site)/dev-toolbar.tsx</code>) gated by <code>SB_ENABLE_DEV_TOOLS</code>
+(checked in the server layout, so no <code>NEXT_PUBLIC_</code> is needed) and shown when
+<code>?dev=1</code> is present. It offers <em>real time</em> (clear cookie), <code>+1h</code> / <code>+1d</code> /
+<code>+7d</code>, a date/time picker, and dismiss (to hide for screenshots). Each control
+writes the <code>time-override</code> cookie via <code>document.cookie</code> and calls
+<code>router.refresh()</code> so Server Components re-render with the new time.</p>
+<h2 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-positive" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-positive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Positive</h3>
+<ul>
+<li>An organizer can preview any phase and time-dependent UI on staging/demo
+without editing the database.</li>
+<li>A required <code>now</code> parameter makes it a compile error to bypass the effective
+clock in phase logic.</li>
+<li>The client reuses the existing <code>EventContext</code> clock rather than adding a
+parallel one.</li>
+</ul>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-negative" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-negative" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Negative</h3>
+<ul>
+<li>Every phase-logic call site must now supply <code>now</code>, a small amount of extra
+threading.</li>
+<li>The override only shifts “now”; it does not accelerate <code>setTimeout</code> and does
+not affect real-time systems (see below).</li>
+</ul>
+<h3 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-neutral" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-neutral" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Neutral</h3>
+<ul>
+<li>The offset itself is timezone-agnostic; the picker stores/displays UTC ISO.</li>
+</ul>
+<h2 id="adr-0004-dev-fake-clock-for-time-traveling-event-phases-caveats" class="docmd-heading"><a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-caveats" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Caveats</h2>
+<ul>
+<li><strong>SQLite / <code>NOW()</code></strong>: the DB uses real time. Time-dependent queries must take
+the effective time as a parameter rather than relying on DB time. Today the
+phase logic runs in app code, not SQL, so this is a note for future queries.</li>
+<li><strong>External services</strong> (email, etc.) still use real time.</li>
+<li><strong>Caching</strong>: force-dynamic on time-sensitive routes so cached output doesn’t
+preserve a stale clock. The affected phase routes already set
+<code>dynamic = &quot;force-dynamic&quot;</code>.</li>
+<li><strong>Timers don’t accelerate</strong>: an offset shifts “now” but does not make
+<code>setTimeout</code> fire faster. Fine for phase testing.</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              <div class="toc-sidebar">
+                
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases" class="toc-link">ADR 0004: Dev fake clock for time-traveling event phases</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-context" class="toc-link">Context</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision" class="toc-link">Decision</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-a-single-time-offset" class="toc-link">A single time offset</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-request-scoped-never-a-global-date-mock" class="toc-link">Request-scoped, never a global Date mock</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-thread-now-into-the-phase-logic" class="toc-link">Thread now into the phase logic</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-enforced-by-lint-not-by-habit" class="toc-link">Enforced by lint, not by habit</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-reuse-the-existing-client-clock" class="toc-link">Reuse the existing client clock</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-decision-toolbar" class="toc-link">Toolbar</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences" class="toc-link">Consequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-positive" class="toc-link">Positive</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-negative" class="toc-link">Negative</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-consequences-neutral" class="toc-link">Neutral</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0004-dev-fake-clock-for-time-traveling-event-phases-caveats" class="toc-link">Caveats</a>
+        </li>
+      
+    </ul>
+  </div>
+
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1788558839000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1788558839000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: lint against ambient clock reads outside the request boundary">feat: lint against ambient clock read...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1788558839000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: move developers documentation to /docs/dev/">docs: move developers documentation t...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1785058311000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: dev fake clock for time-traveling event phases">feat: dev fake clock for time-traveli...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1784831186000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mu9lj5ju"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mu9lj5ju"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-search.js?v=mu9lj5ju" ></script>
+<script src="../../assets/js/docmd-git.js?v=mu9lj5ju" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mu9lj5ju"></script>
+        
+      
+      
+  </body>
+</html>
