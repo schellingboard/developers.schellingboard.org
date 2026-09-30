@@ -3,10 +3,10 @@ type: concept
 title: "2 · Domain"
 source: "https://developers.schellingboard.org/target-architecture/02-domain/"
 path: /target-architecture/02-domain/
-updated: 2026-09-20
+updated: 2026-09-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-09-20T11:45:32.686Z"
+  generated_at: "2026-09-30T06:25:10.874Z"
 ---
 # 2 · Domain
 

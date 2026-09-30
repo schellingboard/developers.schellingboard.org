@@ -3,10 +3,10 @@ type: concept
 title: "4 · Web app"
 source: "https://developers.schellingboard.org/target-architecture/04-client/"
 path: /target-architecture/04-client/
-updated: 2026-09-20
+updated: 2026-09-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-09-20T11:45:32.687Z"
+  generated_at: "2026-09-30T06:25:10.874Z"
 ---
 # 4 · Web app
 

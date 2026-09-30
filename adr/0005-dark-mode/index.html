@@ -10,7 +10,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="generator" content="docmd v0.9.5">
+    <meta name="generator" content="docmd v0.9.6">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script>
@@ -98,17 +98,15 @@
         visibility: hidden;
       }
     </style>
-    <title>
-      ADR 0005: Dark mode via semantic tokens and a per-device cookie : SchellingBoard Developers
-    </title>
+    <title>ADR 0005: Dark mode via semantic tokens and a per-device cookie - SchellingBoard Developers</title>
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mu9r297i">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mu9r297i">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=munq0shz">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=munq0shz">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mu9r297i" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mu9r297i" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=munq0shz" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=munq0shz" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -120,14 +118,17 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ADR 0005: Dark mode via semantic tokens and a per-device cookie - SchellingBoard Developers">
 <meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SchellingBoard Developers","item":"https://developers.schellingboard.org/"},{"@type":"ListItem","position":2,"name":"Design"},{"@type":"ListItem","position":3,"name":"Decision records","item":"https://developers.schellingboard.org/adr/"},{"@type":"ListItem","position":4,"name":"0005: Dark mode via semantic tokens and a per-device cookie","item":"https://developers.schellingboard.org/adr/0005-dark-mode/"}]}
+</script>
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mu9r297i" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mu9r297i" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=munq0shz" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=munq0shz" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mu9r297i">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=munq0shz">
     
     
   </head>
@@ -142,6 +143,8 @@
     
 
     
+
+    
     
       <aside class="sidebar">
         <div class="sidebar-header">
@@ -149,10 +152,10 @@
 <a href="../../" class="logo-link">
               <img
                 src="../../logo/logo.svg"
-                alt="SchellingBoard" class="logo-light" style="height: 1.5rem;">
+                alt="SchellingBoard" class="logo logo-light light-logo" style="height: 1.5rem;">
               <img
                 src="../../logo/logo-reversed.svg"
-                alt="SchellingBoard" class="logo-dark" style="height: 1.5rem;">
+                alt="SchellingBoard" class="logo logo-dark dark-logo" style="height: 1.5rem;">
             </a>
           
           <span class="mobile-view sidebar-menu-button float-right">
@@ -177,6 +180,7 @@
           </span>
         </div>
         <div class="sidebar-top-group">
+          
           
           
             <div class="sidebar-options-wrapper">
@@ -213,7 +217,7 @@
     
 
     
-    <button class="theme-toggle-button" aria-label="Toggle theme">
+    <button class="theme-toggle-button" aria-label="Toggle theme" title="Toggle theme">
         
 <svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
   class="lucide lucide-sun"
@@ -254,6 +258,8 @@
 </svg>
 
     </button>
+    
+
     
 
     
@@ -1215,7 +1221,7 @@
       <li class="" >
       
         <a href="/diagrams/" class=" "
-          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+          target="_blank" rel="noopener">
            
 <svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
   class="lucide lucide-workflow"
@@ -1373,7 +1379,7 @@
       <li class="" >
       
         <a href="https://github.com/schellingboard/schellingboard" class=" "
-          target=&quot;_blank&quot; rel=&quot;noopener&quot;>
+          target="_blank" rel="noopener">
            
           
           <span class="nav-item-title">
@@ -1408,6 +1414,7 @@
   </ul>
 </nav>
         <div class="sidebar-bottom-group mt-auto">
+          
           
           
           
@@ -1524,6 +1531,7 @@
                   
 
                   
+                  
                     <div class="docmd-copy-widgets">
                       
                         <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
@@ -1567,9 +1575,14 @@
                           <span class="docmd-btn-text">Copy Context</span>
                         </button>
                       
+                      
                     </div>
                   
                 </div>
+                
+                  <h1 class="docmd-focus-title">
+                    ADR 0005: Dark mode via semantic tokens and a per-device cookie
+                  </h1>
                 
                 <h1 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ADR 0005: Dark mode via semantic tokens and a per-device cookie</h1>
 <ul>
@@ -1809,8 +1822,11 @@ worth the divergence.</li>
                 
               </div>
               
+              
               <div class="toc-sidebar">
                 
+                
+                  
 
 
   <div class="toc-container">
@@ -1887,6 +1903,8 @@ worth the divergence.</li>
     </ul>
   </div>
 
+                
+                
               </div>
               
             </div>
@@ -1991,13 +2009,13 @@ worth the divergence.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mu9r297i"></script>
+      <script src="../../assets/js/docmd-main.js?v=munq0shz"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mu9r297i"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mu9r297i" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mu9r297i" ></script>
-<script src="../../assets/js/docmd-search.js?v=mu9r297i" ></script>
-<script src="../../assets/js/docmd-git.js?v=mu9r297i" ></script>
+      <script src="../../assets/js/docmd-git.js?v=munq0shz"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=munq0shz" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=munq0shz" ></script>
+<script src="../../assets/js/docmd-search.js?v=munq0shz" ></script>
+<script src="../../assets/js/docmd-git.js?v=munq0shz" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2075,7 +2093,7 @@ worth the divergence.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mu9r297i"></script>
+          src="../../assets/js/likec4-embed.js?v=munq0shz"></script>
         
       
       

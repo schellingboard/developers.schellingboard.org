@@ -3,10 +3,10 @@ type: concept
 title: "Creating and Reading GitHub Issues"
 source: "https://developers.schellingboard.org/github-issues/"
 path: /github-issues/
-updated: 2026-09-20
+updated: 2026-09-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-09-20T11:45:32.684Z"
+  generated_at: "2026-09-30T06:25:10.873Z"
 ---
 # Creating and Reading GitHub Issues
 
@@ -68,19 +68,19 @@ gh api graphql -f query='
 } }'
 ```
 
-Known values as of 2026-07-22 (double-check if a query above disagrees):
+Known values as of 2026-09-29 (double-check if a query above disagrees):
 
 | Name             | ID                    |
 | ---------------- | --------------------- |
-| Repo             | `R_kgDOO4ASpA`        |
-| Type: Task       | `IT_kwDODU0pG84Bqq5u` |
-| Type: Bug        | `IT_kwDODU0pG84Bqq5v` |
-| Type: Feature    | `IT_kwDODU0pG84Bqq5w` |
-| Priority field   | `IFSS_kgDOAhz4lg`     |
-| Priority: Urgent | `IFSSO_kgDOA7KbIA`    |
-| Priority: High   | `IFSSO_kgDOA7KbIQ`    |
-| Priority: Medium | `IFSSO_kgDOA7KbIg`    |
-| Priority: Low    | `IFSSO_kgDOA7KbIw`    |
+| Repo             | `R_kgDOUhaF9Q`        |
+| Type: Task       | `IT_kwDOE75_iM40KuIP` |
+| Type: Bug        | `IT_kwDOE75_iM40KuIQ` |
+| Type: Feature    | `IT_kwDOE75_iM40KuIR` |
+| Priority field   | `IFSS_kgDOAs8wdA`     |
+| Priority: Urgent | `IFSSO_kgDOBOrxxw`    |
+| Priority: High   | `IFSSO_kgDOBOrxyA`    |
+| Priority: Medium | `IFSSO_kgDOBOrxyQ`    |
+| Priority: Low    | `IFSSO_kgDOBOrxyg`    |
 
 ## Creating an issue with type and priority set
 
@@ -92,12 +92,12 @@ mutation($repo: ID!, $title: String!, $body: String!, $type: ID!, $prioField: ID
     issueFields: [{ fieldId: $prioField, singleSelectOptionId: $prioOpt }]
   }) { issue { number url } }
 }' \
-  -f repo=R_kgDOO4ASpA \
+  -f repo=R_kgDOUhaF9Q \
   -f title="Issue title" \
   -f body="$(cat body.md)" \
-  -f type=IT_kwDODU0pG84Bqq5w \
-  -f prioField=IFSS_kgDOAhz4lg \
-  -f prioOpt=IFSSO_kgDOA7KbIw
+  -f type=IT_kwDOE75_iM40KuIR \
+  -f prioField=IFSS_kgDOAs8wdA \
+  -f prioOpt=IFSSO_kgDOBOrxyg
 ```
 
 ## Changing type/priority on an existing issue
@@ -121,7 +121,7 @@ mutation($issue: ID!, $type: ID!) {
 gh api graphql -f query='
 mutation($issue: ID!, $field: ID!, $opt: ID!) {
   setIssueFieldValue(input: { issueId: $issue, issueFields: [{ fieldId: $field, singleSelectOptionId: $opt }] }) { issue { number } }
-}' -f issue=<issue node id> -f field=IFSS_kgDOAhz4lg -f opt=<priority option id>
+}' -f issue=<issue node id> -f field=IFSS_kgDOAs8wdA -f opt=<priority option id>
 ```
 
 ## Body format conventions
