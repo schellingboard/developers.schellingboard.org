@@ -6,7 +6,7 @@ path: /adr/0007-attendee-count-and-reminder-dispatch/
 updated: 2026-10-03
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-03T12:19:30.233Z"
+  generated_at: "2026-10-03T12:54:02.788Z"
 ---
 # ADR 0007: Attendee count storage and in-process reminder dispatch
 

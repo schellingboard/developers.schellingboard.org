@@ -6,7 +6,7 @@ path: /adr/0003-form-field-validation-with-zod/
 updated: 2026-10-03
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-03T12:19:30.231Z"
+  generated_at: "2026-10-03T12:54:02.786Z"
 ---
 # ADR 0003: Form handling and validation with React Hook Form and Zod
 

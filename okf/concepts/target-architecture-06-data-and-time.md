@@ -6,7 +6,7 @@ path: /target-architecture/06-data-and-time/
 updated: 2026-10-03
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-03T12:19:30.246Z"
+  generated_at: "2026-10-03T12:54:02.801Z"
 ---
 # 6 · Data and time
 
