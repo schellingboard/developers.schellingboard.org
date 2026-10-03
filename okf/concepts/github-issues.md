@@ -3,10 +3,10 @@ type: concept
 title: "Creating and Reading GitHub Issues"
 source: "https://developers.schellingboard.org/github-issues/"
 path: /github-issues/
-updated: 2026-10-01
+updated: 2026-10-03
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-01T06:02:27.512Z"
+  generated_at: "2026-10-03T12:19:30.241Z"
 ---
 # Creating and Reading GitHub Issues
 

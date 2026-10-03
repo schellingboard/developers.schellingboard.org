@@ -3,10 +3,10 @@ type: concept
 title: "Getting started"
 source: "https://developers.schellingboard.org/getting-started/"
 path: /getting-started/
-updated: 2026-10-01
+updated: 2026-10-03
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-01T06:02:27.511Z"
+  generated_at: "2026-10-03T12:19:30.240Z"
 ---
 # Getting started
 

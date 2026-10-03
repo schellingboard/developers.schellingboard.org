@@ -3,10 +3,10 @@ type: concept
 title: Testing
 source: "https://developers.schellingboard.org/testing/"
 path: /testing/
-updated: 2026-10-01
+updated: 2026-10-03
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-01T06:02:27.520Z"
+  generated_at: "2026-10-03T12:19:30.250Z"
 ---
 # Testing
 
@@ -368,6 +368,38 @@ is stable — the aim there is to measure flakiness, not to start failing on it.
   reminder is delivered in the app whether or not it can also be mailed. A
   test that needs reminders delivered clicks **Send due reminders** on the
   `?dev=1` toolbar, which runs one dispatch against the dev clock
+
+## Use cases
+
+`tests/use-cases.ts` catalogues what attendees, hosts and organizers can do,
+one line per user goal ("Attendee votes on a proposal"), not per UI step or
+edge case. Use cases are grouped into numbered features, and each gets an ID
+from its feature and user story number: `005-US1`. IDs are permanent: retire a
+use case with `status: "deprecated"` rather than renumbering. A use case not
+built yet gets `status: "planned"`, so the report doesn't list it as uncovered.
+
+Tests declare the use cases they cover:
+
+```ts
+// E2E: required; tags go at the end of the title
+test("votes on a proposal @005-US1", async ({ page }) => {});
+
+// Vitest: optional; for a whole file, as its first line
+// @module-tag 005-US1
+// …or for one test or describe block, type-checked against the catalogue
+it("rejects a voter outside the event", { tags: ["005-US1"] }, () => {});
+```
+
+`make test` fails on an E2E test without a use case and on any ID missing from
+the catalogue. Run the tests for one use case with
+`bun set-env.ts test bun x playwright test -g @005-US1` or
+`bun set-env.ts test bun x vitest run --tags-filter 005-US1`.
+
+`make use-cases` prints how many tests in each tier claim each use case, which
+use cases no test covers, and which have so many E2E tests that some are
+probably redundant. CI adds the same report to the test job's summary. The
+counts are claims, not measured coverage: a tag says what a test is for, not
+how well it checks it.
 
 ## Test data
 
