@@ -6,7 +6,7 @@ path: /adr/0005-dark-mode/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T06:46:59.093Z"
+  generated_at: "2026-10-04T07:04:43.622Z"
 ---
 # ADR 0005: Dark mode via semantic tokens and a per-device cookie
 
@@ -197,7 +197,7 @@ border instead of a solid block of colour.
   `color-scheme` is set by the same rule as the tokens.
 - New components get dark mode for free by naming roles.
 - The contrast test makes readability regressions fail the build.
-- #802's class of bug is harder to reintroduce: state is no longer encoded as a
+- [#802](https://github.com/schellingboard/schellingboard/issues/802)'s class of bug is harder to reintroduce: state is no longer encoded as a
   bare palette shade.
 
 ### Negative

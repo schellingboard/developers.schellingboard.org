@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mutgk7lo">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mutgk7lo">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=muth711j">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=muth711j">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mutgk7lo" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mutgk7lo" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=muth711j" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=muth711j" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mutgk7lo" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mutgk7lo" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=muth711j" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=muth711j" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mutgk7lo">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=muth711j">
     
     
   </head>
@@ -1465,7 +1465,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%2010%20%C2%B7%20A%20path%20from%20the%20current%20code%0A%0AThe%20design%20ignores%20the%20current%20layout%20on%20purpose.%20This%20page%20is%20the%20shortest%20honest%0Aroute%20from%20here%20to%20there%2C%20in%20steps%20that%20each%20leave%20the%20app%20shippable.%20It%20is%20a%0Asketch%2C%20not%20a%20plan%3B%20each%20step%20would%20get%20its%20own%20issue%20and%20ADR.%0A%0A1.%20**Extract%20%60domain%60%20and%20%60contracts%60%20as%20packages.**%20Move%20%60model%2F%60%20and%20the%20pure%0A%20%20%20parts%20of%20%60utils%2F%60%20into%20%60packages%2Fdomain%60%3B%20move%20the%20zod%20schemas%20from%20server%0A%20%20%20actions%20and%20routes%20into%20%60packages%2Fcontracts%60.%20Finish%20%23965%20in%20the%20process.%20The%0A%20%20%20Next%20app%20keeps%20working%3B%20the%20boundary%20becomes%20physical.%0A2.%20**Introduce%20the%20change%20log%20and%20the%20jobs%20loop%20inside%20the%20Next%20app.**%20Add%20the%0A%20%20%20%60changes%60%20table%20and%20%60tx.record()%60%20to%20the%20repositories%3B%20move%20reminders%20and%20email%0A%20%20%20dispatch%20onto%20the%20loop%20(this%20is%20%231005%20done%20the%20target%20way).%20No%20UI%20change.%0A3.%20**Stand%20up%20the%20API%20in%20the%20same%20process.**%20Mount%20a%20Hono%20app%20under%20%60%2Fapi%2Fv1%60%20in%20a%0A%20%20%20custom%20server%20(or%20as%20route%20handlers)%20that%20calls%20the%20same%20repositories%3B%20declare%0A%20%20%20contracts%2C%20generate%20%60openapi.json%60%20and%20%60api-client%60.%20Server%20actions%20start%0A%20%20%20delegating%20to%20use%20cases%20so%20both%20paths%20share%20one%20implementation.%0A4.%20**Ship%20the%20feed%20and%20the%20snapshot.**%20SSE%20endpoint%20over%20the%20change%20log%3B%20a%0A%20%20%20%60replica%60%20package%20in%20the%20Next%20app%20that%20the%20schedule%20page%20reads%20from.%20Live%0A%20%20%20updates%20arrive%20for%20everyone%20while%20the%20rest%20of%20the%20UI%20is%20unchanged.%0A5.%20**Move%20screens%20to%20the%20SPA%20one%20family%20at%20a%20time.**%20Start%20with%20the%20schedule%0A%20%20%20(biggest%20win%3A%20replica%2C%20filters%2C%20agenda%2C%20kiosk)%2C%20then%20proposals%20and%20voting%2C%0A%20%20%20people%20and%20meetings%2C%20settings%2C%20admin.%20Each%20moved%20screen%20deletes%20its%20server%0A%20%20%20actions.%20A%20route%20in%20Next%20redirects%20to%20the%20SPA%20route%20until%20all%20are%20moved.%0A6.%20**Identity%20and%20roles.**%20Persons%2C%20participations%2C%20login%20sessions%2C%20assurance%2C%0A%20%20%20join%20links%3B%20migrate%20protected%20guests%20to%20verified%20credentials%3B%20replace%20the%20admin%0A%20%20%20password%20with%20a%20site-admin%20role%20and%20the%20bootstrap%20link.%0A7.%20**Retire%20Next.**%20The%20server%20serves%20the%20SPA&#039;s%20static%20files%3B%20%60next%60%20leaves%0A%20%20%20%60package.json%60%3B%20the%20Dockerfile%20shrinks.%0A%0ASteps%201%20and%202%20are%20valuable%20even%20if%20nothing%20else%20happens.%20Steps%203%20to%205%20are%20where%20the%0Aattendee-visible%20wins%20land%2C%20and%20they%20can%20be%20paced%20by%20event%20calendar%3A%20the%20feed%20and%0Athe%20schedule%20screen%20before%20the%20next%20event%2C%20the%20rest%20after.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%2010%20%C2%B7%20A%20path%20from%20the%20current%20code%0A%0AThe%20design%20ignores%20the%20current%20layout%20on%20purpose.%20This%20page%20is%20the%20shortest%20honest%0Aroute%20from%20here%20to%20there%2C%20in%20steps%20that%20each%20leave%20the%20app%20shippable.%20It%20is%20a%0Asketch%2C%20not%20a%20plan%3B%20each%20step%20would%20get%20its%20own%20issue%20and%20ADR.%0A%0A1.%20**Extract%20%60domain%60%20and%20%60contracts%60%20as%20packages.**%20Move%20%60model%2F%60%20and%20the%20pure%0A%20%20%20parts%20of%20%60utils%2F%60%20into%20%60packages%2Fdomain%60%3B%20move%20the%20zod%20schemas%20from%20server%0A%20%20%20actions%20and%20routes%20into%20%60packages%2Fcontracts%60.%20Finish%20%5B%23965%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F965)%20in%20the%20process.%20The%0A%20%20%20Next%20app%20keeps%20working%3B%20the%20boundary%20becomes%20physical.%0A2.%20**Introduce%20the%20change%20log%20and%20the%20jobs%20loop%20inside%20the%20Next%20app.**%20Add%20the%0A%20%20%20%60changes%60%20table%20and%20%60tx.record()%60%20to%20the%20repositories%3B%20move%20reminders%20and%20email%0A%20%20%20dispatch%20onto%20the%20loop%20(this%20is%20%5B%231005%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F1005)%20done%20the%20target%20way).%20No%20UI%20change.%0A3.%20**Stand%20up%20the%20API%20in%20the%20same%20process.**%20Mount%20a%20Hono%20app%20under%20%60%2Fapi%2Fv1%60%20in%20a%0A%20%20%20custom%20server%20(or%20as%20route%20handlers)%20that%20calls%20the%20same%20repositories%3B%20declare%0A%20%20%20contracts%2C%20generate%20%60openapi.json%60%20and%20%60api-client%60.%20Server%20actions%20start%0A%20%20%20delegating%20to%20use%20cases%20so%20both%20paths%20share%20one%20implementation.%0A4.%20**Ship%20the%20feed%20and%20the%20snapshot.**%20SSE%20endpoint%20over%20the%20change%20log%3B%20a%0A%20%20%20%60replica%60%20package%20in%20the%20Next%20app%20that%20the%20schedule%20page%20reads%20from.%20Live%0A%20%20%20updates%20arrive%20for%20everyone%20while%20the%20rest%20of%20the%20UI%20is%20unchanged.%0A5.%20**Move%20screens%20to%20the%20SPA%20one%20family%20at%20a%20time.**%20Start%20with%20the%20schedule%0A%20%20%20(biggest%20win%3A%20replica%2C%20filters%2C%20agenda%2C%20kiosk)%2C%20then%20proposals%20and%20voting%2C%0A%20%20%20people%20and%20meetings%2C%20settings%2C%20admin.%20Each%20moved%20screen%20deletes%20its%20server%0A%20%20%20actions.%20A%20route%20in%20Next%20redirects%20to%20the%20SPA%20route%20until%20all%20are%20moved.%0A6.%20**Identity%20and%20roles.**%20Persons%2C%20participations%2C%20login%20sessions%2C%20assurance%2C%0A%20%20%20join%20links%3B%20migrate%20protected%20guests%20to%20verified%20credentials%3B%20replace%20the%20admin%0A%20%20%20password%20with%20a%20site-admin%20role%20and%20the%20bootstrap%20link.%0A7.%20**Retire%20Next.**%20The%20server%20serves%20the%20SPA&#039;s%20static%20files%3B%20%60next%60%20leaves%0A%20%20%20%60package.json%60%3B%20the%20Dockerfile%20shrinks.%0A%0ASteps%201%20and%202%20are%20valuable%20even%20if%20nothing%20else%20happens.%20Steps%203%20to%205%20are%20where%20the%0Aattendee-visible%20wins%20land%2C%20and%20they%20can%20be%20paced%20by%20event%20calendar%3A%20the%20feed%20and%0Athe%20schedule%20screen%20before%20the%20next%20event%2C%20the%20rest%20after.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1591,11 +1591,11 @@ sketch, not a plan; each step would get its own issue and ADR.</p>
 <ol>
 <li><strong>Extract <code>domain</code> and <code>contracts</code> as packages.</strong> Move <code>model/</code> and the pure
 parts of <code>utils/</code> into <code>packages/domain</code>; move the zod schemas from server
-actions and routes into <code>packages/contracts</code>. Finish #965 in the process. The
+actions and routes into <code>packages/contracts</code>. Finish <a href="https://github.com/schellingboard/schellingboard/issues/965">#965</a> in the process. The
 Next app keeps working; the boundary becomes physical.</li>
 <li><strong>Introduce the change log and the jobs loop inside the Next app.</strong> Add the
 <code>changes</code> table and <code>tx.record()</code> to the repositories; move reminders and email
-dispatch onto the loop (this is #1005 done the target way). No UI change.</li>
+dispatch onto the loop (this is <a href="https://github.com/schellingboard/schellingboard/issues/1005">#1005</a> done the target way). No UI change.</li>
 <li><strong>Stand up the API in the same process.</strong> Mount a Hono app under <code>/api/v1</code> in a
 custom server (or as route handlers) that calls the same repositories; declare
 contracts, generate <code>openapi.json</code> and <code>api-client</code>. Server actions start
@@ -1687,17 +1687,32 @@ the schedule screen before the next event, the rest after.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1789625537000">
+                <span class="git-last-updated" data-timestamp="1791096655000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1789625537000"></span>
+                  <span class="git-time" data-timestamp="1791096655000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: link GitHub issue references">docs: link GitHub issue references</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791096655000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1740,13 +1755,13 @@ the schedule screen before the next event, the rest after.</p>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mutgk7lo"></script>
+      <script src="../../assets/js/docmd-main.js?v=muth711j"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mutgk7lo"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mutgk7lo" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mutgk7lo" ></script>
-<script src="../../assets/js/docmd-search.js?v=mutgk7lo" ></script>
-<script src="../../assets/js/docmd-git.js?v=mutgk7lo" ></script>
+      <script src="../../assets/js/docmd-git.js?v=muth711j"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=muth711j" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=muth711j" ></script>
+<script src="../../assets/js/docmd-search.js?v=muth711j" ></script>
+<script src="../../assets/js/docmd-git.js?v=muth711j" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1824,7 +1839,7 @@ the schedule screen before the next event, the rest after.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mutgk7lo"></script>
+          src="../../assets/js/likec4-embed.js?v=muth711j"></script>
         
       
       

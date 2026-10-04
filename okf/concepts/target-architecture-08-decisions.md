@@ -6,7 +6,7 @@ path: /target-architecture/08-decisions/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T06:46:59.109Z"
+  generated_at: "2026-10-04T07:04:43.638Z"
 ---
 # 8 · Decisions
 
@@ -39,10 +39,10 @@ server and read the database directly. The benefits, measured against this app:
 
 - Two runtimes for one UI: components must run on the server and in the browser,
   props must be serializable, `"use client"` boundaries are placed by hand.
-  The timezone hydration mismatch (#734) and the Suspense-boundary freeze are this
+  The timezone hydration mismatch ([#734](https://github.com/schellingboard/schellingboard/issues/734)) and the Suspense-boundary freeze are this
   class of bug, and they are the hard kind: "which code ran where, and when".
 - A snapshot that is stale on arrival: live updates need client state anyway,
-  which overwrites the server HTML on load. The optimistic-RSVP mess (#463) is
+  which overwrites the server HTML on load. The optimistic-RSVP mess ([#463](https://github.com/schellingboard/schellingboard/issues/463)) is
   server-rendered truth plus client mutation plus revalidation.
 - No offline path unless the client render path exists too, which is the SPA.
 - Convention churn: the framework's own agent notice in this repo warns that this

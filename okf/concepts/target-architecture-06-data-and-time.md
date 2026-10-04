@@ -6,7 +6,7 @@ path: /target-architecture/06-data-and-time/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T06:46:59.107Z"
+  generated_at: "2026-10-04T07:04:43.637Z"
 ---
 # 6 · Data and time
 
@@ -23,7 +23,7 @@ okf:
   still appears in "who moved/deleted this" via the change log, which is enough).
 - **Row shapes stay in `db/`.** The adapter maps rows to domain objects; nothing
   above the adapter imports a row type. This is the boundary the current code is
-  still moving towards (#965), made structural here by the package split.
+  still moving towards ([#965](https://github.com/schellingboard/schellingboard/issues/965)), made structural here by the package split.
 
 ## Tables by module
 

@@ -6,7 +6,7 @@ path: /target-architecture/05-security/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T06:46:59.107Z"
+  generated_at: "2026-10-04T07:04:43.636Z"
 ---
 # 5 · Security
 
@@ -115,7 +115,7 @@ nosniff`.
   anonymizes their changes (actor becomes `deleted`) rather than breaking the log,
   and removes profile, credentials, marks, meetings, bindings.
 - A per-site **data collection statement** page is generated from the schema's
-  data classes (#801), so it cannot drift.
+  data classes ([#801](https://github.com/schellingboard/schellingboard/issues/801)), so it cannot drift.
 - Retention: change payload pruning, delivery logs and idempotency keys expire;
   all windows are settings with safe defaults.
 
