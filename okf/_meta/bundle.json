@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-10-04T07:04:43.643Z",
+    "generated_at": "2026-10-04T07:48:32.574Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 39,
+    "concepts": 41,
     "by_type": {
-      "concept": 39
+      "concept": 41
     },
     "locales": [],
     "versions": []
@@ -124,6 +124,28 @@
       "description": "",
       "path": "/adr/0009-standalone-repository-in-own-org/",
       "file": "concepts/adr-0009-standalone-repository-in-own-org.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0010-workspace-packages",
+      "type": "concept",
+      "title": "ADR 0010: Domain and contracts as workspace packages",
+      "description": "",
+      "path": "/adr/0010-workspace-packages/",
+      "file": "concepts/adr-0010-workspace-packages.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0011-change-log-and-jobs-loop",
+      "type": "concept",
+      "title": "ADR 0011: A change log and one jobs loop",
+      "description": "",
+      "path": "/adr/0011-change-log-and-jobs-loop/",
+      "file": "concepts/adr-0011-change-log-and-jobs-loop.md",
       "locale": "",
       "version": "",
       "tags": []

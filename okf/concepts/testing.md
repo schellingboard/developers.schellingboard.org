@@ -6,7 +6,7 @@ path: /testing/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T07:04:43.642Z"
+  generated_at: "2026-10-04T07:48:32.573Z"
 ---
 # Testing
 
@@ -27,6 +27,9 @@ See [ADR 0002](adr/0002-testing-strategy.md) for the full rationale. Three tiers
 - If making a test pass requires reaching into a private, the test is wrong.
 - Factories produce minimal entities; tests override only the fields they care about. If a test sets 12 fields, the factory is wrong.
 - No cross-test state. Each test builds what it needs.
+- Integration tests start no jobs loop (ADR 0011), so email and push go out only when the test
+  sends them: call `runJobs()` after a request, or `deliverQueued()` after calling a notify
+  function directly (`tests/helpers/jobs.ts`). Assert on the mailer only after one of them.
 
 ## TDD workflow
 

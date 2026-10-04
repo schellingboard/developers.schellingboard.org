@@ -1123,7 +1123,7 @@ worth it at this exposure; revisit if the exposure changes.
 
 # ADR 0007: Attendee count storage and in-process reminder dispatch
 
-- **Status:** Accepted
+- **Status:** Accepted; decision 1 superseded by [ADR 0011](0011-change-log-and-jobs-loop.md)
 - **Date:** 2026-08-25, amended 2026-09-02 (see [Amendment](#amendment-2026-09-02--the-in-app-channel))
 
 ## Context
@@ -1534,6 +1534,191 @@ We did it early, because stars and history only grow.
 
 ---
 
+## [ADR 0010: Domain and contracts as workspace packages](https://developers.schellingboard.org/adr/0010-workspace-packages/)
+
+# ADR 0010: Domain and contracts as workspace packages
+
+- **Status:** Accepted
+- **Date:** 2026-10-03
+- **Issue:** #965
+
+## Context
+
+`model/` was meant to be the centre of the app: types, constants and validation
+that both the pages and the database layer depend on, and that depend on neither.
+Only a `dependency-cruiser` rule kept it that way, and it held half the picture.
+The entity types still lived in `db/repositories/interfaces.ts` (#965), and
+`model/` itself mixed two things: domain vocabulary (contact types, length caps,
+the prompt pool) and the zod schemas for what forms and routes accept.
+
+The [target architecture](../target-architecture/README.md) splits these into
+`packages/domain` and `packages/contracts`, with workspace package manifests as the
+boundary ([D5](../target-architecture/08-decisions.md#d5)). Its
+[path from here](../target-architecture/10-path-from-here.md) makes that split the
+first step, because it pays off even if nothing after it happens.
+
+## Decision
+
+The repository becomes a Bun workspace with two packages next to the Next app,
+which stays at the root:
+
+- **`@schellingboard/domain`** (`packages/domain`): entity types, domain constants
+  and pure functions. It imports nothing but itself and `luxon`.
+- **`@schellingboard/contracts`** (`packages/contracts`): zod schemas for what
+  crosses the wire. It imports `domain` and `zod`, nothing else.
+
+Packages export their TypeScript source by subpath
+(`@schellingboard/domain/guest`), with no build step: Turbopack, Vitest and `tsc`
+compile workspace sources directly. There is no barrel file, so a client bundle
+pulls in only the modules it names.
+
+The boundary is checked three ways, because Bun hoists `node_modules` and an
+undeclared import would otherwise still resolve:
+
+- `make arch` (dependency-cruiser): `domain` reaches only itself and `luxon`,
+  `contracts` only itself, `domain` and `zod`; a package is imported by name,
+  never by a path into its `src/`; and every npm package a workspace package
+  imports is declared in its own `package.json`.
+- `make typecheck` compiles each package with its own `tsconfig.json`, which has
+  no `@/` path alias and, for `domain`, no DOM or Node types.
+- The ambient-clock lint rule (ADR 0004) covers `packages/*/src`.
+
+Bun's isolated linker would make an undeclared import fail to resolve, which is
+the enforcement the target design describes. It is not used: the Docker image
+copies hoisted `node_modules/sharp` and `@img` by path, and Next's standalone
+tracing has only ever been run against a hoisted tree. The rules above give the
+same guarantee without changing how dependencies are laid out.
+
+Tests stay in `tests/` for now. The repository ports stay in `db/` until the
+target architecture's server modules exist to own them. That departs from #965,
+which put the ports in `model/`; the boundary #965 was after is enforced instead
+by a rule that nothing outside `db/` imports `db/repositories/`.
+
+## Consequences
+
+- `model/` is gone. A new rule goes in `domain`; a new form or route schema goes
+  in `contracts`; if it needs a database type, it does not belong in either.
+- `luxon` is `domain`'s one npm dependency: the time rules need time zones, and
+  the app already formats every instant with it. Another dependency is the same
+  kind of decision: declare it in the package's `package.json` and widen the
+  `domain-stays-pure` rule.
+- The Docker build copies every package's `package.json` before
+  `bun install --frozen-lockfile`. A new package needs a line there too.
+- The root `tsconfig.json` still includes the packages, so the root `tsc` run
+  checks them together with the app; editors and ESLint use each package's own
+  `tsconfig.json`. These are not project references; those wait until the server
+  and web app are packages too.
+
+
+---
+
+## [ADR 0011: A change log and one jobs loop](https://developers.schellingboard.org/adr/0011-change-log-and-jobs-loop/)
+
+# ADR 0011: A change log and one jobs loop
+
+- **Status:** Accepted
+- **Date:** 2026-10-03
+- **Issue:** #1005
+
+## Context
+
+Everything that happens after a state change is done inline, in the request
+that made it. Editing a session awaits one SMTP round-trip per RSVP before it
+responds (#1005), and a failure partway through leaves no record of who was
+already told. Reminders run on their own `setInterval` (ADR 0007). Nothing
+records what changed, so "who moved this session" has no answer, and each new
+consumer of a change (push, a future live schedule, a chat bot) would add
+another inline call.
+
+The [target architecture](../target-architecture/03-server.md#change-log)
+replaces all of this with an append-only change log written in the same
+transaction as the state ([D8](../target-architecture/08-decisions.md#d8)), and
+one in-process jobs loop that turns changes into notifications and deliveries
+([D10](../target-architecture/08-decisions.md#d10)).
+[Step 2 of the path](../target-architecture/10-path-from-here.md) brings both
+into the current app, with no change to what users see beyond the speed.
+
+## Decision
+
+### 1. A change log, written by the repositories
+
+A `changes` table holds one row per logged state change: a sequence number,
+the event, the type (`session.changed`), the subject, the actor, when it
+happened by the actor's clock, and a JSON payload with the subject's full state
+(before and after, for an edit). The change types and the functions that build
+them live in `packages/domain/src/change.ts`.
+
+A repository mutation that is logged takes the actor and time from its caller
+and inserts the change inside its own transaction. If the mutation rolls back,
+so does the change. It is not event sourcing: state stays in its tables and the
+log is derived from it.
+
+The log starts with what something will react to: session edits and deletions
+made through the session repository, whose notifications fan out to every
+RSVP. Sessions removed by a cascade (deleting their day or event) are not
+logged yet, matching today's behaviour of not notifying anyone about them.
+
+A payload is part of the log's contract. A field may be added to it; renaming
+or removing one means a new type name, as the target design's versioned types
+do. A reader skips types it does not know, so a rollback to an older version
+does not stop at rows a newer one wrote.
+
+Differences from the target design, all deliberate for now:
+
+- Types are named `session.changed`, not `scheduling.SessionMoved`, and actors
+  are `guest`, `admin` or `system`: the app has no persons, tokens or modules
+  yet.
+- A deletion carries the deleted session and the guests who had RSVPed, not
+  only ids: its reaction needs them and they are gone afterwards.
+- There is no audience, correlation id or command key yet. The live feed
+  (step 4) and idempotent commands (step 3) add them.
+- Rows are deleted, not pruned to headers, once every reaction has passed them
+  and they are old enough; the log keeps guest names and ids only that long.
+
+### 2. One jobs loop per process, holding a lease
+
+One loop runs in each server process, started from `instrumentation.ts` like the
+reminder scheduler it replaces. It does three kinds of work:
+
+- **Reactions** read the change log after a stored cursor, one cursor per
+  reaction, and advance it only after handling a change. Session-change
+  notifications become one.
+- **Scheduled work** runs on its own period: the attendee-count reminders,
+  unchanged (ADR 0007's claim-by-due-time stays), still switched off by
+  `REMINDER_DISPATCH_INTERVAL_MS=0`.
+- **Deliveries** send what notification code enqueues, one per email or push.
+  A failed email is retried with backoff and eventually given up; a push is
+  best-effort, sent once to each device and not retried.
+
+A request that commits a change nudges the loop, so a notification goes out
+within moments without the request waiting for it. A heartbeat catches retries
+and anything a nudge missed. A lease row in the database lets only one process
+run the loop against a database; another process idles until the lease lapses.
+
+A queued email is stored as the template and props to build it from, since a
+built message holds a React element. As with change payloads, a template's
+props may gain optional fields; anything else needs a new template name.
+
+Delivery is at-least-once: a crash between sending and marking sent repeats
+that one message on the next run. ADR 0007 chose the opposite for reminders,
+because one duplicate there was the outcome its spec forbade; ordinary
+notifications have no such rule, and losing one silently is worse.
+
+## Consequences
+
+- Sending email and push leaves the request: editing or deleting a session
+  with hundreds of RSVPs costs a few inserts.
+- A failed send is retried rather than logged and forgotten.
+- Tests that assert on mail run the loop until it is idle instead of reading
+  the mock right after the action. E2E tests already poll the mailbox.
+- ADR 0007's `setInterval` is replaced by the loop; its reminder state machine
+  is not.
+- Repository methods that are logged need the actor and time from their
+  caller, so a call site cannot leave out who made the change.
+
+
+---
+
 ## [Architecture decision records](https://developers.schellingboard.org/adr/)
 
 # Architecture decision records
@@ -1559,6 +1744,8 @@ the tracking issue where there is one.
 | [0007](0007-attendee-count-and-reminder-dispatch.md) | Attendee count storage and in-process reminder dispatch     | 2026-08-25 |
 | [0008](0008-publish-developer-docs.md)               | Publish the developer docs at developers.schellingboard.org | 2026-09-18 |
 | [0009](0009-standalone-repository-in-own-org.md)     | Move to a standalone repo in new schellingboard GitHub org  | 2026-09-19 |
+| [0010](0010-workspace-packages.md)                   | Domain and contracts as workspace packages                  | 2026-10-03 |
+| [0011](0011-change-log-and-jobs-loop.md)             | A change log and one jobs loop                              | 2026-10-03 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and
@@ -1598,7 +1785,7 @@ selector plus the sentence you want the author to read:
 
 Scope it with a config block listing the enforced areas in `files`. The
 ambient-clock ban (ADR 0004) is the worked example: it covers `app/`, `db/`,
-`emails/`, `model/` and `utils/`.
+`emails/`, `packages/` and `utils/`.
 
 Exempt a line, not a file, with `eslint-disable-next-line <rule> -- <reason>`.
 A file-wide `ignores` entry would stop checking the other hundred lines too,
@@ -1644,29 +1831,31 @@ a `to` set, and the reason:
   name: "domain-stays-pure",
   severity: "error",
   comment: "why this edge is wrong, and what to do instead",
-  from: { path: "^model/" },
-  to: { path: "^(app|db)/" },
+  from: { path: "^packages/domain/" },
+  to: { pathNot: "^packages/domain/" },
 }
 ```
 
 `dependencyTypesNot: ["type-only"]` would narrow a rule to runtime edges only —
 a useful escape valve mid-migration, when a shared type is still declared on the
-wrong side of a boundary. Neither layer rule uses it: an import the compiler
+wrong side of a boundary. No layer rule uses it: an import the compiler
 erases still points the wrong way, and a boundary that holds only at runtime is
 one nobody can reason about from the import list.
 
 The direction that matters is inward. `db/` and `app/` are adapters and may
-depend on `model/`; `model/` may not depend on them. Types follow the same
-direction: an entity type is domain vocabulary and belongs in `model/`, where
-both adapters can import it. A type that only means something to the database —
-a row shape, a driver's handle — stays in `db/` and is used only inside `db/`.
-The repository ports belong in the centre too, next to the types they speak in;
-`db/` is then adapters and row shapes only.
+depend on the workspace packages; the packages may not depend on them
+([ADR 0010](adr/0010-workspace-packages.md)). `packages/domain` imports nothing
+but itself and `luxon`, and `packages/contracts` only `domain` and `zod`. Types
+follow the same direction: an entity type is domain vocabulary and belongs in
+`domain`, where both adapters can import it. A type that only means something
+to the database — a row shape, a driver's handle — stays in `db/` and is used
+only inside `db/`.
 
-We are not there yet. `db/repositories/interfaces.ts` still holds the entity
-vocabulary alongside the ports, and 62 files outside `db/` import their domain
-types from it. `CONTACT_TYPES` moving to `model/guest.ts` is the first instance
-of the fix; issue [#965](https://github.com/schellingboard/schellingboard/issues/965) has the inventory and the order to do the rest in.
+`db/repositories/` holds the repository ports and their SQLite adapters, and
+nothing outside `db/` imports from it (`repositories-stay-in-db`); the rest of
+the app reaches the repositories through `@/db/container`. A port's input or
+page type stays next to the port while only `db/` uses it; once code outside
+`db/` needs to name it, it is vocabulary and moves to `domain`.
 
 `make arch-graph` renders the graph to `arch-graph.svg` (needs graphviz), which
 is usually faster than arguing about where a boundary should go.
@@ -2433,7 +2622,7 @@ room [power levels](https://spec.matrix.org/v1.12/client-server-api/#permissions
 regular accounts) posts into either a per-attendee DM or a per-session room, using
 the RSVP list SchellingBoard already has server-side to decide who's invited/
 targeted. This slots in next to the existing `sessionHeadsUp` email trigger in
-`model/guest.ts` — same trigger point, an additional send instead of/alongside the
+`packages/contracts/src/guest.ts` — same trigger point, an additional send instead of/alongside the
 email.
 
 ## Hosting under `sb.example.com/messaging`?
@@ -2633,6 +2822,9 @@ Where things live:
 - **Database layer**: `db/` — `schema.ts`, `container.ts`, repositories in `db/repositories/sqlite/`
 - **API routes**: Server actions in `app/actions/`, API routes in `app/api/`
 - **Utils**: Shared utilities in `utils/`
+- **Domain and contracts**: workspace packages — `packages/domain` (vocabulary,
+  constants, pure rules) and `packages/contracts` (zod schemas); see
+  [ADR 0010](adr/0010-workspace-packages.md)
 - **Migrations**: Drizzle-managed SQL migrations in `drizzle/`
 
 The design the codebase is moving towards is written up separately in
@@ -4889,6 +5081,9 @@ See [ADR 0002](adr/0002-testing-strategy.md) for the full rationale. Three tiers
 - If making a test pass requires reaching into a private, the test is wrong.
 - Factories produce minimal entities; tests override only the fields they care about. If a test sets 12 fields, the factory is wrong.
 - No cross-test state. Each test builds what it needs.
+- Integration tests start no jobs loop (ADR 0011), so email and push go out only when the test
+  sends them: call `runJobs()` after a request, or `deliverQueued()` after calling a notify
+  function directly (`tests/helpers/jobs.ts`). Assert on the mailer only after one of them.
 
 ## TDD workflow
 

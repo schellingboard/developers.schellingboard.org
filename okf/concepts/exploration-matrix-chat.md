@@ -6,7 +6,7 @@ path: /exploration/matrix-chat/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T07:04:43.629Z"
+  generated_at: "2026-10-04T07:48:32.562Z"
 ---
 # Matrix chat integration — feasibility notes
 
@@ -65,7 +65,7 @@ room [power levels](https://spec.matrix.org/v1.12/client-server-api/#permissions
 regular accounts) posts into either a per-attendee DM or a per-session room, using
 the RSVP list SchellingBoard already has server-side to decide who's invited/
 targeted. This slots in next to the existing `sessionHeadsUp` email trigger in
-`model/guest.ts` — same trigger point, an additional send instead of/alongside the
+`packages/contracts/src/guest.ts` — same trigger point, an additional send instead of/alongside the
 email.
 
 ## Hosting under `sb.example.com/messaging`?

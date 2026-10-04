@@ -6,7 +6,7 @@ path: /adr/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T07:04:43.624Z"
+  generated_at: "2026-10-04T07:48:32.558Z"
 ---
 # Architecture decision records
 
@@ -31,6 +31,8 @@ the tracking issue where there is one.
 | [0007](0007-attendee-count-and-reminder-dispatch.md) | Attendee count storage and in-process reminder dispatch     | 2026-08-25 |
 | [0008](0008-publish-developer-docs.md)               | Publish the developer docs at developers.schellingboard.org | 2026-09-18 |
 | [0009](0009-standalone-repository-in-own-org.md)     | Move to a standalone repo in new schellingboard GitHub org  | 2026-09-19 |
+| [0010](0010-workspace-packages.md)                   | Domain and contracts as workspace packages                  | 2026-10-03 |
+| [0011](0011-change-log-and-jobs-loop.md)             | A change log and one jobs loop                              | 2026-10-03 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and

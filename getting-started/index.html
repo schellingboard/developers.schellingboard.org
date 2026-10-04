@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=muth711j">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=muth711j">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mutirdkz">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mutirdkz">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=muth711j" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=muth711j" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mutirdkz" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mutirdkz" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=muth711j" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=muth711j" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mutirdkz" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mutirdkz" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=muth711j">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mutirdkz">
     
     
   </head>
@@ -951,6 +951,38 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="../adr/0010-workspace-packages/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0010: Domain and contracts as workspace packages
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0011-change-log-and-jobs-loop/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0011: A change log and one jobs loop
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1465,7 +1497,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Getting%20started%0A%0A%23%23%20Technology%20stack%0A%0A-%20**Framework**%3A%20Next.js%2016%20(App%20Router)%0A-%20**Language**%3A%20TypeScript%20(strict%20mode)%0A-%20**Styling**%3A%20Tailwind%20CSS%0A-%20**Database**%3A%20SQLite%20(better-sqlite3)%20with%20Drizzle%20ORM%0A-%20**Testing**%3A%20Vitest%20and%20Playwright%0A-%20**Package%20manager**%3A%20Bun%0A%0AWhere%20things%20live%3A%0A%0A-%20**Frontend**%3A%20React%20components%20in%20%60app%2F%60%20using%20App%20Router%0A-%20**Database%20layer**%3A%20%60db%2F%60%20%E2%80%94%20%60schema.ts%60%2C%20%60container.ts%60%2C%20repositories%20in%20%60db%2Frepositories%2Fsqlite%2F%60%0A-%20**API%20routes**%3A%20Server%20actions%20in%20%60app%2Factions%2F%60%2C%20API%20routes%20in%20%60app%2Fapi%2F%60%0A-%20**Utils**%3A%20Shared%20utilities%20in%20%60utils%2F%60%0A-%20**Migrations**%3A%20Drizzle-managed%20SQL%20migrations%20in%20%60drizzle%2F%60%0A%0AThe%20design%20the%20codebase%20is%20moving%20towards%20is%20written%20up%20separately%20in%0A%5BTarget%20architecture%5D(target-architecture%2FREADME.md)%3B%20the%20rules%20the%20build%0Aenforces%20today%20are%20in%20%5BArchitecture%20rules%5D(architecture-rules.md).%0A%0A%23%23%20Prerequisites%0A%0A-%20**Bun**%20(package%20manager%20and%20script%20runner)%0A-%20**Node.js%2022**%20(or%20higher)%2C%20installed%20and%20on%20your%20%60PATH%60.%20Although%20Bun%20runs%0A%20%20the%20app%2C%20the%20tooling%20shells%20out%20to%20a%20real%20%60node%60%20%E2%80%94%20%60bun%20x%20tsx%60%20for%0A%20%20migrations%2Fscripts%2C%20and%20Vitest&#039;s%20test%20workers%20%E2%80%94%20so%20%60node%60%20must%20be%20directly%20on%0A%20%20your%20%60PATH%60.%20Check%20with%20%60node%20-v%60.%0A%0A%23%23%20Setup%0A%0A1.%20Clone%20the%20repo%20and%20install%20dependencies%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20install%0A%20%20%20%60%60%60%0A%0A2.%20(Optional)%20Create%20%60.env.dev.local%60%20to%20customize%20environment%20variables%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20DATABASE_URL%3Dfile%3A.%2Fdata.db%0A%20%20%20SITE_PASSWORD%3Dyour-password%0A%20%20%20ADMIN_PASSWORD%3Dyour-admin-password%0A%20%20%20AUTH_SECRET%3D%3Cgenerated%20via%20openssl%20rand%20-base64%2032%3E%0A%20%20%20%60%60%60%0A%0A%20%20%20See%20%5BEnvironment%20variables%5D(%23environment-variables)%20below%20for%20all%20options.%0A%20%20%20Note%3A%20%60AUTH_SECRET%60%20is%20required%20only%20when%20%60SITE_PASSWORD%60%20or%0A%20%20%20%60ADMIN_PASSWORD%60%20is%20set%20or%20guests%20protect%20their%20name%20(it%20signs%20their%20session%0A%20%20%20cookies).%20Omitting%20this%20file%20uses%20sensible%20defaults.%0A%0A3.%20(Optional)%20Seed%20the%20database%20with%20test%20data%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev-db-seed%0A%20%20%20%60%60%60%0A%0A%20%20%20This%20seeds%20the%20%60large%60%20profile%3A%20the%20hand-curated%20fixtures%20the%20E2E%20suite%0A%20%20%20uses%20plus%20a%20few%20hundred%20generated%20guests%2C%20proposals%20and%20sessions%20for%0A%20%20%20realistic%20manual%20testing.%20%60SEED_PROFILE%3Dsmall%20make%20dev-db-seed%60%20seeds%20only%0A%20%20%20the%20curated%20fixtures%20(what%20the%20E2E%20suite%20always%20runs%20against).%0A%0A4.%20Start%20the%20dev%20server%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev%0A%20%20%20%60%60%60%0A%0A%20%20%20Open%20%5Bhttp%3A%2F%2Flocalhost%3A3000%5D(http%3A%2F%2Flocalhost%3A3000)%20in%20your%20browser.%0A%0A%23%23%20Development%20commands%0A%0ARun%20%60make%60%20to%20see%20all%20available%20commands%3A%0A%0A%60%60%60bash%0Amake%20%20%20%20%20%20%20%20%20%20%23%20List%20all%20commands%0Amake%20dev%20%20%20%20%20%20%23%20Start%20dev%20server%0Amake%20test%20%20%20%20%20%23%20Run%20tests%0Amake%20lint%20%20%20%20%20%23%20Lint%20code%0Amake%20format%20%20%20%23%20Format%20code%0A%60%60%60%0A%0ABefore%20committing%20or%20pushing%2C%20run%3A%0A%0A%60%60%60bash%0Amake%20precommit%20%20%23%20Format%2C%20lint%2C%20type%20check%2C%20and%20run%20all%20tests%20(incl.%20e2e)%0A%60%60%60%0A%0A%23%23%20Admin%20UI%0A%0AA%20web%20admin%20UI%20is%20available%20at%20%60%2Fadmin%60%20for%20managing%20all%20core%20records%3A%20events%0A(basic%20info%2C%20phases%2C%20days)%2C%20the%20global%20pools%20of%20users%20and%20locations%2C%20event%E2%86%94guest%0Aand%20event%E2%86%94location%20assignments%2C%20moderation%20of%20proposals%2C%20sessions%2C%20and%20RSVPs%2C%20and%0Asite%20settings%20(title%2C%20description%2C%20and%20the%20optional%20venue%20map).%0AIt%20requires%20%60ADMIN_PASSWORD%60%20(and%20%60AUTH_SECRET%60)%20to%20be%20set%3B%20without%0A%60ADMIN_PASSWORD%60%20the%20admin%20routes%20are%20disabled%20and%20return%20a%20diagnostic%20message%0Aexplaining%20how%20to%20enable%20them.%20It%20is%20fully%20separate%20from%20the%20normal%20user%20UI%3A%20it%0Ahas%20its%20own%20layout%20and%20only%20requires%20the%20admin%20password%20(not%20%60SITE_PASSWORD%60).%0A%0A%23%23%20Dev%20fake%20clock%0A%0ASet%20%60SB_ENABLE_DEV_TOOLS%3D1%60%20and%20visit%20any%20event%20page%20with%20%60%3Fdev%3D1%60%20to%20get%20a%0Atoolbar%20for%20time-traveling%20the%20app%20(real%20time%20%2F%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%20%60%2B7d%60%20%2F%20pick%20a%0Adate)%2C%20so%20you%20can%20walk%20an%20event%20through%20its%20proposal%20%E2%86%92%20voting%20%E2%86%92%20scheduling%0Aphases%20without%20editing%20dates%20in%20the%20database.%20It&#039;s%20a%20request-scoped%20cookie%2C%0Ainert%20unless%20the%20env%20var%20is%20set%20%E2%80%94%20safe%20to%20enable%20on%20a%20shared%20staging%2Fdemo%0Ainstance.%20See%20%5BADR%200004%5D(adr%2F0004-dev-fake-clock.md)%20for%20details.%0A%0A%23%23%20Environment%20variables%0A%0ASee%0A%5BConfiguration%5D(https%3A%2F%2Fdocs.schellingboard.org%2Fself-hosting%2Fconfiguration%2F%23environment-variables)%0Afor%20the%20full%20list%20and%20descriptions.%0A%0AFor%20local%20development%2C%20%60DATABASE_URL%60%20is%20the%20only%20required%20variable%20%E2%80%94%20unlike%0ADocker%2C%20no%20default%20is%20provided%20(e.g.%20%60file%3A.%2Fdata.db%60).%20%60AUTH_SECRET%60%20is%0Aadditionally%20required%20when%20%60SITE_PASSWORD%60%20or%20%60ADMIN_PASSWORD%60%20is%20set%20or%0Aguests%20protect%20their%20name%20(it%20signs%20their%20session%20cookies)%3B%20generate%20one%0Awith%3A%0A%0A%60%60%60bash%0Aopenssl%20rand%20-base64%2032%0A%60%60%60%0A%0A%60NEXT_PUBLIC_%60%20variables%20are%20exposed%20to%20the%20browser%3B%20all%20others%20are%20server-side%20only.%0A%0AA%20new%20variable%20a%20self-hoster%20can%20set%20has%20to%20reach%20three%20files%3A%20the%20reference%0Atable%20above%2C%20%60docker-compose.yml%60%20(which%20forwards%20it%20into%20the%20container)%20and%0A%60.env.docker.example%60%20(where%20they%20fill%20it%20in).%20Nothing%20runs%20%60docker-compose.yml%60%0A%E2%80%94%20it%20is%20the%20one%20file%20here%20whose%20only%20user%20is%20a%20stranger%20%E2%80%94%20so%0A%60tests%2Funit%2Fdocker-compose-env.test.ts%60%20compares%20the%20three%20and%20names%20whichever%0Avariable%20fell%20out%20of%20step.%20If%20a%20variable%20deliberately%20doesn&#039;t%20go%20through%0Acompose%2C%20record%20the%20reason%20in%20that%20test%20instead.%0A%0A%23%23%20Running%20multiple%20instances%0A%0ASeveral%20clones%20or%20%60jj%60%20workspaces%20on%20one%20machine%20compete%20for%20the%20same%20ports.%0AGive%20each%20clone%20explicit%2C%20distinct%20ports%20in%20%60.env.dev.local%60%20and%0A%60.env.test.local%60%20%E2%80%94%20see%20%5BRunning%20multiple%20instances%5D(multiple-instances.md)%20for%0Awhich%20variable%20does%20what%20and%20a%20worked%20two-clone%20example.%0A%0A%23%23%20Database%20migrations%0A%0A%60make%20dev-migrate-create%60%20(%60drizzle-kit%20generate%60)%20diffs%20%60db%2Fschema.ts%60%20against%0Athe%20latest%20snapshot%20in%20%60drizzle%2Fmeta%2F%60%20and%20writes%20a%20new%20migration%20plus%20updated%0Ameta%20files.%20When%20two%20branches%20each%20add%20one%2C%20the%20meta%20files%20conflict%20%E2%80%94%20don&#039;t%0Ahand-edit%20them%2C%20regenerate%20as%20described%20in%0A%5BDatabase%20migrations%5D(migrations.md%23resolving-migration-conflicts).%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Getting%20started%0A%0A%23%23%20Technology%20stack%0A%0A-%20**Framework**%3A%20Next.js%2016%20(App%20Router)%0A-%20**Language**%3A%20TypeScript%20(strict%20mode)%0A-%20**Styling**%3A%20Tailwind%20CSS%0A-%20**Database**%3A%20SQLite%20(better-sqlite3)%20with%20Drizzle%20ORM%0A-%20**Testing**%3A%20Vitest%20and%20Playwright%0A-%20**Package%20manager**%3A%20Bun%0A%0AWhere%20things%20live%3A%0A%0A-%20**Frontend**%3A%20React%20components%20in%20%60app%2F%60%20using%20App%20Router%0A-%20**Database%20layer**%3A%20%60db%2F%60%20%E2%80%94%20%60schema.ts%60%2C%20%60container.ts%60%2C%20repositories%20in%20%60db%2Frepositories%2Fsqlite%2F%60%0A-%20**API%20routes**%3A%20Server%20actions%20in%20%60app%2Factions%2F%60%2C%20API%20routes%20in%20%60app%2Fapi%2F%60%0A-%20**Utils**%3A%20Shared%20utilities%20in%20%60utils%2F%60%0A-%20**Domain%20and%20contracts**%3A%20workspace%20packages%20%E2%80%94%20%60packages%2Fdomain%60%20(vocabulary%2C%0A%20%20constants%2C%20pure%20rules)%20and%20%60packages%2Fcontracts%60%20(zod%20schemas)%3B%20see%0A%20%20%5BADR%200010%5D(adr%2F0010-workspace-packages.md)%0A-%20**Migrations**%3A%20Drizzle-managed%20SQL%20migrations%20in%20%60drizzle%2F%60%0A%0AThe%20design%20the%20codebase%20is%20moving%20towards%20is%20written%20up%20separately%20in%0A%5BTarget%20architecture%5D(target-architecture%2FREADME.md)%3B%20the%20rules%20the%20build%0Aenforces%20today%20are%20in%20%5BArchitecture%20rules%5D(architecture-rules.md).%0A%0A%23%23%20Prerequisites%0A%0A-%20**Bun**%20(package%20manager%20and%20script%20runner)%0A-%20**Node.js%2022**%20(or%20higher)%2C%20installed%20and%20on%20your%20%60PATH%60.%20Although%20Bun%20runs%0A%20%20the%20app%2C%20the%20tooling%20shells%20out%20to%20a%20real%20%60node%60%20%E2%80%94%20%60bun%20x%20tsx%60%20for%0A%20%20migrations%2Fscripts%2C%20and%20Vitest&#039;s%20test%20workers%20%E2%80%94%20so%20%60node%60%20must%20be%20directly%20on%0A%20%20your%20%60PATH%60.%20Check%20with%20%60node%20-v%60.%0A%0A%23%23%20Setup%0A%0A1.%20Clone%20the%20repo%20and%20install%20dependencies%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20install%0A%20%20%20%60%60%60%0A%0A2.%20(Optional)%20Create%20%60.env.dev.local%60%20to%20customize%20environment%20variables%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20DATABASE_URL%3Dfile%3A.%2Fdata.db%0A%20%20%20SITE_PASSWORD%3Dyour-password%0A%20%20%20ADMIN_PASSWORD%3Dyour-admin-password%0A%20%20%20AUTH_SECRET%3D%3Cgenerated%20via%20openssl%20rand%20-base64%2032%3E%0A%20%20%20%60%60%60%0A%0A%20%20%20See%20%5BEnvironment%20variables%5D(%23environment-variables)%20below%20for%20all%20options.%0A%20%20%20Note%3A%20%60AUTH_SECRET%60%20is%20required%20only%20when%20%60SITE_PASSWORD%60%20or%0A%20%20%20%60ADMIN_PASSWORD%60%20is%20set%20or%20guests%20protect%20their%20name%20(it%20signs%20their%20session%0A%20%20%20cookies).%20Omitting%20this%20file%20uses%20sensible%20defaults.%0A%0A3.%20(Optional)%20Seed%20the%20database%20with%20test%20data%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev-db-seed%0A%20%20%20%60%60%60%0A%0A%20%20%20This%20seeds%20the%20%60large%60%20profile%3A%20the%20hand-curated%20fixtures%20the%20E2E%20suite%0A%20%20%20uses%20plus%20a%20few%20hundred%20generated%20guests%2C%20proposals%20and%20sessions%20for%0A%20%20%20realistic%20manual%20testing.%20%60SEED_PROFILE%3Dsmall%20make%20dev-db-seed%60%20seeds%20only%0A%20%20%20the%20curated%20fixtures%20(what%20the%20E2E%20suite%20always%20runs%20against).%0A%0A4.%20Start%20the%20dev%20server%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev%0A%20%20%20%60%60%60%0A%0A%20%20%20Open%20%5Bhttp%3A%2F%2Flocalhost%3A3000%5D(http%3A%2F%2Flocalhost%3A3000)%20in%20your%20browser.%0A%0A%23%23%20Development%20commands%0A%0ARun%20%60make%60%20to%20see%20all%20available%20commands%3A%0A%0A%60%60%60bash%0Amake%20%20%20%20%20%20%20%20%20%20%23%20List%20all%20commands%0Amake%20dev%20%20%20%20%20%20%23%20Start%20dev%20server%0Amake%20test%20%20%20%20%20%23%20Run%20tests%0Amake%20lint%20%20%20%20%20%23%20Lint%20code%0Amake%20format%20%20%20%23%20Format%20code%0A%60%60%60%0A%0ABefore%20committing%20or%20pushing%2C%20run%3A%0A%0A%60%60%60bash%0Amake%20precommit%20%20%23%20Format%2C%20lint%2C%20type%20check%2C%20and%20run%20all%20tests%20(incl.%20e2e)%0A%60%60%60%0A%0A%23%23%20Admin%20UI%0A%0AA%20web%20admin%20UI%20is%20available%20at%20%60%2Fadmin%60%20for%20managing%20all%20core%20records%3A%20events%0A(basic%20info%2C%20phases%2C%20days)%2C%20the%20global%20pools%20of%20users%20and%20locations%2C%20event%E2%86%94guest%0Aand%20event%E2%86%94location%20assignments%2C%20moderation%20of%20proposals%2C%20sessions%2C%20and%20RSVPs%2C%20and%0Asite%20settings%20(title%2C%20description%2C%20and%20the%20optional%20venue%20map).%0AIt%20requires%20%60ADMIN_PASSWORD%60%20(and%20%60AUTH_SECRET%60)%20to%20be%20set%3B%20without%0A%60ADMIN_PASSWORD%60%20the%20admin%20routes%20are%20disabled%20and%20return%20a%20diagnostic%20message%0Aexplaining%20how%20to%20enable%20them.%20It%20is%20fully%20separate%20from%20the%20normal%20user%20UI%3A%20it%0Ahas%20its%20own%20layout%20and%20only%20requires%20the%20admin%20password%20(not%20%60SITE_PASSWORD%60).%0A%0A%23%23%20Dev%20fake%20clock%0A%0ASet%20%60SB_ENABLE_DEV_TOOLS%3D1%60%20and%20visit%20any%20event%20page%20with%20%60%3Fdev%3D1%60%20to%20get%20a%0Atoolbar%20for%20time-traveling%20the%20app%20(real%20time%20%2F%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%20%60%2B7d%60%20%2F%20pick%20a%0Adate)%2C%20so%20you%20can%20walk%20an%20event%20through%20its%20proposal%20%E2%86%92%20voting%20%E2%86%92%20scheduling%0Aphases%20without%20editing%20dates%20in%20the%20database.%20It&#039;s%20a%20request-scoped%20cookie%2C%0Ainert%20unless%20the%20env%20var%20is%20set%20%E2%80%94%20safe%20to%20enable%20on%20a%20shared%20staging%2Fdemo%0Ainstance.%20See%20%5BADR%200004%5D(adr%2F0004-dev-fake-clock.md)%20for%20details.%0A%0A%23%23%20Environment%20variables%0A%0ASee%0A%5BConfiguration%5D(https%3A%2F%2Fdocs.schellingboard.org%2Fself-hosting%2Fconfiguration%2F%23environment-variables)%0Afor%20the%20full%20list%20and%20descriptions.%0A%0AFor%20local%20development%2C%20%60DATABASE_URL%60%20is%20the%20only%20required%20variable%20%E2%80%94%20unlike%0ADocker%2C%20no%20default%20is%20provided%20(e.g.%20%60file%3A.%2Fdata.db%60).%20%60AUTH_SECRET%60%20is%0Aadditionally%20required%20when%20%60SITE_PASSWORD%60%20or%20%60ADMIN_PASSWORD%60%20is%20set%20or%0Aguests%20protect%20their%20name%20(it%20signs%20their%20session%20cookies)%3B%20generate%20one%0Awith%3A%0A%0A%60%60%60bash%0Aopenssl%20rand%20-base64%2032%0A%60%60%60%0A%0A%60NEXT_PUBLIC_%60%20variables%20are%20exposed%20to%20the%20browser%3B%20all%20others%20are%20server-side%20only.%0A%0AA%20new%20variable%20a%20self-hoster%20can%20set%20has%20to%20reach%20three%20files%3A%20the%20reference%0Atable%20above%2C%20%60docker-compose.yml%60%20(which%20forwards%20it%20into%20the%20container)%20and%0A%60.env.docker.example%60%20(where%20they%20fill%20it%20in).%20Nothing%20runs%20%60docker-compose.yml%60%0A%E2%80%94%20it%20is%20the%20one%20file%20here%20whose%20only%20user%20is%20a%20stranger%20%E2%80%94%20so%0A%60tests%2Funit%2Fdocker-compose-env.test.ts%60%20compares%20the%20three%20and%20names%20whichever%0Avariable%20fell%20out%20of%20step.%20If%20a%20variable%20deliberately%20doesn&#039;t%20go%20through%0Acompose%2C%20record%20the%20reason%20in%20that%20test%20instead.%0A%0A%23%23%20Running%20multiple%20instances%0A%0ASeveral%20clones%20or%20%60jj%60%20workspaces%20on%20one%20machine%20compete%20for%20the%20same%20ports.%0AGive%20each%20clone%20explicit%2C%20distinct%20ports%20in%20%60.env.dev.local%60%20and%0A%60.env.test.local%60%20%E2%80%94%20see%20%5BRunning%20multiple%20instances%5D(multiple-instances.md)%20for%0Awhich%20variable%20does%20what%20and%20a%20worked%20two-clone%20example.%0A%0A%23%23%20Database%20migrations%0A%0A%60make%20dev-migrate-create%60%20(%60drizzle-kit%20generate%60)%20diffs%20%60db%2Fschema.ts%60%20against%0Athe%20latest%20snapshot%20in%20%60drizzle%2Fmeta%2F%60%20and%20writes%20a%20new%20migration%20plus%20updated%0Ameta%20files.%20When%20two%20branches%20each%20add%20one%2C%20the%20meta%20files%20conflict%20%E2%80%94%20don&#039;t%0Ahand-edit%20them%2C%20regenerate%20as%20described%20in%0A%5BDatabase%20migrations%5D(migrations.md%23resolving-migration-conflicts).%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1552,6 +1584,9 @@
 <li><strong>Database layer</strong>: <code>db/</code> — <code>schema.ts</code>, <code>container.ts</code>, repositories in <code>db/repositories/sqlite/</code></li>
 <li><strong>API routes</strong>: Server actions in <code>app/actions/</code>, API routes in <code>app/api/</code></li>
 <li><strong>Utils</strong>: Shared utilities in <code>utils/</code></li>
+<li><strong>Domain and contracts</strong>: workspace packages — <code>packages/domain</code> (vocabulary,
+constants, pure rules) and <code>packages/contracts</code> (zod schemas); see
+<a href="../adr/0010-workspace-packages/">ADR 0010</a></li>
 <li><strong>Migrations</strong>: Drizzle-managed SQL migrations in <code>drizzle/</code></li>
 </ul>
 <p>The design the codebase is moving towards is written up separately in
@@ -1786,17 +1821,32 @@ hand-edit them, regenerate as described in
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1789892736000">
+                <span class="git-last-updated" data-timestamp="1791063581000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1789892736000"></span>
+                  <span class="git-time" data-timestamp="1791063581000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Claude">
+                            
+                              C
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="refactor: split model/ into domain and contracts workspace packages">refactor: split model/ into domain an...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Claude</span>
+                              <span class="git-commit-date" data-timestamp="1791063581000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1839,13 +1889,13 @@ hand-edit them, regenerate as described in
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=muth711j"></script>
+      <script src="../assets/js/docmd-main.js?v=mutirdkz"></script>
       
-      <script src="../assets/js/docmd-git.js?v=muth711j"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=muth711j" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=muth711j" ></script>
-<script src="../assets/js/docmd-search.js?v=muth711j" ></script>
-<script src="../assets/js/docmd-git.js?v=muth711j" ></script>
+      <script src="../assets/js/docmd-git.js?v=mutirdkz"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mutirdkz" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mutirdkz" ></script>
+<script src="../assets/js/docmd-search.js?v=mutirdkz" ></script>
+<script src="../assets/js/docmd-git.js?v=mutirdkz" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1923,7 +1973,7 @@ hand-edit them, regenerate as described in
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=muth711j"></script>
+          src="../assets/js/likec4-embed.js?v=mutirdkz"></script>
         
       
       

@@ -57,6 +57,18 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0010: Domain and contracts as workspace packages",
+      "url": "https://developers.schellingboard.org/adr/0010-workspace-packages/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "ADR 0011: A change log and one jobs loop",
+      "url": "https://developers.schellingboard.org/adr/0011-change-log-and-jobs-loop/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
