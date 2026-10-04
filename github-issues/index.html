@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=muse8eik">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=muse8eik">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mutgk7lo">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mutgk7lo">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=muse8eik" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=muse8eik" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mutgk7lo" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mutgk7lo" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=muse8eik" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=muse8eik" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mutgk7lo" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mutgk7lo" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=muse8eik">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mutgk7lo">
     
     
   </head>
@@ -1465,7 +1465,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Creating%20and%20Reading%20GitHub%20Issues%0A%0AThis%20repo%20uses%20two%20conventions%20beyond%20GitHub&#039;s%20built-in%20issue%20fields%3A%20an%20**Issue%20Type**%0A(%60Task%60%20%2F%20%60Bug%60%20%2F%20%60Feature%60)%20and%20a%20custom%20single-select%20**Priority**%20field%20(%60Urgent%60%20%2F%20%60High%60%20%2F%0A%60Medium%60%20%2F%20%60Low%60).%20Type%20and%20Priority%20carry%20that%20information%20instead%20of%20labels%20%E2%80%94%20the%20only%20labels%0Ain%20regular%20use%20are%20the%20%60component%3A%20*%60%20ones%20below.%0A%0A%23%23%20Component%20labels%0A%0AEach%20issue%20should%20get%20one%20%60component%3A%20*%60%20label%20indicating%20the%20area%20it%20touches%3A%0A%0A%7C%20Label%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Scope%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------------%20%7C%20----------------------------------------------%20%7C%0A%7C%20%60component%3A%20proposals%60%20%20%20%20%20%7C%20Proposal%20creation%2Flisting%2Fediting%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20voting%60%20%20%20%20%20%20%20%20%7C%20Voting%20(table%20%2B%20Quick%20Voting)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20scheduling%60%20%20%20%20%7C%20Sessions%2C%20session%20grid%2C%20scheduling%20phase%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20admin%60%20%20%20%20%20%20%20%20%20%7C%20%60%2Fadmin%60%20backend%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20attendees%60%20%20%20%20%20%7C%20Attendee%20list%2C%20profiles%2C%20RSVPs%20on%20profiles%20%20%20%20%20%7C%0A%7C%20%60component%3A%201-on-1s%60%20%20%20%20%20%20%20%7C%201-on-1%20meetings%3A%20booking%2C%20availability%2C%20column%20%7C%0A%7C%20%60component%3A%20auth%60%20%20%20%20%20%20%20%20%20%20%7C%20Login%2C%20passwords%2C%20protected%20accounts%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20infra%20%26%20dev%60%20%20%20%7C%20CI%2C%20testing%2C%20tooling%2C%20perf%2C%20security%2C%20upgrades%20%7C%0A%7C%20%60component%3A%20notifications%60%20%7C%20Email%20and%20in-app%20notifications%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20ui%2Fux%60%20%20%20%20%20%20%20%20%20%7C%20Cross-cutting%20styling%2Flayout%2Faccessibility%20%20%20%20%20%7C%0A%7C%20%60component%3A%20other%60%20%20%20%20%20%20%20%20%20%7C%20Reviewed%2C%20no%20suitable%20component%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%60gh%20issue%20create%60%2F%60edit%60%20can%20set%20labels%20directly%20(no%20GraphQL%20needed)%3A%0A%0A%60%60%60bash%0Agh%20issue%20edit%20123%20--add-label%20%22component%3A%20scheduling%22%0A%60%60%60%0A%0ANeither%20field%20is%20exposed%20by%20%60gh%20issue%20create%60%2F%60gh%20issue%20edit%60%2F%60gh%20issue%20view%60%20%E2%80%94%20both%20require%20the%0AGraphQL%20API%20(%60gh%20api%20graphql%60).%0A%0A%23%23%20Reading%20an%20issue&#039;s%20type%20and%20priority%0A%0A%60gh%20issue%20view%20--json%60%20doesn&#039;t%20expose%20either%20field.%20Use%20REST%20instead%3A%0A%0A%60%60%60bash%0Agh%20api%20repos%2Fschellingboard%2Fschellingboard%2Fissues%2F123%20--jq%20%5C%0A%20%20&#039;%7Btype%3A%20.type.name%2C%20priority%3A%20(.issue_field_values%5B%5D%3F%20%7C%20select(.issue_field_name%3D%3D%22Priority%22)%20%7C%20.single_select_option.name)%7D&#039;%0A%60%60%60%0A%0A%23%23%20IDs%20needed%20for%20mutations%0A%0ARepo%20id%2C%20issue%20type%20ids%2C%20and%20the%20Priority%20field%2Foption%20ids%20(stable%2C%20but%20re-fetch%20if%20unsure)%3A%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%0A%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%0A%20%20%20%20id%0A%20%20%20%20issueTypes(first%3A%2010)%20%7B%20nodes%20%7B%20id%20name%20%7D%20%7D%0A%7D%20%7D&#039;%0A%0Agh%20api%20graphql%20-f%20query%3D&#039;%0A%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%0A%20%20%20%20issueFields(first%3A%2020)%20%7B%20nodes%20%7B%20...%20on%20IssueFieldSingleSelect%20%7B%20id%20name%20options%20%7B%20id%20name%20%7D%20%7D%20%7D%20%7D%0A%7D%20%7D&#039;%0A%60%60%60%0A%0AKnown%20values%20as%20of%202026-09-29%20(double-check%20if%20a%20query%20above%20disagrees)%3A%0A%0A%7C%20Name%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20ID%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------%20%7C%20---------------------%20%7C%0A%7C%20Repo%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60R_kgDOUhaF9Q%60%20%20%20%20%20%20%20%20%7C%0A%7C%20Type%3A%20Task%20%20%20%20%20%20%20%7C%20%60IT_kwDOE75_iM40KuIP%60%20%7C%0A%7C%20Type%3A%20Bug%20%20%20%20%20%20%20%20%7C%20%60IT_kwDOE75_iM40KuIQ%60%20%7C%0A%7C%20Type%3A%20Feature%20%20%20%20%7C%20%60IT_kwDOE75_iM40KuIR%60%20%7C%0A%7C%20Priority%20field%20%20%20%7C%20%60IFSS_kgDOAs8wdA%60%20%20%20%20%20%7C%0A%7C%20Priority%3A%20Urgent%20%7C%20%60IFSSO_kgDOBOrxxw%60%20%20%20%20%7C%0A%7C%20Priority%3A%20High%20%20%20%7C%20%60IFSSO_kgDOBOrxyA%60%20%20%20%20%7C%0A%7C%20Priority%3A%20Medium%20%7C%20%60IFSSO_kgDOBOrxyQ%60%20%20%20%20%7C%0A%7C%20Priority%3A%20Low%20%20%20%20%7C%20%60IFSSO_kgDOBOrxyg%60%20%20%20%20%7C%0A%0A%23%23%20Creating%20an%20issue%20with%20type%20and%20priority%20set%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24repo%3A%20ID!%2C%20%24title%3A%20String!%2C%20%24body%3A%20String!%2C%20%24type%3A%20ID!%2C%20%24prioField%3A%20ID!%2C%20%24prioOpt%3A%20ID!)%20%7B%0A%20%20createIssue(input%3A%20%7B%0A%20%20%20%20repositoryId%3A%20%24repo%2C%20title%3A%20%24title%2C%20body%3A%20%24body%2C%20issueTypeId%3A%20%24type%2C%0A%20%20%20%20issueFields%3A%20%5B%7B%20fieldId%3A%20%24prioField%2C%20singleSelectOptionId%3A%20%24prioOpt%20%7D%5D%0A%20%20%7D)%20%7B%20issue%20%7B%20number%20url%20%7D%20%7D%0A%7D&#039;%20%5C%0A%20%20-f%20repo%3DR_kgDOUhaF9Q%20%5C%0A%20%20-f%20title%3D%22Issue%20title%22%20%5C%0A%20%20-f%20body%3D%22%24(cat%20body.md)%22%20%5C%0A%20%20-f%20type%3DIT_kwDOE75_iM40KuIR%20%5C%0A%20%20-f%20prioField%3DIFSS_kgDOAs8wdA%20%5C%0A%20%20-f%20prioOpt%3DIFSSO_kgDOBOrxyg%0A%60%60%60%0A%0A%23%23%20Changing%20type%2Fpriority%20on%20an%20existing%20issue%0A%0AGet%20the%20issue&#039;s%20node%20id%20first%20(%60number%60%20is%20not%20a%20valid%20GraphQL%20id)%3A%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%20issue(number%3A%20123)%20%7B%20id%20%7D%20%7D%20%7D&#039;%0A%60%60%60%0A%0AThen%3A%0A%0A%60%60%60bash%0A%23%20Type%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24issue%3A%20ID!%2C%20%24type%3A%20ID!)%20%7B%0A%20%20updateIssueIssueType(input%3A%20%7B%20issueId%3A%20%24issue%2C%20issueTypeId%3A%20%24type%20%7D)%20%7B%20issue%20%7B%20number%20%7D%20%7D%0A%7D&#039;%20-f%20issue%3D%3Cissue%20node%20id%3E%20-f%20type%3D%3Ctype%20id%3E%0A%0A%23%20Priority%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24issue%3A%20ID!%2C%20%24field%3A%20ID!%2C%20%24opt%3A%20ID!)%20%7B%0A%20%20setIssueFieldValue(input%3A%20%7B%20issueId%3A%20%24issue%2C%20issueFields%3A%20%5B%7B%20fieldId%3A%20%24field%2C%20singleSelectOptionId%3A%20%24opt%20%7D%5D%20%7D)%20%7B%20issue%20%7B%20number%20%7D%20%7D%0A%7D&#039;%20-f%20issue%3D%3Cissue%20node%20id%3E%20-f%20field%3DIFSS_kgDOAs8wdA%20-f%20opt%3D%3Cpriority%20option%20id%3E%0A%60%60%60%0A%0A%23%23%20Body%20format%20conventions%0A%0AMatch%20existing%20issues&#039;%20style%3A%0A%0A-%20Sections%20as%20needed%2C%20in%20this%20rough%20order%3A%20%60%23%23%20Overview%60%20%2F%20%60%23%23%20Current%20behavior%60%20%2F%20%60%23%23%20Proposed%0Abehavior%60%20(or%20%60%23%23%20Proposed%20change%60%2F%60%23%23%20Proposed%20fix%60)%20%2F%20%60%23%23%20Why%60%20%2F%20%60%23%23%20Impact%60%20%2F%20%60%23%23%20Notes%60%0A-%20Small%20bugs%2Ftasks%20can%20just%20be%20a%20short%20paragraph%20%E2%80%94%20headers%20aren&#039;t%20mandatory.%0A-%20Reference%20file%3Aline%20for%20code-specific%20bugs%20(e.g.%20%60%60%20%60app%2Factions%2Fuser-auth.ts%3A130%60%20%60%60).%0A-%20Keep%20it%20succinct%3B%20this%20is%20a%20scheduling%20app%20issue%20tracker%2C%20not%20a%20spec%20document.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Creating%20and%20Reading%20GitHub%20Issues%0A%0AThis%20repo%20uses%20two%20conventions%20beyond%20GitHub&#039;s%20built-in%20issue%20fields%3A%20an%20**Issue%20Type**%0A(%60Task%60%20%2F%20%60Bug%60%20%2F%20%60Feature%60)%20and%20a%20custom%20single-select%20**Priority**%20field%20(%60Urgent%60%20%2F%20%60High%60%20%2F%0A%60Medium%60%20%2F%20%60Low%60).%20Type%20and%20Priority%20carry%20that%20information%20instead%20of%20labels%20%E2%80%94%20the%20only%20labels%0Ain%20regular%20use%20are%20the%20%60component%3A%20*%60%20ones%20below.%0A%0A%23%23%20Component%20labels%0A%0AEach%20issue%20should%20get%20one%20%60component%3A%20*%60%20label%20indicating%20the%20area%20it%20touches%3A%0A%0A%7C%20Label%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Scope%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------------%20%7C%20----------------------------------------------%20%7C%0A%7C%20%60component%3A%20proposals%60%20%20%20%20%20%7C%20Proposal%20creation%2Flisting%2Fediting%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20voting%60%20%20%20%20%20%20%20%20%7C%20Voting%20(table%20%2B%20Quick%20Voting)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20scheduling%60%20%20%20%20%7C%20Sessions%2C%20session%20grid%2C%20scheduling%20phase%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20admin%60%20%20%20%20%20%20%20%20%20%7C%20%60%2Fadmin%60%20backend%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20attendees%60%20%20%20%20%20%7C%20Attendee%20list%2C%20profiles%2C%20RSVPs%20on%20profiles%20%20%20%20%20%7C%0A%7C%20%60component%3A%201-on-1s%60%20%20%20%20%20%20%20%7C%201-on-1%20meetings%3A%20booking%2C%20availability%2C%20column%20%7C%0A%7C%20%60component%3A%20auth%60%20%20%20%20%20%20%20%20%20%20%7C%20Login%2C%20passwords%2C%20protected%20accounts%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20infra%20%26%20dev%60%20%20%20%7C%20CI%2C%20testing%2C%20tooling%2C%20perf%2C%20security%2C%20upgrades%20%7C%0A%7C%20%60component%3A%20notifications%60%20%7C%20Email%20and%20in-app%20notifications%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60component%3A%20ui%2Fux%60%20%20%20%20%20%20%20%20%20%7C%20Cross-cutting%20styling%2Flayout%2Faccessibility%20%20%20%20%20%7C%0A%7C%20%60component%3A%20other%60%20%20%20%20%20%20%20%20%20%7C%20Reviewed%2C%20no%20suitable%20component%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%60gh%20issue%20create%60%2F%60edit%60%20can%20set%20labels%20directly%20(no%20GraphQL%20needed)%3A%0A%0A%60%60%60bash%0Agh%20issue%20edit%20123%20-R%20schellingboard%2Fschellingboard%20--add-label%20%22component%3A%20scheduling%22%0A%60%60%60%0A%0A**Always%20pass%20%60-R%20schellingboard%2Fschellingboard%60**%20to%20%60gh%20issue%60%2F%60gh%20pr%60%20commands.%20Without%20it%0A%60gh%60%20infers%20the%20repo%20from%20git%20remotes%20and%20fails%20(%60not%20a%20git%20repository%60)%20when%20run%20from%20a%0Aworkspace%2C%20a%20jj-only%20checkout%20or%20a%20subdirectory.%0A%0ANeither%20field%20is%20exposed%20by%20%60gh%20issue%20create%60%2F%60gh%20issue%20edit%60%2F%60gh%20issue%20view%60%20%E2%80%94%20both%20require%20the%0AGraphQL%20API%20(%60gh%20api%20graphql%60).%0A%0A%23%23%20Reading%20an%20issue&#039;s%20type%20and%20priority%0A%0A%60gh%20issue%20view%20--json%60%20doesn&#039;t%20expose%20either%20field.%20Use%20REST%20instead%3A%0A%0A%60%60%60bash%0Agh%20api%20repos%2Fschellingboard%2Fschellingboard%2Fissues%2F123%20--jq%20%5C%0A%20%20&#039;%7Btype%3A%20.type.name%2C%20priority%3A%20(.issue_field_values%5B%5D%3F%20%7C%20select(.issue_field_name%3D%3D%22Priority%22)%20%7C%20.single_select_option.name)%7D&#039;%0A%60%60%60%0A%0A%23%23%20IDs%20needed%20for%20mutations%0A%0ARepo%20id%2C%20issue%20type%20ids%2C%20and%20the%20Priority%20field%2Foption%20ids%20(stable%2C%20but%20re-fetch%20if%20unsure)%3A%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%0A%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%0A%20%20%20%20id%0A%20%20%20%20issueTypes(first%3A%2010)%20%7B%20nodes%20%7B%20id%20name%20%7D%20%7D%0A%7D%20%7D&#039;%0A%0Agh%20api%20graphql%20-f%20query%3D&#039;%0A%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%0A%20%20%20%20issueFields(first%3A%2020)%20%7B%20nodes%20%7B%20...%20on%20IssueFieldSingleSelect%20%7B%20id%20name%20options%20%7B%20id%20name%20%7D%20%7D%20%7D%20%7D%0A%7D%20%7D&#039;%0A%60%60%60%0A%0AKnown%20values%20as%20of%202026-09-29%20(double-check%20if%20a%20query%20above%20disagrees)%3A%0A%0A%7C%20Name%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20ID%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------%20%7C%20---------------------%20%7C%0A%7C%20Repo%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60R_kgDOUhaF9Q%60%20%20%20%20%20%20%20%20%7C%0A%7C%20Type%3A%20Task%20%20%20%20%20%20%20%7C%20%60IT_kwDOE75_iM40KuIP%60%20%7C%0A%7C%20Type%3A%20Bug%20%20%20%20%20%20%20%20%7C%20%60IT_kwDOE75_iM40KuIQ%60%20%7C%0A%7C%20Type%3A%20Feature%20%20%20%20%7C%20%60IT_kwDOE75_iM40KuIR%60%20%7C%0A%7C%20Priority%20field%20%20%20%7C%20%60IFSS_kgDOAs8wdA%60%20%20%20%20%20%7C%0A%7C%20Priority%3A%20Urgent%20%7C%20%60IFSSO_kgDOBOrxxw%60%20%20%20%20%7C%0A%7C%20Priority%3A%20High%20%20%20%7C%20%60IFSSO_kgDOBOrxyA%60%20%20%20%20%7C%0A%7C%20Priority%3A%20Medium%20%7C%20%60IFSSO_kgDOBOrxyQ%60%20%20%20%20%7C%0A%7C%20Priority%3A%20Low%20%20%20%20%7C%20%60IFSSO_kgDOBOrxyg%60%20%20%20%20%7C%0A%0A%23%23%20Creating%20an%20issue%20with%20type%20and%20priority%20set%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24repo%3A%20ID!%2C%20%24title%3A%20String!%2C%20%24body%3A%20String!%2C%20%24type%3A%20ID!%2C%20%24prioField%3A%20ID!%2C%20%24prioOpt%3A%20ID!)%20%7B%0A%20%20createIssue(input%3A%20%7B%0A%20%20%20%20repositoryId%3A%20%24repo%2C%20title%3A%20%24title%2C%20body%3A%20%24body%2C%20issueTypeId%3A%20%24type%2C%0A%20%20%20%20issueFields%3A%20%5B%7B%20fieldId%3A%20%24prioField%2C%20singleSelectOptionId%3A%20%24prioOpt%20%7D%5D%0A%20%20%7D)%20%7B%20issue%20%7B%20number%20url%20%7D%20%7D%0A%7D&#039;%20%5C%0A%20%20-f%20repo%3DR_kgDOUhaF9Q%20%5C%0A%20%20-f%20title%3D%22Issue%20title%22%20%5C%0A%20%20-f%20body%3D%22%24(cat%20body.md)%22%20%5C%0A%20%20-f%20type%3DIT_kwDOE75_iM40KuIR%20%5C%0A%20%20-f%20prioField%3DIFSS_kgDOAs8wdA%20%5C%0A%20%20-f%20prioOpt%3DIFSSO_kgDOBOrxyg%0A%60%60%60%0A%0A%23%23%20Changing%20type%2Fpriority%20on%20an%20existing%20issue%0A%0AGet%20the%20issue&#039;s%20node%20id%20first%20(%60number%60%20is%20not%20a%20valid%20GraphQL%20id)%3A%0A%0A%60%60%60bash%0Agh%20api%20graphql%20-f%20query%3D&#039;%7B%20repository(owner%3A%20%22schellingboard%22%2C%20name%3A%20%22schellingboard%22)%20%7B%20issue(number%3A%20123)%20%7B%20id%20%7D%20%7D%20%7D&#039;%0A%60%60%60%0A%0AThen%3A%0A%0A%60%60%60bash%0A%23%20Type%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24issue%3A%20ID!%2C%20%24type%3A%20ID!)%20%7B%0A%20%20updateIssueIssueType(input%3A%20%7B%20issueId%3A%20%24issue%2C%20issueTypeId%3A%20%24type%20%7D)%20%7B%20issue%20%7B%20number%20%7D%20%7D%0A%7D&#039;%20-f%20issue%3D%3Cissue%20node%20id%3E%20-f%20type%3D%3Ctype%20id%3E%0A%0A%23%20Priority%0Agh%20api%20graphql%20-f%20query%3D&#039;%0Amutation(%24issue%3A%20ID!%2C%20%24field%3A%20ID!%2C%20%24opt%3A%20ID!)%20%7B%0A%20%20setIssueFieldValue(input%3A%20%7B%20issueId%3A%20%24issue%2C%20issueFields%3A%20%5B%7B%20fieldId%3A%20%24field%2C%20singleSelectOptionId%3A%20%24opt%20%7D%5D%20%7D)%20%7B%20issue%20%7B%20number%20%7D%20%7D%0A%7D&#039;%20-f%20issue%3D%3Cissue%20node%20id%3E%20-f%20field%3DIFSS_kgDOAs8wdA%20-f%20opt%3D%3Cpriority%20option%20id%3E%0A%60%60%60%0A%0A%23%23%20Body%20format%20conventions%0A%0AMatch%20existing%20issues&#039;%20style%3A%0A%0A-%20Sections%20as%20needed%2C%20in%20this%20rough%20order%3A%20%60%23%23%20Overview%60%20%2F%20%60%23%23%20Current%20behavior%60%20%2F%20%60%23%23%20Proposed%0Abehavior%60%20(or%20%60%23%23%20Proposed%20change%60%2F%60%23%23%20Proposed%20fix%60)%20%2F%20%60%23%23%20Why%60%20%2F%20%60%23%23%20Impact%60%20%2F%20%60%23%23%20Notes%60%0A-%20Small%20bugs%2Ftasks%20can%20just%20be%20a%20short%20paragraph%20%E2%80%94%20headers%20aren&#039;t%20mandatory.%0A-%20Reference%20file%3Aline%20for%20code-specific%20bugs%20(e.g.%20%60%60%20%60app%2Factions%2Fuser-auth.ts%3A130%60%20%60%60).%0A-%20Keep%20it%20succinct%3B%20this%20is%20a%20scheduling%20app%20issue%20tracker%2C%20not%20a%20spec%20document.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1622,8 +1622,11 @@ in regular use are the <code>component: *</code> ones below.</p>
 </tbody>
 </table>
 </div><p><code>gh issue create</code>/<code>edit</code> can set labels directly (no GraphQL needed):</p>
-<pre class="hljs"><code class="language-bash">gh issue edit <span class="hljs-number">123</span> <span class="hljs-operator">--</span>add<span class="hljs-operator">-</span>label <span class="hljs-string">&quot;component: scheduling&quot;</span>
+<pre class="hljs"><code class="language-bash">gh issue edit <span class="hljs-number">123</span> <span class="hljs-operator">-</span>R schellingboard<span class="hljs-operator">/</span>schellingboard <span class="hljs-operator">--</span>add<span class="hljs-operator">-</span>label <span class="hljs-string">&quot;component: scheduling&quot;</span>
 </code></pre>
+<p><strong>Always pass <code>-R schellingboard/schellingboard</code></strong> to <code>gh issue</code>/<code>gh pr</code> commands. Without it
+<code>gh</code> infers the repo from git remotes and fails (<code>not a git repository</code>) when run from a
+workspace, a jj-only checkout or a subdirectory.</p>
 <p>Neither field is exposed by <code>gh issue create</code>/<code>gh issue edit</code>/<code>gh issue view</code> — both require the
 GraphQL API (<code>gh api graphql</code>).</p>
 <h2 id="creating-and-reading-github-issues-reading-an-issues-type-and-priority" class="docmd-heading"><a href="#creating-and-reading-github-issues-reading-an-issues-type-and-priority" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Reading an issue’s type and priority</h2>
@@ -1852,17 +1855,32 @@ mutation($issue: ID!, $field: ID!, $opt: ID!) {
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1790713791000">
+                <span class="git-last-updated" data-timestamp="1791096323000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1790713791000"></span>
+                  <span class="git-time" data-timestamp="1791096323000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: always pass -R to gh issue/pr commands">docs: always pass -R to gh issue/pr c...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791096323000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1924,21 +1942,6 @@ mutation($issue: ID!, $field: ID!, $opt: ID!) {
                           </div>
                         </li>
                       
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="docs: document component labels for GitHub issues">docs: document component labels for G...</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1786261287000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
                     </ul>
                   </div>
                   
@@ -1965,13 +1968,13 @@ mutation($issue: ID!, $field: ID!, $opt: ID!) {
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=muse8eik"></script>
+      <script src="../assets/js/docmd-main.js?v=mutgk7lo"></script>
       
-      <script src="../assets/js/docmd-git.js?v=muse8eik"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=muse8eik" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=muse8eik" ></script>
-<script src="../assets/js/docmd-search.js?v=muse8eik" ></script>
-<script src="../assets/js/docmd-git.js?v=muse8eik" ></script>
+      <script src="../assets/js/docmd-git.js?v=mutgk7lo"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mutgk7lo" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mutgk7lo" ></script>
+<script src="../assets/js/docmd-search.js?v=mutgk7lo" ></script>
+<script src="../assets/js/docmd-git.js?v=mutgk7lo" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2049,7 +2052,7 @@ mutation($issue: ID!, $field: ID!, $opt: ID!) {
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=muse8eik"></script>
+          src="../assets/js/likec4-embed.js?v=mutgk7lo"></script>
         
       
       

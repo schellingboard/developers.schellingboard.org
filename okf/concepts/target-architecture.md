@@ -3,10 +3,10 @@ type: concept
 title: "Target architecture"
 source: "https://developers.schellingboard.org/target-architecture/"
 path: /target-architecture/
-updated: 2026-10-03
+updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-03T12:54:02.804Z"
+  generated_at: "2026-10-04T06:46:59.110Z"
 ---
 # Target architecture
 

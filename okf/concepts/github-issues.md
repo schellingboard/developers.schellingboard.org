@@ -3,10 +3,10 @@ type: concept
 title: "Creating and Reading GitHub Issues"
 source: "https://developers.schellingboard.org/github-issues/"
 path: /github-issues/
-updated: 2026-10-03
+updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-03T12:54:02.796Z"
+  generated_at: "2026-10-04T06:46:59.102Z"
 ---
 # Creating and Reading GitHub Issues
 
@@ -36,8 +36,12 @@ Each issue should get one `component: *` label indicating the area it touches:
 `gh issue create`/`edit` can set labels directly (no GraphQL needed):
 
 ```bash
-gh issue edit 123 --add-label "component: scheduling"
+gh issue edit 123 -R schellingboard/schellingboard --add-label "component: scheduling"
 ```
+
+**Always pass `-R schellingboard/schellingboard`** to `gh issue`/`gh pr` commands. Without it
+`gh` infers the repo from git remotes and fails (`not a git repository`) when run from a
+workspace, a jj-only checkout or a subdirectory.
 
 Neither field is exposed by `gh issue create`/`gh issue edit`/`gh issue view` — both require the
 GraphQL API (`gh api graphql`).
