@@ -6,7 +6,7 @@ path: /adr/0004-dev-fake-clock/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T07:48:32.554Z"
+  generated_at: "2026-10-04T08:15:24.893Z"
 ---
 # ADR 0004: Dev fake clock for time-traveling event phases
 

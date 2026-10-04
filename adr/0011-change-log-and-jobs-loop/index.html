@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mutirdkz">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mutirdkz">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mutjpxjk">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mutjpxjk">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mutirdkz" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mutirdkz" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mutjpxjk" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mutjpxjk" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mutirdkz" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mutirdkz" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mutjpxjk" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mutjpxjk" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mutirdkz">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mutjpxjk">
     
     
   </head>
@@ -1497,7 +1497,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200011%3A%20A%20change%20log%20and%20one%20jobs%20loop%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-03%0A-%20**Issue%3A**%20%231005%0A%0A%23%23%20Context%0A%0AEverything%20that%20happens%20after%20a%20state%20change%20is%20done%20inline%2C%20in%20the%20request%0Athat%20made%20it.%20Editing%20a%20session%20awaits%20one%20SMTP%20round-trip%20per%20RSVP%20before%20it%0Aresponds%20(%231005)%2C%20and%20a%20failure%20partway%20through%20leaves%20no%20record%20of%20who%20was%0Aalready%20told.%20Reminders%20run%20on%20their%20own%20%60setInterval%60%20(ADR%200007).%20Nothing%0Arecords%20what%20changed%2C%20so%20%22who%20moved%20this%20session%22%20has%20no%20answer%2C%20and%20each%20new%0Aconsumer%20of%20a%20change%20(push%2C%20a%20future%20live%20schedule%2C%20a%20chat%20bot)%20would%20add%0Aanother%20inline%20call.%0A%0AThe%20%5Btarget%20architecture%5D(..%2Ftarget-architecture%2F03-server.md%23change-log)%0Areplaces%20all%20of%20this%20with%20an%20append-only%20change%20log%20written%20in%20the%20same%0Atransaction%20as%20the%20state%20(%5BD8%5D(..%2Ftarget-architecture%2F08-decisions.md%23d8))%2C%20and%0Aone%20in-process%20jobs%20loop%20that%20turns%20changes%20into%20notifications%20and%20deliveries%0A(%5BD10%5D(..%2Ftarget-architecture%2F08-decisions.md%23d10)).%0A%5BStep%202%20of%20the%20path%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20brings%20both%0Ainto%20the%20current%20app%2C%20with%20no%20change%20to%20what%20users%20see%20beyond%20the%20speed.%0A%0A%23%23%20Decision%0A%0A%23%23%23%201.%20A%20change%20log%2C%20written%20by%20the%20repositories%0A%0AA%20%60changes%60%20table%20holds%20one%20row%20per%20logged%20state%20change%3A%20a%20sequence%20number%2C%0Athe%20event%2C%20the%20type%20(%60session.changed%60)%2C%20the%20subject%2C%20the%20actor%2C%20when%20it%0Ahappened%20by%20the%20actor&#039;s%20clock%2C%20and%20a%20JSON%20payload%20with%20the%20subject&#039;s%20full%20state%0A(before%20and%20after%2C%20for%20an%20edit).%20The%20change%20types%20and%20the%20functions%20that%20build%0Athem%20live%20in%20%60packages%2Fdomain%2Fsrc%2Fchange.ts%60.%0A%0AA%20repository%20mutation%20that%20is%20logged%20takes%20the%20actor%20and%20time%20from%20its%20caller%0Aand%20inserts%20the%20change%20inside%20its%20own%20transaction.%20If%20the%20mutation%20rolls%20back%2C%0Aso%20does%20the%20change.%20It%20is%20not%20event%20sourcing%3A%20state%20stays%20in%20its%20tables%20and%20the%0Alog%20is%20derived%20from%20it.%0A%0AThe%20log%20starts%20with%20what%20something%20will%20react%20to%3A%20session%20edits%20and%20deletions%0Amade%20through%20the%20session%20repository%2C%20whose%20notifications%20fan%20out%20to%20every%0ARSVP.%20Sessions%20removed%20by%20a%20cascade%20(deleting%20their%20day%20or%20event)%20are%20not%0Alogged%20yet%2C%20matching%20today&#039;s%20behaviour%20of%20not%20notifying%20anyone%20about%20them.%0A%0AA%20payload%20is%20part%20of%20the%20log&#039;s%20contract.%20A%20field%20may%20be%20added%20to%20it%3B%20renaming%0Aor%20removing%20one%20means%20a%20new%20type%20name%2C%20as%20the%20target%20design&#039;s%20versioned%20types%0Ado.%20A%20reader%20skips%20types%20it%20does%20not%20know%2C%20so%20a%20rollback%20to%20an%20older%20version%0Adoes%20not%20stop%20at%20rows%20a%20newer%20one%20wrote.%0A%0ADifferences%20from%20the%20target%20design%2C%20all%20deliberate%20for%20now%3A%0A%0A-%20Types%20are%20named%20%60session.changed%60%2C%20not%20%60scheduling.SessionMoved%60%2C%20and%20actors%0A%20%20are%20%60guest%60%2C%20%60admin%60%20or%20%60system%60%3A%20the%20app%20has%20no%20persons%2C%20tokens%20or%20modules%0A%20%20yet.%0A-%20A%20deletion%20carries%20the%20deleted%20session%20and%20the%20guests%20who%20had%20RSVPed%2C%20not%0A%20%20only%20ids%3A%20its%20reaction%20needs%20them%20and%20they%20are%20gone%20afterwards.%0A-%20There%20is%20no%20audience%2C%20correlation%20id%20or%20command%20key%20yet.%20The%20live%20feed%0A%20%20(step%204)%20and%20idempotent%20commands%20(step%203)%20add%20them.%0A-%20Rows%20are%20deleted%2C%20not%20pruned%20to%20headers%2C%20once%20every%20reaction%20has%20passed%20them%0A%20%20and%20they%20are%20old%20enough%3B%20the%20log%20keeps%20guest%20names%20and%20ids%20only%20that%20long.%0A%0A%23%23%23%202.%20One%20jobs%20loop%20per%20process%2C%20holding%20a%20lease%0A%0AOne%20loop%20runs%20in%20each%20server%20process%2C%20started%20from%20%60instrumentation.ts%60%20like%20the%0Areminder%20scheduler%20it%20replaces.%20It%20does%20three%20kinds%20of%20work%3A%0A%0A-%20**Reactions**%20read%20the%20change%20log%20after%20a%20stored%20cursor%2C%20one%20cursor%20per%0A%20%20reaction%2C%20and%20advance%20it%20only%20after%20handling%20a%20change.%20Session-change%0A%20%20notifications%20become%20one.%0A-%20**Scheduled%20work**%20runs%20on%20its%20own%20period%3A%20the%20attendee-count%20reminders%2C%0A%20%20unchanged%20(ADR%200007&#039;s%20claim-by-due-time%20stays)%2C%20still%20switched%20off%20by%0A%20%20%60REMINDER_DISPATCH_INTERVAL_MS%3D0%60.%0A-%20**Deliveries**%20send%20what%20notification%20code%20enqueues%2C%20one%20per%20email%20or%20push.%0A%20%20A%20failed%20email%20is%20retried%20with%20backoff%20and%20eventually%20given%20up%3B%20a%20push%20is%0A%20%20best-effort%2C%20sent%20once%20to%20each%20device%20and%20not%20retried.%0A%0AA%20request%20that%20commits%20a%20change%20nudges%20the%20loop%2C%20so%20a%20notification%20goes%20out%0Awithin%20moments%20without%20the%20request%20waiting%20for%20it.%20A%20heartbeat%20catches%20retries%0Aand%20anything%20a%20nudge%20missed.%20A%20lease%20row%20in%20the%20database%20lets%20only%20one%20process%0Arun%20the%20loop%20against%20a%20database%3B%20another%20process%20idles%20until%20the%20lease%20lapses.%0A%0AA%20queued%20email%20is%20stored%20as%20the%20template%20and%20props%20to%20build%20it%20from%2C%20since%20a%0Abuilt%20message%20holds%20a%20React%20element.%20As%20with%20change%20payloads%2C%20a%20template&#039;s%0Aprops%20may%20gain%20optional%20fields%3B%20anything%20else%20needs%20a%20new%20template%20name.%0A%0ADelivery%20is%20at-least-once%3A%20a%20crash%20between%20sending%20and%20marking%20sent%20repeats%0Athat%20one%20message%20on%20the%20next%20run.%20ADR%200007%20chose%20the%20opposite%20for%20reminders%2C%0Abecause%20one%20duplicate%20there%20was%20the%20outcome%20its%20spec%20forbade%3B%20ordinary%0Anotifications%20have%20no%20such%20rule%2C%20and%20losing%20one%20silently%20is%20worse.%0A%0A%23%23%20Consequences%0A%0A-%20Sending%20email%20and%20push%20leaves%20the%20request%3A%20editing%20or%20deleting%20a%20session%0A%20%20with%20hundreds%20of%20RSVPs%20costs%20a%20few%20inserts.%0A-%20A%20failed%20send%20is%20retried%20rather%20than%20logged%20and%20forgotten.%0A-%20Tests%20that%20assert%20on%20mail%20run%20the%20loop%20until%20it%20is%20idle%20instead%20of%20reading%0A%20%20the%20mock%20right%20after%20the%20action.%20E2E%20tests%20already%20poll%20the%20mailbox.%0A-%20ADR%200007&#039;s%20%60setInterval%60%20is%20replaced%20by%20the%20loop%3B%20its%20reminder%20state%20machine%0A%20%20is%20not.%0A-%20Repository%20methods%20that%20are%20logged%20need%20the%20actor%20and%20time%20from%20their%0A%20%20caller%2C%20so%20a%20call%20site%20cannot%20leave%20out%20who%20made%20the%20change.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200011%3A%20A%20change%20log%20and%20one%20jobs%20loop%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-03%0A-%20**Issue%3A**%20%231005%0A%0A%23%23%20Context%0A%0AEverything%20that%20happens%20after%20a%20state%20change%20is%20done%20inline%2C%20in%20the%20request%0Athat%20made%20it.%20Editing%20a%20session%20awaits%20one%20SMTP%20round-trip%20per%20RSVP%20before%20it%0Aresponds%20(%231005)%2C%20and%20a%20failure%20partway%20through%20leaves%20no%20record%20of%20who%20was%0Aalready%20told.%20Reminders%20run%20on%20their%20own%20%60setInterval%60%20(ADR%200007).%20Nothing%0Arecords%20what%20changed%2C%20so%20%22who%20moved%20this%20session%22%20has%20no%20answer%2C%20and%20each%20new%0Aconsumer%20of%20a%20change%20(push%2C%20a%20future%20live%20schedule%2C%20a%20chat%20bot)%20would%20add%0Aanother%20inline%20call.%0A%0AThe%20%5Btarget%20architecture%5D(..%2Ftarget-architecture%2F03-server.md%23change-log)%0Areplaces%20all%20of%20this%20with%20an%20append-only%20change%20log%20written%20in%20the%20same%0Atransaction%20as%20the%20state%20(%5BD8%5D(..%2Ftarget-architecture%2F08-decisions.md%23d8))%2C%20and%0Aone%20in-process%20jobs%20loop%20that%20turns%20changes%20into%20notifications%20and%20deliveries%0A(%5BD10%5D(..%2Ftarget-architecture%2F08-decisions.md%23d10)).%0A%5BStep%202%20of%20the%20path%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20brings%20both%0Ainto%20the%20current%20app%2C%20with%20no%20change%20to%20what%20users%20see%20beyond%20the%20speed.%0A%0A%23%23%20Decision%0A%0A%23%23%23%201.%20A%20change%20log%2C%20written%20by%20the%20repositories%0A%0AA%20%60changes%60%20table%20holds%20one%20row%20per%20logged%20state%20change%3A%20a%20sequence%20number%2C%0Athe%20event%2C%20the%20type%20(%60session.changed%60)%2C%20the%20subject%2C%20the%20actor%2C%20when%20it%0Ahappened%20by%20the%20actor&#039;s%20clock%2C%20and%20a%20JSON%20payload%20with%20the%20subject&#039;s%20full%20state%0A(before%20and%20after%2C%20for%20an%20edit).%20The%20change%20types%20and%20the%20functions%20that%20build%0Athem%20live%20in%20%60packages%2Fdomain%2Fsrc%2Fchange.ts%60.%0A%0AA%20repository%20mutation%20that%20is%20logged%20takes%20the%20actor%20and%20time%20from%20its%20caller%0Aand%20inserts%20the%20change%20inside%20its%20own%20transaction.%20If%20the%20mutation%20rolls%20back%2C%0Aso%20does%20the%20change.%20It%20is%20not%20event%20sourcing%3A%20state%20stays%20in%20its%20tables%20and%20the%0Alog%20is%20derived%20from%20it.%0A%0AThe%20log%20starts%20with%20what%20something%20will%20react%20to%3A%20session%20edits%20and%20deletions%0Amade%20through%20the%20session%20repository%2C%20whose%20notifications%20fan%20out%20to%20every%0ARSVP.%20Sessions%20removed%20by%20a%20cascade%20(deleting%20their%20day%20or%20event)%20are%20not%0Alogged%20yet%2C%20matching%20today&#039;s%20behaviour%20of%20not%20notifying%20anyone%20about%20them.%0A%0AA%20payload%20is%20part%20of%20the%20log&#039;s%20contract.%20A%20field%20may%20be%20added%20to%20it%3B%20renaming%0Aor%20removing%20one%20means%20a%20new%20type%20name%2C%20as%20the%20target%20design&#039;s%20versioned%20types%0Ado.%20A%20reader%20skips%20types%20it%20does%20not%20know%2C%20so%20a%20rollback%20to%20an%20older%20version%0Adoes%20not%20stop%20at%20rows%20a%20newer%20one%20wrote.%0A%0ADifferences%20from%20the%20target%20design%2C%20all%20deliberate%20for%20now%3A%0A%0A-%20Types%20are%20named%20%60session.changed%60%2C%20not%20%60scheduling.SessionMoved%60%2C%20and%20actors%0A%20%20are%20%60guest%60%2C%20%60admin%60%20or%20%60system%60%3A%20the%20app%20has%20no%20persons%2C%20tokens%20or%20modules%0A%20%20yet.%0A-%20A%20deletion%20carries%20the%20deleted%20session%20and%20the%20guests%20who%20had%20RSVPed%2C%20not%0A%20%20only%20ids%3A%20its%20reaction%20needs%20them%20and%20they%20are%20gone%20afterwards.%0A-%20There%20is%20no%20audience%2C%20correlation%20id%20or%20command%20key%20yet.%20The%20live%20feed%0A%20%20(step%204)%20and%20idempotent%20commands%20(step%203)%20add%20them.%0A-%20Rows%20are%20deleted%2C%20not%20pruned%20to%20headers%2C%20once%20every%20reaction%20has%20passed%20them%0A%20%20and%20they%20are%20old%20enough%3B%20the%20log%20keeps%20guest%20names%20and%20ids%20only%20that%20long.%0A%0A%23%23%23%202.%20One%20jobs%20loop%20per%20process%2C%20holding%20a%20lease%0A%0AOne%20loop%20runs%20in%20each%20server%20process%2C%20started%20from%20%60instrumentation.ts%60%20like%20the%0Areminder%20scheduler%20it%20replaces.%20It%20does%20three%20kinds%20of%20work%3A%0A%0A-%20**Reactions**%20read%20the%20change%20log%20after%20a%20stored%20cursor%2C%20one%20cursor%20per%0A%20%20reaction%2C%20and%20advance%20it%20only%20after%20handling%20a%20change.%20Session-change%0A%20%20notifications%20become%20one.%0A-%20**Scheduled%20work**%20runs%20on%20its%20own%20period%3A%20the%20attendee-count%20reminders%2C%0A%20%20unchanged%20(ADR%200007&#039;s%20claim-by-due-time%20stays)%2C%20still%20switched%20off%20by%0A%20%20%60REMINDER_DISPATCH_INTERVAL_MS%3D0%60.%0A-%20**Deliveries**%20send%20what%20notification%20code%20enqueues%2C%20one%20per%20email%20or%20push.%0A%20%20A%20failed%20email%20is%20retried%20with%20backoff%20and%20eventually%20given%20up%3B%20a%20push%20is%0A%20%20best-effort%2C%20sent%20once%20to%20each%20device%20and%20not%20retried.%0A%0AA%20request%20that%20commits%20a%20change%20nudges%20the%20loop%2C%20so%20a%20notification%20goes%20out%0Awithin%20moments%20without%20the%20request%20waiting%20for%20it.%20A%20heartbeat%20catches%20retries%0Aand%20anything%20a%20nudge%20missed.%20A%20lease%20row%20in%20the%20database%20lets%20only%20one%20process%0Arun%20the%20loop%20against%20a%20database%3B%20another%20process%20idles%20until%20the%20lease%20lapses.%0A%0AA%20queued%20email%20is%20stored%20as%20the%20template%20and%20props%20to%20build%20it%20from%2C%20since%20a%0Abuilt%20message%20holds%20a%20React%20element.%20As%20with%20change%20payloads%2C%20a%20template&#039;s%0Aprops%20may%20gain%20optional%20fields%3B%20anything%20else%20needs%20a%20new%20template%20name.%0A%0ADelivery%20is%20at-least-once%3A%20a%20crash%20between%20sending%20and%20marking%20sent%20repeats%0Athat%20one%20message%20on%20the%20next%20run.%20ADR%200007%20chose%20the%20opposite%20for%20reminders%2C%0Abecause%20one%20duplicate%20there%20was%20the%20outcome%20its%20spec%20forbade%3B%20ordinary%0Anotifications%20have%20no%20such%20rule%2C%20and%20losing%20one%20silently%20is%20worse.%0A%0A%23%23%20Consequences%0A%0A-%20Sending%20email%20and%20push%20leaves%20the%20request%3A%20editing%20or%20deleting%20a%20session%0A%20%20with%20hundreds%20of%20RSVPs%20costs%20a%20few%20inserts.%0A-%20A%20failed%20send%20is%20retried%20rather%20than%20logged%20and%20forgotten.%0A-%20Tests%20that%20assert%20on%20mail%20run%20the%20loop%20until%20it%20is%20idle%20instead%20of%20reading%0A%20%20the%20mock%20right%20after%20the%20action.%20E2E%20tests%20already%20poll%20the%20mailbox.%0A-%20ADR%200007&#039;s%20%60setInterval%60%20is%20replaced%20by%20the%20loop%3B%20its%20reminder%20state%20machine%0A%20%20is%20not.%0A-%20Repository%20methods%20that%20are%20logged%20need%20the%20actor%20and%20time%20from%20their%0A%20%20caller%2C%20so%20a%20call%20site%20cannot%20leave%20out%20who%20made%20the%20change.%0A-%20A%20reaction%20that%20fails%20for%20one%20guest%20logs%20it%20and%20moves%20on%3B%20the%20cursor%20does%0A%20%20not%20retry%20it.%20Retrying%20the%20whole%20change%20would%20tell%20the%20guests%20already%20told%0A%20%20a%20second%20time%2C%20until%20a%20change&#039;s%20notices%20are%20written%20in%20one%20transaction.%0A-%20An%20edit&#039;s%20notices%20go%20to%20whoever%20has%20RSVPed%20when%20the%20reaction%20runs%2C%20a%0A%20%20deletion&#039;s%20to%20who%20had%20when%20it%20was%20made.%20Edited%20and%20then%20deleted%20before%20the%0A%20%20reaction%20runs%2C%20a%20session&#039;s%20attendees%20hear%20only%20of%20the%20deletion.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1704,6 +1704,12 @@ the mock right after the action. E2E tests already poll the mailbox.</li>
 is not.</li>
 <li>Repository methods that are logged need the actor and time from their
 caller, so a call site cannot leave out who made the change.</li>
+<li>A reaction that fails for one guest logs it and moves on; the cursor does
+not retry it. Retrying the whole change would tell the guests already told
+a second time, until a change’s notices are written in one transaction.</li>
+<li>An edit’s notices go to whoever has RSVPed when the reaction runs, a
+deletion’s to who had when it was made. Edited and then deleted before the
+reaction runs, a session’s attendees hear only of the deletion.</li>
 </ul>
 
                 
@@ -1822,17 +1828,32 @@ caller, so a call site cannot leave out who made the change.</li>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1791073119000">
+                <span class="git-last-updated" data-timestamp="1791098651000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1791073119000"></span>
+                  <span class="git-time" data-timestamp="1791098651000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: state what the jobs lease and reactions do not guarantee">docs: state what the jobs lease and r...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791098651000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Claude">
@@ -1890,13 +1911,13 @@ caller, so a call site cannot leave out who made the change.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mutirdkz"></script>
+      <script src="../../assets/js/docmd-main.js?v=mutjpxjk"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mutirdkz"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mutirdkz" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mutirdkz" ></script>
-<script src="../../assets/js/docmd-search.js?v=mutirdkz" ></script>
-<script src="../../assets/js/docmd-git.js?v=mutirdkz" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mutjpxjk"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mutjpxjk" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mutjpxjk" ></script>
+<script src="../../assets/js/docmd-search.js?v=mutjpxjk" ></script>
+<script src="../../assets/js/docmd-git.js?v=mutjpxjk" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1974,7 +1995,7 @@ caller, so a call site cannot leave out who made the change.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mutirdkz"></script>
+          src="../../assets/js/likec4-embed.js?v=mutjpxjk"></script>
         
       
       

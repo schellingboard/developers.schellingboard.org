@@ -6,7 +6,7 @@ path: /adr/0006-push-notifications/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T07:48:32.555Z"
+  generated_at: "2026-10-04T08:15:24.894Z"
 ---
 # ADR 0006: Push notifications through an installable web app
 

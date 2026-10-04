@@ -6,7 +6,7 @@ path: /target-architecture/09-feedback-map/
 updated: 2026-10-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T07:48:32.570Z"
+  generated_at: "2026-10-04T08:15:24.912Z"
 ---
 # 9 · Feedback and issues, mapped to the design
 
