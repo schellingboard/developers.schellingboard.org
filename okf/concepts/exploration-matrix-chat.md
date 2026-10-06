@@ -3,10 +3,10 @@ type: concept
 title: "Matrix chat integration — feasibility notes"
 source: "https://developers.schellingboard.org/exploration/matrix-chat/"
 path: /exploration/matrix-chat/
-updated: 2026-10-04
+updated: 2026-10-06
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T08:15:24.903Z"
+  generated_at: "2026-10-06T05:35:23.976Z"
 ---
 # Matrix chat integration — feasibility notes
 

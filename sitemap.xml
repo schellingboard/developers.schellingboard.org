@@ -61,6 +61,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://developers.schellingboard.org/adr/0012-http-api-v1/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://developers.schellingboard.org/adr/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -122,6 +127,11 @@
   </url>
   <url>
     <loc>https://developers.schellingboard.org/releasing/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/server/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

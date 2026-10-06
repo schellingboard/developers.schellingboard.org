@@ -3,10 +3,10 @@ type: concept
 title: "10 · A path from the current code"
 source: "https://developers.schellingboard.org/target-architecture/10-path-from-here/"
 path: /target-architecture/10-path-from-here/
-updated: 2026-10-04
+updated: 2026-10-06
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T08:15:24.912Z"
+  generated_at: "2026-10-06T05:35:23.985Z"
 ---
 # 10 · A path from the current code
 
@@ -25,6 +25,22 @@ sketch, not a plan; each step would get its own issue and ADR.
    custom server (or as route handlers) that calls the same repositories; declare
    contracts, generate `openapi.json` and `api-client`. Server actions start
    delegating to use cases so both paths share one implementation.
+
+   **Done** ([ADR 0012](../adr/0012-http-api-v1.md), [#677](https://github.com/schellingboard/schellingboard/issues/677)):
+   Hono under `/api/v1` as route handlers, use cases in `server/modules/`, and
+   every server action and legacy route that changes data delegating to them,
+   except sign-in, passwords and the dev tools (see
+   [The server and the API](../server.md)). Still open: the
+   [#1006](https://github.com/schellingboard/schellingboard/issues/1006) gaps (an
+   admin session list, a partial session update that keeps an explicit
+   capacity, a session delete reporting the RSVPs it removed, find-or-create for
+   locations by name); pages that read the repositories directly instead of
+   through queries; the unit of work, so a use case writing through two
+   repositories is not yet atomic; pagination, rate limiting and
+   `expectedVersion`; location images and the push key outside the API; and
+   [#141](https://github.com/schellingboard/schellingboard/issues/141), which
+   closes once the UI sends `Idempotency-Key`.
+
 4. **Ship the feed and the snapshot.** SSE endpoint over the change log; a
    `replica` package in the Next app that the schedule page reads from. Live
    updates arrive for everyone while the rest of the UI is unchanged.

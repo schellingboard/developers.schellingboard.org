@@ -711,7 +711,7 @@ checked. They fall into two groups:
 1. The fake clock itself and the pieces that turn real time into effective time
    (`dev-clock.ts`, `now-ticker.ts`, the toolbar, `EventProvider`'s offset).
 2. Real time by design: the auth cookie's age, auth-code expiry, and the
-   login/email throttles (`utils/auth.ts`, `utils/login-rate-limit.ts`,
+   login/email throttles (`utils/auth-cookies.ts`, `utils/login-rate-limit.ts`,
    `app/actions/user-auth.ts`), plus cache-busting `?v=` query strings. These
    must _not_ follow the offset, or anyone who can set the `time-override`
    cookie could jump past a lockout.
@@ -1725,6 +1725,207 @@ notifications have no such rule, and losing one silently is worse.
 
 ---
 
+## [ADR 0012: A versioned HTTP API in the Next process](https://developers.schellingboard.org/adr/0012-http-api-v1/)
+
+# ADR 0012: A versioned HTTP API in the Next process
+
+- **Status:** Accepted
+- **Date:** 2026-10-04
+- **Issue:** #677
+
+## Context
+
+The app's write paths are server actions and about thirty hand-written routes
+under `/api/*`. Each reads its own cookies, validates its own body, calls the
+repositories and shapes its own error, so the same rule (who may RSVP, who may
+edit a session) is written once per path, and nothing describes the routes to a
+client: #677 asks for an OpenAPI document, #1006 for an admin API a script can
+call.
+
+The [target architecture](../target-architecture/03-server.md#http-api) puts a
+REST API under `/api/v1` in front of use cases, typed by the zod contracts in
+`packages/contracts` (ADR 0010), with RFC 9457 errors and idempotent mutations.
+[Step 3 of the path](../target-architecture/10-path-from-here.md) brings that
+API into today's Next process, with server actions and the legacy routes
+calling the same use cases. Identity stays as it is until step 6.
+
+## Decision
+
+### 1. Hono, mounted by a Next catch-all route
+
+The API is a Hono app built with `@hono/zod-openapi`, based at `/api/v1` and
+mounted by one route handler, `app/api/v1/[[...route]]/route.ts`, which passes
+every method to the app's `fetch`. It runs on the Node runtime and is never
+statically rendered. There is no custom server: the Dockerfile, the standalone
+output and `next dev` stay as they are, and `proxy.ts` gates `/api/v1` as
+section 3 sets out. Every response is sent with `cache-control: no-store`
+unless a route sets its own, so a browser never shows a stale read after a
+reload.
+
+`@hono/zod-openapi` supports zod 4, checked on 2026-10-04: version 1.6.3
+declares the peer dependencies `zod ^4.0.0` and `hono >=4.10.0` and builds on
+`@asteasolutions/zod-to-openapi` 9.1.0, which also peers on `zod ^4.0.0`. The
+repo is on zod 4.6.5 and the current `hono` is 4.13.13. Contracts stay plain
+zod schemas imported from `zod`; they gain no dependency on Hono, and anything
+only the OpenAPI document needs is added where a route is declared.
+
+### 2. Where the code lives
+
+A top-level `server/` directory, next to `app/` and `db/`, follows the
+[target layout](../target-architecture/03-server.md#layout) as far as today's
+app allows:
+
+```
+server/
+  kernel/              Result and error kinds, Actor and its resolution, actingGuest
+  http/                the Hono app, middleware (actor, idempotency, problem details), OpenAPI document
+  composition.ts       builds every use case from the repositories; the one place they are wired
+  modules/<module>/
+    module.ts          the module's public surface
+    ports.ts           the repositories it needs, as a Pick of the container's
+    application/       one file per use case or query
+    http/              route declarations and handlers: contract in, use case, contract out
+```
+
+Modules are named after what they hold, close to the target's: `sessions`
+(the target's scheduling and participation: sessions, RSVPs, room
+unavailability, attendee counts), `proposals` (with votes), `comments`,
+`meetings`, `people` (profiles and the admin guest list), `notifications`,
+`events` (with days), `venue` (locations) and `settings` (site settings, which
+the target's modules have no home for). Repositories stay in `db/` as
+ADR 0010 left them: a module's `ports.ts` names the repositories it needs
+instead of declaring new ones, and `composition.ts` passes in
+`getRepositories()`. dependency-cruiser enforces the target's rules on this
+layout: `application/` imports no `http/`, `next/*`, `hono` or `db/` code
+beyond the container's types; a module is imported only through its
+`module.ts`; `kernel/` imports no module; `app/` reaches `server/` only through
+`module.ts` files, the use cases `composition.ts` wires, the kernel (server
+actions resolve the actor there, section 3) and the mount.
+
+A use case is a function of its dependencies taking an actor, validated
+input and `now`, and returning a `Result`, as in the target. `now` is resolved
+per request (the dev fake clock, ADR 0004) rather than read from a clock port. The unit of work and
+`tx.record()` do not exist yet: repositories keep their own transactions and
+change logging (ADR 0011), so a use case that writes through two repositories
+is not atomic until a unit of work replaces them.
+
+### 3. The actor comes from today's cookies
+
+Middleware resolves an `Actor` once per request and hands it to the handler; a
+use case never reads a cookie or a header. The actor carries the facts the
+cookies prove: whether the admin cookie is valid, and which guest the guest
+cookie selects and at what level (`open` or `verified`). Server actions resolve
+the same `Actor` from `cookies()` through the same function.
+
+Acting as a guest keeps today's rule, as one kernel function every use case
+calls (`actingGuest`): a request may act as an unprotected guest it names, and
+as a protected guest only with that guest's verified cookie (#370). It refuses
+with `guest.unselected` or `guest.protected`. Where the request names the guest
+in its path or body (RSVPs, votes), `actingAsNamedGuest` applies the same rule
+to the named guest. Organizer actions require the admin actor. No tokens,
+persons or roles: those are step 6.
+
+`proxy.ts` gates the API as it gates the legacy routes. Endpoints that require
+the admin actor live under `/api/v1/admin/`, which gets the `/api/admin/*`
+branch: the admin cookie alone, without the site password (the two are
+independent, as the admin guide documents), the cross-site check, and `404`
+when `ADMIN_PASSWORD` is unset. The rest of `/api/v1` requires the site
+password or the admin cookie, so an admin script needs one cookie. Under `/api/v1`, the proxy refuses with problem details (section 4)
+instead of the login redirect or `{ error }` body the legacy routes get.
+
+### 4. Errors are values, sent as problem details
+
+Use cases return `Result<T>`: a value, or an error with a stable `code` and a
+kind (`notFound`, `forbidden`, `conflict`, `invalid`, `gone`, and `unavailable`,
+`503`, when a service the app relies on fails, such as the mail server). One function in
+`server/http` maps the kind to a status and the error to an RFC 9457 body
+(`application/problem+json`): `type: "about:blank"`, `title`, `status`, an
+optional `detail`, and the extension member `code`. A request that fails its
+contract gets `400` with code `request.invalid` and an `errors` list of paths
+and messages; a use case may attach the same list to its own `invalid` error to
+name every refused field at once (`location.invalid`), and a `conflict` may too
+(`guest.emailTaken`). Codes are dotted, named for what was refused
+(`guest.protected`, `session.notFound`); a code once shipped keeps its meaning,
+and the client translates it rather than showing `detail`.
+
+The legacy routes map the same `Result` to the `{ error }` bodies and statuses
+they return today, so no existing client changes.
+
+### 5. Idempotency-Key, stored for 24 hours
+
+Every mutation under `/api/v1` accepts an `Idempotency-Key` header. Middleware
+stores the key with the actor it was used by, the method and path, a hash of
+the body, and once handled, the response's status and body. A retry with the
+same key and actor:
+
+- after the first request finished, gets the stored response without running
+  the use case again;
+- while it is still running, gets `409` with `idempotency.inProgress`;
+- with a different method, path (query included) or body, gets `422` with
+  `idempotency.keyReused`.
+
+The actor a key is scoped to is the admin flag plus the guest's id and cookie
+level, so an open cookie naming a protected guest does not share that guest's
+verified keys. Claiming a key is one immediate transaction, so two concurrent
+requests cannot both run. A claim still unfinished after 60 seconds counts as
+abandoned (its process died), so a retry runs again rather than getting `409`
+for a day. The replay carries the stored status, headers (without
+`set-cookie`) and body. A key that is empty or over 255 characters is
+`400 request.invalid`. A multipart body is hashed by its parsed fields (files by
+name, type and content), so a retry with a new boundary still matches.
+
+A `5xx` response or a thrown error releases the key, so a retry after a server
+error runs again.
+Rows older than 24 hours are deleted by the jobs loop (ADR 0011) as scheduled
+work. The key is optional; without it a mutation simply runs. A request with
+neither admin nor guest has no one to scope a key to, so its key is ignored
+rather than shared by every anonymous client. Server actions do not use it.
+Echoing the key on the change log (`command_key`) waits for the feed that reads
+it, in step 4.
+
+### 6. A committed `openapi.json` that cannot go stale
+
+A script imports the Hono app and writes its OpenAPI 3.1 document to
+`packages/contracts/openapi.json`, which is committed. `make openapi` rewrites
+it; `make openapi-check` regenerates it and fails with "Regenerate and review
+the API change" when it differs, and runs in `make precommit` and CI. Every
+route is declared with `createRoute` and its request and response contracts,
+so the document covers the whole API.
+
+`packages/api-client` (`@schellingboard/api-client`) is a thin wrapper over
+`openapi-fetch` with types that `openapi-typescript` generates from this file.
+The generated types are committed too: `make openapi` writes both from the same
+document and `make openapi-check` fails when either is stale. This departs from
+the target ([03](../target-architecture/03-server.md#http-api): "generated from
+it in the build"): generating at build time would need a step before every
+`tsc`, ESLint, dependency-cruiser, Vitest and `next build` run, the Dockerfile
+included, and leave editors without types. One source and no staleness, the
+target's intent, hold either way. The app does not import the client, so the
+standalone build does not carry it.
+
+## Consequences
+
+- One implementation per rule: a route under `/api/v1`, a server action and a
+  legacy route that do the same thing call the same use case.
+- Two new runtime dependencies, `hono` and `@hono/zod-openapi`, carried in the
+  standalone build. They are the target's HTTP layer, so they stay when Next
+  leaves (step 7).
+- A change to a contract shows up as a diff of `openapi.json` in review.
+- Admin endpoints sit under their own prefix only because the proxy gates by
+  path; step 6's roles replace both the prefix and the two passwords.
+- Until a unit of work exists, "one transaction per use case" holds only for
+  use cases that write through one repository call.
+- A new `idempotency_keys` table and migration; a retried request after a lost
+  response no longer RSVPs twice or creates two proposals (#141), for clients
+  that send the key. The web app's server actions do not, so #141 stays open
+  until the UI calls the API.
+- Pagination, rate limiting and `expectedVersion` checks from the target are
+  not part of this decision; a table gains a version check only if it already
+  has a version column.
+
+
+---
+
 ## [Architecture decision records](https://developers.schellingboard.org/adr/)
 
 # Architecture decision records
@@ -1752,6 +1953,7 @@ the tracking issue where there is one.
 | [0009](0009-standalone-repository-in-own-org.md)     | Move to a standalone repo in new schellingboard GitHub org  | 2026-09-19 |
 | [0010](0010-workspace-packages.md)                   | Domain and contracts as workspace packages                  | 2026-10-03 |
 | [0011](0011-change-log-and-jobs-loop.md)             | A change log and one jobs loop                              | 2026-10-03 |
+| [0012](0012-http-api-v1.md)                          | A versioned HTTP API in the Next process                    | 2026-10-04 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and
@@ -1844,9 +2046,11 @@ a `to` set, and the reason:
 
 `dependencyTypesNot: ["type-only"]` would narrow a rule to runtime edges only —
 a useful escape valve mid-migration, when a shared type is still declared on the
-wrong side of a boundary. No layer rule uses it: an import the compiler
-erases still points the wrong way, and a boundary that holds only at runtime is
-one nobody can reason about from the import list.
+wrong side of a boundary. One rule uses it, by decision: a use case may name the
+`db/` container's repository types until its ports are its own
+(`use-cases-take-only-container-types`, ADR 0012). Otherwise an import the
+compiler erases still points the wrong way, and a boundary that holds only at
+runtime is one nobody can reason about from the import list.
 
 The direction that matters is inward. `db/` and `app/` are adapters and may
 depend on the workspace packages; the packages may not depend on them
@@ -1862,6 +2066,13 @@ nothing outside `db/` imports from it (`repositories-stay-in-db`); the rest of
 the app reaches the repositories through `@/db/container`. A port's input or
 page type stays next to the port while only `db/` uses it; once code outside
 `db/` needs to name it, it is vocabulary and moves to `domain`.
+
+`server/` follows [ADR 0012](adr/0012-http-api-v1.md): `server/kernel/` reaches
+no module, no HTTP and no framework, not even through a helper it imports; a
+module's `application/` imports no HTTP, framework or `db/` code; a module is
+imported only through its `module.ts`, by other modules, tests and `app/` alike;
+and `app/` reaches `server/` only through `module.ts`, `composition.ts`, the
+kernel and the API mount. See [The server and the API](server.md).
 
 `make arch-graph` renders the graph to `arch-graph.svg` (needs graphviz), which
 is usually faster than arguing about where a boundary should go.
@@ -2309,8 +2520,11 @@ the honest path only; the handler behind it is reachable directly. Where the
 UI restricts an operation to certain guests (e.g. hosts), the handler must
 enforce the same rule independently.
 
-Helpers live in `utils/acting-guest.ts` (they hit the database, so they
-can't live in `utils/auth.ts`, which must stay importable from the proxy).
+Use cases apply the rule with `actingGuest` and `actingAsNamedGuest` from
+`server/kernel/acting-guest.ts` (see [The server and the API](server.md)).
+Code outside them uses the helpers in `utils/acting-guest.ts` (they hit the
+database, so they can't live in `utils/auth.ts`, which must stay importable
+from the proxy).
 `tests/integration/mutating-surface-guard.test.ts` guards the invariant by
 enumerating the mutating surfaces and failing on one that doesn't resolve an
 acting guest.
@@ -3132,6 +3346,7 @@ branch reads that branch's `docs/dev/` in the repository.
 | Chapter                                             | For                                                      |
 | --------------------------------------------------- | -------------------------------------------------------- |
 | [Architecture rules](architecture-rules.md)         | the conventions the build enforces, and how to add one   |
+| [The server and the API](server.md)                 | `server/` and `/api/v1`: adding a use case and its route |
 | [Database migrations](migrations.md)                | generating migrations, resolving drizzle conflicts       |
 | [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine  |
 | [Documentation and the sites](documentation.md)     | how the three published sites are built                  |
@@ -3479,6 +3694,104 @@ Pushing the branch republishes that version's documentation on its own, without
 a tag — the docs build prefers `release/<major.minor>` over the tag for that
 version, which is also how published docs are corrected between releases. See
 [Correcting published documentation](documentation.md#correcting-published-documentation).
+
+
+---
+
+## [The server and the API](https://developers.schellingboard.org/server/)
+
+# The server and the API
+
+`server/` holds the use cases and the `/api/v1` HTTP API in front of them.
+Server actions, the legacy `/api/*` routes and `/api/v1` all call the same use
+cases, so a rule is written once. [ADR 0012](adr/0012-http-api-v1.md) has the
+decisions; this page is how the code is laid out and how to add to it. The
+user-facing description of the API is
+[HTTP API](https://docs.schellingboard.org/self-hosting/api/).
+
+## Layout
+
+```
+server/
+  kernel/              Result and error kinds, Actor and resolveActor, actingGuest
+  http/                the Hono app (app.ts), middleware, problem details, OpenAPI document
+  composition.ts       builds each module's use cases from the repositories and adapters
+  modules/<module>/
+    module.ts          the only file anything outside the module imports
+    ports.ts           its dependencies: a Pick of the repository container, plus adapters
+    application/       use cases and queries, gathered in use-cases.ts
+    http/              route declarations and handlers
+```
+
+The modules are `sessions` (sessions, RSVPs, room unavailability, attendee
+counts), `proposals` (proposals and votes), `comments`, `meetings`, `people`
+(profiles and the admin guest list), `notifications`, `events` (events and
+days), `venue` (locations) and `settings` (site settings).
+
+The Next mount is `app/api/v1/[[...route]]/route.ts`; `proxy.ts` gates it like
+any other route (site password or admin cookie for `/api/v1`, the admin cookie for
+`/api/v1/admin/`). Repositories stay in `db/`.
+
+## Adding a use case and its route
+
+1. **Contract.** Add the request and response zod schemas to
+   `packages/contracts/src/<area>.ts`; they are plain `zod`, with no Hono
+   import.
+2. **Use case.** In `application/`, a function of the module's deps returning
+   `(actor, input, now) => Promise<Result<T>>`. Authorize first: `actor.admin`
+   for organizer actions, `actingGuest` (or `actingAsNamedGuest` when the
+   request names the guest) from `server/kernel/acting-guest.ts` for anything
+   done as a guest. Refuse with `notFound`, `forbidden`, `conflict`, `invalid`,
+   `gone` or `unavailable` from `server/kernel/result.ts` and a dotted code
+   named for what was refused (`session.full`); `invalidFields` names several
+   fields at once. Take `now` as an argument, never read the clock. Add it to
+   the module's `use-cases.ts`; a new dependency goes in `ports.ts` and is
+   wired in `composition.ts`.
+3. **Route.** In `http/`, declare it with `createRoute`: the contract for the
+   request, `json(schema, …)` for each success status, `...problemDefault` for
+   problems, and `headers: idempotencyHeaders` on every mutation. The handler
+   reads `c.req.valid(…)`, calls the use case with `c.var.actor` and
+   `c.var.now`, and returns `problem(result.error)` on failure. Admin routes go
+   under `/admin/`, or the proxy will not gate them. Register a new route
+   function in `server/http/app.ts`.
+4. **Callers.** A server action resolves the actor with
+   `resolveActor(await cookies())` and calls the use case from
+   `server/composition.ts`. A legacy route uses `legacyActor` and
+   `legacyRefusal` from `app/api/legacy.ts` and keeps its old response body.
+5. **`make openapi`.** It rewrites `packages/contracts/openapi.json` and the
+   client's types in `packages/api-client/src/schema.ts`; commit both.
+   `make openapi-check`, in `make precommit` and CI, fails while either is stale.
+
+`make arch` enforces the layout (see
+[Architecture rules](architecture-rules.md)): the kernel reaches no module,
+HTTP code or framework, even indirectly; `application/` imports no HTTP,
+framework or `db/` code beyond the container's types, and never calls the
+container; a module is imported only through its `module.ts`, by other
+modules, tests and `app/` alike; `app/` reaches `server/` only through
+`module.ts`, `composition.ts`, the kernel and `http/app.ts`; `server/` never
+imports `app/`; `packages/api-client` imports only `openapi-fetch`.
+
+## Testing
+
+Two integration tiers, against the real database:
+
+- **Behaviour on the use case** (`tests/integration/*-use-cases.test.ts`): call
+  the use case from `composition.ts` with an `Actor` built in the test, and
+  cover its rules there — who may, what is refused, what is stored.
+- **HTTP only on the route** (`tests/integration/api-*.test.ts`): call the
+  mount's handlers with a request and cookies, and check what only HTTP adds:
+  status codes, the problem body and its `code`, the contract's validation,
+  the admin gate. Do not repeat the use case's rules here.
+
+`tests/integration/idempotency.test.ts` covers `Idempotency-Key`, and
+`tests/integration/api-client.test.ts` calls the API through
+`@schellingboard/api-client`. `tests/integration/mutating-surface-guard.test.ts`
+checks the whole mount through a single route, so a new use case acting as a
+guest proves its own `guest.protected` refusal in its tests.
+
+Two meanings of "use case" meet here: the functions in `application/`, and the
+user stories catalogued in `tests/use-cases.ts` that every test is tagged with
+([Testing](testing.md#use-cases)).
 
 
 ---
@@ -4891,6 +5204,22 @@ sketch, not a plan; each step would get its own issue and ADR.
    custom server (or as route handlers) that calls the same repositories; declare
    contracts, generate `openapi.json` and `api-client`. Server actions start
    delegating to use cases so both paths share one implementation.
+
+   **Done** ([ADR 0012](../adr/0012-http-api-v1.md), [#677](https://github.com/schellingboard/schellingboard/issues/677)):
+   Hono under `/api/v1` as route handlers, use cases in `server/modules/`, and
+   every server action and legacy route that changes data delegating to them,
+   except sign-in, passwords and the dev tools (see
+   [The server and the API](../server.md)). Still open: the
+   [#1006](https://github.com/schellingboard/schellingboard/issues/1006) gaps (an
+   admin session list, a partial session update that keeps an explicit
+   capacity, a session delete reporting the RSVPs it removed, find-or-create for
+   locations by name); pages that read the repositories directly instead of
+   through queries; the unit of work, so a use case writing through two
+   repositories is not yet atomic; pagination, rate limiting and
+   `expectedVersion`; location images and the push key outside the API; and
+   [#141](https://github.com/schellingboard/schellingboard/issues/141), which
+   closes once the UI sends `Idempotency-Key`.
+
 4. **Ship the feed and the snapshot.** SSE endpoint over the change log; a
    `replica` package in the Next app that the schedule page reads from. Live
    updates arrive for everyone while the rest of the UI is unchanged.

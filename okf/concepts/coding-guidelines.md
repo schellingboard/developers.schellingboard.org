@@ -3,10 +3,10 @@ type: concept
 title: "Coding Guidelines"
 source: "https://developers.schellingboard.org/coding-guidelines/"
 path: /coding-guidelines/
-updated: 2026-10-04
+updated: 2026-10-06
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T08:15:24.901Z"
+  generated_at: "2026-10-06T05:35:23.975Z"
 ---
 # Coding Guidelines
 
@@ -120,8 +120,11 @@ the honest path only; the handler behind it is reachable directly. Where the
 UI restricts an operation to certain guests (e.g. hosts), the handler must
 enforce the same rule independently.
 
-Helpers live in `utils/acting-guest.ts` (they hit the database, so they
-can't live in `utils/auth.ts`, which must stay importable from the proxy).
+Use cases apply the rule with `actingGuest` and `actingAsNamedGuest` from
+`server/kernel/acting-guest.ts` (see [The server and the API](server.md)).
+Code outside them uses the helpers in `utils/acting-guest.ts` (they hit the
+database, so they can't live in `utils/auth.ts`, which must stay importable
+from the proxy).
 `tests/integration/mutating-surface-guard.test.ts` guards the invariant by
 enumerating the mutating surfaces and failing on one that doesn't resolve an
 acting guest.

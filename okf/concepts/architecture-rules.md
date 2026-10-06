@@ -3,10 +3,10 @@ type: concept
 title: "Architecture rules"
 source: "https://developers.schellingboard.org/architecture-rules/"
 path: /architecture-rules/
-updated: 2026-10-04
+updated: 2026-10-06
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T08:15:24.899Z"
+  generated_at: "2026-10-06T05:35:23.973Z"
 ---
 # Architecture rules
 
@@ -90,9 +90,11 @@ a `to` set, and the reason:
 
 `dependencyTypesNot: ["type-only"]` would narrow a rule to runtime edges only —
 a useful escape valve mid-migration, when a shared type is still declared on the
-wrong side of a boundary. No layer rule uses it: an import the compiler
-erases still points the wrong way, and a boundary that holds only at runtime is
-one nobody can reason about from the import list.
+wrong side of a boundary. One rule uses it, by decision: a use case may name the
+`db/` container's repository types until its ports are its own
+(`use-cases-take-only-container-types`, ADR 0012). Otherwise an import the
+compiler erases still points the wrong way, and a boundary that holds only at
+runtime is one nobody can reason about from the import list.
 
 The direction that matters is inward. `db/` and `app/` are adapters and may
 depend on the workspace packages; the packages may not depend on them
@@ -108,6 +110,13 @@ nothing outside `db/` imports from it (`repositories-stay-in-db`); the rest of
 the app reaches the repositories through `@/db/container`. A port's input or
 page type stays next to the port while only `db/` uses it; once code outside
 `db/` needs to name it, it is vocabulary and moves to `domain`.
+
+`server/` follows [ADR 0012](adr/0012-http-api-v1.md): `server/kernel/` reaches
+no module, no HTTP and no framework, not even through a helper it imports; a
+module's `application/` imports no HTTP, framework or `db/` code; a module is
+imported only through its `module.ts`, by other modules, tests and `app/` alike;
+and `app/` reaches `server/` only through `module.ts`, `composition.ts`, the
+kernel and the API mount. See [The server and the API](server.md).
 
 `make arch-graph` renders the graph to `arch-graph.svg` (needs graphviz), which
 is usually faster than arguing about where a boundary should go.

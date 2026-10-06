@@ -5,12 +5,12 @@ bundle:
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-04T08:15:24.916Z"
+  generated_at: "2026-10-06T05:35:23.989Z"
   default_type: concept
 stats:
-  concepts: 41
+  concepts: 43
   by_type:
-    concept: 41
+    concept: 43
   locales: 
   versions: 
 concepts:
@@ -119,6 +119,15 @@ concepts:
     description: ""
     path: /adr/0011-change-log-and-jobs-loop/
     file: concepts/adr-0011-change-log-and-jobs-loop.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0012-http-api-v1
+    type: concept
+    title: "ADR 0012: A versioned HTTP API in the Next process"
+    description: ""
+    path: /adr/0012-http-api-v1/
+    file: concepts/adr-0012-http-api-v1.md
     locale: ""
     version: ""
     tags: 
@@ -236,6 +245,15 @@ concepts:
     description: ""
     path: /releasing/
     file: concepts/releasing.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: server
+    type: concept
+    title: "The server and the API"
+    description: ""
+    path: /server/
+    file: concepts/server.md
     locale: ""
     version: ""
     tags: 

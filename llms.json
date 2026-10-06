@@ -69,6 +69,12 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0012: A versioned HTTP API in the Next process",
+      "url": "https://developers.schellingboard.org/adr/0012-http-api-v1/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
@@ -149,6 +155,12 @@
     {
       "title": "Releasing a New Version",
       "url": "https://developers.schellingboard.org/releasing/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
+      "title": "The server and the API",
+      "url": "https://developers.schellingboard.org/server/",
       "description": "",
       "priority": "medium"
     },

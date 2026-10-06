@@ -10,7 +10,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="generator" content="docmd v0.9.6">
+    <meta name="generator" content="docmd v0.9.7">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script>
@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mutjpxjk">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mutjpxjk">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=muw8vus4">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=muw8vus4">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mutjpxjk" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mutjpxjk" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=muw8vus4" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=muw8vus4" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mutjpxjk" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mutjpxjk" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=muw8vus4" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=muw8vus4" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mutjpxjk">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=muw8vus4">
     
     
   </head>
@@ -536,6 +536,41 @@
           
           <span class="nav-item-title">
             Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../server/" class=" "
+          >
+           
+<svg class="lucide-icon icon-server " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-server"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Server and API
             </span>
           
           
@@ -974,6 +1009,22 @@
           
           <span class="nav-item-title">
             0011: A change log and one jobs loop
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0012-http-api-v1/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0012: A versioned HTTP API in the Next process
             </span>
           
           
@@ -1497,7 +1548,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200004%3A%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-07-23%0A%0A%23%23%20Context%0A%0AAn%20event%20moves%20through%20three%20time-gated%20phases%20%E2%80%94%20proposal%20%E2%86%92%20voting%20%E2%86%92%0Ascheduling%20%E2%80%94%20plus%20time-dependent%20UI%20such%20as%20bookable-slot%20checks%2C%20the%20schedule%0A%22now%22%20line%2C%20and%20the%20kiosk%20display.%20Previewing%20any%20of%20this%20used%20to%20require%0Aediting%20phase%20dates%20in%20the%20database%2C%20which%20is%20slow%2C%20error-prone%2C%20and%20can&#039;t%20be%0Adone%20on%20a%20shared%20staging%2Fdemo%20instance%20without%20disrupting%20other%20viewers.%0A%0AWe%20want%20a%20development-only%20way%20to%20make%20the%20app%20believe%20it%20is%20at%20a%20different%0Apoint%20in%20time%20so%20an%20organizer%20can%20walk%20an%20event%20through%20its%20phases%20and%20see%20the%0Atime-dependent%20UI%2C%20without%20touching%20the%20data.%20Constraints%20that%20shape%20the%0Adecision%3A%0A%0A-%20It%20must%20work%20on%20a%20**deployed**%20staging%2Fdemo%20instance%2C%20which%20runs%20in%0A%20%20production%20mode%20%E2%80%94%20so%20gating%20on%20%60NODE_ENV%20!%3D%3D%20%22production%22%60%20would%20be%20wrong.%0A-%20Next.js%20serves%20concurrent%20requests%2C%20so%20the%20simulated%20time%20of%20one%20viewer%20must%0A%20%20never%20leak%20into%20another&#039;s%20request.%0A-%20Time-dependent%20decisions%20are%20spread%20across%20Server%20Components%2C%20Server%20Actions%2C%0A%20%20Route%20Handlers%2C%20and%20client%20components%2C%20each%20of%20which%20reads%20request%20state%0A%20%20differently.%0A%0A%23%23%20Decision%0A%0AAdd%20a%20fake%20clock%20gated%20by%20the%20%60SB_ENABLE_DEV_TOOLS%60%20env%20var%20(not%20%60NODE_ENV%60).%0AWhen%20it%20is%20unset%20the%20override%20is%20ignored%20server-side%20and%20the%20toolbar%20never%0Arenders%2C%20so%20the%20feature%20is%20inert%20in%20production%20even%20if%20a%20client%20forges%20the%0Acookie.%0A%0A%23%23%23%20A%20single%20time%20offset%0A%0AThe%20override%20is%20one%20number%3A%20%60offsetMs%60%2C%20an%20integer%20stored%20in%20the%0A%60time-override%60%20cookie.%20Effective%20time%20is%20always%20%60Date.now()%20%2B%20offsetMs%60.%0A%0A-%20Real%20time%20%E2%86%92%20no%20cookie%20(offset%20%600%60).%0A-%20Jump%20forward%20%E2%86%92%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%20%60%2B7d%60%20add%20to%20the%20current%20offset.%0A-%20Pick%20a%20date%2Ftime%20%E2%86%92%20%60offset%20%3D%20target%20%E2%88%92%20Date.now()%60%3B%20time%20then%20keeps%20ticking%0A%20%20forward%20from%20there.%0A%0AWe%20deliberately%20do%20**not**%20implement%20a%20separate%20%22frozen%22%20mode.%20Freezing%20only%0Amatters%20for%20exact-boundary%20assertions%2C%20which%20belong%20in%20automated%20tests%0A(Vitest&#039;s%20%60vi.setSystemTime%60)%2C%20not%20this%20manual%20toolbar.%20A%20single%20offset%20keeps%0Athe%20client%20ticker%20trivial%20%E2%80%94%20it%20just%20adds%20%60offsetMs%60.%0A%0A%23%23%23%20Request-scoped%2C%20never%20a%20global%20%60Date%60%20mock%0A%0ABecause%20requests%20are%20concurrent%2C%20we%20never%20mock%20%60Date%60%20globally%3B%20a%20shared%0Amutable%20clock%20would%20leak%20one%20viewer&#039;s%20simulated%20time%20into%20another%20request.%20The%0Aoverride%20is%20request-scoped%20(read%20from%20the%20cookie%20per%20request)%20and%2C%20on%20the%0Aclient%2C%20a%20per-tab%20offset.%0A%0A%60utils%2Fdev-clock.ts%60%20(client-safe%20%E2%80%94%20no%20%60next%2Fheaders%60)%20holds%20the%20cookie%20name%2C%0Athe%20%60SB_ENABLE_DEV_TOOLS%60%20gate%2C%20offset%20parsing%2C%20and%20the%20Route%20Handler%20reader.%0A%60utils%2Fdev-clock-server.ts%60%20adds%20the%20Server%20Component%20%2F%20Server%20Action%20reader%0Athat%20pulls%20the%20cookie%20via%20%60next%2Fheaders%60.%0A%0A%23%23%23%20Thread%20%60now%60%20into%20the%20phase%20logic%0A%0AThe%20phase%20helpers%20in%20%60app%2F(site)%2Futils%2Fevents.ts%60%20take%20a%20**required**%0A%60now%3A%20Date%60%20parameter%20instead%20of%20calling%20%60Date.now()%60%20internally.%20A%20required%0Aparameter%20(rather%20than%20an%20optional%20%60%3D%20new%20Date()%60%20default)%20is%20intentional%3A%20the%0Acompiler%20then%20forces%20every%20call%20site%20to%20supply%20the%20effective%20clock%2C%20so%20faking%0Acan%20never%20be%20silently%20ignored.%20Callers%20obtain%20%60now%60%20from%3A%0A%0A-%20Server%20Components%20%2F%20Server%20Actions%3A%20%60serverNow()%60.%0A-%20Route%20Handlers%3A%20%60requestNow(req)%60.%0A-%20Client%20components%3A%20%60EventContext.now%60.%0A%0A%23%23%23%20Enforced%20by%20lint%2C%20not%20by%20habit%0A%0AThreading%20%60now%60%20only%20works%20if%20nothing%20quietly%20reads%20an%20ambient%20clock%20instead%2C%20so%0A%60eslint.config.mjs%60%20bans%20the%20zero-argument%20clock%20reads%20%E2%80%94%20%60new%20Date()%60%2C%0A%60Date.now()%60%2C%20%60DateTime.now()%2Flocal()%2Futc()%60%20%E2%80%94%20across%20%60app%2F%60%2C%20%60db%2F%60%2C%20%60emails%2F%60%2C%0A%60model%2F%60%20and%20%60utils%2F%60.%20Zero-argument%20only%3A%20%60new%20Date(iso)%60%20parses%20a%20value%2C%20it%0Adoes%20not%20read%20a%20clock.%0A%0ATwo%20consequences%20worth%20stating%3A%0A%0A-%20**Repositories%20never%20generate%20time.**%20They%20are%20inside%20the%20linted%20scope%2C%20so%20a%0A%20%20stored%20timestamp%20has%20to%20arrive%20as%20a%20required%20field%20on%20the%20input%20type%0A%20%20(%60createdTime%60%2C%20%60readAt%60%2C%20%60editedTime%60).%20A%20repository%20that%20reads%20a%20clock%20is%0A%20%20now%20a%20lint%20error%20rather%20than%20a%20code-review%20catch.%0A-%20**%60now%20%3D%20new%20Date()%60%20defaults%20are%20caught%20too**%2C%20since%20the%20default%20is%20itself%20a%0A%20%20zero-argument%20%60new%20Date()%60.%20That%20is%20deliberate%3A%20an%20optional%20parameter%20makes%20a%0A%20%20missed%20call%20site%20silent%2C%20a%20required%20one%20makes%20it%20a%20compile%20error.%0A%0AExemptions%20are%20per-line%20%60eslint-disable-next-line%20no-restricted-syntax%60%0Acomments%2C%20each%20carrying%20its%20own%20reason%2C%20rather%20than%20file-wide%20%60ignores%60%3A%20a%20file%0Athat%20legitimately%20reads%20the%20real%20clock%20in%20one%20place%20keeps%20every%20other%20line%0Achecked.%20They%20fall%20into%20two%20groups%3A%0A%0A1.%20The%20fake%20clock%20itself%20and%20the%20pieces%20that%20turn%20real%20time%20into%20effective%20time%0A%20%20%20(%60dev-clock.ts%60%2C%20%60now-ticker.ts%60%2C%20the%20toolbar%2C%20%60EventProvider%60&#039;s%20offset).%0A2.%20Real%20time%20by%20design%3A%20the%20auth%20cookie&#039;s%20age%2C%20auth-code%20expiry%2C%20and%20the%0A%20%20%20login%2Femail%20throttles%20(%60utils%2Fauth.ts%60%2C%20%60utils%2Flogin-rate-limit.ts%60%2C%0A%20%20%20%60app%2Factions%2Fuser-auth.ts%60)%2C%20plus%20cache-busting%20%60%3Fv%3D%60%20query%20strings.%20These%0A%20%20%20must%20_not_%20follow%20the%20offset%2C%20or%20anyone%20who%20can%20set%20the%20%60time-override%60%0A%20%20%20cookie%20could%20jump%20past%20a%20lockout.%0A%0A**Elapsed%20time%20and%20idle%20timers**%20need%20no%20exemption%3A%20they%20measure%20a%20duration%2C%20not%0A%22now%22%2C%20so%20they%20use%20%60performance.now()%60%2C%20which%20is%20monotonic%20and%20unaffected%20by%20the%0Aoffset.%20Under%20a%20%60%2B7d%60%20jump%20a%20faked%20clock%20would%20otherwise%20make%20the%20kiosk%20think%20it%0Ahad%20been%20idle%20for%20a%20week%20and%20reset%20immediately.%0A%0A%60scripts%2F%60%20and%20%60tests%2F%60%20are%20outside%20the%20linted%20scope%20entirely.%0A%0A%23%23%23%20Reuse%20the%20existing%20client%20clock%0A%0A%60EventContext%60%20already%20carries%20%60now%60%2C%20seeded%20from%20the%20server%20and%20ticked%20forward%0Aby%20%60startNowTicker%60.%20It%20is%20now%20seeded%20from%20the%20override%20(via%20%60serverNow()%60)%2C%20and%0Athe%20ticker%20is%20offset-aware%20so%20it%20keeps%20the%20fake%20time%20instead%20of%20snapping%20back%20to%0Areal%20time%20on%20the%20next%20tick.%20%60EventProvider%60%20derives%20the%20offset%20once%20from%20the%0Aserver-seeded%20value%20(%60value.now.getTime()%20%E2%88%92%20Date.now()%60)%20%E2%80%94%20~0%20in%20normal%0Aoperation%2C%20the%20simulated%20jump%20under%20an%20override.%20Because%20all%20client%20phase%20checks%0Aalready%20read%20%60EventContext.now%60%2C%20they%20follow%20the%20fake%20clock%20for%20free%20after%20a%0A%60router.refresh()%60.%0A%0A%23%23%23%20Toolbar%0A%0AA%20client%20component%20(%60app%2F(site)%2Fdev-toolbar.tsx%60)%20gated%20by%20%60SB_ENABLE_DEV_TOOLS%60%0A(checked%20in%20the%20server%20layout%2C%20so%20no%20%60NEXT_PUBLIC_%60%20is%20needed)%20and%20shown%20when%0A%60%3Fdev%3D1%60%20is%20present.%20It%20offers%20_real%20time_%20(clear%20cookie)%2C%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%0A%60%2B7d%60%2C%20a%20date%2Ftime%20picker%2C%20and%20dismiss%20(to%20hide%20for%20screenshots).%20Each%20control%0Awrites%20the%20%60time-override%60%20cookie%20via%20%60document.cookie%60%20and%20calls%0A%60router.refresh()%60%20so%20Server%20Components%20re-render%20with%20the%20new%20time.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20An%20organizer%20can%20preview%20any%20phase%20and%20time-dependent%20UI%20on%20staging%2Fdemo%0A%20%20without%20editing%20the%20database.%0A-%20A%20required%20%60now%60%20parameter%20makes%20it%20a%20compile%20error%20to%20bypass%20the%20effective%0A%20%20clock%20in%20phase%20logic.%0A-%20The%20client%20reuses%20the%20existing%20%60EventContext%60%20clock%20rather%20than%20adding%20a%0A%20%20parallel%20one.%0A%0A%23%23%23%20Negative%0A%0A-%20Every%20phase-logic%20call%20site%20must%20now%20supply%20%60now%60%2C%20a%20small%20amount%20of%20extra%0A%20%20threading.%0A-%20The%20override%20only%20shifts%20%22now%22%3B%20it%20does%20not%20accelerate%20%60setTimeout%60%20and%20does%0A%20%20not%20affect%20real-time%20systems%20(see%20below).%0A%0A%23%23%23%20Neutral%0A%0A-%20The%20offset%20itself%20is%20timezone-agnostic%3B%20the%20picker%20stores%2Fdisplays%20UTC%20ISO.%0A%0A%23%23%20Caveats%0A%0A-%20**SQLite%20%2F%20%60NOW()%60**%3A%20the%20DB%20uses%20real%20time.%20Time-dependent%20queries%20must%20take%0A%20%20the%20effective%20time%20as%20a%20parameter%20rather%20than%20relying%20on%20DB%20time.%20Today%20the%0A%20%20phase%20logic%20runs%20in%20app%20code%2C%20not%20SQL%2C%20so%20this%20is%20a%20note%20for%20future%20queries.%0A-%20**External%20services**%20(email%2C%20etc.)%20still%20use%20real%20time.%0A-%20**Caching**%3A%20force-dynamic%20on%20time-sensitive%20routes%20so%20cached%20output%20doesn&#039;t%0A%20%20preserve%20a%20stale%20clock.%20The%20affected%20phase%20routes%20already%20set%0A%20%20%60dynamic%20%3D%20%22force-dynamic%22%60.%0A-%20**Timers%20don&#039;t%20accelerate**%3A%20an%20offset%20shifts%20%22now%22%20but%20does%20not%20make%0A%20%20%60setTimeout%60%20fire%20faster.%20Fine%20for%20phase%20testing.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200004%3A%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-07-23%0A%0A%23%23%20Context%0A%0AAn%20event%20moves%20through%20three%20time-gated%20phases%20%E2%80%94%20proposal%20%E2%86%92%20voting%20%E2%86%92%0Ascheduling%20%E2%80%94%20plus%20time-dependent%20UI%20such%20as%20bookable-slot%20checks%2C%20the%20schedule%0A%22now%22%20line%2C%20and%20the%20kiosk%20display.%20Previewing%20any%20of%20this%20used%20to%20require%0Aediting%20phase%20dates%20in%20the%20database%2C%20which%20is%20slow%2C%20error-prone%2C%20and%20can&#039;t%20be%0Adone%20on%20a%20shared%20staging%2Fdemo%20instance%20without%20disrupting%20other%20viewers.%0A%0AWe%20want%20a%20development-only%20way%20to%20make%20the%20app%20believe%20it%20is%20at%20a%20different%0Apoint%20in%20time%20so%20an%20organizer%20can%20walk%20an%20event%20through%20its%20phases%20and%20see%20the%0Atime-dependent%20UI%2C%20without%20touching%20the%20data.%20Constraints%20that%20shape%20the%0Adecision%3A%0A%0A-%20It%20must%20work%20on%20a%20**deployed**%20staging%2Fdemo%20instance%2C%20which%20runs%20in%0A%20%20production%20mode%20%E2%80%94%20so%20gating%20on%20%60NODE_ENV%20!%3D%3D%20%22production%22%60%20would%20be%20wrong.%0A-%20Next.js%20serves%20concurrent%20requests%2C%20so%20the%20simulated%20time%20of%20one%20viewer%20must%0A%20%20never%20leak%20into%20another&#039;s%20request.%0A-%20Time-dependent%20decisions%20are%20spread%20across%20Server%20Components%2C%20Server%20Actions%2C%0A%20%20Route%20Handlers%2C%20and%20client%20components%2C%20each%20of%20which%20reads%20request%20state%0A%20%20differently.%0A%0A%23%23%20Decision%0A%0AAdd%20a%20fake%20clock%20gated%20by%20the%20%60SB_ENABLE_DEV_TOOLS%60%20env%20var%20(not%20%60NODE_ENV%60).%0AWhen%20it%20is%20unset%20the%20override%20is%20ignored%20server-side%20and%20the%20toolbar%20never%0Arenders%2C%20so%20the%20feature%20is%20inert%20in%20production%20even%20if%20a%20client%20forges%20the%0Acookie.%0A%0A%23%23%23%20A%20single%20time%20offset%0A%0AThe%20override%20is%20one%20number%3A%20%60offsetMs%60%2C%20an%20integer%20stored%20in%20the%0A%60time-override%60%20cookie.%20Effective%20time%20is%20always%20%60Date.now()%20%2B%20offsetMs%60.%0A%0A-%20Real%20time%20%E2%86%92%20no%20cookie%20(offset%20%600%60).%0A-%20Jump%20forward%20%E2%86%92%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%20%60%2B7d%60%20add%20to%20the%20current%20offset.%0A-%20Pick%20a%20date%2Ftime%20%E2%86%92%20%60offset%20%3D%20target%20%E2%88%92%20Date.now()%60%3B%20time%20then%20keeps%20ticking%0A%20%20forward%20from%20there.%0A%0AWe%20deliberately%20do%20**not**%20implement%20a%20separate%20%22frozen%22%20mode.%20Freezing%20only%0Amatters%20for%20exact-boundary%20assertions%2C%20which%20belong%20in%20automated%20tests%0A(Vitest&#039;s%20%60vi.setSystemTime%60)%2C%20not%20this%20manual%20toolbar.%20A%20single%20offset%20keeps%0Athe%20client%20ticker%20trivial%20%E2%80%94%20it%20just%20adds%20%60offsetMs%60.%0A%0A%23%23%23%20Request-scoped%2C%20never%20a%20global%20%60Date%60%20mock%0A%0ABecause%20requests%20are%20concurrent%2C%20we%20never%20mock%20%60Date%60%20globally%3B%20a%20shared%0Amutable%20clock%20would%20leak%20one%20viewer&#039;s%20simulated%20time%20into%20another%20request.%20The%0Aoverride%20is%20request-scoped%20(read%20from%20the%20cookie%20per%20request)%20and%2C%20on%20the%0Aclient%2C%20a%20per-tab%20offset.%0A%0A%60utils%2Fdev-clock.ts%60%20(client-safe%20%E2%80%94%20no%20%60next%2Fheaders%60)%20holds%20the%20cookie%20name%2C%0Athe%20%60SB_ENABLE_DEV_TOOLS%60%20gate%2C%20offset%20parsing%2C%20and%20the%20Route%20Handler%20reader.%0A%60utils%2Fdev-clock-server.ts%60%20adds%20the%20Server%20Component%20%2F%20Server%20Action%20reader%0Athat%20pulls%20the%20cookie%20via%20%60next%2Fheaders%60.%0A%0A%23%23%23%20Thread%20%60now%60%20into%20the%20phase%20logic%0A%0AThe%20phase%20helpers%20in%20%60app%2F(site)%2Futils%2Fevents.ts%60%20take%20a%20**required**%0A%60now%3A%20Date%60%20parameter%20instead%20of%20calling%20%60Date.now()%60%20internally.%20A%20required%0Aparameter%20(rather%20than%20an%20optional%20%60%3D%20new%20Date()%60%20default)%20is%20intentional%3A%20the%0Acompiler%20then%20forces%20every%20call%20site%20to%20supply%20the%20effective%20clock%2C%20so%20faking%0Acan%20never%20be%20silently%20ignored.%20Callers%20obtain%20%60now%60%20from%3A%0A%0A-%20Server%20Components%20%2F%20Server%20Actions%3A%20%60serverNow()%60.%0A-%20Route%20Handlers%3A%20%60requestNow(req)%60.%0A-%20Client%20components%3A%20%60EventContext.now%60.%0A%0A%23%23%23%20Enforced%20by%20lint%2C%20not%20by%20habit%0A%0AThreading%20%60now%60%20only%20works%20if%20nothing%20quietly%20reads%20an%20ambient%20clock%20instead%2C%20so%0A%60eslint.config.mjs%60%20bans%20the%20zero-argument%20clock%20reads%20%E2%80%94%20%60new%20Date()%60%2C%0A%60Date.now()%60%2C%20%60DateTime.now()%2Flocal()%2Futc()%60%20%E2%80%94%20across%20%60app%2F%60%2C%20%60db%2F%60%2C%20%60emails%2F%60%2C%0A%60model%2F%60%20and%20%60utils%2F%60.%20Zero-argument%20only%3A%20%60new%20Date(iso)%60%20parses%20a%20value%2C%20it%0Adoes%20not%20read%20a%20clock.%0A%0ATwo%20consequences%20worth%20stating%3A%0A%0A-%20**Repositories%20never%20generate%20time.**%20They%20are%20inside%20the%20linted%20scope%2C%20so%20a%0A%20%20stored%20timestamp%20has%20to%20arrive%20as%20a%20required%20field%20on%20the%20input%20type%0A%20%20(%60createdTime%60%2C%20%60readAt%60%2C%20%60editedTime%60).%20A%20repository%20that%20reads%20a%20clock%20is%0A%20%20now%20a%20lint%20error%20rather%20than%20a%20code-review%20catch.%0A-%20**%60now%20%3D%20new%20Date()%60%20defaults%20are%20caught%20too**%2C%20since%20the%20default%20is%20itself%20a%0A%20%20zero-argument%20%60new%20Date()%60.%20That%20is%20deliberate%3A%20an%20optional%20parameter%20makes%20a%0A%20%20missed%20call%20site%20silent%2C%20a%20required%20one%20makes%20it%20a%20compile%20error.%0A%0AExemptions%20are%20per-line%20%60eslint-disable-next-line%20no-restricted-syntax%60%0Acomments%2C%20each%20carrying%20its%20own%20reason%2C%20rather%20than%20file-wide%20%60ignores%60%3A%20a%20file%0Athat%20legitimately%20reads%20the%20real%20clock%20in%20one%20place%20keeps%20every%20other%20line%0Achecked.%20They%20fall%20into%20two%20groups%3A%0A%0A1.%20The%20fake%20clock%20itself%20and%20the%20pieces%20that%20turn%20real%20time%20into%20effective%20time%0A%20%20%20(%60dev-clock.ts%60%2C%20%60now-ticker.ts%60%2C%20the%20toolbar%2C%20%60EventProvider%60&#039;s%20offset).%0A2.%20Real%20time%20by%20design%3A%20the%20auth%20cookie&#039;s%20age%2C%20auth-code%20expiry%2C%20and%20the%0A%20%20%20login%2Femail%20throttles%20(%60utils%2Fauth-cookies.ts%60%2C%20%60utils%2Flogin-rate-limit.ts%60%2C%0A%20%20%20%60app%2Factions%2Fuser-auth.ts%60)%2C%20plus%20cache-busting%20%60%3Fv%3D%60%20query%20strings.%20These%0A%20%20%20must%20_not_%20follow%20the%20offset%2C%20or%20anyone%20who%20can%20set%20the%20%60time-override%60%0A%20%20%20cookie%20could%20jump%20past%20a%20lockout.%0A%0A**Elapsed%20time%20and%20idle%20timers**%20need%20no%20exemption%3A%20they%20measure%20a%20duration%2C%20not%0A%22now%22%2C%20so%20they%20use%20%60performance.now()%60%2C%20which%20is%20monotonic%20and%20unaffected%20by%20the%0Aoffset.%20Under%20a%20%60%2B7d%60%20jump%20a%20faked%20clock%20would%20otherwise%20make%20the%20kiosk%20think%20it%0Ahad%20been%20idle%20for%20a%20week%20and%20reset%20immediately.%0A%0A%60scripts%2F%60%20and%20%60tests%2F%60%20are%20outside%20the%20linted%20scope%20entirely.%0A%0A%23%23%23%20Reuse%20the%20existing%20client%20clock%0A%0A%60EventContext%60%20already%20carries%20%60now%60%2C%20seeded%20from%20the%20server%20and%20ticked%20forward%0Aby%20%60startNowTicker%60.%20It%20is%20now%20seeded%20from%20the%20override%20(via%20%60serverNow()%60)%2C%20and%0Athe%20ticker%20is%20offset-aware%20so%20it%20keeps%20the%20fake%20time%20instead%20of%20snapping%20back%20to%0Areal%20time%20on%20the%20next%20tick.%20%60EventProvider%60%20derives%20the%20offset%20once%20from%20the%0Aserver-seeded%20value%20(%60value.now.getTime()%20%E2%88%92%20Date.now()%60)%20%E2%80%94%20~0%20in%20normal%0Aoperation%2C%20the%20simulated%20jump%20under%20an%20override.%20Because%20all%20client%20phase%20checks%0Aalready%20read%20%60EventContext.now%60%2C%20they%20follow%20the%20fake%20clock%20for%20free%20after%20a%0A%60router.refresh()%60.%0A%0A%23%23%23%20Toolbar%0A%0AA%20client%20component%20(%60app%2F(site)%2Fdev-toolbar.tsx%60)%20gated%20by%20%60SB_ENABLE_DEV_TOOLS%60%0A(checked%20in%20the%20server%20layout%2C%20so%20no%20%60NEXT_PUBLIC_%60%20is%20needed)%20and%20shown%20when%0A%60%3Fdev%3D1%60%20is%20present.%20It%20offers%20_real%20time_%20(clear%20cookie)%2C%20%60%2B1h%60%20%2F%20%60%2B1d%60%20%2F%0A%60%2B7d%60%2C%20a%20date%2Ftime%20picker%2C%20and%20dismiss%20(to%20hide%20for%20screenshots).%20Each%20control%0Awrites%20the%20%60time-override%60%20cookie%20via%20%60document.cookie%60%20and%20calls%0A%60router.refresh()%60%20so%20Server%20Components%20re-render%20with%20the%20new%20time.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20An%20organizer%20can%20preview%20any%20phase%20and%20time-dependent%20UI%20on%20staging%2Fdemo%0A%20%20without%20editing%20the%20database.%0A-%20A%20required%20%60now%60%20parameter%20makes%20it%20a%20compile%20error%20to%20bypass%20the%20effective%0A%20%20clock%20in%20phase%20logic.%0A-%20The%20client%20reuses%20the%20existing%20%60EventContext%60%20clock%20rather%20than%20adding%20a%0A%20%20parallel%20one.%0A%0A%23%23%23%20Negative%0A%0A-%20Every%20phase-logic%20call%20site%20must%20now%20supply%20%60now%60%2C%20a%20small%20amount%20of%20extra%0A%20%20threading.%0A-%20The%20override%20only%20shifts%20%22now%22%3B%20it%20does%20not%20accelerate%20%60setTimeout%60%20and%20does%0A%20%20not%20affect%20real-time%20systems%20(see%20below).%0A%0A%23%23%23%20Neutral%0A%0A-%20The%20offset%20itself%20is%20timezone-agnostic%3B%20the%20picker%20stores%2Fdisplays%20UTC%20ISO.%0A%0A%23%23%20Caveats%0A%0A-%20**SQLite%20%2F%20%60NOW()%60**%3A%20the%20DB%20uses%20real%20time.%20Time-dependent%20queries%20must%20take%0A%20%20the%20effective%20time%20as%20a%20parameter%20rather%20than%20relying%20on%20DB%20time.%20Today%20the%0A%20%20phase%20logic%20runs%20in%20app%20code%2C%20not%20SQL%2C%20so%20this%20is%20a%20note%20for%20future%20queries.%0A-%20**External%20services**%20(email%2C%20etc.)%20still%20use%20real%20time.%0A-%20**Caching**%3A%20force-dynamic%20on%20time-sensitive%20routes%20so%20cached%20output%20doesn&#039;t%0A%20%20preserve%20a%20stale%20clock.%20The%20affected%20phase%20routes%20already%20set%0A%20%20%60dynamic%20%3D%20%22force-dynamic%22%60.%0A-%20**Timers%20don&#039;t%20accelerate**%3A%20an%20offset%20shifts%20%22now%22%20but%20does%20not%20make%0A%20%20%60setTimeout%60%20fire%20faster.%20Fine%20for%20phase%20testing.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1702,7 +1753,7 @@ checked. They fall into two groups:</p>
 <li>The fake clock itself and the pieces that turn real time into effective time
 (<code>dev-clock.ts</code>, <code>now-ticker.ts</code>, the toolbar, <code>EventProvider</code>’s offset).</li>
 <li>Real time by design: the auth cookie’s age, auth-code expiry, and the
-login/email throttles (<code>utils/auth.ts</code>, <code>utils/login-rate-limit.ts</code>,
+login/email throttles (<code>utils/auth-cookies.ts</code>, <code>utils/login-rate-limit.ts</code>,
 <code>app/actions/user-auth.ts</code>), plus cache-busting <code>?v=</code> query strings. These
 must <em>not</em> follow the offset, or anyone who can set the <code>time-override</code>
 cookie could jump past a lockout.</li>
@@ -1910,17 +1961,32 @@ preserve a stale clock. The affected phase routes already set
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1788558839000">
+                <span class="git-last-updated" data-timestamp="1791105032000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1788558839000"></span>
+                  <span class="git-time" data-timestamp="1791105032000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Claude">
+                            
+                              C
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat(api): kernel and /api/v1 skeleton with a health route">feat(api): kernel and /api/v1 skeleto...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Claude</span>
+                              <span class="git-commit-date" data-timestamp="1791105032000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1993,13 +2059,13 @@ preserve a stale clock. The affected phase routes already set
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mutjpxjk"></script>
+      <script src="../../assets/js/docmd-main.js?v=muw8vus4"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mutjpxjk"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mutjpxjk" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mutjpxjk" ></script>
-<script src="../../assets/js/docmd-search.js?v=mutjpxjk" ></script>
-<script src="../../assets/js/docmd-git.js?v=mutjpxjk" ></script>
+      <script src="../../assets/js/docmd-git.js?v=muw8vus4"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=muw8vus4" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=muw8vus4" ></script>
+<script src="../../assets/js/docmd-search.js?v=muw8vus4" ></script>
+<script src="../../assets/js/docmd-git.js?v=muw8vus4" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2077,7 +2143,7 @@ preserve a stale clock. The affected phase routes already set
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mutjpxjk"></script>
+          src="../../assets/js/likec4-embed.js?v=muw8vus4"></script>
         
       
       
