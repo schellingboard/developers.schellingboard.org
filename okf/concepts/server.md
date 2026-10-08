@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-10-06
+updated: 2026-10-08
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-06T05:35:23.980Z"
+  generated_at: "2026-10-08T21:05:39.847Z"
 ---
 # The server and the API
 
@@ -22,7 +22,7 @@ user-facing description of the API is
 ```
 server/
   kernel/              Result and error kinds, Actor and resolveActor, actingGuest
-  http/                the Hono app (app.ts), middleware, problem details, OpenAPI document
+  http/                the Hono app (app.ts), middleware, problem details, OpenAPI document and its reference page (docs.ts)
   composition.ts       builds each module's use cases from the repositories and adapters
   modules/<module>/
     module.ts          the only file anything outside the module imports

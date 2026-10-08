@@ -3,10 +3,10 @@ type: concept
 title: "Coding Guidelines"
 source: "https://developers.schellingboard.org/coding-guidelines/"
 path: /coding-guidelines/
-updated: 2026-10-06
+updated: 2026-10-08
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-06T05:35:23.975Z"
+  generated_at: "2026-10-08T21:05:39.843Z"
 ---
 # Coding Guidelines
 

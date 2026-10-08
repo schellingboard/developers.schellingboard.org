@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=muw8vus4">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=muw8vus4">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mv00zvvt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mv00zvvt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=muw8vus4" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=muw8vus4" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mv00zvvt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mv00zvvt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=muw8vus4" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=muw8vus4" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mv00zvvt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mv00zvvt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=muw8vus4">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mv00zvvt">
     
     
   </head>
@@ -1034,6 +1034,22 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="../adr/0013-unit-of-work/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0013: The unit of work
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1548,7 +1564,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20The%20server%20and%20the%20API%0A%0A%60server%2F%60%20holds%20the%20use%20cases%20and%20the%20%60%2Fapi%2Fv1%60%20HTTP%20API%20in%20front%20of%20them.%0AServer%20actions%2C%20the%20legacy%20%60%2Fapi%2F*%60%20routes%20and%20%60%2Fapi%2Fv1%60%20all%20call%20the%20same%20use%0Acases%2C%20so%20a%20rule%20is%20written%20once.%20%5BADR%200012%5D(adr%2F0012-http-api-v1.md)%20has%20the%0Adecisions%3B%20this%20page%20is%20how%20the%20code%20is%20laid%20out%20and%20how%20to%20add%20to%20it.%20The%0Auser-facing%20description%20of%20the%20API%20is%0A%5BHTTP%20API%5D(https%3A%2F%2Fdocs.schellingboard.org%2Fself-hosting%2Fapi%2F).%0A%0A%23%23%20Layout%0A%0A%60%60%60%0Aserver%2F%0A%20%20kernel%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20Result%20and%20error%20kinds%2C%20Actor%20and%20resolveActor%2C%20actingGuest%0A%20%20http%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20the%20Hono%20app%20(app.ts)%2C%20middleware%2C%20problem%20details%2C%20OpenAPI%20document%0A%20%20composition.ts%20%20%20%20%20%20%20builds%20each%20module&#039;s%20use%20cases%20from%20the%20repositories%20and%20adapters%0A%20%20modules%2F%3Cmodule%3E%2F%0A%20%20%20%20module.ts%20%20%20%20%20%20%20%20%20%20the%20only%20file%20anything%20outside%20the%20module%20imports%0A%20%20%20%20ports.ts%20%20%20%20%20%20%20%20%20%20%20its%20dependencies%3A%20a%20Pick%20of%20the%20repository%20container%2C%20plus%20adapters%0A%20%20%20%20application%2F%20%20%20%20%20%20%20use%20cases%20and%20queries%2C%20gathered%20in%20use-cases.ts%0A%20%20%20%20http%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20route%20declarations%20and%20handlers%0A%60%60%60%0A%0AThe%20modules%20are%20%60sessions%60%20(sessions%2C%20RSVPs%2C%20room%20unavailability%2C%20attendee%0Acounts)%2C%20%60proposals%60%20(proposals%20and%20votes)%2C%20%60comments%60%2C%20%60meetings%60%2C%20%60people%60%0A(profiles%20and%20the%20admin%20guest%20list)%2C%20%60notifications%60%2C%20%60events%60%20(events%20and%0Adays)%2C%20%60venue%60%20(locations)%20and%20%60settings%60%20(site%20settings).%0A%0AThe%20Next%20mount%20is%20%60app%2Fapi%2Fv1%2F%5B%5B...route%5D%5D%2Froute.ts%60%3B%20%60proxy.ts%60%20gates%20it%20like%0Aany%20other%20route%20(site%20password%20or%20admin%20cookie%20for%20%60%2Fapi%2Fv1%60%2C%20the%20admin%20cookie%20for%0A%60%2Fapi%2Fv1%2Fadmin%2F%60).%20Repositories%20stay%20in%20%60db%2F%60.%0A%0A%23%23%20Adding%20a%20use%20case%20and%20its%20route%0A%0A1.%20**Contract.**%20Add%20the%20request%20and%20response%20zod%20schemas%20to%0A%20%20%20%60packages%2Fcontracts%2Fsrc%2F%3Carea%3E.ts%60%3B%20they%20are%20plain%20%60zod%60%2C%20with%20no%20Hono%0A%20%20%20import.%0A2.%20**Use%20case.**%20In%20%60application%2F%60%2C%20a%20function%20of%20the%20module&#039;s%20deps%20returning%0A%20%20%20%60(actor%2C%20input%2C%20now)%20%3D%3E%20Promise%3CResult%3CT%3E%3E%60.%20Authorize%20first%3A%20%60actor.admin%60%0A%20%20%20for%20organizer%20actions%2C%20%60actingGuest%60%20(or%20%60actingAsNamedGuest%60%20when%20the%0A%20%20%20request%20names%20the%20guest)%20from%20%60server%2Fkernel%2Facting-guest.ts%60%20for%20anything%0A%20%20%20done%20as%20a%20guest.%20Refuse%20with%20%60notFound%60%2C%20%60forbidden%60%2C%20%60conflict%60%2C%20%60invalid%60%2C%0A%20%20%20%60gone%60%20or%20%60unavailable%60%20from%20%60server%2Fkernel%2Fresult.ts%60%20and%20a%20dotted%20code%0A%20%20%20named%20for%20what%20was%20refused%20(%60session.full%60)%3B%20%60invalidFields%60%20names%20several%0A%20%20%20fields%20at%20once.%20Take%20%60now%60%20as%20an%20argument%2C%20never%20read%20the%20clock.%20Add%20it%20to%0A%20%20%20the%20module&#039;s%20%60use-cases.ts%60%3B%20a%20new%20dependency%20goes%20in%20%60ports.ts%60%20and%20is%0A%20%20%20wired%20in%20%60composition.ts%60.%0A3.%20**Route.**%20In%20%60http%2F%60%2C%20declare%20it%20with%20%60createRoute%60%3A%20the%20contract%20for%20the%0A%20%20%20request%2C%20%60json(schema%2C%20%E2%80%A6)%60%20for%20each%20success%20status%2C%20%60...problemDefault%60%20for%0A%20%20%20problems%2C%20and%20%60headers%3A%20idempotencyHeaders%60%20on%20every%20mutation.%20The%20handler%0A%20%20%20reads%20%60c.req.valid(%E2%80%A6)%60%2C%20calls%20the%20use%20case%20with%20%60c.var.actor%60%20and%0A%20%20%20%60c.var.now%60%2C%20and%20returns%20%60problem(result.error)%60%20on%20failure.%20Admin%20routes%20go%0A%20%20%20under%20%60%2Fadmin%2F%60%2C%20or%20the%20proxy%20will%20not%20gate%20them.%20Register%20a%20new%20route%0A%20%20%20function%20in%20%60server%2Fhttp%2Fapp.ts%60.%0A4.%20**Callers.**%20A%20server%20action%20resolves%20the%20actor%20with%0A%20%20%20%60resolveActor(await%20cookies())%60%20and%20calls%20the%20use%20case%20from%0A%20%20%20%60server%2Fcomposition.ts%60.%20A%20legacy%20route%20uses%20%60legacyActor%60%20and%0A%20%20%20%60legacyRefusal%60%20from%20%60app%2Fapi%2Flegacy.ts%60%20and%20keeps%20its%20old%20response%20body.%0A5.%20**%60make%20openapi%60.**%20It%20rewrites%20%60packages%2Fcontracts%2Fopenapi.json%60%20and%20the%0A%20%20%20client&#039;s%20types%20in%20%60packages%2Fapi-client%2Fsrc%2Fschema.ts%60%3B%20commit%20both.%0A%20%20%20%60make%20openapi-check%60%2C%20in%20%60make%20precommit%60%20and%20CI%2C%20fails%20while%20either%20is%20stale.%0A%0A%60make%20arch%60%20enforces%20the%20layout%20(see%0A%5BArchitecture%20rules%5D(architecture-rules.md))%3A%20the%20kernel%20reaches%20no%20module%2C%0AHTTP%20code%20or%20framework%2C%20even%20indirectly%3B%20%60application%2F%60%20imports%20no%20HTTP%2C%0Aframework%20or%20%60db%2F%60%20code%20beyond%20the%20container&#039;s%20types%2C%20and%20never%20calls%20the%0Acontainer%3B%20a%20module%20is%20imported%20only%20through%20its%20%60module.ts%60%2C%20by%20other%0Amodules%2C%20tests%20and%20%60app%2F%60%20alike%3B%20%60app%2F%60%20reaches%20%60server%2F%60%20only%20through%0A%60module.ts%60%2C%20%60composition.ts%60%2C%20the%20kernel%20and%20%60http%2Fapp.ts%60%3B%20%60server%2F%60%20never%0Aimports%20%60app%2F%60%3B%20%60packages%2Fapi-client%60%20imports%20only%20%60openapi-fetch%60.%0A%0A%23%23%20Testing%0A%0ATwo%20integration%20tiers%2C%20against%20the%20real%20database%3A%0A%0A-%20**Behaviour%20on%20the%20use%20case**%20(%60tests%2Fintegration%2F*-use-cases.test.ts%60)%3A%20call%0A%20%20the%20use%20case%20from%20%60composition.ts%60%20with%20an%20%60Actor%60%20built%20in%20the%20test%2C%20and%0A%20%20cover%20its%20rules%20there%20%E2%80%94%20who%20may%2C%20what%20is%20refused%2C%20what%20is%20stored.%0A-%20**HTTP%20only%20on%20the%20route**%20(%60tests%2Fintegration%2Fapi-*.test.ts%60)%3A%20call%20the%0A%20%20mount&#039;s%20handlers%20with%20a%20request%20and%20cookies%2C%20and%20check%20what%20only%20HTTP%20adds%3A%0A%20%20status%20codes%2C%20the%20problem%20body%20and%20its%20%60code%60%2C%20the%20contract&#039;s%20validation%2C%0A%20%20the%20admin%20gate.%20Do%20not%20repeat%20the%20use%20case&#039;s%20rules%20here.%0A%0A%60tests%2Fintegration%2Fidempotency.test.ts%60%20covers%20%60Idempotency-Key%60%2C%20and%0A%60tests%2Fintegration%2Fapi-client.test.ts%60%20calls%20the%20API%20through%0A%60%40schellingboard%2Fapi-client%60.%20%60tests%2Fintegration%2Fmutating-surface-guard.test.ts%60%0Achecks%20the%20whole%20mount%20through%20a%20single%20route%2C%20so%20a%20new%20use%20case%20acting%20as%20a%0Aguest%20proves%20its%20own%20%60guest.protected%60%20refusal%20in%20its%20tests.%0A%0ATwo%20meanings%20of%20%22use%20case%22%20meet%20here%3A%20the%20functions%20in%20%60application%2F%60%2C%20and%20the%0Auser%20stories%20catalogued%20in%20%60tests%2Fuse-cases.ts%60%20that%20every%20test%20is%20tagged%20with%0A(%5BTesting%5D(testing.md%23use-cases)).%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20The%20server%20and%20the%20API%0A%0A%60server%2F%60%20holds%20the%20use%20cases%20and%20the%20%60%2Fapi%2Fv1%60%20HTTP%20API%20in%20front%20of%20them.%0AServer%20actions%2C%20the%20legacy%20%60%2Fapi%2F*%60%20routes%20and%20%60%2Fapi%2Fv1%60%20all%20call%20the%20same%20use%0Acases%2C%20so%20a%20rule%20is%20written%20once.%20%5BADR%200012%5D(adr%2F0012-http-api-v1.md)%20has%20the%0Adecisions%3B%20this%20page%20is%20how%20the%20code%20is%20laid%20out%20and%20how%20to%20add%20to%20it.%20The%0Auser-facing%20description%20of%20the%20API%20is%0A%5BHTTP%20API%5D(https%3A%2F%2Fdocs.schellingboard.org%2Fself-hosting%2Fapi%2F).%0A%0A%23%23%20Layout%0A%0A%60%60%60%0Aserver%2F%0A%20%20kernel%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20Result%20and%20error%20kinds%2C%20Actor%20and%20resolveActor%2C%20actingGuest%0A%20%20http%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20the%20Hono%20app%20(app.ts)%2C%20middleware%2C%20problem%20details%2C%20OpenAPI%20document%20and%20its%20reference%20page%20(docs.ts)%0A%20%20composition.ts%20%20%20%20%20%20%20builds%20each%20module&#039;s%20use%20cases%20from%20the%20repositories%20and%20adapters%0A%20%20modules%2F%3Cmodule%3E%2F%0A%20%20%20%20module.ts%20%20%20%20%20%20%20%20%20%20the%20only%20file%20anything%20outside%20the%20module%20imports%0A%20%20%20%20ports.ts%20%20%20%20%20%20%20%20%20%20%20its%20dependencies%3A%20a%20Pick%20of%20the%20repository%20container%2C%20plus%20adapters%0A%20%20%20%20application%2F%20%20%20%20%20%20%20use%20cases%20and%20queries%2C%20gathered%20in%20use-cases.ts%0A%20%20%20%20http%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20route%20declarations%20and%20handlers%0A%60%60%60%0A%0AThe%20modules%20are%20%60sessions%60%20(sessions%2C%20RSVPs%2C%20room%20unavailability%2C%20attendee%0Acounts)%2C%20%60proposals%60%20(proposals%20and%20votes)%2C%20%60comments%60%2C%20%60meetings%60%2C%20%60people%60%0A(profiles%20and%20the%20admin%20guest%20list)%2C%20%60notifications%60%2C%20%60events%60%20(events%20and%0Adays)%2C%20%60venue%60%20(locations)%20and%20%60settings%60%20(site%20settings).%0A%0AThe%20Next%20mount%20is%20%60app%2Fapi%2Fv1%2F%5B%5B...route%5D%5D%2Froute.ts%60%3B%20%60proxy.ts%60%20gates%20it%20like%0Aany%20other%20route%20(site%20password%20or%20admin%20cookie%20for%20%60%2Fapi%2Fv1%60%2C%20the%20admin%20cookie%20for%0A%60%2Fapi%2Fv1%2Fadmin%2F%60).%20Repositories%20stay%20in%20%60db%2F%60.%0A%0A%23%23%20Adding%20a%20use%20case%20and%20its%20route%0A%0A1.%20**Contract.**%20Add%20the%20request%20and%20response%20zod%20schemas%20to%0A%20%20%20%60packages%2Fcontracts%2Fsrc%2F%3Carea%3E.ts%60%3B%20they%20are%20plain%20%60zod%60%2C%20with%20no%20Hono%0A%20%20%20import.%0A2.%20**Use%20case.**%20In%20%60application%2F%60%2C%20a%20function%20of%20the%20module&#039;s%20deps%20returning%0A%20%20%20%60(actor%2C%20input%2C%20now)%20%3D%3E%20Promise%3CResult%3CT%3E%3E%60.%20Authorize%20first%3A%20%60actor.admin%60%0A%20%20%20for%20organizer%20actions%2C%20%60actingGuest%60%20(or%20%60actingAsNamedGuest%60%20when%20the%0A%20%20%20request%20names%20the%20guest)%20from%20%60server%2Fkernel%2Facting-guest.ts%60%20for%20anything%0A%20%20%20done%20as%20a%20guest.%20Refuse%20with%20%60notFound%60%2C%20%60forbidden%60%2C%20%60conflict%60%2C%20%60invalid%60%2C%0A%20%20%20%60gone%60%20or%20%60unavailable%60%20from%20%60server%2Fkernel%2Fresult.ts%60%20and%20a%20dotted%20code%0A%20%20%20named%20for%20what%20was%20refused%20(%60session.full%60)%3B%20%60invalidFields%60%20names%20several%0A%20%20%20fields%20at%20once.%20Take%20%60now%60%20as%20an%20argument%2C%20never%20read%20the%20clock.%20Add%20it%20to%0A%20%20%20the%20module&#039;s%20%60use-cases.ts%60%3B%20a%20new%20dependency%20goes%20in%20%60ports.ts%60%20and%20is%0A%20%20%20wired%20in%20%60composition.ts%60.%0A3.%20**Route.**%20In%20%60http%2F%60%2C%20declare%20it%20with%20%60createRoute%60%3A%20the%20contract%20for%20the%0A%20%20%20request%2C%20%60json(schema%2C%20%E2%80%A6)%60%20for%20each%20success%20status%2C%20%60...problemDefault%60%20for%0A%20%20%20problems%2C%20and%20%60headers%3A%20idempotencyHeaders%60%20on%20every%20mutation.%20The%20handler%0A%20%20%20reads%20%60c.req.valid(%E2%80%A6)%60%2C%20calls%20the%20use%20case%20with%20%60c.var.actor%60%20and%0A%20%20%20%60c.var.now%60%2C%20and%20returns%20%60problem(result.error)%60%20on%20failure.%20Admin%20routes%20go%0A%20%20%20under%20%60%2Fadmin%2F%60%2C%20or%20the%20proxy%20will%20not%20gate%20them.%20Register%20a%20new%20route%0A%20%20%20function%20in%20%60server%2Fhttp%2Fapp.ts%60.%0A4.%20**Callers.**%20A%20server%20action%20resolves%20the%20actor%20with%0A%20%20%20%60resolveActor(await%20cookies())%60%20and%20calls%20the%20use%20case%20from%0A%20%20%20%60server%2Fcomposition.ts%60.%20A%20legacy%20route%20uses%20%60legacyActor%60%20and%0A%20%20%20%60legacyRefusal%60%20from%20%60app%2Fapi%2Flegacy.ts%60%20and%20keeps%20its%20old%20response%20body.%0A5.%20**%60make%20openapi%60.**%20It%20rewrites%20%60packages%2Fcontracts%2Fopenapi.json%60%20and%20the%0A%20%20%20client&#039;s%20types%20in%20%60packages%2Fapi-client%2Fsrc%2Fschema.ts%60%3B%20commit%20both.%0A%20%20%20%60make%20openapi-check%60%2C%20in%20%60make%20precommit%60%20and%20CI%2C%20fails%20while%20either%20is%20stale.%0A%0A%60make%20arch%60%20enforces%20the%20layout%20(see%0A%5BArchitecture%20rules%5D(architecture-rules.md))%3A%20the%20kernel%20reaches%20no%20module%2C%0AHTTP%20code%20or%20framework%2C%20even%20indirectly%3B%20%60application%2F%60%20imports%20no%20HTTP%2C%0Aframework%20or%20%60db%2F%60%20code%20beyond%20the%20container&#039;s%20types%2C%20and%20never%20calls%20the%0Acontainer%3B%20a%20module%20is%20imported%20only%20through%20its%20%60module.ts%60%2C%20by%20other%0Amodules%2C%20tests%20and%20%60app%2F%60%20alike%3B%20%60app%2F%60%20reaches%20%60server%2F%60%20only%20through%0A%60module.ts%60%2C%20%60composition.ts%60%2C%20the%20kernel%20and%20%60http%2Fapp.ts%60%3B%20%60server%2F%60%20never%0Aimports%20%60app%2F%60%3B%20%60packages%2Fapi-client%60%20imports%20only%20%60openapi-fetch%60.%0A%0A%23%23%20Testing%0A%0ATwo%20integration%20tiers%2C%20against%20the%20real%20database%3A%0A%0A-%20**Behaviour%20on%20the%20use%20case**%20(%60tests%2Fintegration%2F*-use-cases.test.ts%60)%3A%20call%0A%20%20the%20use%20case%20from%20%60composition.ts%60%20with%20an%20%60Actor%60%20built%20in%20the%20test%2C%20and%0A%20%20cover%20its%20rules%20there%20%E2%80%94%20who%20may%2C%20what%20is%20refused%2C%20what%20is%20stored.%0A-%20**HTTP%20only%20on%20the%20route**%20(%60tests%2Fintegration%2Fapi-*.test.ts%60)%3A%20call%20the%0A%20%20mount&#039;s%20handlers%20with%20a%20request%20and%20cookies%2C%20and%20check%20what%20only%20HTTP%20adds%3A%0A%20%20status%20codes%2C%20the%20problem%20body%20and%20its%20%60code%60%2C%20the%20contract&#039;s%20validation%2C%0A%20%20the%20admin%20gate.%20Do%20not%20repeat%20the%20use%20case&#039;s%20rules%20here.%0A%0A%60tests%2Fintegration%2Fidempotency.test.ts%60%20covers%20%60Idempotency-Key%60%2C%20and%0A%60tests%2Fintegration%2Fapi-client.test.ts%60%20calls%20the%20API%20through%0A%60%40schellingboard%2Fapi-client%60.%20%60tests%2Fintegration%2Fmutating-surface-guard.test.ts%60%0Achecks%20the%20whole%20mount%20through%20a%20single%20route%2C%20so%20a%20new%20use%20case%20acting%20as%20a%0Aguest%20proves%20its%20own%20%60guest.protected%60%20refusal%20in%20its%20tests.%0A%0ATwo%20meanings%20of%20%22use%20case%22%20meet%20here%3A%20the%20functions%20in%20%60application%2F%60%2C%20and%20the%0Auser%20stories%20catalogued%20in%20%60tests%2Fuse-cases.ts%60%20that%20every%20test%20is%20tagged%20with%0A(%5BTesting%5D(testing.md%23use-cases)).%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1653,7 +1669,7 @@ user-facing description of the API is
 <h2 id="the-server-and-the-api-layout" class="docmd-heading"><a href="#the-server-and-the-api-layout" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Layout</h2>
 <pre class="hljs"><code>server<span class="hljs-operator">/</span>
   kernel<span class="hljs-operator">/</span>              Result and error kinds, Actor and resolveActor, actingGuest
-  http<span class="hljs-operator">/</span>                the Hono <span class="hljs-title function_">app</span> (app.<span class="hljs-attr">ts</span>), middleware, problem details, OpenAPI document
+  http<span class="hljs-operator">/</span>                the Hono <span class="hljs-title function_">app</span> (app.<span class="hljs-attr">ts</span>), middleware, problem details, OpenAPI document and its reference <span class="hljs-title function_">page</span> (docs.<span class="hljs-attr">ts</span>)
   composition.<span class="hljs-attr">ts</span>       builds each module&#039;s <span class="hljs-keyword">use</span> cases <span class="hljs-keyword">from</span> the repositories and adapters
   modules<span class="hljs-operator">/&lt;</span>module<span class="hljs-operator">&gt;/</span>
     module.<span class="hljs-attr">ts</span>          the only file anything outside the module imports
@@ -1834,17 +1850,32 @@ user stories catalogued in <code>tests/use-cases.ts</code> that every test is ta
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1791264194000">
+                <span class="git-last-updated" data-timestamp="1791489766000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1791264194000"></span>
+                  <span class="git-time" data-timestamp="1791489766000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: serve an interactive API reference">feat: serve an interactive API reference</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791489766000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1902,13 +1933,13 @@ user stories catalogued in <code>tests/use-cases.ts</code> that every test is ta
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=muw8vus4"></script>
+      <script src="../assets/js/docmd-main.js?v=mv00zvvt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=muw8vus4"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=muw8vus4" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=muw8vus4" ></script>
-<script src="../assets/js/docmd-search.js?v=muw8vus4" ></script>
-<script src="../assets/js/docmd-git.js?v=muw8vus4" ></script>
+      <script src="../assets/js/docmd-git.js?v=mv00zvvt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mv00zvvt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mv00zvvt" ></script>
+<script src="../assets/js/docmd-search.js?v=mv00zvvt" ></script>
+<script src="../assets/js/docmd-git.js?v=mv00zvvt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1986,7 +2017,7 @@ user stories catalogued in <code>tests/use-cases.ts</code> that every test is ta
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=muw8vus4"></script>
+          src="../assets/js/likec4-embed.js?v=mv00zvvt"></script>
         
       
       

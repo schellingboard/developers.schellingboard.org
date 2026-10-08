@@ -5,12 +5,12 @@ bundle:
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-06T05:35:23.989Z"
+  generated_at: "2026-10-08T21:05:39.854Z"
   default_type: concept
 stats:
-  concepts: 43
+  concepts: 44
   by_type:
-    concept: 43
+    concept: 44
   locales: 
   versions: 
 concepts:
@@ -128,6 +128,15 @@ concepts:
     description: ""
     path: /adr/0012-http-api-v1/
     file: concepts/adr-0012-http-api-v1.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0013-unit-of-work
+    type: concept
+    title: "ADR 0013: The unit of work"
+    description: ""
+    path: /adr/0013-unit-of-work/
+    file: concepts/adr-0013-unit-of-work.md
     locale: ""
     version: ""
     tags: 
