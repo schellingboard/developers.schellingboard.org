@@ -3,10 +3,10 @@ type: concept
 title: "Attendance prediction from voting results"
 source: "https://developers.schellingboard.org/attendance-model/"
 path: /attendance-model/
-updated: 2026-10-08
+updated: 2026-10-12
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-08T21:05:39.841Z"
+  generated_at: "2026-10-12T11:24:18.491Z"
 ---
 # Attendance prediction from voting results
 

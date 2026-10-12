@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-10-08
+updated: 2026-10-12
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-08T21:05:39.847Z"
+  generated_at: "2026-10-12T11:24:18.495Z"
 ---
 # The server and the API
 
@@ -21,7 +21,7 @@ user-facing description of the API is
 
 ```
 server/
-  kernel/              Result and error kinds, Actor and resolveActor, actingGuest
+  kernel/              Result and error kinds, Actor and resolveActor, actingGuest, the unit of work
   http/                the Hono app (app.ts), middleware, problem details, OpenAPI document and its reference page (docs.ts)
   composition.ts       builds each module's use cases from the repositories and adapters
   modules/<module>/
@@ -39,6 +39,21 @@ days), `venue` (locations) and `settings` (site settings).
 The Next mount is `app/api/v1/[[...route]]/route.ts`; `proxy.ts` gates it like
 any other route (site password or admin cookie for `/api/v1`, the admin cookie for
 `/api/v1/admin/`). Repositories stay in `db/`.
+
+`db/container.ts` opens the database in WAL mode with two connections.
+Repository methods named `find…` (but not `findOrCreate…`), `list…`, `search…`,
+`count…` or `get…` run on a read-only connection, which sees only committed rows. Every other method
+takes the in-process write lock and runs on the write connection, so name a
+method that writes accordingly ([ADR 0013](adr/0013-unit-of-work.md)).
+
+A use case writes in `deps.uow.run(async (tx) => …)`
+(`server/kernel/unit-of-work.ts`): one transaction, which a throw or a failure
+`Result` rolls back. Inside it, read and write through `tx`, never through
+`deps.repos`: their writes wait for the lock `tx` holds, and their reads do not
+see its rows. `tx.record(change)` logs a change with the state; after commit,
+each change goes to the `subscribeToChanges` subscribers in `seq` order, the
+jobs loop among them. Keep I/O to other systems, such as mail, out of the
+callback. `uow.read` runs several reads on one consistent view.
 
 ## Adding a use case and its route
 

@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0013: The unit of work"
 source: "https://developers.schellingboard.org/adr/0013-unit-of-work/"
 path: /adr/0013-unit-of-work/
-updated: 2026-10-08
+updated: 2026-10-12
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-08T21:05:39.839Z"
+  generated_at: "2026-10-12T11:24:18.490Z"
 ---
 # ADR 0013: The unit of work
 
@@ -129,8 +129,39 @@ repository interfaces that the rest of the target does not want.
 
 ## Decision
 
-Open: the user chooses (a), (b) or (c). Steps 2 and 3 of the run wait for it.
+(a), chosen by the user on 2026-10-06 over the recommendation: reads must
+never see a write that is still open, also outside the unit of work.
+
+- The database runs in WAL mode with `synchronous=NORMAL`. `db/container.ts`
+  opens a write connection and a read-only connection.
+- Repository methods named `find…` (but not `findOrCreate…`), `list…`,
+  `search…`, `count…` or `get…` run on the read connection. Every other method takes the in-process write
+  lock and runs on the write connection, so a write outside `uow.run` (the
+  jobs loop, a single-write path) waits for an open use case instead of
+  joining its transaction.
+- The lock is on `globalThis`, like the jobs nudge, so module copies under
+  Next share it. `withWriter(fn)` holds it and hands `fn` the write
+  connection; `uow.run` builds on it. Writes keep `BEGIN IMMEDIATE` for other
+  processes.
+- Test databases are files: each worker migrates a template once per test
+  file and copies it before each test.
 
 ## Consequences
 
-To be written with the decision.
+- A repository method that writes must not have a read name: the read
+  connection is read-only, so such a method fails on its first call.
+- A read sees each write as soon as it commits, and never one in progress.
+- Self-hosted databases switch to WAL on first start; `data.db-wal` and
+  `data.db-shm` sit next to `data.db` in the `/data` volume. The documented
+  backup (`.backup`) and restore already handle them. The database must stay
+  on a local file system.
+- `uow.run` opens `BEGIN IMMEDIATE` on the write connection under the write
+  lock and keeps it open across the callback's awaits; a repository's own
+  transaction inside it becomes a savepoint. A throw or a failure `Result`
+  rolls it back. `tx.record()` collects changes, which are written before
+  `COMMIT` and published after it, still under the lock.
+- `uow.read` has a third, read-only connection behind a lock of its own: a
+  plain read on the shared read connection would otherwise join an open read
+  transaction and see its older view.
+- A use case inside `uow.run` must write through `tx`, never through
+  `getRepositories()`: that waits for the lock it holds.

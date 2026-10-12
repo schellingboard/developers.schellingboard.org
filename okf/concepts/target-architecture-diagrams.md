@@ -3,10 +3,10 @@ type: concept
 title: Diagrams
 source: "https://developers.schellingboard.org/target-architecture/diagrams/"
 path: /target-architecture/diagrams/
-updated: 2026-10-08
+updated: 2026-10-12
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-08T21:05:39.852Z"
+  generated_at: "2026-10-12T11:24:18.499Z"
 ---
 # Diagrams
 

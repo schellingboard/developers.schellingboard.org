@@ -48,7 +48,6 @@
 [WARN] orphan-concept adr-0007-attendee-count-and-reminder-dispatch  (no inbound links)
 [WARN] orphan-concept adr-0009-standalone-repository-in-own-org  (no inbound links)
 [WARN] orphan-concept adr-0011-change-log-and-jobs-loop  (no inbound links)
-[WARN] orphan-concept adr-0013-unit-of-work  (no inbound links)
 [WARN] orphan-concept adr  (no inbound links)
 [WARN] orphan-concept attendance-model  (no inbound links)
 [WARN] orphan-concept attendance-model-attendance-2025  (no inbound links)

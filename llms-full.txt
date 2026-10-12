@@ -1844,7 +1844,12 @@ optional `detail`, and the extension member `code`. A request that fails its
 contract gets `400` with code `request.invalid` and an `errors` list of paths
 and messages; a use case may attach the same list to its own `invalid` error to
 name every refused field at once (`location.invalid`), and a `conflict` may too
-(`guest.emailTaken`). Codes are dotted, named for what was refused
+(`guest.emailTaken`). An edit names the version it was made from
+(`expectedVersion`, the `version` every read of the subject carries); when the
+subject has changed since, the edit is refused with `409`,
+`<subject>.versionConflict`, and the extension member `current`: the subject
+as it is now, shaped as a read of it, so a client can redo the edit on it
+without another request. Codes are dotted, named for what was refused
 (`guest.protected`, `session.notFound`); a code once shipped keeps its meaning,
 and the client translates it rather than showing `detail`.
 
@@ -1919,9 +1924,9 @@ standalone build does not carry it.
   response no longer RSVPs twice or creates two proposals (#141), for clients
   that send the key. The web app's server actions do not, so #141 stays open
   until the UI calls the API.
-- Pagination, rate limiting and `expectedVersion` checks from the target are
-  not part of this decision; a table gains a version check only if it already
-  has a version column.
+- Pagination and rate limiting from the target are not part of this
+  decision. `expectedVersion` came later, with a `version` column on each
+  editable table.
 
 
 ---
@@ -2049,11 +2054,42 @@ repository interfaces that the rest of the target does not want.
 
 ## Decision
 
-Open: the user chooses (a), (b) or (c). Steps 2 and 3 of the run wait for it.
+(a), chosen by the user on 2026-10-06 over the recommendation: reads must
+never see a write that is still open, also outside the unit of work.
+
+- The database runs in WAL mode with `synchronous=NORMAL`. `db/container.ts`
+  opens a write connection and a read-only connection.
+- Repository methods named `find…` (but not `findOrCreate…`), `list…`,
+  `search…`, `count…` or `get…` run on the read connection. Every other method takes the in-process write
+  lock and runs on the write connection, so a write outside `uow.run` (the
+  jobs loop, a single-write path) waits for an open use case instead of
+  joining its transaction.
+- The lock is on `globalThis`, like the jobs nudge, so module copies under
+  Next share it. `withWriter(fn)` holds it and hands `fn` the write
+  connection; `uow.run` builds on it. Writes keep `BEGIN IMMEDIATE` for other
+  processes.
+- Test databases are files: each worker migrates a template once per test
+  file and copies it before each test.
 
 ## Consequences
 
-To be written with the decision.
+- A repository method that writes must not have a read name: the read
+  connection is read-only, so such a method fails on its first call.
+- A read sees each write as soon as it commits, and never one in progress.
+- Self-hosted databases switch to WAL on first start; `data.db-wal` and
+  `data.db-shm` sit next to `data.db` in the `/data` volume. The documented
+  backup (`.backup`) and restore already handle them. The database must stay
+  on a local file system.
+- `uow.run` opens `BEGIN IMMEDIATE` on the write connection under the write
+  lock and keeps it open across the callback's awaits; a repository's own
+  transaction inside it becomes a savepoint. A throw or a failure `Result`
+  rolls it back. `tx.record()` collects changes, which are written before
+  `COMMIT` and published after it, still under the lock.
+- `uow.read` has a third, read-only connection behind a lock of its own: a
+  plain read on the shared read connection would otherwise join an open read
+  transaction and see its older view.
+- A use case inside `uow.run` must write through `tx`, never through
+  `getRepositories()`: that waits for the lock it holds.
 
 
 ---
@@ -3846,7 +3882,7 @@ user-facing description of the API is
 
 ```
 server/
-  kernel/              Result and error kinds, Actor and resolveActor, actingGuest
+  kernel/              Result and error kinds, Actor and resolveActor, actingGuest, the unit of work
   http/                the Hono app (app.ts), middleware, problem details, OpenAPI document and its reference page (docs.ts)
   composition.ts       builds each module's use cases from the repositories and adapters
   modules/<module>/
@@ -3864,6 +3900,21 @@ days), `venue` (locations) and `settings` (site settings).
 The Next mount is `app/api/v1/[[...route]]/route.ts`; `proxy.ts` gates it like
 any other route (site password or admin cookie for `/api/v1`, the admin cookie for
 `/api/v1/admin/`). Repositories stay in `db/`.
+
+`db/container.ts` opens the database in WAL mode with two connections.
+Repository methods named `find…` (but not `findOrCreate…`), `list…`, `search…`,
+`count…` or `get…` run on a read-only connection, which sees only committed rows. Every other method
+takes the in-process write lock and runs on the write connection, so name a
+method that writes accordingly ([ADR 0013](adr/0013-unit-of-work.md)).
+
+A use case writes in `deps.uow.run(async (tx) => …)`
+(`server/kernel/unit-of-work.ts`): one transaction, which a throw or a failure
+`Result` rolls back. Inside it, read and write through `tx`, never through
+`deps.repos`: their writes wait for the lock `tx` holds, and their reads do not
+see its rows. `tx.record(change)` logs a change with the state; after commit,
+each change goes to the `subscribeToChanges` subscribers in `seq` order, the
+jobs loop among them. Keep I/O to other systems, such as mail, out of the
+callback. `uow.read` runs several reads on one consistent view.
 
 ## Adding a use case and its route
 
@@ -5538,7 +5589,7 @@ See [ADR 0002](adr/0002-testing-strategy.md) for the full rationale. Three tiers
 
 **Unit tests** (Vitest, `tests/unit/`) — pure functions and isolated business rules only. No DB, no I/O.
 
-**Integration tests** (Vitest, `tests/integration/`) — server actions and API route handlers against a real in-memory SQLite DB. Verify post-condition state through a read surface in order of preference: (1) the corresponding GET endpoint, (2) repo read methods, (3) direct DB rows (last resort). Only `redirect()` and `revalidatePath()` are mocked.
+**Integration tests** (Vitest, `tests/integration/`) — server actions and API route handlers against a real SQLite database file, restored from a migrated template before each test. Verify post-condition state through a read surface in order of preference: (1) the corresponding GET endpoint, (2) repo read methods, (3) direct DB rows (last resort). Only `redirect()` and `revalidatePath()` are mocked.
 
 **E2E tests** (Playwright, `tests/e2e/`) — behavior that only manifests in a browser: routing, phase-dependent UI, modals, form interaction, mobile layout. Prefer fewer, high-confidence tests over broad coverage.
 
