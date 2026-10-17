@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0012: A versioned HTTP API in the Next process"
 source: "https://developers.schellingboard.org/adr/0012-http-api-v1/"
 path: /adr/0012-http-api-v1/
-updated: 2026-10-12
+updated: 2026-10-17
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-12T11:24:18.490Z"
+  generated_at: "2026-10-17T14:46:05.457Z"
 ---
 # ADR 0012: A versioned HTTP API in the Next process
 
@@ -130,7 +130,9 @@ name every refused field at once (`location.invalid`), and a `conflict` may too
 subject has changed since, the edit is refused with `409`,
 `<subject>.versionConflict`, and the extension member `current`: the subject
 as it is now, shaped as a read of it, so a client can redo the edit on it
-without another request. Codes are dotted, named for what was refused
+without another request. Adding to or removing from a set (assigning rooms to
+an event) overwrites nothing, so it sends no version, but raises the version of
+each subject whose read it changes. Codes are dotted, named for what was refused
 (`guest.protected`, `session.notFound`); a code once shipped keeps its meaning,
 and the client translates it rather than showing `detail`.
 
