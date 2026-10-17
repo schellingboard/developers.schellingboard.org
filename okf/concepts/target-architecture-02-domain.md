@@ -6,7 +6,7 @@ path: /target-architecture/02-domain/
 updated: 2026-10-17
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T14:46:05.468Z"
+  generated_at: "2026-10-17T15:41:26.291Z"
 ---
 # 2 · Domain
 

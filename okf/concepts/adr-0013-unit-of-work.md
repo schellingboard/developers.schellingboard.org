@@ -6,7 +6,7 @@ path: /adr/0013-unit-of-work/
 updated: 2026-10-17
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T14:46:05.457Z"
+  generated_at: "2026-10-17T15:41:26.283Z"
 ---
 # ADR 0013: The unit of work
 
