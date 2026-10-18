@@ -3,10 +3,10 @@ type: concept
 title: "SchellingBoard developer documentation"
 source: "https://developers.schellingboard.org/"
 path: /
-updated: 2026-10-17
+updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T15:41:26.275Z"
+  generated_at: "2026-10-18T09:34:47.035Z"
 ---
 # SchellingBoard developer documentation
 

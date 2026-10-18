@@ -3,10 +3,10 @@ type: concept
 title: "Open questions"
 source: "https://developers.schellingboard.org/target-architecture/open-questions/"
 path: /target-architecture/open-questions/
-updated: 2026-10-17
+updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T15:41:26.298Z"
+  generated_at: "2026-10-18T09:34:47.061Z"
 ---
 # Open questions
 

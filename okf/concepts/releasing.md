@@ -3,10 +3,10 @@ type: concept
 title: "Releasing a New Version"
 source: "https://developers.schellingboard.org/releasing/"
 path: /releasing/
-updated: 2026-10-17
+updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T15:41:26.290Z"
+  generated_at: "2026-10-18T09:34:47.052Z"
 ---
 # Releasing a New Version
 

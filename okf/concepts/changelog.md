@@ -3,10 +3,10 @@ type: concept
 title: "Changelog and release notes"
 source: "https://developers.schellingboard.org/changelog/"
 path: /changelog/
-updated: 2026-10-17
+updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T15:41:26.286Z"
+  generated_at: "2026-10-18T09:34:47.046Z"
 ---
 # Changelog and release notes
 

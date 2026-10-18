@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0009: Move to a standalone repo in new schellingboard GitHub org"
 source: "https://developers.schellingboard.org/adr/0009-standalone-repository-in-own-org/"
 path: /adr/0009-standalone-repository-in-own-org/
-updated: 2026-10-17
+updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T15:41:26.281Z"
+  generated_at: "2026-10-18T09:34:47.040Z"
 ---
 # ADR 0009: Move to a standalone repo in new schellingboard GitHub org
 

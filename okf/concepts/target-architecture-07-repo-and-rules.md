@@ -3,10 +3,10 @@ type: concept
 title: "7 · Repository, enforced rules, testing, agents"
 source: "https://developers.schellingboard.org/target-architecture/07-repo-and-rules/"
 path: /target-architecture/07-repo-and-rules/
-updated: 2026-10-17
+updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-17T15:41:26.294Z"
+  generated_at: "2026-10-18T09:34:47.057Z"
 ---
 # 7 · Repository, enforced rules, testing, agents
 
