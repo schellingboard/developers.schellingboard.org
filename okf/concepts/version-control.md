@@ -6,7 +6,7 @@ path: /version-control/
 updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T10:54:40.404Z"
+  generated_at: "2026-10-18T11:35:54.800Z"
 ---
 # Version control and pull requests
 

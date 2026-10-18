@@ -1,0 +1,2324 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.7">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>ADR 0014: The change feed and the snapshot - SchellingBoard Developers</title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvdr1pdv">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvdr1pdv">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvdr1pdv" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvdr1pdv" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/">
+<meta property="og:title" content="ADR 0014: The change feed and the snapshot - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ADR 0014: The change feed and the snapshot - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SchellingBoard Developers","item":"https://developers.schellingboard.org/"},{"@type":"ListItem","position":2,"name":"Design"},{"@type":"ListItem","position":3,"name":"Decision records","item":"https://developers.schellingboard.org/adr/"},{"@type":"ListItem","position":4,"name":"0014: The change feed and the snapshot","item":"https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/"}]}
+</script>
+
+
+
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvdr1pdv" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvdr1pdv" >
+
+    
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvdr1pdv">
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/adr/0014-change-feed-and-snapshot.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../../" class="logo-link">
+              <img
+                src="../../logo/logo.svg"
+                alt="SchellingBoard" class="logo logo-light light-logo" style="height: 1.5rem;">
+              <img
+                src="../../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo logo-dark dark-logo" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme" title="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../server/" class=" "
+          >
+           
+<svg class="lucide-icon icon-server " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-server"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Server and API
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="active-parent collapsible expanded nav-group"  aria-expanded="true" >
+      
+        <a href="../../adr/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0010-workspace-packages/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0010: Domain and contracts as workspace packages
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0011-change-log-and-jobs-loop/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0011: A change log and one jobs loop
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0012-http-api-v1/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0012: A versioned HTTP API in the Next process
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../adr/0013-unit-of-work/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0013: The unit of work
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../../adr/0014-change-feed-and-snapshot/" class="active "
+          >
+          
+          <span class="nav-item-title">
+            0014: The change feed and the snapshot
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../../target-architecture/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Target architecture
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../target-architecture/01-overview/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            1 · Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/02-domain/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            2 · Domain
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/03-server/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            3 · Server
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/04-client/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            4 · Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/05-security/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            5 · Security
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/06-data-and-time/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            6 · Data and time
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/07-repo-and-rules/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            7 · Repository, enforced rules, testing, agents
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/08-decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            8 · Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/09-feedback-map/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            9 · Feedback and issues, mapped to the design
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/10-path-from-here/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            10 · A path from the current code
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../target-architecture/open-questions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Open questions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target="_blank" rel="noopener">
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../../attendance-model/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target="_blank" rel="noopener">
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  ADR 0014: The change feed and the snapshot
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200014%3A%20The%20change%20feed%20and%20the%20snapshot%0A%0A-%20**Status%3A**%20Proposed%0A-%20**Date%3A**%202026-10-07%0A-%20**Issue%3A**%20%231111%0A%0A%23%23%20Context%0A%0AA%20schedule%20shows%20what%20the%20server%20sent%20at%20render%20time.%20Nobody%20sees%20another%0Aperson&#039;s%20edit%20or%20RSVP%20until%20they%20reload%20(%231111).%20The%0A%5Btarget%20architecture%5D(..%2Ftarget-architecture%2F03-server.md%23change-feed-and-snapshot)%0Asolves%20this%20with%20a%20snapshot%20of%20the%20event%20and%20a%20feed%20of%20changes%20after%20it.%20The%0Abrowser%20keeps%20a%20replica%3A%20it%20loads%20the%20snapshot%20and%20applies%20each%20change%0A(%5B04%5D(..%2Ftarget-architecture%2F04-client.md%23the-replica)).%0A%5BStep%204%20of%20the%20path%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20brings%20this%20to%0Atoday&#039;s%20schedule%20(grid%2C%20agenda%2C%20kiosk%2C%20session%20modal)%20in%20the%20Next%20app.%0A%0AWhat%20exists%3A%20the%20change%20log%20(ADR%200011)%2C%20logging%20only%20%60session.changed%60%20and%0A%60session.deleted%60%2C%20whose%20payloads%20hold%20reaction%20fields%20(%60before%60%2C%0A%60rsvpGuestIds%60).%20The%20unit%20of%20work%20(ADR%200013)%20records%20changes%20in%20the%20state&#039;s%0Atransaction%20and%20publishes%20them%20in%20%60seq%60%20order%20under%20the%20write%20lock.%20There%20is%20a%0A%60uow.read%60%20for%20consistent%20reads.%20The%20schedule&#039;s%20data%20is%20%60EventContext%60%2C%0Aassembled%20in%20%60app%2F(site)%2F%5BeventSlug%5D%2Flayout-content.tsx%60.%20Identity%20is%20as%20in%0AADR%200012%3A%20an%20admin%20actor%2C%20and%20a%20guest%20actor%20that%20is%20either%20verified%20or%20open.%0A%0A%23%23%20Decision%20(proposed)%0A%0A%23%23%23%201.%20Change%20types%20and%20what%20the%20feed%20sends%0A%0AThe%20replica%20needs%20these%20types.%20Each%20payload%20carries%20the%20subject&#039;s%20full%20state%0Aas%20its%20audience%20may%20see%20it%2C%20including%20%60version%60%20where%20the%20row%20has%20one%2C%20so%20a%0Aform%20opened%20from%20the%20replica%20sends%20the%20right%20%60expectedVersion%60.%20A%20deletion%0Acarries%20only%20ids.%0A%0A%7C%20Subject%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Types%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Audience%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------------%20%7C%20-------------------------------------------------------%20%7C%20------------------%20%7C%0A%7C%20Event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60event.changed%60%2C%20%60event.deleted%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Day%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60day.created%60%2C%20%60day.changed%60%2C%20%60day.deleted%60%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Session%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60session.created%60%2C%20%60session.changed%60%2C%20%60session.deleted%60%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20RSVP%20count%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60session.attendanceChanged%60%20(%60sessionId%60%2C%20%60numRsvps%60)%20%20%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Own%20RSVP%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60rsvp.added%60%2C%20%60rsvp.removed%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20guests%3A%20the%20RSVPer%20%7C%0A%7C%20Location%20in%20this%20event%20%7C%20%60location.changed%60%2C%20%60location.removed%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Room%20unavailability%20%20%20%20%7C%20%60unavailability.added%60%2C%20%60unavailability.removed%60%20%20%20%20%20%20%20%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Event%20guest%20(public)%20%20%20%7C%20%60guest.joined%60%2C%20%60guest.changed%60%2C%20%60guest.left%60%20%20%20%20%20%20%20%20%20%20%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20Meeting%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60meeting.changed%60%2C%20%60meeting.deleted%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20guests%3A%20the%20two%20%20%20%20%7C%0A%7C%20Own%20meeting%20slots%20%20%20%20%20%20%7C%20%60availability.changed%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20guests%3A%20the%20owner%20%20%7C%0A%7C%20Meeting%20point%20%20%20%20%20%20%20%20%20%20%7C%20%60meetingPoint.changed%60%2C%20%60meetingPoint.deleted%60%20%20%20%20%20%20%20%20%20%20%7C%20event%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A-%20**Per-type%20projection.**%20The%20log%20keeps%20what%20reactions%20need.%20The%20feed%20sends%0A%20%20%60project(change)%60%2C%20one%20function%20per%20type%20in%20%60server%2Ffeed%2F%60%2C%20which%20drops%0A%20%20reaction-only%20fields%20(%60before%60%2C%20%60rsvpGuestIds%60).%20An%20unprojected%20type%20is%20not%0A%20%20sent.%20The%20projected%20message%20is%20a%20contract%20in%0A%20%20%60packages%2Fcontracts%2Fsrc%2Ffeed.ts%60.%20OpenAPI%20documents%20it%20with%20the%20feed.%0A-%20**Guest%20payloads**%20carry%20the%20public%20profile%20and%20its%20%60profileVersion%60%2C%20never%0A%20%20%60version%60%3A%20that%20one%20also%20moves%20on%20admin-only%20edits%20(email%2C%20protection).%0A-%20**Site-level%20subjects%20are%20recorded%20per%20event.**%20A%20location%20or%20a%20guest%0A%20%20belongs%20to%20several%20events%2C%20so%20a%20change%20to%20one%20is%20recorded%20once%20for%20each%0A%20%20event%20that%20shows%20it%2C%20with%20that%20%60event_id%60.%20A%20location%20taken%20out%20of%20an%20event%0A%20%20is%20%60location.removed%60%20for%20that%20event.%20The%20feed&#039;s%20resume%20query%20stays%0A%20%20%60WHERE%20event_id%20%3D%20%3F%20AND%20seq%20%3E%20%3F%60.%20This%20supersedes%20the%20target&#039;s%20%60NULL%60%0A%20%20%60event_id%60%20for%20site-level%20changes%0A%20%20(%5B06%5D(..%2Ftarget-architecture%2F06-data-and-time.md%23the-change-log-table))%3A%0A%20%20a%20per-event%20feed%20cannot%20resume%20over%20such%20rows.%0A-%20**Event%20guests**%20are%20the%20guests%20the%20event%20shows%3A%20its%20members%2C%20plus%20every%0A%20%20guest%20that%20a%20session%20or%20meeting%20of%20the%20event%20names%20(a%20host%20need%20not%20be%20a%0A%20%20member%2C%20and%20leaving%20keeps%20hosts%20and%20meetings).%20%60guest.joined%60%20and%0A%20%20%60guest.left%60%20mean%20entering%20and%20leaving%20that%20set%2C%20so%20%60hostIds%60%20always%20resolve.%0A-%20**Audiences**%20are%20the%20three%20that%20today&#039;s%20model%20has%3A%0A%20%20%60%7B%20kind%3A%20%22event%22%20%7D%60%2C%20%60%7B%20kind%3A%20%22guests%22%2C%20ids%20%7D%60%20and%20%60%7B%20kind%3A%20%22admins%22%20%7D%60.%0A%20%20%60event%60%20means%20anyone%20who%20may%20open%20the%20event%20page%20today%2C%20which%20is%20anyone%20past%0A%20%20the%20site%20password.%20No%20schedule%20type%20needs%20%60admins%60%20yet.%20The%20target&#039;s%0A%20%20%60persons%60%20and%20%60organizers%60%0A%20%20(%5B03%5D(..%2Ftarget-architecture%2F03-server.md%23change-log))%20are%20deliberately%20not%0A%20%20used%3A%20the%20ids%20are%20guest%20ids%2C%20and%20a%20stored%20%60persons%60%20row%20would%20name%20the%20wrong%0A%20%20kind%20of%20id.%20Step%206%20of%20the%20path%20maps%20the%20stored%20kinds%20when%20persons%20arrive.%0A%0A%23%23%23%202.%20Who%20receives%20guest-addressed%20changes%0A%0AA%20connection&#039;s%20viewer%20is%20the%20guest%20that%20%60verifiedCurrentUser%60%20returns%20when%20the%0Aconnection%20opens.%20This%20is%20a%20verified%20cookie%2C%20or%20an%20open%20cookie%20for%20an%0Aunprotected%20name%2C%20as%20the%20SSR%20snapshot%20decides%20today.%20An%20open%20cookie%20that%20names%0Aa%20protected%20guest%20gets%20no%20%60guests%60%20changes.%20The%20viewer%20is%20fixed%20for%20the%20life%0Aof%20the%20connection.%20When%20the%20user%20changes%20in%20this%20tab%20(select%2C%20log%20in%2C%20log%0Aout)%2C%20the%20client%20closes%20the%20feed%20and%20loads%20the%20snapshot%20and%20the%20feed%20again.%0A%0AOther%20tabs%20and%20other%20devices%20are%20covered%20by%20the%20server%3A%0A%0A-%20The%20hub%20closes%20every%20connection%20of%20a%20guest%20whose%20protection%20or%20credentials%0A%20%20change%2C%20or%20who%20is%20deleted.%20The%20browser%20reconnects%2C%20and%20the%20cookie%20is%20checked%0A%20%20again.%0A-%20The%20server%20ends%20every%20connection%20after%2010%20minutes.%20The%20browser%20reconnects%0A%20%20with%20%60Last-Event-ID%60%2C%20so%20a%20logout%20or%20user%20switch%20in%20another%20tab%20ends%20the%20old%0A%20%20viewer&#039;s%20stream%20within%20that%20time.%0A%0A%23%23%23%203.%20RSVPs%3A%20one%20change%20per%20audience%0A%0AAn%20RSVP%20records%20two%20changes%20in%20its%20transaction%3A%0A%0A-%20%60rsvp.added%60%20or%20%60rsvp.removed%60%20for%20the%20guest%3B%0A-%20%60session.attendanceChanged%60%20with%20the%20new%20count%20for%20the%20event.%0A%0ARejected%3A%20one%20change%20with%20a%20projection%20per%20audience.%20A%20stored%20row%20has%20one%0Aaudience%2C%20which%20is%20the%20security%20model%20of%20the%20target%20design.%20A%20row%20whose%0Acontent%20depends%20on%20who%20reads%20it%20would%20make%20that%20audience%20a%20lie%2C%20and%20a%20test%0Acannot%20assert%20one%20fixed%20payload%20for%20it.%20Two%20rows%20per%20RSVP%20is%20cheap.%0A%0A%23%23%23%204.%20State%20that%20follows%20the%20clock%0A%0AState%20that%20follows%20the%20clock%20is%20derived%20on%20the%20client%20from%20raw%20data%20and%20the%0Apage&#039;s%20clock%20(the%20dev%20fake%20clock%20included).%20No%20job%20records%20a%20change%20for%20it.%0AA%20meeting%20that%20is%20pending%20at%20its%20slot%20start%20shows%20as%20expired%2C%20as%0A%60meetingViewsFor%60%20decides%20it%20on%20the%20server%20today.%20Phases%20and%20folded%20days%20are%0Aderived%20on%20the%20client%20already.%0A%0AA%20meeting&#039;s%20clash%20lines%20are%20not%20in%20the%20replica%3A%20they%20rest%20on%20the%20other%20guest&#039;s%0ARSVPs%2C%20which%20never%20leave%20the%20server.%20The%20meetings%20column%20fetches%20them%20through%0Athe%20existing%20meetings%20query.%20It%20fetches%20again%2C%20debounced%2C%20after%20it%20applies%20a%0Asession%2C%20RSVP%20or%20meeting%20change.%0A%0A%23%23%23%205.%20Old%20rows%0A%0ARows%20written%20before%20the%20%60audience%60%20column%20have%20none%20(%60NULL%60).%20They%20are%20sent%20to%0Ano%20one.%20Their%20only%20reader%20is%20the%20reaction%2C%20as%20before.%0A%0A%23%23%23%206.%20Connections%20per%20tab%0A%0AEach%20tab%20opens%20one%20%60EventSource%60.%20HTTP%2F1.1%20allows%20six%20connections%20per%20origin%2C%0Aso%20the%20seventh%20tab%20would%20hang.%20Two%20measures%2C%20both%3A%0A%0A-%20A%20tab%20hidden%20for%20more%20than%2030%20seconds%20closes%20its%20feed.%20When%20it%20is%20visible%0A%20%20again%2C%20it%20opens%20a%20new%20%60EventSource%60%20with%20%60%3Fsince%3D%60%20the%20replica&#039;s%20%60seq%60%20(a%20new%0A%20%20%60EventSource%60%20cannot%20set%20%60Last-Event-ID%60)%20and%20shows%20%22reconnecting%22%20until%20it%0A%20%20is%20live.%20A%20kiosk%20stays%20visible%2C%20so%20it%20is%20never%20affected.%0A-%20The%20self-hosting%20docs%20ask%20for%20HTTP%2F2%20at%20the%20reverse%20proxy.%20Caddy%20and%20Traefik%0A%20%20use%20it%20by%20default%3B%20nginx%20needs%20%60http2%20on%60.%0A%0ARejected%20for%20now%3A%20one%20connection%20shared%20by%20tabs%20(%60SharedWorker%60%20or%0A%60BroadcastChannel%60%20with%20a%20leader).%20It%20is%20more%20code%20and%20a%20second%20failure%20mode%2C%0Afor%20a%20problem%20that%20the%20two%20measures%20above%20solve.%0A%0A%23%23%23%207.%20The%20snapshot%0A%0AThe%20snapshot%20contains%20what%20%60EventContext%60%20holds%20today%2C%20normalized%3A%0A%0A-%20%60seq%60%3A%20the%20newest%20%60seq%60%20(section%2010)%3B%0A-%20%60event%60%2C%20%60days%60%2C%20%60locations%60%20(this%20event&#039;s)%2C%20%60unavailability%60%2C%20and%20%60guests%60%0A%20%20(event%20guests&#039;%20public%20fields%2C%20section%201)%3B%0A-%20%60sessions%60%2C%20with%20%60hostIds%60%20and%20%60locationIds%60%20and%20without%20host%20names%20or%0A%20%20counts%3B%0A-%20%60counts%60%3A%20%60numRsvps%60%20by%20session%3B%0A-%20%60meetingPoints%60%3B%0A-%20%60me%60%2C%20only%20for%20a%20viewer%20as%20in%20section%202%3A%20%60guestId%60%2C%20own%20RSVPs%2C%20own%20meetings%0A%20%20(raw%2C%20without%20clash%20lines)%2C%20own%20meeting%20slots.%0A%0AIt%20is%20assembled%20in%20one%20%60uow.read%60%2C%20so%20the%20state%20and%20its%20%60seq%60%20agree.%0A%60server%2Ffeed%2Fsnapshot.ts%60%20builds%20it%20from%20module%20queries.%20A%20new%0Adependency-cruiser%20rule%20lets%20%60server%2Ffeed%2F%60%20import%20modules%20only%20through%0A%60module.ts%60.%20%60GET%20%2Fapi%2Fv1%2Fevents%2F%7Bslug%7D%2Fsnapshot%60%20serves%20it%2C%20and%20the%20SSR%20layout%0Acalls%20the%20same%20query.%20Golden-file%20tests%20cover%20each%20viewer%20(step%2010).%0A%0A%23%23%23%208.%20Denormalized%20fields%0A%0AThese%20are%20normalized%20in%20the%20replica.%20Selectors%20give%20the%20components%20their%0Acurrent%20shapes%20(a%20%60Session%60%20with%20host%20names%20and%20%60numRsvps%60).%0A%0A-%20Host%20names%20come%20from%20%60guests%60%2C%20so%20a%20rename%20is%20one%20%60guest.changed%60%2C%20not%20one%0A%20%20change%20per%20hosted%20session.%0A-%20%60numRsvps%60%20comes%20from%20%60counts%60%2C%20which%20%60session.attendanceChanged%60%20updates.%0A-%20Location%20names%20come%20from%20%60locations%60%2C%20in%20the%20same%20way.%0A%0A%23%23%23%209.%20Cascades%0A%0AThe%20use%20case%20that%20deletes%20a%20day%2C%20an%20event%20or%20a%20location%20records%20one%20change%0Afor%20each%20session%20it%20removes%20or%20edits%3A%20%60session.deleted%60%20for%20a%20session%20removed%0Awith%20its%20day%2C%20and%20%60session.changed%60%20for%20a%20session%20that%20loses%20a%20location.%20The%0Asame%20goes%20for%20any%20other%20subject%20a%20cascade%20removes%20from%20the%20replica.%0A%0AA%20guest%20delete%20is%20a%20cascade%20too.%20For%20each%20event%20of%20the%20guest%20it%20records%0A%60session.changed%60%20for%20each%20session%20they%20hosted%2C%20%60session.attendanceChanged%60%0Afor%20each%20session%20they%20had%20an%20RSVP%20for%2C%20%60meeting.deleted%60%20for%20each%20of%20their%0Ameetings%20(audience%3A%20the%20other%20guest)%20and%20%60guest.left%60.%20%60apply%60%0Astays%20one%20subject%20per%20change%2C%20and%20the%20log%20answers%20%22where%20did%20this%20session%0Ago%22.%20The%20session-notification%20reaction%20skips%20changes%20marked%0A%60cascade%3A%20true%60%2C%20so%20attendees%20are%20told%20no%20more%20than%20today%20(see%20Open%0Aquestions).%0A%0A%23%23%23%2010.%20The%20feed%0A%0A%60GET%20%2Fapi%2Fv1%2Fevents%2F%7Bslug%7D%2Ffeed%60%20serves%20%60text%2Fevent-stream%60%20through%20the%0Aexisting%20Hono%20mount.%0A%0A-%20**Start.**%20It%20starts%20after%20%60Last-Event-ID%60%20if%20the%20request%20has%20one%2C%20else%0A%20%20after%20%60%3Fsince%3D%60%20(the%20snapshot&#039;s%20%60seq%60).%20%60Last-Event-ID%60%20wins%20because%20the%0A%20%20browser&#039;s%20own%20reconnect%20keeps%20the%20original%20%60%3Fsince%3D%60.%20With%20neither%2C%20the%0A%20%20request%20gets%20%60400%60.%0A-%20**Stream.**%20Messages%20have%20%60id%3A%20seq%60%20and%20%60event%3A%20%3Ctype%3E%60%2C%20and%20their%20data%20is%0A%20%20the%20projected%20change.%20Responses%20have%20%60Cache-Control%3A%20no-store%2C%20no-transform%60%0A%20%20(so%20compression%20does%20not%20buffer%20the%20stream)%20and%20%60X-Accel-Buffering%3A%20no%60.%20A%0A%20%20comment%20every%2025%20seconds%20keeps%20proxies%20from%20closing%20the%20stream.%0A-%20**Reset.**%20%60EventSource%60%20cannot%20read%20a%20status%20code%2C%20so%20a%20resume%20point%20below%0A%20%20the%20prune%20watermark%20or%20above%20the%20newest%20%60seq%60%20(a%20restored%20backup)%20gets%20a%0A%20%20%60200%60%20stream%20with%20one%20%60event%3A%20reset%60%20message%2C%20which%20then%20closes.%20The%20client%0A%20%20closes%20its%20%60EventSource%60%20and%20loads%20the%20snapshot%20again.%20Any%20other%20failure%0A%20%20(%60401%60%2C%20%60404%60%2C%20network)%20ends%20or%20retries%20the%20%60EventSource%60%3B%20when%20it%20is%20closed%2C%0A%20%20the%20client%20loads%20the%20snapshot%20with%20%60fetch%60%2C%20which%20reads%20the%20status.%0A-%20**Newest%20%60seq%60**%20is%20the%20%60changes%60%20row%20of%20%60sqlite_sequence%60%3A%20the%20last%20%60seq%60%0A%20%20assigned%2C%20which%20pruning%20does%20not%20lower%20(%60max(seq)%60%20is%20%60NULL%60%20once%20pruning%0A%20%20empties%20the%20table).%20The%20snapshot%20and%20the%20reset%20check%20read%20it.%0A-%20**Watermark.**%20Pruning%20deletes%20by%20%60occurred_at%60%2C%20which%20follows%20the%20actor&#039;s%0A%20%20clock%2C%20so%20it%20can%20leave%20gaps%20in%20the%20middle%20of%20the%20log.%20Pruning%20changes%20to%3A%0A%20%20delete%20the%20contiguous%20prefix%20up%20to%20the%20newest%20%60seq%60%20that%20every%20reaction%20has%0A%20%20handled%20and%20that%20is%20older%20than%207%20days%2C%20and%20store%20that%20%60seq%60%20as%20the%0A%20%20watermark%20(a%20jobs%20cursor%20row%2C%20%60changes.pruned%60).%20A%20row%20dated%20in%20the%20future%0A%20%20by%20the%20dev%20fake%20clock%20stops%20pruning%20until%20that%20date%3B%20only%20dev%20builds%20have%0A%20%20the%20clock.%0A-%20**Slug%20change.**%20The%20feed%20is%20addressed%20by%20slug.%20On%20an%20%60event.changed%60%20with%20a%0A%20%20new%20slug%2C%20the%20client%20replaces%20the%20page%20URL%20and%20reopens%20the%20feed%20under%20the%0A%20%20new%20slug%20with%20%60%3Fsince%3D%60.%0A-%20**Command%20keys.**%20A%20change&#039;s%20%60command_key%60%20is%20the%20raw%20%60Idempotency-Key%60%2C%0A%20%20which%20is%20unique%20only%20per%20actor%20(ADR%200012%20section%205).%20The%20feed%20sends%20it%20only%0A%20%20to%20the%20connections%20of%20the%20actor%20who%20made%20the%20change%2C%20and%20the%20client%20matches%0A%20%20its%20echo%20by%20key%20and%20actor%2C%20never%20by%20key%20alone.%0A-%20**Slow%20clients.**%20A%20connection%20whose%20unsent%20data%20passes%201%20MB%20is%20closed.%20The%0A%20%20browser%20reconnects%20with%20%60Last-Event-ID%60%20and%20replays%20from%20the%20table.%0A-%20**Replay%2C%20then%20live.**%20A%20new%20connection%20registers%20with%20the%20hub%20and%20buffers%0A%20%20live%20changes.%20It%20then%20replays%20from%20the%20table%20up%20to%20the%20newest%20%60seq%60%2C%20and%0A%20%20then%20sends%20the%20buffered%20changes%20above%20the%20last%20one%20it%20replayed.%20Order%20and%0A%20%20completeness%20do%20not%20depend%20on%20timing.%0A%0A%23%23%23%2011.%20The%20hub%0A%0AThe%20hub%20runs%20in%20the%20process%20and%20lives%20on%20%60globalThis%60%20like%20the%20change%0Asubscribers.%20It%20subscribes%20with%20%60subscribeToChanges%60.%20Each%20connection%20holds%0A%60%7B%20eventId%2C%20viewer%2C%20lastSeq%2C%20send%20%7D%60.%20For%20each%20change%2C%20the%20hub%20checks%20event%2C%0Aaudience%20and%20%60seq%60%2C%20then%20projects%20the%20change%20and%20sends%20it%20to%20each%20connection%0Athat%20matches.%20Because%20publish%20runs%20under%20the%20write%20lock%2C%20changes%20arrive%20in%0A%60seq%60%20order.%20A%20connection%20that%20closes%20unregisters.%0A%0A%23%23%23%2012.%20Where%20the%20code%20lives%0A%0A-%20%60apply(replica%2C%20change)%60%20and%20the%20%60Replica%60%20type%20live%20in%0A%20%20%60packages%2Fdomain%2Fsrc%2Freplica.ts%60.%20%60apply%60%20is%20pure%3A%20it%20upserts%20or%20deletes%20per%0A%20%20type%2C%20ignores%20%60seq%20%E2%89%A4%20replica.seq%60%20and%20skips%20unknown%20types.%20Server%20tests%20use%0A%20%20it%20to%20check%20that%20payloads%20are%20sufficient%20(step%2011).%0A-%20Snapshot%20and%20feed%20message%20contracts%20live%20in%20%60packages%2Fcontracts%60.%0A-%20The%20client%20store%20lives%20in%20%60app%2F(site)%2F%5BeventSlug%5D%2Freplica%2F%60%3A%20the%20store%2C%20the%0A%20%20%60EventSource%60%20client%20and%20the%20sync%20state%2C%20with%20no%20React.%20One%20hook%20connects%0A%20%20them%20to%20%60EventContext%60.%20Step%205%20of%20the%20path%20moves%20the%20store%20to%20the%20SPA%0A%20%20unchanged.%0A%0A%23%23%20Consequences%0A%0A-%20Every%20use%20case%20that%20changes%20what%20the%20schedule%20shows%20records%20a%20change.%20Steps%0A%20%2012a%20to%2012c%20add%20them%20family%20by%20family%2C%20each%20with%20its%20%60apply%60%20case%20and%20a%0A%20%20sufficiency%20test.%0A-%20The%20log%20grows%3A%20two%20rows%20per%20RSVP%2C%20and%20one%20row%20per%20event%20for%20site-level%0A%20%20subjects.%20At%20the%20target&#039;s%20capacity%20this%20is%20a%20few%20thousand%20rows%20a%20day.%0A-%20The%20jobs%20loop&#039;s%20pruning%20changes%20from%20a%20time%20filter%20to%20a%20contiguous%20prefix%0A%20%20with%20a%20stored%20watermark.%0A-%20An%20open%20connection%20may%20serve%20a%20viewer%20who%20logged%20out%20in%20another%20tab%20for%20up%0A%20%20to%2010%20minutes.%0A-%20A%20protected%20guest%20who%20has%20not%20verified%20sees%20the%20schedule%20without%20their%20own%0A%20%20RSVPs%20and%20meetings%2C%20as%20now.%0A-%20Hidden%20tabs%20go%20quiet%20after%2030%20seconds%20and%20catch%20up%20when%20they%20are%20shown%0A%20%20again.%0A-%20Self-hosters%20behind%20HTTP%2F1.1%20proxies%20should%20switch%20to%20HTTP%2F2%3B%20the%20docs%20say%0A%20%20so.%0A%0A%23%23%20Open%20questions%0A%0A1.%20**Cascades%20and%20notifications.**%20When%20an%20organizer%20deletes%20a%20day%20or%20a%0A%20%20%20location%2C%20attendees%20of%20the%20affected%20sessions%20are%20told%20nothing%20today.%20This%0A%20%20%20ADR%20keeps%20that%20(the%20reaction%20skips%20%60cascade%3A%20true%60).%20Should%20they%20be%20told%3F%0A2.%20**Hidden%20tabs.**%20Closing%20the%20feed%20after%2030%20seconds%20hidden%20is%20the%0A%20%20%20recommendation.%20The%20alternative%20is%20to%20keep%20every%20tab%20connected%20and%20rely%0A%20%20%20only%20on%20HTTP%2F2.%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <a href="../../adr/">Decision records</a>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>0014: The change feed and the snapshot</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                      
+                    </div>
+                  
+                </div>
+                
+                  <h1 class="docmd-focus-title">
+                    ADR 0014: The change feed and the snapshot
+                  </h1>
+                
+                <h1 id="adr-0014-the-change-feed-and-the-snapshot" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>ADR 0014: The change feed and the snapshot</h1>
+<ul>
+<li><strong>Status:</strong> Proposed</li>
+<li><strong>Date:</strong> 2026-10-07</li>
+<li><strong>Issue:</strong> #1111</li>
+</ul>
+<h2 id="adr-0014-the-change-feed-and-the-snapshot-context" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
+<p>A schedule shows what the server sent at render time. Nobody sees another
+person’s edit or RSVP until they reload (#1111). The
+<a href="../../target-architecture/03-server/#change-feed-and-snapshot">target architecture</a>
+solves this with a snapshot of the event and a feed of changes after it. The
+browser keeps a replica: it loads the snapshot and applies each change
+(<a href="../../target-architecture/04-client/#the-replica">04</a>).
+<a href="../../target-architecture/10-path-from-here/">Step 4 of the path</a> brings this to
+today’s schedule (grid, agenda, kiosk, session modal) in the Next app.</p>
+<p>What exists: the change log (ADR 0011), logging only <code>session.changed</code> and
+<code>session.deleted</code>, whose payloads hold reaction fields (<code>before</code>,
+<code>rsvpGuestIds</code>). The unit of work (ADR 0013) records changes in the state’s
+transaction and publishes them in <code>seq</code> order under the write lock. There is a
+<code>uow.read</code> for consistent reads. The schedule’s data is <code>EventContext</code>,
+assembled in <code>app/(site)/[eventSlug]/layout-content.tsx</code>. Identity is as in
+ADR 0012: an admin actor, and a guest actor that is either verified or open.</p>
+<h2 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision (proposed)</h2>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-1-change-types-and-what-the-feed-sends" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-1-change-types-and-what-the-feed-sends" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Change types and what the feed sends</h3>
+<p>The replica needs these types. Each payload carries the subject’s full state
+as its audience may see it, including <code>version</code> where the row has one, so a
+form opened from the replica sends the right <code>expectedVersion</code>. A deletion
+carries only ids.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Types</th>
+<th>Audience</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Event</td>
+<td><code>event.changed</code>, <code>event.deleted</code></td>
+<td>event</td>
+</tr>
+<tr>
+<td>Day</td>
+<td><code>day.created</code>, <code>day.changed</code>, <code>day.deleted</code></td>
+<td>event</td>
+</tr>
+<tr>
+<td>Session</td>
+<td><code>session.created</code>, <code>session.changed</code>, <code>session.deleted</code></td>
+<td>event</td>
+</tr>
+<tr>
+<td>RSVP count</td>
+<td><code>session.attendanceChanged</code> (<code>sessionId</code>, <code>numRsvps</code>)</td>
+<td>event</td>
+</tr>
+<tr>
+<td>Own RSVP</td>
+<td><code>rsvp.added</code>, <code>rsvp.removed</code></td>
+<td>guests: the RSVPer</td>
+</tr>
+<tr>
+<td>Location in this event</td>
+<td><code>location.changed</code>, <code>location.removed</code></td>
+<td>event</td>
+</tr>
+<tr>
+<td>Room unavailability</td>
+<td><code>unavailability.added</code>, <code>unavailability.removed</code></td>
+<td>event</td>
+</tr>
+<tr>
+<td>Event guest (public)</td>
+<td><code>guest.joined</code>, <code>guest.changed</code>, <code>guest.left</code></td>
+<td>event</td>
+</tr>
+<tr>
+<td>Meeting</td>
+<td><code>meeting.changed</code>, <code>meeting.deleted</code></td>
+<td>guests: the two</td>
+</tr>
+<tr>
+<td>Own meeting slots</td>
+<td><code>availability.changed</code></td>
+<td>guests: the owner</td>
+</tr>
+<tr>
+<td>Meeting point</td>
+<td><code>meetingPoint.changed</code>, <code>meetingPoint.deleted</code></td>
+<td>event</td>
+</tr>
+</tbody>
+</table>
+</div><ul>
+<li><strong>Per-type projection.</strong> The log keeps what reactions need. The feed sends
+<code>project(change)</code>, one function per type in <code>server/feed/</code>, which drops
+reaction-only fields (<code>before</code>, <code>rsvpGuestIds</code>). An unprojected type is not
+sent. The projected message is a contract in
+<code>packages/contracts/src/feed.ts</code>. OpenAPI documents it with the feed.</li>
+<li><strong>Guest payloads</strong> carry the public profile and its <code>profileVersion</code>, never
+<code>version</code>: that one also moves on admin-only edits (email, protection).</li>
+<li><strong>Site-level subjects are recorded per event.</strong> A location or a guest
+belongs to several events, so a change to one is recorded once for each
+event that shows it, with that <code>event_id</code>. A location taken out of an event
+is <code>location.removed</code> for that event. The feed’s resume query stays
+<code>WHERE event_id = ? AND seq &gt; ?</code>. This supersedes the target’s <code>NULL</code>
+<code>event_id</code> for site-level changes
+(<a href="../../target-architecture/06-data-and-time/#the-change-log-table">06</a>):
+a per-event feed cannot resume over such rows.</li>
+<li><strong>Event guests</strong> are the guests the event shows: its members, plus every
+guest that a session or meeting of the event names (a host need not be a
+member, and leaving keeps hosts and meetings). <code>guest.joined</code> and
+<code>guest.left</code> mean entering and leaving that set, so <code>hostIds</code> always resolve.</li>
+<li><strong>Audiences</strong> are the three that today’s model has:
+<code>{ kind: &quot;event&quot; }</code>, <code>{ kind: &quot;guests&quot;, ids }</code> and <code>{ kind: &quot;admins&quot; }</code>.
+<code>event</code> means anyone who may open the event page today, which is anyone past
+the site password. No schedule type needs <code>admins</code> yet. The target’s
+<code>persons</code> and <code>organizers</code>
+(<a href="../../target-architecture/03-server/#change-log">03</a>) are deliberately not
+used: the ids are guest ids, and a stored <code>persons</code> row would name the wrong
+kind of id. Step 6 of the path maps the stored kinds when persons arrive.</li>
+</ul>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-2-who-receives-guest-addressed-changes" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-2-who-receives-guest-addressed-changes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Who receives guest-addressed changes</h3>
+<p>A connection’s viewer is the guest that <code>verifiedCurrentUser</code> returns when the
+connection opens. This is a verified cookie, or an open cookie for an
+unprotected name, as the SSR snapshot decides today. An open cookie that names
+a protected guest gets no <code>guests</code> changes. The viewer is fixed for the life
+of the connection. When the user changes in this tab (select, log in, log
+out), the client closes the feed and loads the snapshot and the feed again.</p>
+<p>Other tabs and other devices are covered by the server:</p>
+<ul>
+<li>The hub closes every connection of a guest whose protection or credentials
+change, or who is deleted. The browser reconnects, and the cookie is checked
+again.</li>
+<li>The server ends every connection after 10 minutes. The browser reconnects
+with <code>Last-Event-ID</code>, so a logout or user switch in another tab ends the old
+viewer’s stream within that time.</li>
+</ul>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-3-rsvps-one-change-per-audience" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-3-rsvps-one-change-per-audience" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. RSVPs: one change per audience</h3>
+<p>An RSVP records two changes in its transaction:</p>
+<ul>
+<li><code>rsvp.added</code> or <code>rsvp.removed</code> for the guest;</li>
+<li><code>session.attendanceChanged</code> with the new count for the event.</li>
+</ul>
+<p>Rejected: one change with a projection per audience. A stored row has one
+audience, which is the security model of the target design. A row whose
+content depends on who reads it would make that audience a lie, and a test
+cannot assert one fixed payload for it. Two rows per RSVP is cheap.</p>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-4-state-that-follows-the-clock" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-4-state-that-follows-the-clock" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. State that follows the clock</h3>
+<p>State that follows the clock is derived on the client from raw data and the
+page’s clock (the dev fake clock included). No job records a change for it.
+A meeting that is pending at its slot start shows as expired, as
+<code>meetingViewsFor</code> decides it on the server today. Phases and folded days are
+derived on the client already.</p>
+<p>A meeting’s clash lines are not in the replica: they rest on the other guest’s
+RSVPs, which never leave the server. The meetings column fetches them through
+the existing meetings query. It fetches again, debounced, after it applies a
+session, RSVP or meeting change.</p>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-5-old-rows" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-5-old-rows" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Old rows</h3>
+<p>Rows written before the <code>audience</code> column have none (<code>NULL</code>). They are sent to
+no one. Their only reader is the reaction, as before.</p>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-6-connections-per-tab" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-6-connections-per-tab" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. Connections per tab</h3>
+<p>Each tab opens one <code>EventSource</code>. HTTP/1.1 allows six connections per origin,
+so the seventh tab would hang. Two measures, both:</p>
+<ul>
+<li>A tab hidden for more than 30 seconds closes its feed. When it is visible
+again, it opens a new <code>EventSource</code> with <code>?since=</code> the replica’s <code>seq</code> (a new
+<code>EventSource</code> cannot set <code>Last-Event-ID</code>) and shows “reconnecting” until it
+is live. A kiosk stays visible, so it is never affected.</li>
+<li>The self-hosting docs ask for HTTP/2 at the reverse proxy. Caddy and Traefik
+use it by default; nginx needs <code>http2 on</code>.</li>
+</ul>
+<p>Rejected for now: one connection shared by tabs (<code>SharedWorker</code> or
+<code>BroadcastChannel</code> with a leader). It is more code and a second failure mode,
+for a problem that the two measures above solve.</p>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-7-the-snapshot" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-7-the-snapshot" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. The snapshot</h3>
+<p>The snapshot contains what <code>EventContext</code> holds today, normalized:</p>
+<ul>
+<li><code>seq</code>: the newest <code>seq</code> (section 10);</li>
+<li><code>event</code>, <code>days</code>, <code>locations</code> (this event’s), <code>unavailability</code>, and <code>guests</code>
+(event guests’ public fields, section 1);</li>
+<li><code>sessions</code>, with <code>hostIds</code> and <code>locationIds</code> and without host names or
+counts;</li>
+<li><code>counts</code>: <code>numRsvps</code> by session;</li>
+<li><code>meetingPoints</code>;</li>
+<li><code>me</code>, only for a viewer as in section 2: <code>guestId</code>, own RSVPs, own meetings
+(raw, without clash lines), own meeting slots.</li>
+</ul>
+<p>It is assembled in one <code>uow.read</code>, so the state and its <code>seq</code> agree.
+<code>server/feed/snapshot.ts</code> builds it from module queries. A new
+dependency-cruiser rule lets <code>server/feed/</code> import modules only through
+<code>module.ts</code>. <code>GET /api/v1/events/{slug}/snapshot</code> serves it, and the SSR layout
+calls the same query. Golden-file tests cover each viewer (step 10).</p>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-8-denormalized-fields" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-8-denormalized-fields" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. Denormalized fields</h3>
+<p>These are normalized in the replica. Selectors give the components their
+current shapes (a <code>Session</code> with host names and <code>numRsvps</code>).</p>
+<ul>
+<li>Host names come from <code>guests</code>, so a rename is one <code>guest.changed</code>, not one
+change per hosted session.</li>
+<li><code>numRsvps</code> comes from <code>counts</code>, which <code>session.attendanceChanged</code> updates.</li>
+<li>Location names come from <code>locations</code>, in the same way.</li>
+</ul>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-9-cascades" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-9-cascades" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9. Cascades</h3>
+<p>The use case that deletes a day, an event or a location records one change
+for each session it removes or edits: <code>session.deleted</code> for a session removed
+with its day, and <code>session.changed</code> for a session that loses a location. The
+same goes for any other subject a cascade removes from the replica.</p>
+<p>A guest delete is a cascade too. For each event of the guest it records
+<code>session.changed</code> for each session they hosted, <code>session.attendanceChanged</code>
+for each session they had an RSVP for, <code>meeting.deleted</code> for each of their
+meetings (audience: the other guest) and <code>guest.left</code>. <code>apply</code>
+stays one subject per change, and the log answers “where did this session
+go”. The session-notification reaction skips changes marked
+<code>cascade: true</code>, so attendees are told no more than today (see Open
+questions).</p>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-10-the-feed" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-10-the-feed" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>10. The feed</h3>
+<p><code>GET /api/v1/events/{slug}/feed</code> serves <code>text/event-stream</code> through the
+existing Hono mount.</p>
+<ul>
+<li><strong>Start.</strong> It starts after <code>Last-Event-ID</code> if the request has one, else
+after <code>?since=</code> (the snapshot’s <code>seq</code>). <code>Last-Event-ID</code> wins because the
+browser’s own reconnect keeps the original <code>?since=</code>. With neither, the
+request gets <code>400</code>.</li>
+<li><strong>Stream.</strong> Messages have <code>id: seq</code> and <code>event: &lt;type&gt;</code>, and their data is
+the projected change. Responses have <code>Cache-Control: no-store, no-transform</code>
+(so compression does not buffer the stream) and <code>X-Accel-Buffering: no</code>. A
+comment every 25 seconds keeps proxies from closing the stream.</li>
+<li><strong>Reset.</strong> <code>EventSource</code> cannot read a status code, so a resume point below
+the prune watermark or above the newest <code>seq</code> (a restored backup) gets a
+<code>200</code> stream with one <code>event: reset</code> message, which then closes. The client
+closes its <code>EventSource</code> and loads the snapshot again. Any other failure
+(<code>401</code>, <code>404</code>, network) ends or retries the <code>EventSource</code>; when it is closed,
+the client loads the snapshot with <code>fetch</code>, which reads the status.</li>
+<li><strong>Newest <code>seq</code></strong> is the <code>changes</code> row of <code>sqlite_sequence</code>: the last <code>seq</code>
+assigned, which pruning does not lower (<code>max(seq)</code> is <code>NULL</code> once pruning
+empties the table). The snapshot and the reset check read it.</li>
+<li><strong>Watermark.</strong> Pruning deletes by <code>occurred_at</code>, which follows the actor’s
+clock, so it can leave gaps in the middle of the log. Pruning changes to:
+delete the contiguous prefix up to the newest <code>seq</code> that every reaction has
+handled and that is older than 7 days, and store that <code>seq</code> as the
+watermark (a jobs cursor row, <code>changes.pruned</code>). A row dated in the future
+by the dev fake clock stops pruning until that date; only dev builds have
+the clock.</li>
+<li><strong>Slug change.</strong> The feed is addressed by slug. On an <code>event.changed</code> with a
+new slug, the client replaces the page URL and reopens the feed under the
+new slug with <code>?since=</code>.</li>
+<li><strong>Command keys.</strong> A change’s <code>command_key</code> is the raw <code>Idempotency-Key</code>,
+which is unique only per actor (ADR 0012 section 5). The feed sends it only
+to the connections of the actor who made the change, and the client matches
+its echo by key and actor, never by key alone.</li>
+<li><strong>Slow clients.</strong> A connection whose unsent data passes 1 MB is closed. The
+browser reconnects with <code>Last-Event-ID</code> and replays from the table.</li>
+<li><strong>Replay, then live.</strong> A new connection registers with the hub and buffers
+live changes. It then replays from the table up to the newest <code>seq</code>, and
+then sends the buffered changes above the last one it replayed. Order and
+completeness do not depend on timing.</li>
+</ul>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-11-the-hub" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-11-the-hub" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>11. The hub</h3>
+<p>The hub runs in the process and lives on <code>globalThis</code> like the change
+subscribers. It subscribes with <code>subscribeToChanges</code>. Each connection holds
+<code>{ eventId, viewer, lastSeq, send }</code>. For each change, the hub checks event,
+audience and <code>seq</code>, then projects the change and sends it to each connection
+that matches. Because publish runs under the write lock, changes arrive in
+<code>seq</code> order. A connection that closes unregisters.</p>
+<h3 id="adr-0014-the-change-feed-and-the-snapshot-decision-proposed-12-where-the-code-lives" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-12-where-the-code-lives" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>12. Where the code lives</h3>
+<ul>
+<li><code>apply(replica, change)</code> and the <code>Replica</code> type live in
+<code>packages/domain/src/replica.ts</code>. <code>apply</code> is pure: it upserts or deletes per
+type, ignores <code>seq ≤ replica.seq</code> and skips unknown types. Server tests use
+it to check that payloads are sufficient (step 11).</li>
+<li>Snapshot and feed message contracts live in <code>packages/contracts</code>.</li>
+<li>The client store lives in <code>app/(site)/[eventSlug]/replica/</code>: the store, the
+<code>EventSource</code> client and the sync state, with no React. One hook connects
+them to <code>EventContext</code>. Step 5 of the path moves the store to the SPA
+unchanged.</li>
+</ul>
+<h2 id="adr-0014-the-change-feed-and-the-snapshot-consequences" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
+<ul>
+<li>Every use case that changes what the schedule shows records a change. Steps
+12a to 12c add them family by family, each with its <code>apply</code> case and a
+sufficiency test.</li>
+<li>The log grows: two rows per RSVP, and one row per event for site-level
+subjects. At the target’s capacity this is a few thousand rows a day.</li>
+<li>The jobs loop’s pruning changes from a time filter to a contiguous prefix
+with a stored watermark.</li>
+<li>An open connection may serve a viewer who logged out in another tab for up
+to 10 minutes.</li>
+<li>A protected guest who has not verified sees the schedule without their own
+RSVPs and meetings, as now.</li>
+<li>Hidden tabs go quiet after 30 seconds and catch up when they are shown
+again.</li>
+<li>Self-hosters behind HTTP/1.1 proxies should switch to HTTP/2; the docs say
+so.</li>
+</ul>
+<h2 id="adr-0014-the-change-feed-and-the-snapshot-open-questions" class="docmd-heading"><a href="#adr-0014-the-change-feed-and-the-snapshot-open-questions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Open questions</h2>
+<ol>
+<li><strong>Cascades and notifications.</strong> When an organizer deletes a day or a
+location, attendees of the affected sessions are told nothing today. This
+ADR keeps that (the reaction skips <code>cascade: true</code>). Should they be told?</li>
+<li><strong>Hidden tabs.</strong> Closing the feed after 30 seconds hidden is the
+recommendation. The alternative is to keep every tab connected and rely
+only on HTTP/2.</li>
+</ol>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../../adr/0013-unit-of-work/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            0013: The unit of work
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <a href="../../target-architecture/" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Target architecture
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+              <div class="toc-sidebar">
+                
+                
+                  
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot" class="toc-link">ADR 0014: The change feed and the snapshot</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-context" class="toc-link">Context</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed" class="toc-link">Decision (proposed)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-1-change-types-and-what-the-feed-sends" class="toc-link">1. Change types and what the feed sends</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-2-who-receives-guest-addressed-changes" class="toc-link">2. Who receives guest-addressed changes</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-3-rsvps-one-change-per-audience" class="toc-link">3. RSVPs: one change per audience</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-4-state-that-follows-the-clock" class="toc-link">4. State that follows the clock</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-5-old-rows" class="toc-link">5. Old rows</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-6-connections-per-tab" class="toc-link">6. Connections per tab</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-7-the-snapshot" class="toc-link">7. The snapshot</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-8-denormalized-fields" class="toc-link">8. Denormalized fields</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-9-cascades" class="toc-link">9. Cascades</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-10-the-feed" class="toc-link">10. The feed</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-11-the-hub" class="toc-link">11. The hub</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-decision-proposed-12-where-the-code-lives" class="toc-link">12. Where the code lives</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-consequences" class="toc-link">Consequences</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#adr-0014-the-change-feed-and-the-snapshot-open-questions" class="toc-link">Open questions</a>
+        </li>
+      
+    </ul>
+  </div>
+
+                
+                
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1791810603000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1791810603000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: address each logged change to an audience and its command">feat: address each logged change to a...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791810603000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: propose ADR 0014 for the change feed and the snapshot">docs: propose ADR 0014 for the change...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791810603000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../../assets/js/docmd-main.js?v=mvdr1pdv"></script>
+      
+      <script src="../../assets/js/docmd-git.js?v=mvdr1pdv"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvdr1pdv" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvdr1pdv" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvdr1pdv" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvdr1pdv" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../../assets/js/likec4-embed.js?v=mvdr1pdv"></script>
+        
+      
+      
+  </body>
+</html>

@@ -81,6 +81,12 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0014: The change feed and the snapshot",
+      "url": "https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
