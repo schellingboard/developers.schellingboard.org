@@ -6,7 +6,7 @@ path: /adr/0014-change-feed-and-snapshot/
 updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T11:35:54.789Z"
+  generated_at: "2026-10-18T12:03:45.674Z"
 ---
 # ADR 0014: The change feed and the snapshot
 
@@ -71,10 +71,16 @@ carries only ids.
   `event_id` for site-level changes
   ([06](../target-architecture/06-data-and-time.md#the-change-log-table)):
   a per-event feed cannot resume over such rows.
-- **Event guests** are the guests the event shows: its members, plus every
-  guest that a session or meeting of the event names (a host need not be a
-  member, and leaving keeps hosts and meetings). `guest.joined` and
-  `guest.left` mean entering and leaving that set, so `hostIds` always resolve.
+- **Event guests** are the guests the event shows everyone: its members and
+  its sessions' hosts (a host need not be a member, and leaving keeps hosted
+  sessions). `guest.joined` and `guest.left` mean entering and leaving that
+  set, so `hostIds` always resolve. Each carries `member`, since the
+  schedule's guest lists (host picker, attendee count) are members only; a
+  change of membership alone is a `guest.changed`. Meeting parties are not
+  in it: a meeting request is private to its two guests. A viewer gets the
+  other party of each own meeting in `me.meetingGuests`, and a meeting change
+  carries both parties' lean fields, so a partner's rename shows with the
+  next change to that meeting.
 - **Audiences** are the three that today's model has:
   `{ kind: "event" }`, `{ kind: "guests", ids }` and `{ kind: "admins" }`.
   `event` means anyone who may open the event page today, which is anyone past
@@ -160,12 +166,16 @@ The snapshot contains what `EventContext` holds today, normalized:
 - `counts`: `numRsvps` by session;
 - `meetingPoints`;
 - `me`, only for a viewer as in section 2: `guestId`, own RSVPs, own meetings
-  (raw, without clash lines), own meeting slots.
+  (raw, without clash lines) and their other parties (`meetingGuests`), own
+  meeting slots.
 
 It is assembled in one `uow.read`, so the state and its `seq` agree.
-`server/feed/snapshot.ts` builds it from module queries. A new
-dependency-cruiser rule lets `server/feed/` import modules only through
-`module.ts`. `GET /api/v1/events/{slug}/snapshot` serves it, and the SSR layout
+`server/feed/snapshot.ts` builds it from module queries and the kernel's
+`newestSeq`. It imports modules only through `module.ts` (an existing
+dependency-cruiser rule) and no `db/` code beyond types (a new rule), so it
+reaches the repositories only through `uow.read`. The repositories it may use
+are typed as the ones those queries take; review, not a rule, keeps it from
+calling them directly. `GET /api/v1/events/{slug}/snapshot` serves it, and the SSR layout
 calls the same query. Golden-file tests cover each viewer (step 10).
 
 ### 8. Denormalized fields
@@ -229,7 +239,11 @@ existing Hono mount.
 - **Command keys.** A change's `command_key` is the raw `Idempotency-Key`,
   which is unique only per actor (ADR 0012 section 5). The feed sends it only
   to the connections of the actor who made the change, and the client matches
-  its echo by key and actor, never by key alone.
+  its echo by key and actor, never by key alone. "The actor" is coarser here
+  than in ADR 0012: admins have no id, so every admin connection gets every
+  admin's keys, and a guest's keys go to any connection naming that guest,
+  whatever its cookie level. A key reveals only that someone made a request,
+  so this is accepted until persons have ids (step 6 of the path).
 - **Slow clients.** A connection whose unsent data passes 1 MB is closed. The
   browser reconnects with `Last-Event-ID` and replays from the table.
 - **Replay, then live.** A new connection registers with the hub and buffers
@@ -248,15 +262,22 @@ that matches. Because publish runs under the write lock, changes arrive in
 
 ### 12. Where the code lives
 
-- `apply(replica, change)` and the `Replica` type live in
-  `packages/domain/src/replica.ts`. `apply` is pure: it upserts or deletes per
-  type, ignores `seq ≤ replica.seq` and skips unknown types. Server tests use
-  it to check that payloads are sufficient (step 11).
+- `apply(replica, message)` lives with the client store, in
+  `app/(site)/[eventSlug]/replica/apply.ts`. The replica is the snapshot's
+  wire type (`Snapshot`) and a message the feed's (`FeedMessage`), both from
+  `packages/contracts`. `apply` is pure: it upserts or deletes per type,
+  ignores `seq ≤ replica.seq` and skips unknown types, moving `seq` past
+  them. Server tests use it to check that payloads are sufficient (step 11).
+  Rejected: `packages/domain`, which may import nothing but itself; it would
+  need its own copy of the wire types, kept in step with the schemas.
+- `reaches(audience, viewer)` (the audience filter) is in
+  `packages/domain/src/change.ts`; `project(change, viewer)` is in
+  `server/feed/project.ts` and gives `commandKey` only to the change's actor.
 - Snapshot and feed message contracts live in `packages/contracts`.
-- The client store lives in `app/(site)/[eventSlug]/replica/`: the store, the
-  `EventSource` client and the sync state, with no React. One hook connects
-  them to `EventContext`. Step 5 of the path moves the store to the SPA
-  unchanged.
+- The client store lives in `app/(site)/[eventSlug]/replica/`: the store,
+  the `EventSource` client, the sync state and the selectors, with no React.
+  One hook connects them to `EventContext`. Step 5 of the path moves the
+  store to the SPA unchanged.
 
 ## Consequences
 

@@ -6,7 +6,7 @@ path: /target-architecture/01-overview/
 updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T11:35:54.794Z"
+  generated_at: "2026-10-18T12:03:45.682Z"
 ---
 # 1 · Overview
 
