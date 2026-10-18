@@ -6,7 +6,7 @@ path: /adr/0012-http-api-v1/
 updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T09:34:47.042Z"
+  generated_at: "2026-10-18T10:54:40.392Z"
 ---
 # ADR 0012: A versioned HTTP API in the Next process
 
@@ -183,7 +183,8 @@ and names are not sorted by locale); a list sorts by fields that rarely change
 the list's name and the last item's sort key, not a position, so an item
 deleted between two requests shifts nothing, while one that changes its sort
 key meanwhile may be skipped or seen twice. A cursor the server cannot read, or
-one from another list, is `400 cursor.invalid`. Lists bounded by something else
+one from another list (another event's sessions, another proposal's
+comments), is `400 cursor.invalid`. Lists bounded by something else
 (an event's days, its locations, a guest's votes) stay whole. The pages are cut
 in the HTTP layer from the use case's full list: the contract allows reading
 pages from the database later without a change for clients.

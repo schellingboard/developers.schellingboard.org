@@ -6,7 +6,7 @@ path: /target-architecture/08-decisions/
 updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T09:34:47.057Z"
+  generated_at: "2026-10-18T10:54:40.401Z"
 ---
 # 8 · Decisions
 

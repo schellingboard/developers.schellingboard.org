@@ -6,7 +6,7 @@ path: /attendance-model/attendance-2025/
 updated: 2026-10-18
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T09:34:47.046Z"
+  generated_at: "2026-10-18T10:54:40.394Z"
 ---
 # Predicting session attendance from voting results
 
