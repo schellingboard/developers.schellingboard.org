@@ -3,10 +3,10 @@ type: concept
 title: "Architecture rules"
 source: "https://developers.schellingboard.org/architecture-rules/"
 path: /architecture-rules/
-updated: 2026-10-18
+updated: 2026-10-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T12:03:45.675Z"
+  generated_at: "2026-10-20T07:41:29.718Z"
 ---
 # Architecture rules
 
@@ -117,6 +117,13 @@ module's `application/` imports no HTTP, framework or `db/` code; a module is
 imported only through its `module.ts`, by other modules, tests and `app/` alike;
 and `app/` reaches `server/` only through `module.ts`, `composition.ts`, the
 kernel and the API mount. See [The server and the API](server.md).
+
+`app/` does not import the repository container (`@/db/container`) directly:
+pages and actions read through `pageReads()` or a use case. Only direct imports
+are checked; some `utils/` helpers still reach the container. The auth flows
+(`actions/user-auth.ts`, `auth/login`, `auth/reset`) are exempt. `adminReads()`
+(`server/admin-reads.ts`) is importable only from `app/admin/` and
+`app/actions/admin-*`.
 
 `make arch-graph` renders the graph to `arch-graph.svg` (needs graphviz), which
 is usually faster than arguing about where a boundary should go.

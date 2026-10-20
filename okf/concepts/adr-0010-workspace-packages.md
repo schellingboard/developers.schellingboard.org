@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0010: Domain and contracts as workspace packages"
 source: "https://developers.schellingboard.org/adr/0010-workspace-packages/"
 path: /adr/0010-workspace-packages/
-updated: 2026-10-18
+updated: 2026-10-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T12:03:45.672Z"
+  generated_at: "2026-10-20T07:41:29.715Z"
 ---
 # ADR 0010: Domain and contracts as workspace packages
 

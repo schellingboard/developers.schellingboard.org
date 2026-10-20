@@ -3,10 +3,10 @@ type: concept
 title: "Database Migrations"
 source: "https://developers.schellingboard.org/migrations/"
 path: /migrations/
-updated: 2026-10-18
+updated: 2026-10-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-18T12:03:45.680Z"
+  generated_at: "2026-10-20T07:41:29.722Z"
 ---
 # Database Migrations
 
