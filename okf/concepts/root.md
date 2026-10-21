@@ -6,7 +6,7 @@ path: /
 updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T20:46:28.921Z"
+  generated_at: "2026-10-21T20:47:03.340Z"
 ---
 # SchellingBoard developer documentation
 

@@ -6,7 +6,7 @@ path: /changelog/
 updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T20:46:28.929Z"
+  generated_at: "2026-10-21T20:47:03.353Z"
 ---
 # Changelog and release notes
 
