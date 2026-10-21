@@ -6,7 +6,7 @@ path: /target-architecture/diagrams/
 updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T14:57:20.799Z"
+  generated_at: "2026-10-21T20:46:28.938Z"
 ---
 # Diagrams
 

@@ -6,7 +6,7 @@ path: /documentation/
 updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T14:57:20.794Z"
+  generated_at: "2026-10-21T20:46:28.930Z"
 ---
 # Documentation and the sites
 

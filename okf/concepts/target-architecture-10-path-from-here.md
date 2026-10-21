@@ -6,7 +6,7 @@ path: /target-architecture/10-path-from-here/
 updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T14:57:20.799Z"
+  generated_at: "2026-10-21T20:46:28.937Z"
 ---
 # 10 · A path from the current code
 
@@ -37,8 +37,7 @@ sketch, not a plan; each step would get its own issue and ADR.
    A use case writing through several repositories is atomic (the unit of work),
    pages read through page reads, lists are paged, edits carry
    `expectedVersion`, and the UI sends `Idempotency-Key`. Still open: location
-   images and the push key outside the API, and the `utils/` helpers that still
-   read the repositories.
+   images and the push key outside the API.
 
 4. **Ship the feed and the snapshot.** SSE endpoint over the change log; a
    `replica` package in the Next app that the schedule page reads from. Live
@@ -52,7 +51,11 @@ sketch, not a plan; each step would get its own issue and ADR.
 5. **Move screens to the SPA one family at a time.** Start with the schedule
    (biggest win: replica, filters, agenda, kiosk), then proposals and voting,
    people and meetings, settings, admin. Each moved screen deletes its server
-   actions. A route in Next redirects to the SPA route until all are moved.
+   actions.
+
+   **Started** ([ADR 0015](../adr/0015-spa-alongside-next.md)): the SPA owns
+   every URL and Next moves under `/legacy` until all screens have moved.
+
 6. **Identity and roles.** Persons, participations, login sessions, assurance,
    join links; migrate protected guests to verified credentials; replace the admin
    password with a site-admin role and the bootstrap link.

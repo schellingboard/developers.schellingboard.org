@@ -5,12 +5,12 @@ bundle:
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T14:57:20.801Z"
+  generated_at: "2026-10-21T20:46:28.940Z"
   default_type: concept
 stats:
-  concepts: 45
+  concepts: 46
   by_type:
-    concept: 45
+    concept: 46
   locales: 
   versions: 
 concepts:
@@ -146,6 +146,15 @@ concepts:
     description: ""
     path: /adr/0014-change-feed-and-snapshot/
     file: concepts/adr-0014-change-feed-and-snapshot.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0015-spa-alongside-next
+    type: concept
+    title: "ADR 0015: The SPA alongside Next"
+    description: ""
+    path: /adr/0015-spa-alongside-next/
+    file: concepts/adr-0015-spa-alongside-next.md
     locale: ""
     version: ""
     tags: 

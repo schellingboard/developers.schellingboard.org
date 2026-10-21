@@ -18,6 +18,7 @@
 - [ADR 0012: A versioned HTTP API in the Next process](https://developers.schellingboard.org/adr/0012-http-api-v1/)
 - [ADR 0013: The unit of work](https://developers.schellingboard.org/adr/0013-unit-of-work/)
 - [ADR 0014: The change feed and the snapshot](https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/)
+- [ADR 0015: The SPA alongside Next](https://developers.schellingboard.org/adr/0015-spa-alongside-next/)
 - [Architecture decision records](https://developers.schellingboard.org/adr/)
 - [Architecture rules](https://developers.schellingboard.org/architecture-rules/)
 - [Predicting session attendance from voting results](https://developers.schellingboard.org/attendance-model/attendance-2025/)

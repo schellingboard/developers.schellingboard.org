@@ -87,6 +87,12 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0015: The SPA alongside Next",
+      "url": "https://developers.schellingboard.org/adr/0015-spa-alongside-next/",
+      "description": "",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",

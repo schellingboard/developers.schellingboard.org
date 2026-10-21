@@ -6,7 +6,7 @@ path: /architecture-rules/
 updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T14:57:20.793Z"
+  generated_at: "2026-10-21T20:46:28.928Z"
 ---
 # Architecture rules
 
@@ -119,9 +119,11 @@ and `app/` reaches `server/` only through `module.ts`, `composition.ts`, the
 kernel and the API mount. See [The server and the API](server.md).
 
 `app/` does not import the repository container (`@/db/container`) directly:
-pages and actions read through `pageReads()` or a use case. Only direct imports
-are checked; some `utils/` helpers still reach the container. The auth flows
-(`actions/user-auth.ts`, `auth/login`, `auth/reset`) are exempt. `adminReads()`
+pages, actions and the `utils/` helpers they call read through `pageReads()` or
+a use case; the rule covers `app/` and `utils/`. Exempt: the auth flows
+(`actions/user-auth.ts`, `auth/login`, `auth/reset`), which run before an actor
+exists, and the job loop, notification and push infrastructure (`utils/jobs/`,
+`utils/notifications.ts`, `utils/push.ts`). `adminReads()`
 (`server/admin-reads.ts`) is importable only from `app/admin/` and
 `app/actions/admin-*`.
 

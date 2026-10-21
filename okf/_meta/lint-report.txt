@@ -13,6 +13,7 @@
 [WARN] missing-type /adr/0012-http-api-v1/  (using fallback 'concept')
 [WARN] missing-type /adr/0013-unit-of-work/  (using fallback 'concept')
 [WARN] missing-type /adr/0014-change-feed-and-snapshot/  (using fallback 'concept')
+[WARN] missing-type /adr/0015-spa-alongside-next/  (using fallback 'concept')
 [WARN] missing-type /adr/  (using fallback 'concept')
 [WARN] missing-type /architecture-rules/  (using fallback 'concept')
 [WARN] missing-type /attendance-model/  (using fallback 'concept')
