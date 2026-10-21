@@ -1955,7 +1955,7 @@ standalone build does not carry it.
 
 # ADR 0013: The unit of work
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-06
 
 ## Context
@@ -2118,7 +2118,7 @@ never see a write that is still open, also outside the unit of work.
 
 # ADR 0014: The change feed and the snapshot
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-07
 - **Issue:** #1111
 
@@ -2347,7 +2347,9 @@ existing Hono mount.
 - **Command keys.** A change's `command_key` is the raw `Idempotency-Key`,
   which is unique only per actor (ADR 0012 section 5). The feed sends it only
   to the connections of the actor who made the change, and the client matches
-  its echo by key and actor, never by key alone. "The actor" is coarser here
+  its echo by key and actor, never by key alone. A connection only receives
+  its own actor's keys, so a key it has seen already belongs to that actor.
+  "The actor" is coarser here
   than in ADR 0012: admins have no id, so every admin connection gets every
   admin's keys, and a guest's keys go to any connection naming that guest,
   whatever its cookie level. A key reveals only that someone made a request,
@@ -2445,8 +2447,8 @@ the tracking issue where there is one.
 | [0010](0010-workspace-packages.md)                   | Domain and contracts as workspace packages                  | 2026-10-03 |
 | [0011](0011-change-log-and-jobs-loop.md)             | A change log and one jobs loop                              | 2026-10-03 |
 | [0012](0012-http-api-v1.md)                          | A versioned HTTP API in the Next process                    | 2026-10-04 |
-| [0013](0013-unit-of-work.md)                         | The unit of work (proposed)                                 | 2026-10-06 |
-| [0014](0014-change-feed-and-snapshot.md)             | The change feed and the snapshot (proposed)                 | 2026-10-07 |
+| [0013](0013-unit-of-work.md)                         | The unit of work                                            | 2026-10-06 |
+| [0014](0014-change-feed-and-snapshot.md)             | The change feed and the snapshot                            | 2026-10-07 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and
@@ -4215,6 +4217,7 @@ user-facing description of the API is
 server/
   kernel/              Result and error kinds, Actor and resolveActor, actingGuest, the unit of work
   http/                the Hono app (app.ts), middleware, problem details, OpenAPI document and its reference page (docs.ts)
+  feed/                the snapshot and the SSE change feed (routes.ts), the hub of open connections, projection of a change to a viewer
   composition.ts       builds each module's use cases from the repositories and adapters
   modules/<module>/
     module.ts          the only file anything outside the module imports
@@ -4243,11 +4246,46 @@ A use case writes in `deps.uow.run(async (tx) => …)`
 `Result` rolls back. Inside it, read and write through `tx`, never through
 `deps.repos`: their writes wait for the lock `tx` holds, and their reads do not
 see its rows. `tx.record(change)` logs a change with the state, addressed to
-the audience `audienceOf` gives (add a case for each new type) and marked with
+the audience `audienceOf` (`packages/domain/src/change.ts`) gives (add a case for each new type) and marked with
 the request's `Idempotency-Key`, if any; after commit,
 each change goes to the `subscribeToChanges` subscribers in `seq` order, the
 jobs loop among them. Keep I/O to other systems, such as mail, out of the
 callback. `uow.read` runs several reads on one consistent view.
+
+## Reading for pages
+
+Site pages do not call the repositories. `pageReads()` in `composition.ts`
+gives plain reads (no actor: the pages sit behind the site password only), and
+`adminReads()` in `server/admin-reads.ts` the admin pages' reads. Each is a
+function in a module's `application/page-reads.ts` taking a `Pick` of the
+repositories. `make arch` enforces it, with the auth flows allow-listed.
+
+## The feed and the snapshot
+
+[ADR 0014](adr/0014-change-feed-and-snapshot.md) has the decisions.
+`GET /api/v1/events/{slug}/snapshot` returns what one viewer may see of an
+event, with the `seq` of the newest change it includes. `GET
+/api/v1/events/{slug}/feed?since=` is a Server-Sent Events stream: it replays
+the `changes` table after `since`, then follows live changes registered with
+the hub. `project()` in `server/feed/project.ts` turns each recorded change
+into the message that viewer may see, or none; a new change type needs a case
+there and in `audienceOf`. The message carries the `command_key` only for the
+actor who made the change.
+
+The client applies messages to its replica in
+`app/(site)/[eventSlug]/replica/` (`apply.ts`, a pure function from replica and
+message to replica; `store.ts`; `live-replica.ts` for the connection). A new
+message type needs a case in `apply.ts`: unknown types only move `seq`.
+
+## Keys from the UI
+
+A server action or legacy route that creates something runs under
+`idempotentAction()` from `composition.ts`, with a key the form made when it
+opened (`newIdempotencyKey()` in `utils/idempotency-key.ts`) and sent as the
+`Idempotency-Key` header or an argument outside the zod schema. A success is
+stored and replayed for a repeat; a refusal frees the key. The changes it
+records carry the key, and the feed echoes it to the sender, which is how the
+RSVP overlay (`replica/rsvp-overlay.ts`) knows its toggle has arrived.
 
 ## Adding a use case and its route
 
@@ -5722,24 +5760,29 @@ sketch, not a plan; each step would get its own issue and ADR.
    contracts, generate `openapi.json` and `api-client`. Server actions start
    delegating to use cases so both paths share one implementation.
 
-   **Done** ([ADR 0012](../adr/0012-http-api-v1.md), [#677](https://github.com/schellingboard/schellingboard/issues/677)):
-   Hono under `/api/v1` as route handlers, use cases in `server/modules/`, and
-   every server action and legacy route that changes data delegating to them,
-   except sign-in, passwords and the dev tools (see
-   [The server and the API](../server.md)). Still open: the
-   [#1006](https://github.com/schellingboard/schellingboard/issues/1006) gaps (an
-   admin session list, a partial session update that keeps an explicit
-   capacity, a session delete reporting the RSVPs it removed, find-or-create for
-   locations by name); pages that read the repositories directly instead of
-   through queries; the unit of work, so a use case writing through two
-   repositories is not yet atomic; pagination, rate limiting and
-   `expectedVersion`; location images and the push key outside the API; and
-   [#141](https://github.com/schellingboard/schellingboard/issues/141), which
-   closes once the UI sends `Idempotency-Key`.
+   **Done** ([ADR 0012](../adr/0012-http-api-v1.md),
+   [ADR 0013](../adr/0013-unit-of-work.md),
+   [#677](https://github.com/schellingboard/schellingboard/issues/677),
+   [#1006](https://github.com/schellingboard/schellingboard/issues/1006),
+   [#141](https://github.com/schellingboard/schellingboard/issues/141)): Hono
+   under `/api/v1` as route handlers, use cases in `server/modules/`, and every
+   server action and legacy route that changes data delegating to them, except
+   sign-in, passwords and the dev tools (see [The server and the API](../server.md)).
+   A use case writing through several repositories is atomic (the unit of work),
+   pages read through page reads, lists are paged, edits carry
+   `expectedVersion`, and the UI sends `Idempotency-Key`. Still open: location
+   images and the push key outside the API, and the `utils/` helpers that still
+   read the repositories.
 
 4. **Ship the feed and the snapshot.** SSE endpoint over the change log; a
    `replica` package in the Next app that the schedule page reads from. Live
    updates arrive for everyone while the rest of the UI is unchanged.
+
+   **Done** ([ADR 0014](../adr/0014-change-feed-and-snapshot.md),
+   [#1111](https://github.com/schellingboard/schellingboard/issues/1111)): the
+   feed and the snapshot are served under `/api/v1`, and the schedule, agenda
+   and kiosk read from a replica in `app/(site)/[eventSlug]/replica/`.
+
 5. **Move screens to the SPA one family at a time.** Start with the schedule
    (biggest win: replica, filters, agenda, kiosk), then proposals and voting,
    people and meetings, settings, admin. Each moved screen deletes its server

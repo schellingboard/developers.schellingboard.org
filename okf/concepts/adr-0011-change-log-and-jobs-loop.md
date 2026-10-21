@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0011: A change log and one jobs loop"
 source: "https://developers.schellingboard.org/adr/0011-change-log-and-jobs-loop/"
 path: /adr/0011-change-log-and-jobs-loop/
-updated: 2026-10-20
+updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-20T07:41:29.715Z"
+  generated_at: "2026-10-21T14:57:20.791Z"
 ---
 # ADR 0011: A change log and one jobs loop
 

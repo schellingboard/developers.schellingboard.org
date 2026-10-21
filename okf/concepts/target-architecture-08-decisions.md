@@ -3,10 +3,10 @@ type: concept
 title: "8 · Decisions"
 source: "https://developers.schellingboard.org/target-architecture/08-decisions/"
 path: /target-architecture/08-decisions/
-updated: 2026-10-20
+updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-20T07:41:29.727Z"
+  generated_at: "2026-10-21T14:57:20.798Z"
 ---
 # 8 · Decisions
 

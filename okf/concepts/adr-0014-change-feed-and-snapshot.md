@@ -3,14 +3,14 @@ type: concept
 title: "ADR 0014: The change feed and the snapshot"
 source: "https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/"
 path: /adr/0014-change-feed-and-snapshot/
-updated: 2026-10-20
+updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-20T07:41:29.717Z"
+  generated_at: "2026-10-21T14:57:20.792Z"
 ---
 # ADR 0014: The change feed and the snapshot
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-07
 - **Issue:** #1111
 
@@ -239,7 +239,9 @@ existing Hono mount.
 - **Command keys.** A change's `command_key` is the raw `Idempotency-Key`,
   which is unique only per actor (ADR 0012 section 5). The feed sends it only
   to the connections of the actor who made the change, and the client matches
-  its echo by key and actor, never by key alone. "The actor" is coarser here
+  its echo by key and actor, never by key alone. A connection only receives
+  its own actor's keys, so a key it has seen already belongs to that actor.
+  "The actor" is coarser here
   than in ADR 0012: admins have no id, so every admin connection gets every
   admin's keys, and a guest's keys go to any connection naming that guest,
   whatever its cookie level. A key reveals only that someone made a request,

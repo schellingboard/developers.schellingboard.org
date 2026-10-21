@@ -3,10 +3,10 @@ type: concept
 title: "Architecture decision records"
 source: "https://developers.schellingboard.org/adr/"
 path: /adr/
-updated: 2026-10-20
+updated: 2026-10-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-20T07:41:29.717Z"
+  generated_at: "2026-10-21T14:57:20.792Z"
 ---
 # Architecture decision records
 
@@ -34,8 +34,8 @@ the tracking issue where there is one.
 | [0010](0010-workspace-packages.md)                   | Domain and contracts as workspace packages                  | 2026-10-03 |
 | [0011](0011-change-log-and-jobs-loop.md)             | A change log and one jobs loop                              | 2026-10-03 |
 | [0012](0012-http-api-v1.md)                          | A versioned HTTP API in the Next process                    | 2026-10-04 |
-| [0013](0013-unit-of-work.md)                         | The unit of work (proposed)                                 | 2026-10-06 |
-| [0014](0014-change-feed-and-snapshot.md)             | The change feed and the snapshot (proposed)                 | 2026-10-07 |
+| [0013](0013-unit-of-work.md)                         | The unit of work                                            | 2026-10-06 |
+| [0014](0014-change-feed-and-snapshot.md)             | The change feed and the snapshot                            | 2026-10-07 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and
