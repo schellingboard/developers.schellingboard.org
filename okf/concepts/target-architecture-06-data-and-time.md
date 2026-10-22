@@ -3,10 +3,10 @@ type: concept
 title: "6 · Data and time"
 source: "https://developers.schellingboard.org/target-architecture/06-data-and-time/"
 path: /target-architecture/06-data-and-time/
-updated: 2026-10-21
+updated: 2026-10-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T20:47:03.363Z"
+  generated_at: "2026-10-22T19:16:36.113Z"
 ---
 # 6 · Data and time
 

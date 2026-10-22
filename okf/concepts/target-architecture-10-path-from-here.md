@@ -3,10 +3,10 @@ type: concept
 title: "10 · A path from the current code"
 source: "https://developers.schellingboard.org/target-architecture/10-path-from-here/"
 path: /target-architecture/10-path-from-here/
-updated: 2026-10-21
+updated: 2026-10-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T20:47:03.365Z"
+  generated_at: "2026-10-22T19:16:36.114Z"
 ---
 # 10 · A path from the current code
 

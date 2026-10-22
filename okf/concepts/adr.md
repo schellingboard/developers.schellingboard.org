@@ -3,10 +3,10 @@ type: concept
 title: "Architecture decision records"
 source: "https://developers.schellingboard.org/adr/"
 path: /adr/
-updated: 2026-10-21
+updated: 2026-10-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T20:47:03.351Z"
+  generated_at: "2026-10-22T19:16:36.106Z"
 ---
 # Architecture decision records
 

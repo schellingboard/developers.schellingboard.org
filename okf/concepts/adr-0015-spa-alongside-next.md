@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0015: The SPA alongside Next"
 source: "https://developers.schellingboard.org/adr/0015-spa-alongside-next/"
 path: /adr/0015-spa-alongside-next/
-updated: 2026-10-21
+updated: 2026-10-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T20:47:03.350Z"
+  generated_at: "2026-10-22T19:16:36.106Z"
 ---
 # ADR 0015: The SPA alongside Next
 

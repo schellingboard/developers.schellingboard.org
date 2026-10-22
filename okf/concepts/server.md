@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-10-21
+updated: 2026-10-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-21T20:47:03.359Z"
+  generated_at: "2026-10-22T19:16:36.111Z"
 ---
 # The server and the API
 
@@ -52,7 +52,7 @@ A use case writes in `deps.uow.run(async (tx) => …)`
 `Result` rolls back. Inside it, read and write through `tx`, never through
 `deps.repos`: their writes wait for the lock `tx` holds, and their reads do not
 see its rows. `tx.record(change)` logs a change with the state, addressed to
-the audience `audienceOf` (`packages/domain/src/change.ts`) gives (add a case for each new type) and marked with
+the audience `audienceOf` (`packages/domain/src/change.ts`) gives (add a case for each new type; `none` is for changes logged only for reactions, which no feed viewer sees) and marked with
 the request's `Idempotency-Key`, if any; after commit,
 each change goes to the `subscribeToChanges` subscribers in `seq` order, the
 jobs loop among them. Keep I/O to other systems, such as mail, out of the
