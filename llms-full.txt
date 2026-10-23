@@ -675,7 +675,7 @@ that pulls the cookie via `next/headers`.
 
 ### Thread `now` into the phase logic
 
-The phase helpers in `app/(site)/utils/events.ts` take a **required**
+The phase helpers in `app/legacy/(site)/utils/events.ts` take a **required**
 `now: Date` parameter instead of calling `Date.now()` internally. A required
 parameter (rather than an optional `= new Date()` default) is intentional: the
 compiler then forces every call site to supply the effective clock, so faking
@@ -736,7 +736,7 @@ already read `EventContext.now`, they follow the fake clock for free after a
 
 ### Toolbar
 
-A client component (`app/(site)/dev-toolbar.tsx`) gated by `SB_ENABLE_DEV_TOOLS`
+A client component (`app/legacy/(site)/dev-toolbar.tsx`) gated by `SB_ENABLE_DEV_TOOLS`
 (checked in the server layout, so no `NEXT_PUBLIC_` is needed) and shown when
 `?dev=1` is present. It offers _real time_ (clear cookie), `+1h` / `+1d` /
 `+7d`, a date/time picker, and dismiss (to hide for screenshots). Each control
@@ -821,7 +821,7 @@ Constraints that shape the decision:
 
 Per device, rather than on the guest record, because:
 
-- `app/(site)/settings/page.tsx` requires a selected guest, and the header menu
+- `app/legacy/(site)/settings/page.tsx` requires a selected guest, and the header menu
   that reaches it only renders once a name is chosen
   (`header-user-select.tsx:62`). A guest-record setting would be unreachable
   from exactly the screens a first-time visitor sees.
@@ -2138,7 +2138,7 @@ What exists: the change log (ADR 0011), logging only `session.changed` and
 `rsvpGuestIds`). The unit of work (ADR 0013) records changes in the state's
 transaction and publishes them in `seq` order under the write lock. There is a
 `uow.read` for consistent reads. The schedule's data is `EventContext`,
-assembled in `app/(site)/[eventSlug]/layout-content.tsx`. Identity is as in
+assembled in `app/legacy/(site)/[eventSlug]/layout-content.tsx`. Identity is as in
 ADR 0012: an admin actor, and a guest actor that is either verified or open.
 
 ## Decision (proposed)
@@ -2309,8 +2309,9 @@ for each session they had an RSVP for, `meeting.deleted` for each of their
 meetings (audience: the other guest) and `guest.left`. `apply`
 stays one subject per change, and the log answers "where did this session
 go". The session-notification reaction skips changes marked
-`cascade: true`, so attendees are told no more than today (see Open
-questions).
+`cascade: true`, except those a day or location delete records with
+`tellAttendees: true`: for those it notifies the RSVPed guests, not the hosts.
+Event and guest deletes stay silent.
 
 ### 10. The feed
 
@@ -2373,7 +2374,7 @@ that matches. Because publish runs under the write lock, changes arrive in
 ### 12. Where the code lives
 
 - `apply(replica, message)` lives with the client store, in
-  `app/(site)/[eventSlug]/replica/apply.ts`. The replica is the snapshot's
+  `app/legacy/(site)/[eventSlug]/replica/apply.ts`. The replica is the snapshot's
   wire type (`Snapshot`) and a message the feed's (`FeedMessage`), both from
   `packages/contracts`. `apply` is pure: it upserts or deletes per type,
   ignores `seq ≤ replica.seq` and skips unknown types, moving `seq` past
@@ -2384,7 +2385,7 @@ that matches. Because publish runs under the write lock, changes arrive in
   `packages/domain/src/change.ts`; `project(change, viewer)` is in
   `server/feed/project.ts` and gives `commandKey` only to the change's actor.
 - Snapshot and feed message contracts live in `packages/contracts`.
-- The client store lives in `app/(site)/[eventSlug]/replica/`: the store,
+- The client store lives in `app/legacy/(site)/[eventSlug]/replica/`: the store,
   the `EventSource` client, the sync state and the selectors, with no React.
   One hook connects them to `EventContext`. Step 5 of the path moves the
   store to the SPA unchanged.
@@ -2409,9 +2410,9 @@ that matches. Because publish runs under the write lock, changes arrive in
 
 ## Open questions
 
-1. **Cascades and notifications.** When an organizer deletes a day or a
-   location, attendees of the affected sessions are told nothing today. This
-   ADR keeps that (the reaction skips `cascade: true`). Should they be told?
+1. **Cascades and notifications.** _Answered:_ RSVPed guests are told when a
+   day or location delete removes or changes their session (section 9). Event
+   and guest deletes stay silent.
 2. **Hidden tabs.** Closing the feed after 30 seconds hidden is the
    recommendation. The alternative is to keep every tab connected and rely
    only on HTTP/2.
@@ -2438,7 +2439,7 @@ Tailwind with the existing tokens, no server-side rendering.
 
 What exists: the schedule (grid, agenda, kiosk, session modal) reads from a
 replica seeded by SSR and kept current by the feed (ADR 0014), in
-`app/(site)/[eventSlug]/replica/`. RSVPs reconcile by `command_key`. The API
+`app/legacy/(site)/[eventSlug]/replica/`. RSVPs reconcile by `command_key`. The API
 under `/api/v1` covers what the schedule does (ADR 0012). The site password is
 enforced in `proxy.ts`. `public/sw.js` handles push only and caches nothing.
 
@@ -2449,11 +2450,15 @@ move, and what the first slice contains.
 
 ### 1. The SPA owns every URL; Next moves under `/legacy`
 
-- Next gets `basePath: "/legacy"`. Its pages, `next/link`, `redirect()` and
-  `/_next` assets move under it with no change to the route files.
-- Rewrites with `basePath: false` keep at the root: `/api/**` (the API, the
-  feed, bots and the legacy routes keep their URLs), `/sw.js`, the icons, the
-  manifest and `/locations/`.
+- The legacy pages move into a real `app/legacy/` segment, so their URLs are
+  `/legacy/…` and `next/link`, `redirect()` and `revalidatePath()` take the
+  full path. Not `basePath: "/legacy"`: this Next refuses `basePath: false`
+  rewrites to internal paths, and `proxy.ts` matchers are always prefixed with
+  the base path, so the root `/api` would skip the site password. Decided by
+  the user, 2026-10-08.
+- Everything that is not a page stays natively at the root: `/api/**` (the API,
+  the feed, bots and the legacy routes keep their URLs), `/media`, `/sw.js`,
+  the icons, the manifest and `/locations/`.
 - Every other path gets the SPA shell (`index.html`, `no-store`), served by
   Next. Hashed SPA assets are under `/_spa/`.
 - The SPA router has a catch-all: a path it does not own is replaced by
@@ -2545,9 +2550,9 @@ tests in a browser runner.
   accepted.
 - Unmoved screens show `/legacy/…` in the address bar, and a root URL to one
   of them costs a second page load.
-- Hard-coded paths in Next code that do not go through `next/link` or
-  `redirect()` (`<a href>`, `window.location`) must get the base path. Client
-  `fetch("/api/…")` keeps working through the root rewrite.
+- Every hard-coded page path in Next code (`<a href>`, `window.location`,
+  `router.push`, `redirect()`, `revalidatePath()`) must say `/legacy/…`. Client
+  `fetch("/api/…")` is unaffected: the API stays at the root.
 - `sw.js` changes from push-only to precaching. A broken worker can serve an
   old shell; the reload offer in section 5 is necessary, not optional.
 
@@ -2648,7 +2653,7 @@ reason is mandatory: it is what the next reader has instead of this page.
 
 **Gotcha:** route-group and dynamic-segment paths need `**`. Flat config globs
 are minimatch, which reads `[eventSlug]` as a character class, so a literal
-`app/(site)/[eventSlug]/kiosk.tsx` silently matches nothing — and a `files`
+`app/legacy/(site)/[eventSlug]/kiosk.tsx` silently matches nothing — and a `files`
 entry that matches nothing looks exactly like one that works.
 
 When a selector can't express the rule, write a local rule inline — flat config
@@ -2726,7 +2731,7 @@ a use case; the rule covers `app/` and `utils/`. Exempt: the auth flows
 (`actions/user-auth.ts`, `auth/login`, `auth/reset`), which run before an actor
 exists, and the job loop, notification and push infrastructure (`utils/jobs/`,
 `utils/notifications.ts`, `utils/push.ts`). `adminReads()`
-(`server/admin-reads.ts`) is importable only from `app/admin/` and
+(`server/admin-reads.ts`) is importable only from `app/legacy/admin/` and
 `app/actions/admin-*`.
 
 `make arch-graph` renders the graph to `arch-graph.svg` (needs graphviz), which
@@ -3048,7 +3053,7 @@ The full rules, with the hard limits and worked examples, are in
 ## In-app release notes
 
 The app carries a much shorter version of the changelog:
-[`app/release-notes.ts`](https://github.com/schellingboard/schellingboard/blob/main/app/release-notes.ts),
+[`packages/domain/src/release-notes.ts`](https://github.com/schellingboard/schellingboard/blob/main/packages/domain/src/release-notes.ts),
 shown when the footer's version is clicked. It holds **3–5 highlights** of the
 coming release — inline markdown, taking the same **bold** lead phrase as the
 changelog bullets.
@@ -4218,7 +4223,7 @@ documentation.
 
 1. **Finalize the changelog** — in `CHANGELOG.md`, rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD` (no `v` prefix in the header), and replace the `[Unreleased]` compare link at the bottom of the file with the new version's, pointing from the previous release's endpoint to the new tag (`vX.Y.Z`). Do _not_ add a fresh `## [Unreleased]` section here — the released tag should carry no empty section, since that is what the documentation site publishes. Step 4 reopens it afterwards.
 
-   **Release the in-app notes in the same commit** — in `app/release-notes.ts`, the first entry of `releaseNotes` is the one being prepared: replace its `version: "Unreleased"` with this version and add the `date`. Nothing else moves. `make test` fails until the newest release the changelog names has an entry.
+   **Release the in-app notes in the same commit** — in `packages/domain/src/release-notes.ts`, the first entry of `releaseNotes` is the one being prepared: replace its `version: "Unreleased"` with this version and add the `date`. Nothing else moves. `make test` fails until the newest release the changelog names has an entry.
 
    **Re-read those highlights against the finalized changelog first.** They were written one at a time, before it was known what else the release would hold, so they are a draft, not a record: check that they are still the 3-5 changes an attendee or organizer would call this release's highlights, and rewrite or replace any that are not.
 
@@ -4255,7 +4260,7 @@ documentation.
 4. **Reopen the changelog** — in a follow-up commit on `main`, add an empty
    `## [Unreleased]` section above `## [X.Y.Z]` and an `[Unreleased]` compare
    link from `vX.Y.Z` to `HEAD`. **Reopen the in-app notes too** — in
-   `app/release-notes.ts`, add a new first entry with `version: "Unreleased"`
+   `packages/domain/src/release-notes.ts`, add a new first entry with `version: "Unreleased"`
    and no `date`, above the one just released.
 
 ## What the release workflow does
@@ -4413,11 +4418,21 @@ gives plain reads (no actor: the pages sit behind the site password only), and
 function in a module's `application/page-reads.ts` taking a `Pick` of the
 repositories. `make arch` enforces it, with the auth flows allow-listed.
 
+## Choosing a name
+
+`PUT /api/v1/me/identity` makes the browser act as an open guest name and
+`DELETE` signs it out; both set the `guest` cookie, which the route adapter
+builds from the use case's `Identity` (`people/application/identity.ts`). A
+protected name answers `403 guest.protected`: the SPA sends the user to the
+legacy login. The `selectUserAction` server action calls the same use case.
+
 ## The feed and the snapshot
 
 [ADR 0014](adr/0014-change-feed-and-snapshot.md) has the decisions.
 `GET /api/v1/events/{slug}/snapshot` returns what one viewer may see of an
-event, with the `seq` of the newest change it includes. `GET
+event, with the `seq` of the newest change it includes and the server's `now`
+(the dev fake clock included); the feed's `ping` events carry `now` too, so a
+client keeps its clock offset current. A ping reads the `time-override` cookie once, when the stream opens; changing the fake clock takes a reconnect. `GET
 /api/v1/events/{slug}/feed?since=` is a Server-Sent Events stream: it replays
 the `changes` table after `since`, then follows live changes registered with
 the hub. `project()` in `server/feed/project.ts` turns each recorded change
@@ -4426,9 +4441,28 @@ there and in `audienceOf`. The message carries the `command_key` only for the
 actor who made the change.
 
 The client applies messages to its replica in
-`app/(site)/[eventSlug]/replica/` (`apply.ts`, a pure function from replica and
+`app/legacy/(site)/[eventSlug]/replica/` (`apply.ts`, a pure function from replica and
 message to replica; `store.ts`; `live-replica.ts` for the connection). A new
 message type needs a case in `apply.ts`: unknown types only move `seq`.
+
+A cascade change that carries `tellAttendees` (day and location deletes) makes
+the `changeNotifications` reaction notify the session's RSVPed guests, never its
+hosts; event and guest deletes record none.
+
+`GET /api/v1/health` also names the `version` and the `buildId` (Next's
+`.next/BUILD_ID`, the version outside a production build). A client that sees
+the build id change offers a reload. It stays behind the site password.
+
+The in-app release notes live in `packages/domain/src/release-notes.ts` so the
+Next footer and the SPA import the same data.
+
+## Pages under `/legacy`
+
+The Next pages live in `app/legacy/` ([ADR 0015](adr/0015-spa-alongside-next.md)),
+so a page path in code is written `/legacy/…` (`<a href>`, `router.push`,
+`redirect()`, `revalidatePath()`). `/api` and `/media` stay at the root. `proxy.ts`
+redirects every other root path to `/legacy` + path, so emails and push links keep
+their root URLs, and applies its gates to the path without the `/legacy` prefix.
 
 ## Keys from the UI
 
@@ -4850,7 +4884,7 @@ enabled but the server refused" becomes a bug with one cause.
 | `proposals.canEdit`          | Host, or anyone if no host; organizer always; phase                                                                                                                  | proposal                                         |
 | `scheduling.canEditSession`  | Host and not `lockedByOrganizer`; organizer always; a started session keeps its start                                                                                | session, clock                                   |
 | `scheduling.canPlace`        | Booking window, bookable place, length, reserved windows, place uses; only fields actually changed are held to the rules (an organizer-placed session stays fixable) | day, place, rules, previous session state, clock |
-| `scheduling.canRsvp`         | Phase, participation, `rsvp ≠ none`, capacity mode (hard limit vs advisory), not a host                                                                              | rsvp count, event settings                       |
+| `scheduling.rsvpRefusal`     | Phase, participation, not a host, capacity mode (hard limit vs advisory); returns a reason code, or nothing when allowed (`rsvp-rule.ts`)                            | rsvp count, event settings                       |
 | `scheduling.clashes`         | Which of a person's agenda items overlap a candidate; returns all of them ([#1042](https://github.com/schellingboard/schellingboard/issues/1042))                    | agenda                                           |
 | `meetings.canRequest`        | Enabled, phase, availability of both, open-request cap, place use                                                                                                    | meeting settings, availabilities, open count     |
 | `people.canEditProfile`      | The person, or organizer for labels only; profile comments removable by subject or author                                                                            |                                                  |
@@ -5207,8 +5241,8 @@ staleness lasts as long as the reconnect.
 ```ts
 export const rsvp = command({
   predict: (replica, actor, input) => {
-    const verdict = policies.scheduling.canRsvp(actor, input, contextFrom(replica), clock);
-    return verdict.allow ? [changes.RsvpAdded.predict(input, actor)] : deny(verdict);
+    const reason = policies.scheduling.rsvpRefusal(contextFrom(replica, actor, input), clock);
+    return reason ? deny(reason) : [changes.RsvpAdded.predict(input, actor)];
   },
   call: (api, input, key) => api.POST('/events/{slug}/sessions/{id}/rsvp', { ..., headers: { 'Idempotency-Key': key } }),
 });
@@ -5933,7 +5967,7 @@ sketch, not a plan; each step would get its own issue and ADR.
    **Done** ([ADR 0014](../adr/0014-change-feed-and-snapshot.md),
    [#1111](https://github.com/schellingboard/schellingboard/issues/1111)): the
    feed and the snapshot are served under `/api/v1`, and the schedule, agenda
-   and kiosk read from a replica in `app/(site)/[eventSlug]/replica/`.
+   and kiosk read from a replica in `app/legacy/(site)/[eventSlug]/replica/`.
 
 5. **Move screens to the SPA one family at a time.** Start with the schedule
    (biggest win: replica, filters, agenda, kiosk), then proposals and voting,

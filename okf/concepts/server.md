@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-10-22
+updated: 2026-10-23
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-22T19:16:36.111Z"
+  generated_at: "2026-10-23T06:52:39.570Z"
 ---
 # The server and the API
 
@@ -66,11 +66,21 @@ gives plain reads (no actor: the pages sit behind the site password only), and
 function in a module's `application/page-reads.ts` taking a `Pick` of the
 repositories. `make arch` enforces it, with the auth flows allow-listed.
 
+## Choosing a name
+
+`PUT /api/v1/me/identity` makes the browser act as an open guest name and
+`DELETE` signs it out; both set the `guest` cookie, which the route adapter
+builds from the use case's `Identity` (`people/application/identity.ts`). A
+protected name answers `403 guest.protected`: the SPA sends the user to the
+legacy login. The `selectUserAction` server action calls the same use case.
+
 ## The feed and the snapshot
 
 [ADR 0014](adr/0014-change-feed-and-snapshot.md) has the decisions.
 `GET /api/v1/events/{slug}/snapshot` returns what one viewer may see of an
-event, with the `seq` of the newest change it includes. `GET
+event, with the `seq` of the newest change it includes and the server's `now`
+(the dev fake clock included); the feed's `ping` events carry `now` too, so a
+client keeps its clock offset current. A ping reads the `time-override` cookie once, when the stream opens; changing the fake clock takes a reconnect. `GET
 /api/v1/events/{slug}/feed?since=` is a Server-Sent Events stream: it replays
 the `changes` table after `since`, then follows live changes registered with
 the hub. `project()` in `server/feed/project.ts` turns each recorded change
@@ -79,9 +89,28 @@ there and in `audienceOf`. The message carries the `command_key` only for the
 actor who made the change.
 
 The client applies messages to its replica in
-`app/(site)/[eventSlug]/replica/` (`apply.ts`, a pure function from replica and
+`app/legacy/(site)/[eventSlug]/replica/` (`apply.ts`, a pure function from replica and
 message to replica; `store.ts`; `live-replica.ts` for the connection). A new
 message type needs a case in `apply.ts`: unknown types only move `seq`.
+
+A cascade change that carries `tellAttendees` (day and location deletes) makes
+the `changeNotifications` reaction notify the session's RSVPed guests, never its
+hosts; event and guest deletes record none.
+
+`GET /api/v1/health` also names the `version` and the `buildId` (Next's
+`.next/BUILD_ID`, the version outside a production build). A client that sees
+the build id change offers a reload. It stays behind the site password.
+
+The in-app release notes live in `packages/domain/src/release-notes.ts` so the
+Next footer and the SPA import the same data.
+
+## Pages under `/legacy`
+
+The Next pages live in `app/legacy/` ([ADR 0015](adr/0015-spa-alongside-next.md)),
+so a page path in code is written `/legacy/…` (`<a href>`, `router.push`,
+`redirect()`, `revalidatePath()`). `/api` and `/media` stay at the root. `proxy.ts`
+redirects every other root path to `/legacy` + path, so emails and push links keep
+their root URLs, and applies its gates to the path without the `/legacy` prefix.
 
 ## Keys from the UI
 

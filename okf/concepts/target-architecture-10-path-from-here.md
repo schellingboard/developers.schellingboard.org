@@ -3,10 +3,10 @@ type: concept
 title: "10 · A path from the current code"
 source: "https://developers.schellingboard.org/target-architecture/10-path-from-here/"
 path: /target-architecture/10-path-from-here/
-updated: 2026-10-22
+updated: 2026-10-23
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-22T19:16:36.114Z"
+  generated_at: "2026-10-23T06:52:39.577Z"
 ---
 # 10 · A path from the current code
 
@@ -46,7 +46,7 @@ sketch, not a plan; each step would get its own issue and ADR.
    **Done** ([ADR 0014](../adr/0014-change-feed-and-snapshot.md),
    [#1111](https://github.com/schellingboard/schellingboard/issues/1111)): the
    feed and the snapshot are served under `/api/v1`, and the schedule, agenda
-   and kiosk read from a replica in `app/(site)/[eventSlug]/replica/`.
+   and kiosk read from a replica in `app/legacy/(site)/[eventSlug]/replica/`.
 
 5. **Move screens to the SPA one family at a time.** Start with the schedule
    (biggest win: replica, filters, agenda, kiosk), then proposals and voting,

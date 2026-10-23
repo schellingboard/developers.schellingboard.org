@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvjx9k9b">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvjx9k9b">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvkm4orq">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvkm4orq">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvjx9k9b" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvjx9k9b" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvkm4orq" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvkm4orq" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvjx9k9b" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvjx9k9b" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvkm4orq" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvkm4orq" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvjx9k9b">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvkm4orq">
     
     
   </head>
@@ -1596,7 +1596,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200015%3A%20The%20SPA%20alongside%20Next%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-08%0A%0A%23%23%20Context%0A%0A%5BStep%205%20of%20the%20path%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20moves%20the%0Ascreens%20from%20Next%20to%20a%20single-page%20app%2C%20one%20family%20at%20a%20time%2C%20starting%20with%20the%0Aschedule.%20%5BD1%5D(..%2Ftarget-architecture%2F08-decisions.md%23d1)%20and%0A%5BD9%5D(..%2Ftarget-architecture%2F08-decisions.md%23d9)%20already%20chose%20the%20stack%3A%20a%0Astatic%20React%20SPA%20built%20with%20Vite%2C%20TanStack%20Router%2C%20a%20small%20reactive%20store%2C%0ATailwind%20with%20the%20existing%20tokens%2C%20no%20server-side%20rendering.%0A%5B04%5D(..%2Ftarget-architecture%2F04-client.md)%20describes%20the%20end%20state.%0A%0AWhat%20exists%3A%20the%20schedule%20(grid%2C%20agenda%2C%20kiosk%2C%20session%20modal)%20reads%20from%20a%0Areplica%20seeded%20by%20SSR%20and%20kept%20current%20by%20the%20feed%20(ADR%200014)%2C%20in%0A%60app%2F(site)%2F%5BeventSlug%5D%2Freplica%2F%60.%20RSVPs%20reconcile%20by%20%60command_key%60.%20The%20API%0Aunder%20%60%2Fapi%2Fv1%60%20covers%20what%20the%20schedule%20does%20(ADR%200012).%20The%20site%20password%20is%0Aenforced%20in%20%60proxy.ts%60.%20%60public%2Fsw.js%60%20handles%20push%20only%20and%20caches%20nothing.%0A%0AThis%20ADR%20settles%20how%20the%20SPA%20and%20Next%20live%20in%20one%20deployment%20while%20the%20screens%0Amove%2C%20and%20what%20the%20first%20slice%20contains.%0A%0A%23%23%20Decision%0A%0A%23%23%23%201.%20The%20SPA%20owns%20every%20URL%3B%20Next%20moves%20under%20%60%2Flegacy%60%0A%0A-%20Next%20gets%20%60basePath%3A%20%22%2Flegacy%22%60.%20Its%20pages%2C%20%60next%2Flink%60%2C%20%60redirect()%60%20and%0A%20%20%60%2F_next%60%20assets%20move%20under%20it%20with%20no%20change%20to%20the%20route%20files.%0A-%20Rewrites%20with%20%60basePath%3A%20false%60%20keep%20at%20the%20root%3A%20%60%2Fapi%2F**%60%20(the%20API%2C%20the%0A%20%20feed%2C%20bots%20and%20the%20legacy%20routes%20keep%20their%20URLs)%2C%20%60%2Fsw.js%60%2C%20the%20icons%2C%20the%0A%20%20manifest%20and%20%60%2Flocations%2F%60.%0A-%20Every%20other%20path%20gets%20the%20SPA%20shell%20(%60index.html%60%2C%20%60no-store%60)%2C%20served%20by%0A%20%20Next.%20Hashed%20SPA%20assets%20are%20under%20%60%2F_spa%2F%60.%0A-%20The%20SPA%20router%20has%20a%20catch-all%3A%20a%20path%20it%20does%20not%20own%20is%20replaced%20by%0A%20%20%60%2Flegacy%60%20%2B%20path%20%2B%20query.%20SPA%20links%20to%20legacy%20screens%20point%20to%20%60%2Flegacy%2F%E2%80%A6%60%0A%20%20directly.%20Legacy%20links%20to%20moved%20screens%20are%20plain%20%60%3Ca%3E%60%20without%20the%20base%0A%20%20path.%20Emails%2C%20push%2C%20QR%20codes%20and%20bookmarks%20keep%20root%20URLs%20and%20get%20to%20the%0A%20%20right%20screen%20through%20the%20SPA.%0A-%20%60proxy.ts%60%20keeps%20the%20site%20password%20on%20every%20path%2C%20root%20and%20%60%2Flegacy%60%20alike.%0A-%20The%20SPA%20calls%20only%20%60%2Fapi%2Fv1%60%2C%20never%20a%20legacy%20route%20or%20server%20action.%0A%0AWhen%20Next%20retires%20(step%207)%2C%20%60%2Flegacy%60%20goes%20with%20it%20and%20the%20server%20serves%20the%0Ashell%20and%20%60%2F_spa%2F%60%20itself.%0A%0A%23%23%23%202.%20Code%20layout%0A%0A%60apps%2Fweb%60%20is%20a%20new%20workspace%20package%3A%20%60app%2F%60%2C%20%60replica%2F%60%2C%20%60commands%2F%60%2C%0A%60queries%2F%60%20(paged%20or%20restricted%20reads%20such%20as%20comments%20and%20attendee%20lists)%2C%0A%60features%2F%60%2C%20%60ui%2F%60%2C%20%60pwa%2F%60%2C%20as%20in%20%5B04%5D(..%2Ftarget-architecture%2F04-client.md%23layout).%0AIt%20imports%20%60packages%2Fdomain%60%2C%20%60packages%2Fcontracts%60%20and%20%60packages%2Fapi-client%60%0Aonly%3A%20never%20%60app%2F%60%2C%20%60server%2F%60%2C%20%60utils%2F%60%20or%20%60next%2F*%60.%20Nothing%20imports%0A%60apps%2Fweb%60.%20%60features%2F%60%20never%20imports%20%60api-client%60.%20dependency-cruiser%20enforces%0Athese%20rules.%0A%0AThe%20SPA%20writes%20its%20own%20%60ui%2F%60%20(nav%20bar%2C%20user%20picker%2C%20modal%2C%20toast%2C%20markdown%2C%0Aform%20fields).%20Legacy%20pages%20keep%20theirs%20until%20they%20move.%20A%20moved%20screen&#039;s%20Next%0Acode%20(page%2C%20components%2C%20server%20actions%2C%20%60replica%2F%60)%20is%20deleted%20in%20the%20slice%0Athat%20moves%20it.%20Legacy%20pages%20that%20open%20a%20moved%20modal%20link%20to%20its%20SPA%20URL.%0A%0A%23%23%23%203.%20The%20first%20slice%3A%20the%20schedule%20and%20the%20session%20modal%0A%0A-%20The%20shell%3A%20nav%2C%20user%20picker%2C%20theme%2C%20footer%20with%20release%20notes%2C%20sync%0A%20%20indicator.%0A-%20Grid%2C%20agenda%2C%20kiosk%2C%20filters%2C%20and%20the%20meetings%20column%20read-only%20from%20the%0A%20%20replica.%0A-%20The%20session%20modal%3A%20details%2C%20RSVP%2C%20attendee%20list%2C%20comments.%0A%0AAdd%20and%20edit%20session%2C%201-on-1%20booking%2C%20the%20meeting%20modal%20and%20the%20password%0Alogins%20stay%20legacy%20and%20open%20as%20full%20page%20loads.%0A%0A%23%23%23%204.%20Commands%0A%0AOne%20mechanism%20in%20%60commands%2F%60%20for%20every%20mutation%2C%20as%20in%0A%5B04%5D(..%2Ftarget-architecture%2F04-client.md%23commands-and-optimistic-updates)%3A%0Apredict%20with%20the%20domain%20policy%2C%20apply%20a%20pending%20change%20keyed%20by%20a%20new%0A%60Idempotency-Key%60%2C%20call%20the%20API%2C%20and%20reconcile%20when%20the%20feed%20or%20the%20response%0Abrings%20the%20%60command_key%60.%20A%20network%20error%20retries%20with%20the%20same%20key%3B%20a%20%604xx%60%0Aremoves%20the%20prediction%20and%20shows%20the%20problem%20code.%20The%20first%20commands%20are%20RSVP%0Aadd%20and%20remove%20and%20comment%20create.%20The%20RSVP%20rule%20moves%20into%20%60packages%2Fdomain%60%0Aso%20that%20the%20server%20and%20the%20client%20run%20the%20same%20policy.%20Today&#039;s%20%60rsvp-overlay%60%0Ais%20deleted%20with%20the%20Next%20schedule.%0A%0A%23%23%23%205.%20Persistence%20and%20offline%0A%0A-%20The%20replica%20is%20written%20to%20IndexedDB%2C%20debounced%2C%20keyed%20by%20(event%2C%20guest%20or%0A%20%20anonymous)%2C%20and%20cleared%20on%20a%20user%20switch.%0A-%20On%20open%2C%20a%20persisted%20replica%20is%20shown%20at%20once%20as%20%60stale%60%2C%20then%20the%20feed%0A%20%20resumes%20from%20its%20%60seq%60.%20The%20snapshot%20is%20refetched%20only%20on%20%60410%60%20or%20when%0A%20%20nothing%20is%20persisted.%0A-%20The%20service%20worker%20precaches%20the%20shell%20and%20the%20%60%2F_spa%2F%60%20assets%20and%20serves%0A%20%20the%20shell%20for%20SPA%20navigations%20when%20offline.%20It%20never%20caches%20%60%2Fapi%2F**%60%20or%0A%20%20%60%2Flegacy%2F**%60%3A%20the%20replica%20is%20the%20cache%20and%20knows%20its%20own%20staleness%2C%20which%0A%20%20answers%20the%20reservation%20in%20ADR%200006.%0A-%20The%20server%20reports%20its%20build%20id.%20When%20it%20differs%20from%20the%20running%20shell&#039;s%2C%0A%20%20the%20SPA%20offers%20a%20reload%2C%20so%20a%20precached%20shell%20never%20stays%20old.%0A%0A%23%23%23%206.%20Build%20and%20development%0A%0A-%20%60vite%20build%60%20runs%20before%20%60next%20build%60.%20The%20standalone%20output%20and%20the%20Docker%0A%20%20image%20contain%20the%20SPA%20files.%0A-%20%60make%20dev%60%20starts%20Next%20and%20Vite.%20Developers%20open%20the%20Vite%20port%3A%20Vite%20serves%0A%20%20the%20SPA%20with%20HMR%20and%20proxies%20%60%2Flegacy%60%20and%20%60%2Fapi%60%20to%20Next.%0A-%20E2E%20and%20%60make%20test-e2e-docker%60%20run%20against%20the%20built%20app%2C%20as%20in%0A%20%20production.%20E2E%20URLs%20stay%20at%20the%20root.%0A%0A%23%23%23%207.%20Tests%0A%0AStore%2C%20%60apply%60%2C%20commands%20(predict%2C%20reconcile%2C%20roll%20back%20against%20a%20fake%20API)%0Aand%20persistence%20(%60fake-indexeddb%60)%20are%20unit%20tests%20in%20the%20existing%20Vitest%20run%0Awith%20happy-dom.%20Screens%20are%20covered%20by%20the%20existing%20E2E%20suite.%20No%20component%0Atests%20in%20a%20browser%20runner.%0A%0A%23%23%20Consequences%0A%0A-%20A%20cold%20first%20visit%20is%20slower%20than%20SSR%3A%20the%20bundle%20and%20the%20snapshot%20load%0A%20%20before%20the%20schedule%20shows.%20A%20repeat%20open%20is%20faster%20than%20today%20and%20works%0A%20%20offline.%0A-%20No%20hydration%20class%20of%20bugs%20(%23734)%20on%20moved%20screens.%0A-%20Two%20UI%20code%20bases%20until%20Next%20retires.%20The%20SPA%20and%20legacy%20chrome%20can%20drift%3B%0A%20%20accepted.%0A-%20Unmoved%20screens%20show%20%60%2Flegacy%2F%E2%80%A6%60%20in%20the%20address%20bar%2C%20and%20a%20root%20URL%20to%20one%0A%20%20of%20them%20costs%20a%20second%20page%20load.%0A-%20Hard-coded%20paths%20in%20Next%20code%20that%20do%20not%20go%20through%20%60next%2Flink%60%20or%0A%20%20%60redirect()%60%20(%60%3Ca%20href%3E%60%2C%20%60window.location%60)%20must%20get%20the%20base%20path.%20Client%0A%20%20%60fetch(%22%2Fapi%2F%E2%80%A6%22)%60%20keeps%20working%20through%20the%20root%20rewrite.%0A-%20%60sw.js%60%20changes%20from%20push-only%20to%20precaching.%20A%20broken%20worker%20can%20serve%20an%0A%20%20old%20shell%3B%20the%20reload%20offer%20in%20section%205%20is%20necessary%2C%20not%20optional.%0A%0A%23%23%20Alternatives%0A%0A-%20**Same%20URLs%2C%20Next%20serves%20the%20shell%20per%20moved%20route.**%20No%20URL%20change%20for%0A%20%20legacy%20screens%2C%20but%20every%20moved%20route%20needs%20a%20Next%20handler%2C%20and%20the%20SPA%20would%0A%20%20not%20own%20routing%20until%20the%20end.%0A-%20**SPA%20under%20%60%2Fapp%2F%60%2C%20Next%20redirects.**%20Root%20URLs%20change%20for%20moved%20screens%0A%20%20and%20the%20redirects%20stay%20forever.%0A-%20**Hono%20as%20the%20process%20with%20Next%20mounted.**%20Reaches%20the%20target%20process%20now%2C%0A%20%20at%20the%20cost%20of%20a%20custom%20server%2C%20the%20standalone%20build%20and%20the%20jobs%20loop%20start%0A%20%20moving%20in%20the%20same%20step.%0A-%20**Shared%20%60packages%2Fui%60%20with%20a%20router%20adapter.**%20One%20copy%20of%20the%20chrome%2C%20but%0A%20%20it%20constrains%20the%20SPA&#039;s%20UI%20to%20what%20legacy%20pages%20can%20also%20render.%0A-%20**Component%20tests%20in%20Vitest%20browser%20mode.**%20Closer%20to%20a%20real%20browser%3B%20a%0A%20%20second%20browser%20runner%20and%20a%20slower%20%60make%20test%60.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200015%3A%20The%20SPA%20alongside%20Next%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-08%0A%0A%23%23%20Context%0A%0A%5BStep%205%20of%20the%20path%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20moves%20the%0Ascreens%20from%20Next%20to%20a%20single-page%20app%2C%20one%20family%20at%20a%20time%2C%20starting%20with%20the%0Aschedule.%20%5BD1%5D(..%2Ftarget-architecture%2F08-decisions.md%23d1)%20and%0A%5BD9%5D(..%2Ftarget-architecture%2F08-decisions.md%23d9)%20already%20chose%20the%20stack%3A%20a%0Astatic%20React%20SPA%20built%20with%20Vite%2C%20TanStack%20Router%2C%20a%20small%20reactive%20store%2C%0ATailwind%20with%20the%20existing%20tokens%2C%20no%20server-side%20rendering.%0A%5B04%5D(..%2Ftarget-architecture%2F04-client.md)%20describes%20the%20end%20state.%0A%0AWhat%20exists%3A%20the%20schedule%20(grid%2C%20agenda%2C%20kiosk%2C%20session%20modal)%20reads%20from%20a%0Areplica%20seeded%20by%20SSR%20and%20kept%20current%20by%20the%20feed%20(ADR%200014)%2C%20in%0A%60app%2Flegacy%2F(site)%2F%5BeventSlug%5D%2Freplica%2F%60.%20RSVPs%20reconcile%20by%20%60command_key%60.%20The%20API%0Aunder%20%60%2Fapi%2Fv1%60%20covers%20what%20the%20schedule%20does%20(ADR%200012).%20The%20site%20password%20is%0Aenforced%20in%20%60proxy.ts%60.%20%60public%2Fsw.js%60%20handles%20push%20only%20and%20caches%20nothing.%0A%0AThis%20ADR%20settles%20how%20the%20SPA%20and%20Next%20live%20in%20one%20deployment%20while%20the%20screens%0Amove%2C%20and%20what%20the%20first%20slice%20contains.%0A%0A%23%23%20Decision%0A%0A%23%23%23%201.%20The%20SPA%20owns%20every%20URL%3B%20Next%20moves%20under%20%60%2Flegacy%60%0A%0A-%20The%20legacy%20pages%20move%20into%20a%20real%20%60app%2Flegacy%2F%60%20segment%2C%20so%20their%20URLs%20are%0A%20%20%60%2Flegacy%2F%E2%80%A6%60%20and%20%60next%2Flink%60%2C%20%60redirect()%60%20and%20%60revalidatePath()%60%20take%20the%0A%20%20full%20path.%20Not%20%60basePath%3A%20%22%2Flegacy%22%60%3A%20this%20Next%20refuses%20%60basePath%3A%20false%60%0A%20%20rewrites%20to%20internal%20paths%2C%20and%20%60proxy.ts%60%20matchers%20are%20always%20prefixed%20with%0A%20%20the%20base%20path%2C%20so%20the%20root%20%60%2Fapi%60%20would%20skip%20the%20site%20password.%20Decided%20by%0A%20%20the%20user%2C%202026-10-08.%0A-%20Everything%20that%20is%20not%20a%20page%20stays%20natively%20at%20the%20root%3A%20%60%2Fapi%2F**%60%20(the%20API%2C%0A%20%20the%20feed%2C%20bots%20and%20the%20legacy%20routes%20keep%20their%20URLs)%2C%20%60%2Fmedia%60%2C%20%60%2Fsw.js%60%2C%0A%20%20the%20icons%2C%20the%20manifest%20and%20%60%2Flocations%2F%60.%0A-%20Every%20other%20path%20gets%20the%20SPA%20shell%20(%60index.html%60%2C%20%60no-store%60)%2C%20served%20by%0A%20%20Next.%20Hashed%20SPA%20assets%20are%20under%20%60%2F_spa%2F%60.%0A-%20The%20SPA%20router%20has%20a%20catch-all%3A%20a%20path%20it%20does%20not%20own%20is%20replaced%20by%0A%20%20%60%2Flegacy%60%20%2B%20path%20%2B%20query.%20SPA%20links%20to%20legacy%20screens%20point%20to%20%60%2Flegacy%2F%E2%80%A6%60%0A%20%20directly.%20Legacy%20links%20to%20moved%20screens%20are%20plain%20%60%3Ca%3E%60%20without%20the%20base%0A%20%20path.%20Emails%2C%20push%2C%20QR%20codes%20and%20bookmarks%20keep%20root%20URLs%20and%20get%20to%20the%0A%20%20right%20screen%20through%20the%20SPA.%0A-%20%60proxy.ts%60%20keeps%20the%20site%20password%20on%20every%20path%2C%20root%20and%20%60%2Flegacy%60%20alike.%0A-%20The%20SPA%20calls%20only%20%60%2Fapi%2Fv1%60%2C%20never%20a%20legacy%20route%20or%20server%20action.%0A%0AWhen%20Next%20retires%20(step%207)%2C%20%60%2Flegacy%60%20goes%20with%20it%20and%20the%20server%20serves%20the%0Ashell%20and%20%60%2F_spa%2F%60%20itself.%0A%0A%23%23%23%202.%20Code%20layout%0A%0A%60apps%2Fweb%60%20is%20a%20new%20workspace%20package%3A%20%60app%2F%60%2C%20%60replica%2F%60%2C%20%60commands%2F%60%2C%0A%60queries%2F%60%20(paged%20or%20restricted%20reads%20such%20as%20comments%20and%20attendee%20lists)%2C%0A%60features%2F%60%2C%20%60ui%2F%60%2C%20%60pwa%2F%60%2C%20as%20in%20%5B04%5D(..%2Ftarget-architecture%2F04-client.md%23layout).%0AIt%20imports%20%60packages%2Fdomain%60%2C%20%60packages%2Fcontracts%60%20and%20%60packages%2Fapi-client%60%0Aonly%3A%20never%20%60app%2F%60%2C%20%60server%2F%60%2C%20%60utils%2F%60%20or%20%60next%2F*%60.%20Nothing%20imports%0A%60apps%2Fweb%60.%20%60features%2F%60%20never%20imports%20%60api-client%60.%20dependency-cruiser%20enforces%0Athese%20rules.%0A%0AThe%20SPA%20writes%20its%20own%20%60ui%2F%60%20(nav%20bar%2C%20user%20picker%2C%20modal%2C%20toast%2C%20markdown%2C%0Aform%20fields).%20Legacy%20pages%20keep%20theirs%20until%20they%20move.%20A%20moved%20screen&#039;s%20Next%0Acode%20(page%2C%20components%2C%20server%20actions%2C%20%60replica%2F%60)%20is%20deleted%20in%20the%20slice%0Athat%20moves%20it.%20Legacy%20pages%20that%20open%20a%20moved%20modal%20link%20to%20its%20SPA%20URL.%0A%0A%23%23%23%203.%20The%20first%20slice%3A%20the%20schedule%20and%20the%20session%20modal%0A%0A-%20The%20shell%3A%20nav%2C%20user%20picker%2C%20theme%2C%20footer%20with%20release%20notes%2C%20sync%0A%20%20indicator.%0A-%20Grid%2C%20agenda%2C%20kiosk%2C%20filters%2C%20and%20the%20meetings%20column%20read-only%20from%20the%0A%20%20replica.%0A-%20The%20session%20modal%3A%20details%2C%20RSVP%2C%20attendee%20list%2C%20comments.%0A%0AAdd%20and%20edit%20session%2C%201-on-1%20booking%2C%20the%20meeting%20modal%20and%20the%20password%0Alogins%20stay%20legacy%20and%20open%20as%20full%20page%20loads.%0A%0A%23%23%23%204.%20Commands%0A%0AOne%20mechanism%20in%20%60commands%2F%60%20for%20every%20mutation%2C%20as%20in%0A%5B04%5D(..%2Ftarget-architecture%2F04-client.md%23commands-and-optimistic-updates)%3A%0Apredict%20with%20the%20domain%20policy%2C%20apply%20a%20pending%20change%20keyed%20by%20a%20new%0A%60Idempotency-Key%60%2C%20call%20the%20API%2C%20and%20reconcile%20when%20the%20feed%20or%20the%20response%0Abrings%20the%20%60command_key%60.%20A%20network%20error%20retries%20with%20the%20same%20key%3B%20a%20%604xx%60%0Aremoves%20the%20prediction%20and%20shows%20the%20problem%20code.%20The%20first%20commands%20are%20RSVP%0Aadd%20and%20remove%20and%20comment%20create.%20The%20RSVP%20rule%20moves%20into%20%60packages%2Fdomain%60%0Aso%20that%20the%20server%20and%20the%20client%20run%20the%20same%20policy.%20Today&#039;s%20%60rsvp-overlay%60%0Ais%20deleted%20with%20the%20Next%20schedule.%0A%0A%23%23%23%205.%20Persistence%20and%20offline%0A%0A-%20The%20replica%20is%20written%20to%20IndexedDB%2C%20debounced%2C%20keyed%20by%20(event%2C%20guest%20or%0A%20%20anonymous)%2C%20and%20cleared%20on%20a%20user%20switch.%0A-%20On%20open%2C%20a%20persisted%20replica%20is%20shown%20at%20once%20as%20%60stale%60%2C%20then%20the%20feed%0A%20%20resumes%20from%20its%20%60seq%60.%20The%20snapshot%20is%20refetched%20only%20on%20%60410%60%20or%20when%0A%20%20nothing%20is%20persisted.%0A-%20The%20service%20worker%20precaches%20the%20shell%20and%20the%20%60%2F_spa%2F%60%20assets%20and%20serves%0A%20%20the%20shell%20for%20SPA%20navigations%20when%20offline.%20It%20never%20caches%20%60%2Fapi%2F**%60%20or%0A%20%20%60%2Flegacy%2F**%60%3A%20the%20replica%20is%20the%20cache%20and%20knows%20its%20own%20staleness%2C%20which%0A%20%20answers%20the%20reservation%20in%20ADR%200006.%0A-%20The%20server%20reports%20its%20build%20id.%20When%20it%20differs%20from%20the%20running%20shell&#039;s%2C%0A%20%20the%20SPA%20offers%20a%20reload%2C%20so%20a%20precached%20shell%20never%20stays%20old.%0A%0A%23%23%23%206.%20Build%20and%20development%0A%0A-%20%60vite%20build%60%20runs%20before%20%60next%20build%60.%20The%20standalone%20output%20and%20the%20Docker%0A%20%20image%20contain%20the%20SPA%20files.%0A-%20%60make%20dev%60%20starts%20Next%20and%20Vite.%20Developers%20open%20the%20Vite%20port%3A%20Vite%20serves%0A%20%20the%20SPA%20with%20HMR%20and%20proxies%20%60%2Flegacy%60%20and%20%60%2Fapi%60%20to%20Next.%0A-%20E2E%20and%20%60make%20test-e2e-docker%60%20run%20against%20the%20built%20app%2C%20as%20in%0A%20%20production.%20E2E%20URLs%20stay%20at%20the%20root.%0A%0A%23%23%23%207.%20Tests%0A%0AStore%2C%20%60apply%60%2C%20commands%20(predict%2C%20reconcile%2C%20roll%20back%20against%20a%20fake%20API)%0Aand%20persistence%20(%60fake-indexeddb%60)%20are%20unit%20tests%20in%20the%20existing%20Vitest%20run%0Awith%20happy-dom.%20Screens%20are%20covered%20by%20the%20existing%20E2E%20suite.%20No%20component%0Atests%20in%20a%20browser%20runner.%0A%0A%23%23%20Consequences%0A%0A-%20A%20cold%20first%20visit%20is%20slower%20than%20SSR%3A%20the%20bundle%20and%20the%20snapshot%20load%0A%20%20before%20the%20schedule%20shows.%20A%20repeat%20open%20is%20faster%20than%20today%20and%20works%0A%20%20offline.%0A-%20No%20hydration%20class%20of%20bugs%20(%23734)%20on%20moved%20screens.%0A-%20Two%20UI%20code%20bases%20until%20Next%20retires.%20The%20SPA%20and%20legacy%20chrome%20can%20drift%3B%0A%20%20accepted.%0A-%20Unmoved%20screens%20show%20%60%2Flegacy%2F%E2%80%A6%60%20in%20the%20address%20bar%2C%20and%20a%20root%20URL%20to%20one%0A%20%20of%20them%20costs%20a%20second%20page%20load.%0A-%20Every%20hard-coded%20page%20path%20in%20Next%20code%20(%60%3Ca%20href%3E%60%2C%20%60window.location%60%2C%0A%20%20%60router.push%60%2C%20%60redirect()%60%2C%20%60revalidatePath()%60)%20must%20say%20%60%2Flegacy%2F%E2%80%A6%60.%20Client%0A%20%20%60fetch(%22%2Fapi%2F%E2%80%A6%22)%60%20is%20unaffected%3A%20the%20API%20stays%20at%20the%20root.%0A-%20%60sw.js%60%20changes%20from%20push-only%20to%20precaching.%20A%20broken%20worker%20can%20serve%20an%0A%20%20old%20shell%3B%20the%20reload%20offer%20in%20section%205%20is%20necessary%2C%20not%20optional.%0A%0A%23%23%20Alternatives%0A%0A-%20**Same%20URLs%2C%20Next%20serves%20the%20shell%20per%20moved%20route.**%20No%20URL%20change%20for%0A%20%20legacy%20screens%2C%20but%20every%20moved%20route%20needs%20a%20Next%20handler%2C%20and%20the%20SPA%20would%0A%20%20not%20own%20routing%20until%20the%20end.%0A-%20**SPA%20under%20%60%2Fapp%2F%60%2C%20Next%20redirects.**%20Root%20URLs%20change%20for%20moved%20screens%0A%20%20and%20the%20redirects%20stay%20forever.%0A-%20**Hono%20as%20the%20process%20with%20Next%20mounted.**%20Reaches%20the%20target%20process%20now%2C%0A%20%20at%20the%20cost%20of%20a%20custom%20server%2C%20the%20standalone%20build%20and%20the%20jobs%20loop%20start%0A%20%20moving%20in%20the%20same%20step.%0A-%20**Shared%20%60packages%2Fui%60%20with%20a%20router%20adapter.**%20One%20copy%20of%20the%20chrome%2C%20but%0A%20%20it%20constrains%20the%20SPA&#039;s%20UI%20to%20what%20legacy%20pages%20can%20also%20render.%0A-%20**Component%20tests%20in%20Vitest%20browser%20mode.**%20Closer%20to%20a%20real%20browser%3B%20a%0A%20%20second%20browser%20runner%20and%20a%20slower%20%60make%20test%60.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1730,7 +1730,7 @@ Tailwind with the existing tokens, no server-side rendering.
 <a href="../../target-architecture/04-client/">04</a> describes the end state.</p>
 <p>What exists: the schedule (grid, agenda, kiosk, session modal) reads from a
 replica seeded by SSR and kept current by the feed (ADR 0014), in
-<code>app/(site)/[eventSlug]/replica/</code>. RSVPs reconcile by <code>command_key</code>. The API
+<code>app/legacy/(site)/[eventSlug]/replica/</code>. RSVPs reconcile by <code>command_key</code>. The API
 under <code>/api/v1</code> covers what the schedule does (ADR 0012). The site password is
 enforced in <code>proxy.ts</code>. <code>public/sw.js</code> handles push only and caches nothing.</p>
 <p>This ADR settles how the SPA and Next live in one deployment while the screens
@@ -1738,11 +1738,15 @@ move, and what the first slice contains.</p>
 <h2 id="adr-0015-the-spa-alongside-next-decision" class="docmd-heading"><a href="#adr-0015-the-spa-alongside-next-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
 <h3 id="adr-0015-the-spa-alongside-next-decision-1-the-spa-owns-every-url-next-moves-under-legacy" class="docmd-heading"><a href="#adr-0015-the-spa-alongside-next-decision-1-the-spa-owns-every-url-next-moves-under-legacy" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. The SPA owns every URL; Next moves under <code>/legacy</code></h3>
 <ul>
-<li>Next gets <code>basePath: &quot;/legacy&quot;</code>. Its pages, <code>next/link</code>, <code>redirect()</code> and
-<code>/_next</code> assets move under it with no change to the route files.</li>
-<li>Rewrites with <code>basePath: false</code> keep at the root: <code>/api/**</code> (the API, the
-feed, bots and the legacy routes keep their URLs), <code>/sw.js</code>, the icons, the
-manifest and <code>/locations/</code>.</li>
+<li>The legacy pages move into a real <code>app/legacy/</code> segment, so their URLs are
+<code>/legacy/…</code> and <code>next/link</code>, <code>redirect()</code> and <code>revalidatePath()</code> take the
+full path. Not <code>basePath: &quot;/legacy&quot;</code>: this Next refuses <code>basePath: false</code>
+rewrites to internal paths, and <code>proxy.ts</code> matchers are always prefixed with
+the base path, so the root <code>/api</code> would skip the site password. Decided by
+the user, 2026-10-08.</li>
+<li>Everything that is not a page stays natively at the root: <code>/api/**</code> (the API,
+the feed, bots and the legacy routes keep their URLs), <code>/media</code>, <code>/sw.js</code>,
+the icons, the manifest and <code>/locations/</code>.</li>
 <li>Every other path gets the SPA shell (<code>index.html</code>, <code>no-store</code>), served by
 Next. Hashed SPA assets are under <code>/_spa/</code>.</li>
 <li>The SPA router has a catch-all: a path it does not own is replaced by
@@ -1825,9 +1829,9 @@ offline.</li>
 accepted.</li>
 <li>Unmoved screens show <code>/legacy/…</code> in the address bar, and a root URL to one
 of them costs a second page load.</li>
-<li>Hard-coded paths in Next code that do not go through <code>next/link</code> or
-<code>redirect()</code> (<code>&lt;a href&gt;</code>, <code>window.location</code>) must get the base path. Client
-<code>fetch(&quot;/api/…&quot;)</code> keeps working through the root rewrite.</li>
+<li>Every hard-coded page path in Next code (<code>&lt;a href&gt;</code>, <code>window.location</code>,
+<code>router.push</code>, <code>redirect()</code>, <code>revalidatePath()</code>) must say <code>/legacy/…</code>. Client
+<code>fetch(&quot;/api/…&quot;)</code> is unaffected: the API stays at the root.</li>
 <li><code>sw.js</code> changes from push-only to precaching. A broken worker can serve an
 old shell; the reload offer in section 5 is necessary, not optional.</li>
 </ul>
@@ -1987,17 +1991,47 @@ second browser runner and a slower <code>make test</code>.</li>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1791810603000">
+                <span class="git-last-updated" data-timestamp="1791810604000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1791810603000"></span>
+                  <span class="git-time" data-timestamp="1791810604000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="refactor: the Next pages live under /legacy">refactor: the Next pages live under /...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791810604000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: ADR 0015 moves the legacy pages into app/legacy, not a basePath">docs: ADR 0015 moves the legacy pages...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1791810604000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -2040,13 +2074,13 @@ second browser runner and a slower <code>make test</code>.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvjx9k9b"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvkm4orq"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvjx9k9b"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvjx9k9b" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvjx9k9b" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvjx9k9b" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvjx9k9b" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvkm4orq"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvkm4orq" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvkm4orq" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvkm4orq" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvkm4orq" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2124,7 +2158,7 @@ second browser runner and a slower <code>make test</code>.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvjx9k9b"></script>
+          src="../../assets/js/likec4-embed.js?v=mvkm4orq"></script>
         
       
       

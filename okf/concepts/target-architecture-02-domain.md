@@ -3,10 +3,10 @@ type: concept
 title: "2 · Domain"
 source: "https://developers.schellingboard.org/target-architecture/02-domain/"
 path: /target-architecture/02-domain/
-updated: 2026-10-22
+updated: 2026-10-23
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-22T19:16:36.112Z"
+  generated_at: "2026-10-23T06:52:39.572Z"
 ---
 # 2 · Domain
 
@@ -211,7 +211,7 @@ enabled but the server refused" becomes a bug with one cause.
 | `proposals.canEdit`          | Host, or anyone if no host; organizer always; phase                                                                                                                  | proposal                                         |
 | `scheduling.canEditSession`  | Host and not `lockedByOrganizer`; organizer always; a started session keeps its start                                                                                | session, clock                                   |
 | `scheduling.canPlace`        | Booking window, bookable place, length, reserved windows, place uses; only fields actually changed are held to the rules (an organizer-placed session stays fixable) | day, place, rules, previous session state, clock |
-| `scheduling.canRsvp`         | Phase, participation, `rsvp ≠ none`, capacity mode (hard limit vs advisory), not a host                                                                              | rsvp count, event settings                       |
+| `scheduling.rsvpRefusal`     | Phase, participation, not a host, capacity mode (hard limit vs advisory); returns a reason code, or nothing when allowed (`rsvp-rule.ts`)                            | rsvp count, event settings                       |
 | `scheduling.clashes`         | Which of a person's agenda items overlap a candidate; returns all of them ([#1042](https://github.com/schellingboard/schellingboard/issues/1042))                    | agenda                                           |
 | `meetings.canRequest`        | Enabled, phase, availability of both, open-request cap, place use                                                                                                    | meeting settings, availabilities, open count     |
 | `people.canEditProfile`      | The person, or organizer for labels only; profile comments removable by subject or author                                                                            |                                                  |

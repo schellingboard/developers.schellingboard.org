@@ -3,10 +3,10 @@ type: concept
 title: "4 · Web app"
 source: "https://developers.schellingboard.org/target-architecture/04-client/"
 path: /target-architecture/04-client/
-updated: 2026-10-22
+updated: 2026-10-23
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-22T19:16:36.112Z"
+  generated_at: "2026-10-23T06:52:39.573Z"
 ---
 # 4 · Web app
 
@@ -89,8 +89,8 @@ staleness lasts as long as the reconnect.
 ```ts
 export const rsvp = command({
   predict: (replica, actor, input) => {
-    const verdict = policies.scheduling.canRsvp(actor, input, contextFrom(replica), clock);
-    return verdict.allow ? [changes.RsvpAdded.predict(input, actor)] : deny(verdict);
+    const reason = policies.scheduling.rsvpRefusal(contextFrom(replica, actor, input), clock);
+    return reason ? deny(reason) : [changes.RsvpAdded.predict(input, actor)];
   },
   call: (api, input, key) => api.POST('/events/{slug}/sessions/{id}/rsvp', { ..., headers: { 'Idempotency-Key': key } }),
 });

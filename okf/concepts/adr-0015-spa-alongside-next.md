@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0015: The SPA alongside Next"
 source: "https://developers.schellingboard.org/adr/0015-spa-alongside-next/"
 path: /adr/0015-spa-alongside-next/
-updated: 2026-10-22
+updated: 2026-10-23
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-22T19:16:36.106Z"
+  generated_at: "2026-10-23T06:52:39.561Z"
 ---
 # ADR 0015: The SPA alongside Next
 
@@ -25,7 +25,7 @@ Tailwind with the existing tokens, no server-side rendering.
 
 What exists: the schedule (grid, agenda, kiosk, session modal) reads from a
 replica seeded by SSR and kept current by the feed (ADR 0014), in
-`app/(site)/[eventSlug]/replica/`. RSVPs reconcile by `command_key`. The API
+`app/legacy/(site)/[eventSlug]/replica/`. RSVPs reconcile by `command_key`. The API
 under `/api/v1` covers what the schedule does (ADR 0012). The site password is
 enforced in `proxy.ts`. `public/sw.js` handles push only and caches nothing.
 
@@ -36,11 +36,15 @@ move, and what the first slice contains.
 
 ### 1. The SPA owns every URL; Next moves under `/legacy`
 
-- Next gets `basePath: "/legacy"`. Its pages, `next/link`, `redirect()` and
-  `/_next` assets move under it with no change to the route files.
-- Rewrites with `basePath: false` keep at the root: `/api/**` (the API, the
-  feed, bots and the legacy routes keep their URLs), `/sw.js`, the icons, the
-  manifest and `/locations/`.
+- The legacy pages move into a real `app/legacy/` segment, so their URLs are
+  `/legacy/…` and `next/link`, `redirect()` and `revalidatePath()` take the
+  full path. Not `basePath: "/legacy"`: this Next refuses `basePath: false`
+  rewrites to internal paths, and `proxy.ts` matchers are always prefixed with
+  the base path, so the root `/api` would skip the site password. Decided by
+  the user, 2026-10-08.
+- Everything that is not a page stays natively at the root: `/api/**` (the API,
+  the feed, bots and the legacy routes keep their URLs), `/media`, `/sw.js`,
+  the icons, the manifest and `/locations/`.
 - Every other path gets the SPA shell (`index.html`, `no-store`), served by
   Next. Hashed SPA assets are under `/_spa/`.
 - The SPA router has a catch-all: a path it does not own is replaced by
@@ -132,9 +136,9 @@ tests in a browser runner.
   accepted.
 - Unmoved screens show `/legacy/…` in the address bar, and a root URL to one
   of them costs a second page load.
-- Hard-coded paths in Next code that do not go through `next/link` or
-  `redirect()` (`<a href>`, `window.location`) must get the base path. Client
-  `fetch("/api/…")` keeps working through the root rewrite.
+- Every hard-coded page path in Next code (`<a href>`, `window.location`,
+  `router.push`, `redirect()`, `revalidatePath()`) must say `/legacy/…`. Client
+  `fetch("/api/…")` is unaffected: the API stays at the root.
 - `sw.js` changes from push-only to precaching. A broken worker can serve an
   old shell; the reload offer in section 5 is necessary, not optional.
 

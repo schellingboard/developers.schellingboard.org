@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0005: Dark mode via semantic tokens and a per-device cookie"
 source: "https://developers.schellingboard.org/adr/0005-dark-mode/"
 path: /adr/0005-dark-mode/
-updated: 2026-10-22
+updated: 2026-10-23
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-22T19:16:36.103Z"
+  generated_at: "2026-10-23T06:52:39.555Z"
 ---
 # ADR 0005: Dark mode via semantic tokens and a per-device cookie
 
@@ -47,7 +47,7 @@ Constraints that shape the decision:
 
 Per device, rather than on the guest record, because:
 
-- `app/(site)/settings/page.tsx` requires a selected guest, and the header menu
+- `app/legacy/(site)/settings/page.tsx` requires a selected guest, and the header menu
   that reaches it only renders once a name is chosen
   (`header-user-select.tsx:62`). A guest-record setting would be unreachable
   from exactly the screens a first-time visitor sees.

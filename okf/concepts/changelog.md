@@ -3,10 +3,10 @@ type: concept
 title: "Changelog and release notes"
 source: "https://developers.schellingboard.org/changelog/"
 path: /changelog/
-updated: 2026-10-22
+updated: 2026-10-23
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-22T19:16:36.108Z"
+  generated_at: "2026-10-23T06:52:39.565Z"
 ---
 # Changelog and release notes
 
@@ -46,7 +46,7 @@ The full rules, with the hard limits and worked examples, are in
 ## In-app release notes
 
 The app carries a much shorter version of the changelog:
-[`app/release-notes.ts`](https://github.com/schellingboard/schellingboard/blob/main/app/release-notes.ts),
+[`packages/domain/src/release-notes.ts`](https://github.com/schellingboard/schellingboard/blob/main/packages/domain/src/release-notes.ts),
 shown when the footer's version is clicked. It holds **3–5 highlights** of the
 coming release — inline markdown, taking the same **bold** lead phrase as the
 changelog bullets.
