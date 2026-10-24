@@ -3,10 +3,10 @@ type: concept
 title: "Getting started"
 source: "https://developers.schellingboard.org/getting-started/"
 path: /getting-started/
-updated: 2026-10-23
+updated: 2026-10-24
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-23T06:52:39.567Z"
+  generated_at: "2026-10-24T08:36:43.013Z"
 ---
 # Getting started
 
@@ -21,7 +21,7 @@ okf:
 
 Where things live:
 
-- **Frontend**: React components in `app/` using App Router
+- **Frontend**: React components in `app/` using App Router (pages under `app/legacy/`), and the single-page app in `apps/web` that is replacing them; see [The web app](web-app.md)
 - **Database layer**: `db/` — `schema.ts`, `container.ts`, repositories in `db/repositories/sqlite/`
 - **API routes**: Server actions in `app/actions/`, API routes in `app/api/`
 - **Utils**: Shared utilities in `utils/`
@@ -81,7 +81,9 @@ enforces today are in [Architecture rules](architecture-rules.md).
    make dev
    ```
 
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+   Open [http://localhost:3000](http://localhost:3000) in your browser. That is
+   the Vite dev server for the SPA; it proxies the Next pages, which run on the
+   next port (3001).
 
 ## Development commands
 

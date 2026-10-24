@@ -5,12 +5,12 @@ bundle:
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-23T06:52:39.581Z"
+  generated_at: "2026-10-24T08:36:43.025Z"
   default_type: concept
 stats:
-  concepts: 46
+  concepts: 47
   by_type:
-    concept: 46
+    concept: 47
   locales: 
   versions: 
 concepts:
@@ -425,6 +425,15 @@ concepts:
     description: ""
     path: /version-control/
     file: concepts/version-control.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: web-app
+    type: concept
+    title: "The web app (`apps/web`)"
+    description: ""
+    path: /web-app/
+    file: concepts/web-app.md
     locale: ""
     version: ""
     tags: 

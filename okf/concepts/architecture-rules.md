@@ -3,10 +3,10 @@ type: concept
 title: "Architecture rules"
 source: "https://developers.schellingboard.org/architecture-rules/"
 path: /architecture-rules/
-updated: 2026-10-23
+updated: 2026-10-24
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-23T06:52:39.563Z"
+  generated_at: "2026-10-24T08:36:43.008Z"
 ---
 # Architecture rules
 
@@ -126,6 +126,12 @@ exists, and the job loop, notification and push infrastructure (`utils/jobs/`,
 `utils/notifications.ts`, `utils/push.ts`). `adminReads()`
 (`server/admin-reads.ts`) is importable only from `app/legacy/admin/` and
 `app/actions/admin-*`.
+
+`apps/web` ([ADR 0015](adr/0015-spa-alongside-next.md)) imports
+`packages/domain`, `packages/contracts` and `packages/api-client` only: never `app/`,
+`server/`, `utils/`, `db/` or `next`. Nothing imports it, `features/` never imports
+`api-client` (screens call `commands/` and `queries/`), and it may import only what
+its own `package.json` declares. See [The web app](web-app.md).
 
 `make arch-graph` renders the graph to `arch-graph.svg` (needs graphviz), which
 is usually faster than arguing about where a boundary should go.

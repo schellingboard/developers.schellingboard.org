@@ -891,7 +891,7 @@ effectively dynamic (a settings read in `generateMetadata`, `cookies()` in
 ### Semantic tokens, not `dark:` on every utility
 
 Components name the role a colour plays — `bg-surface`, `text-fg-muted`,
-`border-line`, `bg-brand` — and the token rule in `app/globals.css` is the only
+`border-line`, `bg-brand` — and the token rule in `styles/tokens.css` is the only
 place a colour is picked. Its `@variant dark` block lists only the tokens that
 change, so what the two themes disagree about is readable at a glance and a
 colour that is meant to be the same in both cannot drift.
@@ -921,7 +921,7 @@ blooms at reading sizes.
 
 ### The contrast contract is a test
 
-`tests/unit/theme-contrast.test.ts` parses the tokens out of `globals.css` and
+`tests/unit/theme-contrast.test.ts` parses the tokens out of `styles/tokens.css` and
 asserts a WCAG ratio for every (foreground, background) pair that occurs in the
 UI, in both themes — 7:1 for body copy, 4.5:1 for secondary and semantic text,
 3:1 for control borders and state indicators per WCAG 2.2 1.4.11. It reads the
@@ -2466,7 +2466,9 @@ move, and what the first slice contains.
   directly. Legacy links to moved screens are plain `<a>` without the base
   path. Emails, push, QR codes and bookmarks keep root URLs and get to the
   right screen through the SPA.
-- `proxy.ts` keeps the site password on every path, root and `/legacy` alike.
+- `proxy.ts` keeps the site password on every path, root and `/legacy` alike, except
+  root `/admin*`: that gets the static shell, and the forwarded `/legacy/admin` request
+  meets the admin gate (admin is independent of the site password).
 - The SPA calls only `/api/v1`, never a legacy route or server action.
 
 When Next retires (step 7), `/legacy` goes with it and the server serves the
@@ -2733,6 +2735,12 @@ exists, and the job loop, notification and push infrastructure (`utils/jobs/`,
 `utils/notifications.ts`, `utils/push.ts`). `adminReads()`
 (`server/admin-reads.ts`) is importable only from `app/legacy/admin/` and
 `app/actions/admin-*`.
+
+`apps/web` ([ADR 0015](adr/0015-spa-alongside-next.md)) imports
+`packages/domain`, `packages/contracts` and `packages/api-client` only: never `app/`,
+`server/`, `utils/`, `db/` or `next`. Nothing imports it, `features/` never imports
+`api-client` (screens call `commands/` and `queries/`), and it may import only what
+its own `package.json` declares. See [The web app](web-app.md).
 
 `make arch-graph` renders the graph to `arch-graph.svg` (needs graphviz), which
 is usually faster than arguing about where a boundary should go.
@@ -3159,10 +3167,10 @@ The location colours on the schedule are the one exception to the rule above:
 they stay palette names, because a location's colour is data. Put `loc-<name>`
 on the element and add the role class for what you are drawing — `loc-block`,
 `loc-block-dim`, `loc-badge`, `loc-tag`, `loc-swatch`. Each mixes the hue into
-the surface and foreground tokens in `app/globals.css`, so the same class works
+the surface and foreground tokens in `styles/tokens.css`, so the same class works
 in both themes — never write `bg-${color}-500` again.
 
-Token values live in `app/globals.css` and are the only place a colour is
+Token values live in `styles/tokens.css` and are the only place a colour is
 chosen. `tests/unit/theme-contrast.test.ts` asserts the WCAG ratio of every pair
 in both themes, and `tests/unit/location-colors.test.ts` does the same for all
 22 location hues, so changing one tells you what it broke. See
@@ -3698,7 +3706,7 @@ partly cover it.
 
 Where things live:
 
-- **Frontend**: React components in `app/` using App Router
+- **Frontend**: React components in `app/` using App Router (pages under `app/legacy/`), and the single-page app in `apps/web` that is replacing them; see [The web app](web-app.md)
 - **Database layer**: `db/` — `schema.ts`, `container.ts`, repositories in `db/repositories/sqlite/`
 - **API routes**: Server actions in `app/actions/`, API routes in `app/api/`
 - **Utils**: Shared utilities in `utils/`
@@ -3758,7 +3766,9 @@ enforces today are in [Architecture rules](architecture-rules.md).
    make dev
    ```
 
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+   Open [http://localhost:3000](http://localhost:3000) in your browser. That is
+   the Vite dev server for the SPA; it proxies the Next pages, which run on the
+   next port (3001).
 
 ## Development commands
 
@@ -4007,6 +4017,7 @@ branch reads that branch's `docs/dev/` in the repository.
 | --------------------------------------------------- | -------------------------------------------------------- |
 | [Architecture rules](architecture-rules.md)         | the conventions the build enforces, and how to add one   |
 | [The server and the API](server.md)                 | `server/` and `/api/v1`: adding a use case and its route |
+| [The web app](web-app.md)                           | `apps/web`: the SPA, how Next serves it, running it      |
 | [Database migrations](migrations.md)                | generating migrations, resolving drizzle conflicts       |
 | [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine  |
 | [Documentation and the sites](documentation.md)     | how the three published sites are built                  |
@@ -4421,7 +4432,8 @@ repositories. `make arch` enforces it, with the auth flows allow-listed.
 ## Choosing a name
 
 `PUT /api/v1/me/identity` makes the browser act as an open guest name and
-`DELETE` signs it out; both set the `guest` cookie, which the route adapter
+`DELETE` signs it out; `GET` answers who the browser acts as now (null for a protected name
+not yet logged in, the SPA's viewer); all three set the `guest` cookie, which the route adapter
 builds from the use case's `Identity` (`people/application/identity.ts`). A
 protected name answers `403 guest.protected`: the SPA sends the user to the
 legacy login. The `selectUserAction` server action calls the same use case.
@@ -6583,6 +6595,65 @@ sharing work-in-progress without that expectation.
 
 Issue Type and Priority are GitHub project fields that `gh issue create` cannot
 set; [GitHub issues](github-issues.md) has the `gh api graphql` calls that can.
+
+
+---
+
+## [The web app (\`apps/web\`)](https://developers.schellingboard.org/web-app/)
+
+# The web app (`apps/web`)
+
+`apps/web` is the single-page app that is replacing the Next pages one screen
+family at a time ([ADR 0015](adr/0015-spa-alongside-next.md)). It is a workspace
+package built with Vite, React and TanStack Router, styled with Tailwind and the
+colour tokens in `styles/tokens.css` (the Next pages import the same file).
+[Client design](target-architecture/04-client.md) describes where it is going.
+
+## How it reaches the browser
+
+- The Next pages live under `/legacy`. Every other root path that is not `/api`,
+  `/media`, `/locations`, `/sw.js`, an icon or the manifest is a page of the SPA.
+- `proxy.ts` applies the site password to those paths, then rewrites them to
+  `/api/spa/shell`, which reads `apps/web/dist/index.html` from disk on each
+  request and answers `no-store`.
+- Hashed files are requested as `/_spa/assets/…`. The proxy skips them; a rewrite in
+  `next.config.js` hands them to `/api/spa/assets/…`, which serves them as
+  immutable and answers 404 for anything missing, never the shell.
+- Until a screen moves, the router's catch-all route replaces the location with
+  `/legacy` + path + query, so the app behaves as before. A path already under
+  `/legacy` is left alone.
+
+The files are read relative to the working directory, so the same code serves
+`next start`, and the Docker image, which copies `apps/web/dist` next to
+`server.js`.
+
+## Build and run
+
+- `make build` and the E2E web server run `vite build apps/web` before `next build`;
+  the Dockerfile does the same. Next serves what is in `apps/web/dist`, so rebuild
+  the SPA after changing it when testing through Next.
+- `make dev` runs Next on `PORT + 1` and Vite on `PORT` (default 3000). Open the
+  Vite port: it serves the SPA with hot reload and proxies `/legacy`, `/api`,
+  `/media` and the other Next paths to Next. The shell gate does not apply in dev.
+  A bare `next dev` answers root pages with the shell (503 until the SPA is built):
+  use `/legacy/...` URLs with it, as the screenshots script does.
+- E2E specs call `page.goto` with root paths; the fixture sends them to `/legacy/...`
+  so a click never lands before hydration. One spec covers the shell's forward.
+
+## Layout and rules
+
+`apps/web/src/` follows [the client layout](target-architecture/04-client.md#layout);
+`app/` and `replica/` exist so far (the replica: store, `apply`, feed client, sync state, a server clock offset and IndexedDB persistence keyed by event and viewer, opened as `stale`). dependency-cruiser enforces that the package imports
+`packages/domain`, `packages/contracts` and `packages/api-client` only (never `app/`,
+`server/`, `utils/` or `next`), that nothing imports it, that `features/` never
+imports `api-client`, and that it declares what it imports. See
+[Architecture rules](architecture-rules.md).
+
+## Tests
+
+Unit tests sit next to the code (`*.test.ts(x)`) and run in the `web` Vitest project
+under happy-dom as part of `make test`. Screens are covered by the E2E suite; there
+are no component tests in a browser runner.
 
 
 ---

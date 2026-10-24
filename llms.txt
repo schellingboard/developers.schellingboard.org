@@ -50,3 +50,4 @@
 - [Open questions](https://developers.schellingboard.org/target-architecture/open-questions/)
 - [Testing](https://developers.schellingboard.org/testing/)
 - [Version control and pull requests](https://developers.schellingboard.org/version-control/)
+- [The web app (\`apps/web\`)](https://developers.schellingboard.org/web-app/)

@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0005: Dark mode via semantic tokens and a per-device cookie"
 source: "https://developers.schellingboard.org/adr/0005-dark-mode/"
 path: /adr/0005-dark-mode/
-updated: 2026-10-23
+updated: 2026-10-24
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-23T06:52:39.555Z"
+  generated_at: "2026-10-24T08:36:43.001Z"
 ---
 # ADR 0005: Dark mode via semantic tokens and a per-device cookie
 
@@ -117,7 +117,7 @@ effectively dynamic (a settings read in `generateMetadata`, `cookies()` in
 ### Semantic tokens, not `dark:` on every utility
 
 Components name the role a colour plays — `bg-surface`, `text-fg-muted`,
-`border-line`, `bg-brand` — and the token rule in `app/globals.css` is the only
+`border-line`, `bg-brand` — and the token rule in `styles/tokens.css` is the only
 place a colour is picked. Its `@variant dark` block lists only the tokens that
 change, so what the two themes disagree about is readable at a glance and a
 colour that is meant to be the same in both cannot drift.
@@ -147,7 +147,7 @@ blooms at reading sizes.
 
 ### The contrast contract is a test
 
-`tests/unit/theme-contrast.test.ts` parses the tokens out of `globals.css` and
+`tests/unit/theme-contrast.test.ts` parses the tokens out of `styles/tokens.css` and
 asserts a WCAG ratio for every (foreground, background) pair that occurs in the
 UI, in both themes — 7:1 for body copy, 4.5:1 for secondary and semantic text,
 3:1 for control borders and state indicators per WCAG 2.2 1.4.11. It reads the

@@ -3,10 +3,10 @@ type: concept
 title: "SchellingBoard developer documentation"
 source: "https://developers.schellingboard.org/"
 path: /
-updated: 2026-10-23
+updated: 2026-10-24
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-23T06:52:39.551Z"
+  generated_at: "2026-10-24T08:36:42.997Z"
 ---
 # SchellingBoard developer documentation
 
@@ -36,6 +36,7 @@ branch reads that branch's `docs/dev/` in the repository.
 | --------------------------------------------------- | -------------------------------------------------------- |
 | [Architecture rules](architecture-rules.md)         | the conventions the build enforces, and how to add one   |
 | [The server and the API](server.md)                 | `server/` and `/api/v1`: adding a use case and its route |
+| [The web app](web-app.md)                           | `apps/web`: the SPA, how Next serves it, running it      |
 | [Database migrations](migrations.md)                | generating migrations, resolving drizzle conflicts       |
 | [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine  |
 | [Documentation and the sites](documentation.md)     | how the three published sites are built                  |

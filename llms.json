@@ -277,6 +277,12 @@
       "url": "https://developers.schellingboard.org/version-control/",
       "description": "",
       "priority": "medium"
+    },
+    {
+      "title": "The web app (\\`apps/web\\`)",
+      "url": "https://developers.schellingboard.org/web-app/",
+      "description": "",
+      "priority": "medium"
     }
   ]
 }

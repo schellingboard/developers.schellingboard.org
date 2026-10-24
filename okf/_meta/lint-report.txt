@@ -44,6 +44,7 @@
 [WARN] missing-type /target-architecture/open-questions/  (using fallback 'concept')
 [WARN] missing-type /testing/  (using fallback 'concept')
 [WARN] missing-type /version-control/  (using fallback 'concept')
+[WARN] missing-type /web-app/  (using fallback 'concept')
 [WARN] orphan-concept root  (no inbound links)
 [WARN] orphan-concept adr-0001-replace-airtable-with-sql-database  (no inbound links)
 [WARN] orphan-concept adr-0003-form-field-validation-with-zod  (no inbound links)
