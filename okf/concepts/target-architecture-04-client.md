@@ -6,7 +6,7 @@ path: /target-architecture/04-client/
 updated: 2026-10-24
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-24T08:36:43.018Z"
+  generated_at: "2026-10-24T11:49:20.082Z"
 ---
 # 4 · Web app
 

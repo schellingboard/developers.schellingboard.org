@@ -6,282 +6,329 @@
       "title": "ADR 0001: Replace Airtable with a SQL database",
       "url": "https://developers.schellingboard.org/adr/0001-replace-airtable-with-sql-database/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0002: Testing strategy",
       "url": "https://developers.schellingboard.org/adr/0002-testing-strategy/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0003: Form handling and validation with React Hook Form and Zod",
       "url": "https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0004: Dev fake clock for time-traveling event phases",
       "url": "https://developers.schellingboard.org/adr/0004-dev-fake-clock/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0005: Dark mode via semantic tokens and a per-device cookie",
       "url": "https://developers.schellingboard.org/adr/0005-dark-mode/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0006: Push notifications through an installable web app",
       "url": "https://developers.schellingboard.org/adr/0006-push-notifications/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0007: Attendee count storage and in-process reminder dispatch",
       "url": "https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0008: Publish the developer docs at developers.schellingboard.org",
       "url": "https://developers.schellingboard.org/adr/0008-publish-developer-docs/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0009: Move to a standalone repo in new schellingboard GitHub org",
       "url": "https://developers.schellingboard.org/adr/0009-standalone-repository-in-own-org/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0010: Domain and contracts as workspace packages",
       "url": "https://developers.schellingboard.org/adr/0010-workspace-packages/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0011: A change log and one jobs loop",
       "url": "https://developers.schellingboard.org/adr/0011-change-log-and-jobs-loop/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0012: A versioned HTTP API in the Next process",
       "url": "https://developers.schellingboard.org/adr/0012-http-api-v1/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0013: The unit of work",
       "url": "https://developers.schellingboard.org/adr/0013-unit-of-work/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0014: The change feed and the snapshot",
       "url": "https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "ADR 0015: The SPA alongside Next",
       "url": "https://developers.schellingboard.org/adr/0015-spa-alongside-next/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
+      "section": "Adr",
       "priority": "medium"
     },
     {
       "title": "Architecture rules",
       "url": "https://developers.schellingboard.org/architecture-rules/",
       "description": "",
+      "section": "Architecture Rules",
       "priority": "medium"
     },
     {
       "title": "Predicting session attendance from voting results",
       "url": "https://developers.schellingboard.org/attendance-model/attendance-2025/",
       "description": "",
+      "section": "Attendance Model",
       "priority": "medium"
     },
     {
       "title": "Attendance prediction from voting results",
       "url": "https://developers.schellingboard.org/attendance-model/",
       "description": "",
+      "section": "Attendance Model",
       "priority": "medium"
     },
     {
       "title": "Changelog and release notes",
       "url": "https://developers.schellingboard.org/changelog/",
       "description": "",
+      "section": "Changelog",
       "priority": "medium"
     },
     {
       "title": "Coding Guidelines",
       "url": "https://developers.schellingboard.org/coding-guidelines/",
       "description": "",
+      "section": "Coding Guidelines",
       "priority": "medium"
     },
     {
       "title": "Documentation and the sites",
       "url": "https://developers.schellingboard.org/documentation/",
       "description": "",
+      "section": "Documentation",
       "priority": "medium"
     },
     {
       "title": "Matrix chat integration — feasibility notes",
       "url": "https://developers.schellingboard.org/exploration/matrix-chat/",
       "description": "",
+      "section": "Exploration",
       "priority": "medium"
     },
     {
       "title": "Getting started",
       "url": "https://developers.schellingboard.org/getting-started/",
       "description": "",
+      "section": "Getting Started",
       "priority": "medium"
     },
     {
       "title": "Creating and Reading GitHub Issues",
       "url": "https://developers.schellingboard.org/github-issues/",
       "description": "",
+      "section": "Github Issues",
       "priority": "medium"
     },
     {
       "title": "SchellingBoard developer documentation",
       "url": "https://developers.schellingboard.org/",
       "description": "",
+      "section": null,
       "priority": "high"
     },
     {
       "title": "Database Migrations",
       "url": "https://developers.schellingboard.org/migrations/",
       "description": "",
+      "section": "Migrations",
       "priority": "medium"
     },
     {
       "title": "Running Multiple Instances",
       "url": "https://developers.schellingboard.org/multiple-instances/",
       "description": "",
+      "section": "Multiple Instances",
       "priority": "medium"
     },
     {
       "title": "Releasing a New Version",
       "url": "https://developers.schellingboard.org/releasing/",
       "description": "",
+      "section": "Releasing",
       "priority": "medium"
     },
     {
       "title": "The server and the API",
       "url": "https://developers.schellingboard.org/server/",
       "description": "",
+      "section": "Server",
       "priority": "medium"
     },
     {
       "title": "1 · Overview",
       "url": "https://developers.schellingboard.org/target-architecture/01-overview/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "2 · Domain",
       "url": "https://developers.schellingboard.org/target-architecture/02-domain/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "3 · Server",
       "url": "https://developers.schellingboard.org/target-architecture/03-server/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "4 · Web app",
       "url": "https://developers.schellingboard.org/target-architecture/04-client/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "5 · Security",
       "url": "https://developers.schellingboard.org/target-architecture/05-security/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "6 · Data and time",
       "url": "https://developers.schellingboard.org/target-architecture/06-data-and-time/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "7 · Repository, enforced rules, testing, agents",
       "url": "https://developers.schellingboard.org/target-architecture/07-repo-and-rules/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "8 · Decisions",
       "url": "https://developers.schellingboard.org/target-architecture/08-decisions/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "9 · Feedback and issues, mapped to the design",
       "url": "https://developers.schellingboard.org/target-architecture/09-feedback-map/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "10 · A path from the current code",
       "url": "https://developers.schellingboard.org/target-architecture/10-path-from-here/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "Diagrams",
       "url": "https://developers.schellingboard.org/target-architecture/diagrams/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "Glossary",
       "url": "https://developers.schellingboard.org/target-architecture/glossary/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "Target architecture",
       "url": "https://developers.schellingboard.org/target-architecture/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "Open questions",
       "url": "https://developers.schellingboard.org/target-architecture/open-questions/",
       "description": "",
+      "section": "Target Architecture",
       "priority": "medium"
     },
     {
       "title": "Testing",
       "url": "https://developers.schellingboard.org/testing/",
       "description": "",
+      "section": "Testing",
       "priority": "medium"
     },
     {
       "title": "Version control and pull requests",
       "url": "https://developers.schellingboard.org/version-control/",
       "description": "",
+      "section": "Version Control",
       "priority": "medium"
     },
     {
       "title": "The web app (\\`apps/web\\`)",
       "url": "https://developers.schellingboard.org/web-app/",
       "description": "",
+      "section": "Web App",
       "priority": "medium"
     }
   ]

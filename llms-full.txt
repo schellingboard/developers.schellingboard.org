@@ -4,7 +4,7 @@
 
 ---
 
-## [ADR 0001: Replace Airtable with a SQL database](https://developers.schellingboard.org/adr/0001-replace-airtable-with-sql-database/)
+## [ADR 0001: Replace Airtable with a SQL database](https://developers.schellingboard.org/adr/0001-replace-airtable-with-sql-database/) (Adr)
 
 # ADR 0001: Replace Airtable with a SQL database
 
@@ -253,7 +253,7 @@ Rationale for each piece:
 
 ---
 
-## [ADR 0002: Testing strategy](https://developers.schellingboard.org/adr/0002-testing-strategy/)
+## [ADR 0002: Testing strategy](https://developers.schellingboard.org/adr/0002-testing-strategy/) (Adr)
 
 # ADR 0002: Testing strategy
 
@@ -499,7 +499,7 @@ it moves the percentage.
 
 ---
 
-## [ADR 0003: Form handling and validation with React Hook Form and Zod](https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/)
+## [ADR 0003: Form handling and validation with React Hook Form and Zod](https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/) (Adr)
 
 # ADR 0003: Form handling and validation with React Hook Form and Zod
 
@@ -611,7 +611,7 @@ No clear benefit to using them over zod, since zod is the most widely used.
 
 ---
 
-## [ADR 0004: Dev fake clock for time-traveling event phases](https://developers.schellingboard.org/adr/0004-dev-fake-clock/)
+## [ADR 0004: Dev fake clock for time-traveling event phases](https://developers.schellingboard.org/adr/0004-dev-fake-clock/) (Adr)
 
 # ADR 0004: Dev fake clock for time-traveling event phases
 
@@ -780,7 +780,7 @@ writes the `time-override` cookie via `document.cookie` and calls
 
 ---
 
-## [ADR 0005: Dark mode via semantic tokens and a per-device cookie](https://developers.schellingboard.org/adr/0005-dark-mode/)
+## [ADR 0005: Dark mode via semantic tokens and a per-device cookie](https://developers.schellingboard.org/adr/0005-dark-mode/) (Adr)
 
 # ADR 0005: Dark mode via semantic tokens and a per-device cookie
 
@@ -1000,7 +1000,7 @@ border instead of a solid block of colour.
 
 ---
 
-## [ADR 0006: Push notifications through an installable web app](https://developers.schellingboard.org/adr/0006-push-notifications/)
+## [ADR 0006: Push notifications through an installable web app](https://developers.schellingboard.org/adr/0006-push-notifications/) (Adr)
 
 # ADR 0006: Push notifications through an installable web app
 
@@ -1119,7 +1119,7 @@ worth it at this exposure; revisit if the exposure changes.
 
 ---
 
-## [ADR 0007: Attendee count storage and in-process reminder dispatch](https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/)
+## [ADR 0007: Attendee count storage and in-process reminder dispatch](https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/) (Adr)
 
 # ADR 0007: Attendee count storage and in-process reminder dispatch
 
@@ -1387,7 +1387,7 @@ look. The host-only control and the `?record=count` deep link stay.
 
 ---
 
-## [ADR 0008: Publish the developer docs at developers.schellingboard.org](https://developers.schellingboard.org/adr/0008-publish-developer-docs/)
+## [ADR 0008: Publish the developer docs at developers.schellingboard.org](https://developers.schellingboard.org/adr/0008-publish-developer-docs/) (Adr)
 
 # ADR 0008: Publish the developer docs at developers.schellingboard.org
 
@@ -1489,7 +1489,7 @@ contributors in the meantime.
 
 ---
 
-## [ADR 0009: Move to a standalone repo in new schellingboard GitHub org](https://developers.schellingboard.org/adr/0009-standalone-repository-in-own-org/)
+## [ADR 0009: Move to a standalone repo in new schellingboard GitHub org](https://developers.schellingboard.org/adr/0009-standalone-repository-in-own-org/) (Adr)
 
 # ADR 0009: Move to a standalone repo in new schellingboard GitHub org
 
@@ -1534,7 +1534,7 @@ We did it early, because stars and history only grow.
 
 ---
 
-## [ADR 0010: Domain and contracts as workspace packages](https://developers.schellingboard.org/adr/0010-workspace-packages/)
+## [ADR 0010: Domain and contracts as workspace packages](https://developers.schellingboard.org/adr/0010-workspace-packages/) (Adr)
 
 # ADR 0010: Domain and contracts as workspace packages
 
@@ -1612,7 +1612,7 @@ by a rule that nothing outside `db/` imports `db/repositories/`.
 
 ---
 
-## [ADR 0011: A change log and one jobs loop](https://developers.schellingboard.org/adr/0011-change-log-and-jobs-loop/)
+## [ADR 0011: A change log and one jobs loop](https://developers.schellingboard.org/adr/0011-change-log-and-jobs-loop/) (Adr)
 
 # ADR 0011: A change log and one jobs loop
 
@@ -1725,7 +1725,7 @@ notifications have no such rule, and losing one silently is worse.
 
 ---
 
-## [ADR 0012: A versioned HTTP API in the Next process](https://developers.schellingboard.org/adr/0012-http-api-v1/)
+## [ADR 0012: A versioned HTTP API in the Next process](https://developers.schellingboard.org/adr/0012-http-api-v1/) (Adr)
 
 # ADR 0012: A versioned HTTP API in the Next process
 
@@ -1951,7 +1951,7 @@ standalone build does not carry it.
 
 ---
 
-## [ADR 0013: The unit of work](https://developers.schellingboard.org/adr/0013-unit-of-work/)
+## [ADR 0013: The unit of work](https://developers.schellingboard.org/adr/0013-unit-of-work/) (Adr)
 
 # ADR 0013: The unit of work
 
@@ -2114,7 +2114,7 @@ never see a write that is still open, also outside the unit of work.
 
 ---
 
-## [ADR 0014: The change feed and the snapshot](https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/)
+## [ADR 0014: The change feed and the snapshot](https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/) (Adr)
 
 # ADR 0014: The change feed and the snapshot
 
@@ -2420,7 +2420,7 @@ that matches. Because publish runs under the write lock, changes arrive in
 
 ---
 
-## [ADR 0015: The SPA alongside Next](https://developers.schellingboard.org/adr/0015-spa-alongside-next/)
+## [ADR 0015: The SPA alongside Next](https://developers.schellingboard.org/adr/0015-spa-alongside-next/) (Adr)
 
 # ADR 0015: The SPA alongside Next
 
@@ -2576,7 +2576,7 @@ tests in a browser runner.
 
 ---
 
-## [Architecture decision records](https://developers.schellingboard.org/adr/)
+## [Architecture decision records](https://developers.schellingboard.org/adr/) (Adr)
 
 # Architecture decision records
 
@@ -2615,7 +2615,7 @@ Longer design work that isn't a single decision lives next door:
 
 ---
 
-## [Architecture rules](https://developers.schellingboard.org/architecture-rules/)
+## [Architecture rules](https://developers.schellingboard.org/architecture-rules/) (Architecture Rules)
 
 # Architecture rules
 
@@ -2757,7 +2757,7 @@ is usually faster than arguing about where a boundary should go.
 
 ---
 
-## [Predicting session attendance from voting results](https://developers.schellingboard.org/attendance-model/attendance-2025/)
+## [Predicting session attendance from voting results](https://developers.schellingboard.org/attendance-model/attendance-2025/) (Attendance Model)
 
 # Predicting session attendance from voting results
 
@@ -2949,7 +2949,7 @@ it is simply imprecise.
 
 ---
 
-## [Attendance prediction from voting results](https://developers.schellingboard.org/attendance-model/)
+## [Attendance prediction from voting results](https://developers.schellingboard.org/attendance-model/) (Attendance Model)
 
 # Attendance prediction from voting results
 
@@ -3021,7 +3021,7 @@ picked a room, and once you know them the vote adds nothing on top.
 
 ---
 
-## [Changelog and release notes](https://developers.schellingboard.org/changelog/)
+## [Changelog and release notes](https://developers.schellingboard.org/changelog/) (Changelog)
 
 # Changelog and release notes
 
@@ -3074,7 +3074,7 @@ against the changelog — see [Releasing a new version](releasing.md).
 
 ---
 
-## [Coding Guidelines](https://developers.schellingboard.org/coding-guidelines/)
+## [Coding Guidelines](https://developers.schellingboard.org/coding-guidelines/) (Coding Guidelines)
 
 # Coding Guidelines
 
@@ -3200,7 +3200,7 @@ acting guest.
 
 ---
 
-## [Documentation and the sites](https://developers.schellingboard.org/documentation/)
+## [Documentation and the sites](https://developers.schellingboard.org/documentation/) (Documentation)
 
 # Documentation and the sites
 
@@ -3451,7 +3451,7 @@ their own, and both use the same setup.
 
 ---
 
-## [Matrix chat integration — feasibility notes](https://developers.schellingboard.org/exploration/matrix-chat/)
+## [Matrix chat integration — feasibility notes](https://developers.schellingboard.org/exploration/matrix-chat/) (Exploration)
 
 # Matrix chat integration — feasibility notes
 
@@ -3691,7 +3691,7 @@ partly cover it.
 
 ---
 
-## [Getting started](https://developers.schellingboard.org/getting-started/)
+## [Getting started](https://developers.schellingboard.org/getting-started/) (Getting Started)
 
 # Getting started
 
@@ -3852,7 +3852,7 @@ hand-edit them, regenerate as described in
 
 ---
 
-## [Creating and Reading GitHub Issues](https://developers.schellingboard.org/github-issues/)
+## [Creating and Reading GitHub Issues](https://developers.schellingboard.org/github-issues/) (Github Issues)
 
 # Creating and Reading GitHub Issues
 
@@ -4048,7 +4048,7 @@ branch reads that branch's `docs/dev/` in the repository.
 
 ---
 
-## [Database Migrations](https://developers.schellingboard.org/migrations/)
+## [Database Migrations](https://developers.schellingboard.org/migrations/) (Migrations)
 
 # Database Migrations
 
@@ -4105,7 +4105,7 @@ the conflicted JSON; regenerate it instead:
 
 ---
 
-## [Running Multiple Instances](https://developers.schellingboard.org/multiple-instances/)
+## [Running Multiple Instances](https://developers.schellingboard.org/multiple-instances/) (Multiple Instances)
 
 # Running Multiple Instances
 
@@ -4220,7 +4220,7 @@ and `MAILPIT_API_URL` matter there. `make test` binds no port at all.
 
 ---
 
-## [Releasing a New Version](https://developers.schellingboard.org/releasing/)
+## [Releasing a New Version](https://developers.schellingboard.org/releasing/) (Releasing)
 
 # Releasing a New Version
 
@@ -4369,7 +4369,7 @@ version, which is also how published docs are corrected between releases. See
 
 ---
 
-## [The server and the API](https://developers.schellingboard.org/server/)
+## [The server and the API](https://developers.schellingboard.org/server/) (Server)
 
 # The server and the API
 
@@ -4550,7 +4550,7 @@ user stories catalogued in `tests/use-cases.ts` that every test is tagged with
 
 ---
 
-## [1 · Overview](https://developers.schellingboard.org/target-architecture/01-overview/)
+## [1 · Overview](https://developers.schellingboard.org/target-architecture/01-overview/) (Target Architecture)
 
 # 1 · Overview
 
@@ -4691,7 +4691,7 @@ alternatives.
 
 ---
 
-## [2 · Domain](https://developers.schellingboard.org/target-architecture/02-domain/)
+## [2 · Domain](https://developers.schellingboard.org/target-architecture/02-domain/) (Target Architecture)
 
 # 2 · Domain
 
@@ -4940,7 +4940,7 @@ adding a second language to sentence-returning code always is.
 
 ---
 
-## [3 · Server](https://developers.schellingboard.org/target-architecture/03-server/)
+## [3 · Server](https://developers.schellingboard.org/target-architecture/03-server/) (Target Architecture)
 
 # 3 · Server
 
@@ -5170,7 +5170,7 @@ prepares for it further.
 
 ---
 
-## [4 · Web app](https://developers.schellingboard.org/target-architecture/04-client/)
+## [4 · Web app](https://developers.schellingboard.org/target-architecture/04-client/) (Target Architecture)
 
 # 4 · Web app
 
@@ -5324,7 +5324,7 @@ scroll). Notable consequences:
 
 ---
 
-## [5 · Security](https://developers.schellingboard.org/target-architecture/05-security/)
+## [5 · Security](https://developers.schellingboard.org/target-architecture/05-security/) (Target Architecture)
 
 # 5 · Security
 
@@ -5449,7 +5449,7 @@ nosniff`.
 
 ---
 
-## [6 · Data and time](https://developers.schellingboard.org/target-architecture/06-data-and-time/)
+## [6 · Data and time](https://developers.schellingboard.org/target-architecture/06-data-and-time/) (Target Architecture)
 
 # 6 · Data and time
 
@@ -5543,7 +5543,7 @@ change `type` version suffix (`SessionMoved.v2`) rather than rewriting old rows;
 
 ---
 
-## [7 · Repository, enforced rules, testing, agents](https://developers.schellingboard.org/target-architecture/07-repo-and-rules/)
+## [7 · Repository, enforced rules, testing, agents](https://developers.schellingboard.org/target-architecture/07-repo-and-rules/) (Target Architecture)
 
 # 7 · Repository, enforced rules, testing, agents
 
@@ -5650,7 +5650,7 @@ map, the table above).
 
 ---
 
-## [8 · Decisions](https://developers.schellingboard.org/target-architecture/08-decisions/)
+## [8 · Decisions](https://developers.schellingboard.org/target-architecture/08-decisions/) (Target Architecture)
 
 # 8 · Decisions
 
@@ -5861,7 +5861,7 @@ accident:
 
 ---
 
-## [9 · Feedback and issues, mapped to the design](https://developers.schellingboard.org/target-architecture/09-feedback-map/)
+## [9 · Feedback and issues, mapped to the design](https://developers.schellingboard.org/target-architecture/09-feedback-map/) (Target Architecture)
 
 # 9 · Feedback and issues, mapped to the design
 
@@ -5939,7 +5939,7 @@ asked for, the row says so.
 
 ---
 
-## [10 · A path from the current code](https://developers.schellingboard.org/target-architecture/10-path-from-here/)
+## [10 · A path from the current code](https://developers.schellingboard.org/target-architecture/10-path-from-here/) (Target Architecture)
 
 # 10 · A path from the current code
 
@@ -6002,7 +6002,7 @@ the schedule screen before the next event, the rest after.
 
 ---
 
-## [Diagrams](https://developers.schellingboard.org/target-architecture/diagrams/)
+## [Diagrams](https://developers.schellingboard.org/target-architecture/diagrams/) (Target Architecture)
 
 # Diagrams
 
@@ -6043,7 +6043,7 @@ the same commit.
 
 ---
 
-## [Glossary](https://developers.schellingboard.org/target-architecture/glossary/)
+## [Glossary](https://developers.schellingboard.org/target-architecture/glossary/) (Target Architecture)
 
 # Glossary
 
@@ -6087,7 +6087,7 @@ marked _(internal)_.
 
 ---
 
-## [Target architecture](https://developers.schellingboard.org/target-architecture/)
+## [Target architecture](https://developers.schellingboard.org/target-architecture/) (Target Architecture)
 
 # Target architecture
 
@@ -6142,7 +6142,7 @@ the sources parse. State machines are inline Mermaid in the documents.
 
 ---
 
-## [Open questions](https://developers.schellingboard.org/target-architecture/open-questions/)
+## [Open questions](https://developers.schellingboard.org/target-architecture/open-questions/) (Target Architecture)
 
 # Open questions
 
@@ -6157,7 +6157,7 @@ decision rather than a product detail, into `08-decisions.md`.
 
 ---
 
-## [Testing](https://developers.schellingboard.org/testing/)
+## [Testing](https://developers.schellingboard.org/testing/) (Testing)
 
 # Testing
 
@@ -6562,7 +6562,7 @@ Each E2E run starts from a clean database with 3 events (Alpha/Beta/Gamma) in di
 
 ---
 
-## [Version control and pull requests](https://developers.schellingboard.org/version-control/)
+## [Version control and pull requests](https://developers.schellingboard.org/version-control/) (Version Control)
 
 # Version control and pull requests
 
@@ -6599,7 +6599,7 @@ set; [GitHub issues](github-issues.md) has the `gh api graphql` calls that can.
 
 ---
 
-## [The web app (\`apps/web\`)](https://developers.schellingboard.org/web-app/)
+## [The web app (\`apps/web\`)](https://developers.schellingboard.org/web-app/) (Web App)
 
 # The web app (`apps/web`)
 

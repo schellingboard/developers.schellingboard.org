@@ -6,7 +6,7 @@ path: /adr/
 updated: 2026-10-24
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-24T08:36:43.008Z"
+  generated_at: "2026-10-24T11:49:20.074Z"
 ---
 # Architecture decision records
 

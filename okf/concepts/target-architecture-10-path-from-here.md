@@ -6,7 +6,7 @@ path: /target-architecture/10-path-from-here/
 updated: 2026-10-24
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-24T08:36:43.022Z"
+  generated_at: "2026-10-24T11:49:20.084Z"
 ---
 # 10 · A path from the current code
 
