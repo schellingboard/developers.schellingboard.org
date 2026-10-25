@@ -3,10 +3,10 @@ type: concept
 title: "Documentation and the sites"
 source: "https://developers.schellingboard.org/documentation/"
 path: /documentation/
-updated: 2026-10-24
+updated: 2026-10-25
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-24T11:49:20.076Z"
+  generated_at: "2026-10-25T11:58:55.032Z"
 ---
 # Documentation and the sites
 

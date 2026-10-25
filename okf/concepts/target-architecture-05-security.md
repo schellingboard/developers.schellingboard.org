@@ -3,10 +3,10 @@ type: concept
 title: "5 · Security"
 source: "https://developers.schellingboard.org/target-architecture/05-security/"
 path: /target-architecture/05-security/
-updated: 2026-10-24
+updated: 2026-10-25
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-24T11:49:20.082Z"
+  generated_at: "2026-10-25T11:58:55.040Z"
 ---
 # 5 · Security
 
