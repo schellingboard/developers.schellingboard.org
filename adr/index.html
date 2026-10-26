@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvovg2sy">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvovg2sy">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvpp09tt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvpp09tt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvovg2sy" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvovg2sy" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvpp09tt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvpp09tt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvovg2sy" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvovg2sy" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvpp09tt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvpp09tt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvovg2sy">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvpp09tt">
     
     
   </head>
@@ -1116,6 +1116,22 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="../adr/0016-remaining-screen-families/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0016: The remaining screen families
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1630,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Architecture%20decision%20records%0A%0AOne%20record%20per%20decision%20that%20was%20expensive%20to%20make%20and%20would%20be%20expensive%20to%0Arevisit%3A%20what%20the%20situation%20was%2C%20what%20was%20chosen%2C%20and%20what%20that%20costs.%20They%20are%0Anot%20updated%20as%20the%20code%20moves%20on%20%E2%80%94%20a%20decision%20that%20no%20longer%20holds%20gets%20a%20new%0AADR%20superseding%20it%2C%20so%20the%20reasoning%20at%20the%20time%20stays%20readable.%0A%0AWrite%20one%20when%20a%20choice%20constrains%20later%20work%20(a%20dependency%2C%20a%20data%20model%2C%20a%0Aprotocol%2C%20a%20deployment%20shape)%2C%20not%20for%20every%20design%20discussion.%20Number%20it%20after%0Athe%20highest%20existing%20ADR%20and%20give%20it%20the%20same%20header%20block%3A%20status%2C%20date%2C%20and%0Athe%20tracking%20issue%20where%20there%20is%20one.%0A%0A%7C%20ADR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Decision%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Date%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------%20%7C%20-----------------------------------------------------------%20%7C%20----------%20%7C%0A%7C%20%5B0001%5D(0001-replace-airtable-with-sql-database.md)%20%20%20%7C%20Replace%20Airtable%20with%20a%20SQL%20database%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-16%20%7C%0A%7C%20%5B0002%5D(0002-testing-strategy.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Testing%20strategy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-23%20%7C%0A%7C%20%5B0003%5D(0003-form-field-validation-with-zod.md)%20%20%20%20%20%20%20%7C%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%20%20%20%7C%202026-07-02%20%7C%0A%7C%20%5B0004%5D(0004-dev-fake-clock.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-07-23%20%7C%0A%7C%20%5B0005%5D(0005-dark-mode.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%20%20%20%20%20%20%20%7C%202026-08-17%20%7C%0A%7C%20%5B0006%5D(0006-push-notifications.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Push%20notifications%20through%20an%20installable%20web%20app%20%20%20%20%20%20%20%20%20%20%20%7C%202026-09-05%20%7C%0A%7C%20%5B0007%5D(0007-attendee-count-and-reminder-dispatch.md)%20%7C%20Attendee%20count%20storage%20and%20in-process%20reminder%20dispatch%20%20%20%20%20%7C%202026-08-25%20%7C%0A%7C%20%5B0008%5D(0008-publish-developer-docs.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Publish%20the%20developer%20docs%20at%20developers.schellingboard.org%20%7C%202026-09-18%20%7C%0A%7C%20%5B0009%5D(0009-standalone-repository-in-own-org.md)%20%20%20%20%20%7C%20Move%20to%20a%20standalone%20repo%20in%20new%20schellingboard%20GitHub%20org%20%20%7C%202026-09-19%20%7C%0A%7C%20%5B0010%5D(0010-workspace-packages.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Domain%20and%20contracts%20as%20workspace%20packages%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0011%5D(0011-change-log-and-jobs-loop.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20change%20log%20and%20one%20jobs%20loop%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0012%5D(0012-http-api-v1.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20versioned%20HTTP%20API%20in%20the%20Next%20process%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-04%20%7C%0A%7C%20%5B0013%5D(0013-unit-of-work.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20unit%20of%20work%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-06%20%7C%0A%7C%20%5B0014%5D(0014-change-feed-and-snapshot.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20change%20feed%20and%20the%20snapshot%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-07%20%7C%0A%7C%20%5B0015%5D(0015-spa-alongside-next.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20SPA%20alongside%20Next%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-08%20%7C%0A%0ALonger%20design%20work%20that%20isn&#039;t%20a%20single%20decision%20lives%20next%20door%3A%0A%5BTarget%20architecture%5D(..%2Ftarget-architecture%2FREADME.md)%20and%0A%5BAttendance%20model%5D(..%2Fattendance-model%2FREADME.md).%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Architecture%20decision%20records%0A%0AOne%20record%20per%20decision%20that%20was%20expensive%20to%20make%20and%20would%20be%20expensive%20to%0Arevisit%3A%20what%20the%20situation%20was%2C%20what%20was%20chosen%2C%20and%20what%20that%20costs.%20They%20are%0Anot%20updated%20as%20the%20code%20moves%20on%20%E2%80%94%20a%20decision%20that%20no%20longer%20holds%20gets%20a%20new%0AADR%20superseding%20it%2C%20so%20the%20reasoning%20at%20the%20time%20stays%20readable.%0A%0AWrite%20one%20when%20a%20choice%20constrains%20later%20work%20(a%20dependency%2C%20a%20data%20model%2C%20a%0Aprotocol%2C%20a%20deployment%20shape)%2C%20not%20for%20every%20design%20discussion.%20Number%20it%20after%0Athe%20highest%20existing%20ADR%20and%20give%20it%20the%20same%20header%20block%3A%20status%2C%20date%2C%20and%0Athe%20tracking%20issue%20where%20there%20is%20one.%0A%0A%7C%20ADR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Decision%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Date%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------%20%7C%20-----------------------------------------------------------%20%7C%20----------%20%7C%0A%7C%20%5B0001%5D(0001-replace-airtable-with-sql-database.md)%20%20%20%7C%20Replace%20Airtable%20with%20a%20SQL%20database%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-16%20%7C%0A%7C%20%5B0002%5D(0002-testing-strategy.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Testing%20strategy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-23%20%7C%0A%7C%20%5B0003%5D(0003-form-field-validation-with-zod.md)%20%20%20%20%20%20%20%7C%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%20%20%20%7C%202026-07-02%20%7C%0A%7C%20%5B0004%5D(0004-dev-fake-clock.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-07-23%20%7C%0A%7C%20%5B0005%5D(0005-dark-mode.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%20%20%20%20%20%20%20%7C%202026-08-17%20%7C%0A%7C%20%5B0006%5D(0006-push-notifications.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Push%20notifications%20through%20an%20installable%20web%20app%20%20%20%20%20%20%20%20%20%20%20%7C%202026-09-05%20%7C%0A%7C%20%5B0007%5D(0007-attendee-count-and-reminder-dispatch.md)%20%7C%20Attendee%20count%20storage%20and%20in-process%20reminder%20dispatch%20%20%20%20%20%7C%202026-08-25%20%7C%0A%7C%20%5B0008%5D(0008-publish-developer-docs.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Publish%20the%20developer%20docs%20at%20developers.schellingboard.org%20%7C%202026-09-18%20%7C%0A%7C%20%5B0009%5D(0009-standalone-repository-in-own-org.md)%20%20%20%20%20%7C%20Move%20to%20a%20standalone%20repo%20in%20new%20schellingboard%20GitHub%20org%20%20%7C%202026-09-19%20%7C%0A%7C%20%5B0010%5D(0010-workspace-packages.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Domain%20and%20contracts%20as%20workspace%20packages%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0011%5D(0011-change-log-and-jobs-loop.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20change%20log%20and%20one%20jobs%20loop%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0012%5D(0012-http-api-v1.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20versioned%20HTTP%20API%20in%20the%20Next%20process%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-04%20%7C%0A%7C%20%5B0013%5D(0013-unit-of-work.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20unit%20of%20work%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-06%20%7C%0A%7C%20%5B0014%5D(0014-change-feed-and-snapshot.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20change%20feed%20and%20the%20snapshot%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-07%20%7C%0A%7C%20%5B0015%5D(0015-spa-alongside-next.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20SPA%20alongside%20Next%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-08%20%7C%0A%7C%20%5B0016%5D(0016-remaining-screen-families.md)%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20remaining%20screen%20families%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-25%20%7C%0A%0ALonger%20design%20work%20that%20isn&#039;t%20a%20single%20decision%20lives%20next%20door%3A%0A%5BTarget%20architecture%5D(..%2Ftarget-architecture%2FREADME.md)%20and%0A%5BAttendance%20model%5D(..%2Fattendance-model%2FREADME.md).%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1818,6 +1834,11 @@ the tracking issue where there is one.</p>
 <td>The SPA alongside Next</td>
 <td>2026-10-08</td>
 </tr>
+<tr>
+<td><a href="0016-remaining-screen-families/">0016</a></td>
+<td>The remaining screen families</td>
+<td>2026-10-25</td>
+</tr>
 </tbody>
 </table>
 </div><p>Longer design work that isn’t a single decision lives next door:
@@ -1894,17 +1915,32 @@ the tracking issue where there is one.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1791810603000">
+                <span class="git-last-updated" data-timestamp="1792944842000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1791810603000"></span>
+                  <span class="git-time" data-timestamp="1792944842000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: ADR 0016 for the remaining screen families">docs: ADR 0016 for the remaining scre...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1792944842000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1966,21 +2002,6 @@ the tracking issue where there is one.</p>
                           </div>
                         </li>
                       
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Claude">
-                            
-                              C
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="docs: ADR 0012 for the /api/v1 HTTP API">docs: ADR 0012 for the /api/v1 HTTP API</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Claude</span>
-                              <span class="git-commit-date" data-timestamp="1791102330000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
                     </ul>
                   </div>
                   
@@ -2007,13 +2028,13 @@ the tracking issue where there is one.</p>
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mvovg2sy"></script>
+      <script src="../assets/js/docmd-main.js?v=mvpp09tt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mvovg2sy"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mvovg2sy" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mvovg2sy" ></script>
-<script src="../assets/js/docmd-search.js?v=mvovg2sy" ></script>
-<script src="../assets/js/docmd-git.js?v=mvovg2sy" ></script>
+      <script src="../assets/js/docmd-git.js?v=mvpp09tt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mvpp09tt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mvpp09tt" ></script>
+<script src="../assets/js/docmd-search.js?v=mvpp09tt" ></script>
+<script src="../assets/js/docmd-git.js?v=mvpp09tt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2091,7 +2112,7 @@ the tracking issue where there is one.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mvovg2sy"></script>
+          src="../assets/js/likec4-embed.js?v=mvpp09tt"></script>
         
       
       

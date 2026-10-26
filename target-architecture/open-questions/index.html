@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvovg2sy">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvovg2sy">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvpp09tt">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvpp09tt">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvovg2sy" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvovg2sy" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvpp09tt" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvpp09tt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvovg2sy" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvovg2sy" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvpp09tt" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvpp09tt" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvovg2sy">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvpp09tt">
     
     
   </head>
@@ -1116,6 +1116,22 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="../../adr/0016-remaining-screen-families/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0016: The remaining screen families
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1630,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Open%20questions%0A%0ANone%20at%20the%20moment.%20D1%E2%80%93D11%20and%20the%20product%20questions%20raised%20during%20review%20are%0Arecorded%20in%20%5B08-decisions.md%5D(08-decisions.md)%2C%20with%20the%20settled%20answers%20folded%0Ainto%20the%20chapters%20they%20affect.%0A%0AAdd%20new%20questions%20here%20as%20numbered%20items%20with%20a%20recommendation%3B%20when%20one%20is%0Adecided%2C%20move%20the%20outcome%20into%20the%20relevant%20chapter%20and%2C%20if%20it%20is%20a%20design%0Adecision%20rather%20than%20a%20product%20detail%2C%20into%20%6008-decisions.md%60.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Open%20questions%0A%0AOpen%20from%20the%20SPA%20migration%20(%5BADR%200015%5D(..%2Fadr%2F0015-spa-alongside-next.md))%2C%20below.%0AD1%E2%80%93D11%20and%20the%20product%20questions%20raised%20during%20review%20are%20recorded%20in%0A%5B08-decisions.md%5D(08-decisions.md)%2C%20with%20the%20settled%20answers%20folded%20into%20the%20chapters%0Athey%20affect.%0A%0A1.%20**Rate%20limit%20keying.**%20Open-name%20guests%20share%20one%20API%20bucket%20per%20address%20(burst%0A%20%20%201000)%3B%20at%20a%20venue%20behind%20one%20Wi-Fi%20address%2C%20or%20with%20%60SB_TRUSTED_PROXIES%60%20unset%2C%20all%0A%20%20%20attendees%20share%20it.%20Recommendation%3A%20key%20by%20address%20plus%20guest%20cookie%20with%20a%20cap%20per%0A%20%20%20address%20(the%20cookie%20is%20unsigned%2C%20so%20any%20id%20buys%20a%20fresh%20bucket).%0A2.%20**Comment%20likes.**%20The%20SPA%20has%20neither%20the%20%22Liked%20by%22%20hover%20preview%20nor%20the%20avatars%0A%20%20%20the%20legacy%20comments%20show.%20Recommendation%3A%20add%20both%20when%20comments%20are%20next%20touched%3B%0A%20%20%20the%20data%20is%20in%20the%20snapshot%20already.%0A3.%20**A%20toast%20in%20the%20SPA.**%20Saving%20or%20deleting%20a%20session%20still%20lands%20on%20%60%2Flegacy%2F%7Bslug%7D%60%3A%0A%20%20%20a%20hard%20navigation%20drops%20the%20confirmation%20toast%2C%20which%20is%20client%20state.%0A%20%20%20Recommendation%3A%20give%20the%20SPA%20its%20own%20toast%2C%20then%20move%20the%20session%20forms.%0A4.%20**%60server%2F%60%20reaching%20%60app%2F%60.**%20%60utils%2Fguest-clashes.ts%60%20imports%0A%20%20%20%60%40%2Fapp%2F(site)%2Fsession_utils%60%2C%20which%20%60server-does-not-reach-into-app%60%20does%20not%20catch.%0A%20%20%20Recommendation%3A%20move%20the%20two%20helpers%20to%20%60packages%2Fdomain%60.%0A5.%20**A%20session%20that%20loses%20its%20only%20room**%20reads%20%60moved%20to%20No%20location%20(was%20Room%20A)%60%20in%0A%20%20%20notices.%20Recommendation%3A%20reword%20to%20%22no%20longer%20has%20a%20location%20(was%20Room%20A)%22.%0A6.%20**User%20menu**%20roles%20copy%20the%20legacy%20markup%20without%20arrow-key%20support.%0A%20%20%20Recommendation%3A%20use%20the%20ARIA%20menu%20pattern%20with%20arrow%20keys%20when%20the%20menu%20is%20next%0A%20%20%20changed.%0A7.%20**Flaky%20E2E.**%20%60scheduling.spec%60%20edit%2C%20delete%20and%20cancel%20flows%20flake%20about%20one%20run%20in%0A%20%20%20four%20at%208%20workers%20(the%20retry%20sees%20the%20first%20attempt&#039;s%20leftover%20session)%3B%0A%20%20%20%60settings.spec%3A67%60%20can%20abort%20its%20first%20%60goto%60%3B%20%60attendee-count.spec%60%20after%20an%20SPA%20to%0A%20%20%20legacy%20hop%20stays%20red%20unless%20the%20spec%20starts%20on%20%60%2Flegacy%2F...%60.%20Recommendation%3A%20move%0A%20%20%20the%20scheduling%20forms%20into%20the%20SPA%2C%20which%20removes%20the%20hop%2C%20and%20keep%20each%20attempt&#039;s%0A%20%20%20trace%20(%60--trace%3Dretain-on-failure%60)%20to%20find%20the%20rest.%0A8.%20**Picking%20a%20name%20without%20being%20a%20member.**%20The%20SPA%20picker%20offers%20only%20the%20snapshot&#039;s%0A%20%20%20guests%20(members%20and%20hosts)%2C%20because%20%60GET%20%2Fguests%60%20is%20closed%20to%20anonymous%20visitors%2C%20so%0A%20%20%20a%20non-member%20cannot%20pick%20their%20name.%20Recommendation%3A%20a%20public%20guest-name%20list%20for%20the%0A%20%20%20picker%20that%20exposes%20names%20only.%0A%0AAdd%20new%20questions%20here%20as%20numbered%20items%20with%20a%20recommendation%3B%20when%20one%20is%0Adecided%2C%20move%20the%20outcome%20into%20the%20relevant%20chapter%20and%2C%20if%20it%20is%20a%20design%0Adecision%20rather%20than%20a%20product%20detail%2C%20into%20%6008-decisions.md%60.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1750,9 +1766,40 @@
                   </h1>
                 
                 <h1 id="open-questions" class="docmd-heading"><a href="#open-questions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Open questions</h1>
-<p>None at the moment. D1–D11 and the product questions raised during review are
-recorded in <a href="../08-decisions/">08-decisions.md</a>, with the settled answers folded
-into the chapters they affect.</p>
+<p>Open from the SPA migration (<a href="../../adr/0015-spa-alongside-next/">ADR 0015</a>), below.
+D1–D11 and the product questions raised during review are recorded in
+<a href="../08-decisions/">08-decisions.md</a>, with the settled answers folded into the chapters
+they affect.</p>
+<ol>
+<li><strong>Rate limit keying.</strong> Open-name guests share one API bucket per address (burst
+1000); at a venue behind one Wi-Fi address, or with <code>SB_TRUSTED_PROXIES</code> unset, all
+attendees share it. Recommendation: key by address plus guest cookie with a cap per
+address (the cookie is unsigned, so any id buys a fresh bucket).</li>
+<li><strong>Comment likes.</strong> The SPA has neither the “Liked by” hover preview nor the avatars
+the legacy comments show. Recommendation: add both when comments are next touched;
+the data is in the snapshot already.</li>
+<li><strong>A toast in the SPA.</strong> Saving or deleting a session still lands on <code>/legacy/{slug}</code>:
+a hard navigation drops the confirmation toast, which is client state.
+Recommendation: give the SPA its own toast, then move the session forms.</li>
+<li><strong><code>server/</code> reaching <code>app/</code>.</strong> <code>utils/guest-clashes.ts</code> imports
+<code>@/app/(site)/session_utils</code>, which <code>server-does-not-reach-into-app</code> does not catch.
+Recommendation: move the two helpers to <code>packages/domain</code>.</li>
+<li><strong>A session that loses its only room</strong> reads <code>moved to No location (was Room A)</code> in
+notices. Recommendation: reword to “no longer has a location (was Room A)”.</li>
+<li><strong>User menu</strong> roles copy the legacy markup without arrow-key support.
+Recommendation: use the ARIA menu pattern with arrow keys when the menu is next
+changed.</li>
+<li><strong>Flaky E2E.</strong> <code>scheduling.spec</code> edit, delete and cancel flows flake about one run in
+four at 8 workers (the retry sees the first attempt’s leftover session);
+<code>settings.spec:67</code> can abort its first <code>goto</code>; <code>attendee-count.spec</code> after an SPA to
+legacy hop stays red unless the spec starts on <code>/legacy/...</code>. Recommendation: move
+the scheduling forms into the SPA, which removes the hop, and keep each attempt’s
+trace (<code>--trace=retain-on-failure</code>) to find the rest.</li>
+<li><strong>Picking a name without being a member.</strong> The SPA picker offers only the snapshot’s
+guests (members and hosts), because <code>GET /guests</code> is closed to anonymous visitors, so
+a non-member cannot pick their name. Recommendation: a public guest-name list for the
+picker that exposes names only.</li>
+</ol>
 <p>Add new questions here as numbered items with a recommendation; when one is
 decided, move the outcome into the relevant chapter and, if it is a design
 decision rather than a product detail, into <code>08-decisions.md</code>.</p>
@@ -1827,17 +1874,32 @@ decision rather than a product detail, into <code>08-decisions.md</code>.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1789625537000">
+                <span class="git-last-updated" data-timestamp="1792832631000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1789625537000"></span>
+                  <span class="git-time" data-timestamp="1792832631000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: bring the client, repo and path chapters up to date with the SPA">docs: bring the client, repo and path...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1792832631000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1880,13 +1942,13 @@ decision rather than a product detail, into <code>08-decisions.md</code>.</p>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvovg2sy"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvpp09tt"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvovg2sy"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvovg2sy" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvovg2sy" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvovg2sy" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvovg2sy" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvpp09tt"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvpp09tt" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvpp09tt" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvpp09tt" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvpp09tt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1964,7 +2026,7 @@ decision rather than a product detail, into <code>08-decisions.md</code>.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvovg2sy"></script>
+          src="../../assets/js/likec4-embed.js?v=mvpp09tt"></script>
         
       
       

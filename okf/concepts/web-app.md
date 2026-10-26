@@ -6,7 +6,7 @@ path: /web-app/
 updated: 2026-10-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T06:24:32.361Z"
+  generated_at: "2026-10-26T20:12:03.490Z"
 ---
 # The web app (`apps/web`)
 
@@ -35,6 +35,12 @@ colour tokens in `styles/tokens.css` (the Next pages import the same file).
   schedule (`forwards-to-legacy.ts`).
 - Legacy pages link to the SPA with plain anchors, never Next's `Link` (`AppLink`, which
   does that for every root path outside `/legacy`): Next has nothing to fetch there.
+
+- `public/sw.js` (registered by `main.tsx` outside the dev server) caches the shell and the `/_spa/assets/`
+  files. SPA navigations go to the network first and fall back to the cached shell, so a new build shows as
+  soon as it is reachable; `/api`, `/legacy` and the other Next paths are never touched. A page compares
+  the shell's build id with `/api/v1/health` (`app/reload-offer.tsx`: on load, every 5 minutes, on `online`
+  and when the tab is shown). The viewer is remembered in `localStorage` so the saved schedule opens offline.
 
 The files are read relative to the working directory, so the same code serves
 `next start`, and the Docker image, which copies `apps/web/dist` next to
@@ -74,9 +80,9 @@ login, `/legacy/auth/login?guest=<id>`; a successful login lands on `/legacy`. T
 lists the guests it is given (the event snapshot's `guests`: members and hosts only, since
 `GET /guests` is closed to anonymous visitors, so a non-member cannot yet pick their name).
 Sign-out and a switch between names clear the device's persisted replicas
-(`persistence.clear()`); step 13 must also close the feed and reopen the replica, the
-command runner and the queries for the new `guestId` when it changes (`useScheduleSession` does:
-the viewer is part of its effect key). The provider asks
+(`persistence.clear()`); a change of `guestId` also closes the feed and reopens the
+replica, the command runner and the queries (`useScheduleSession` does: the viewer is
+part of its effect key). The provider asks
 again every 5 s while the first identity fetch fails. `app/keys.ts` holds the
 `newKey` the runner needs.
 
@@ -85,7 +91,9 @@ again every 5 s while the first identity fetch fails. `app/keys.ts` holds the
 `app/theme.tsx` keeps the ADR 0005 `sb-theme` cookie (read at start, written with the
 `light`/`dark` class on `<html>`; `index.html`'s inline script applies it before first
 paint, as the Next layout does). The footer's version and build come from
-`GET /api/v1/health` (`useHealth`); its release notes are `packages/domain`'s. The dev
+`GET /api/v1/health` (`useHealth`); for the admin, `GET /api/v1/updates`
+(`useUpdateStatus`) adds a red dot and the latest release; its release notes are
+`packages/domain`'s. The dev
 clock toolbar needs `devTools` from the same endpoint (`SB_ENABLE_DEV_TOOLS`) and `?dev=1`;
 it writes the `time-override` cookie and calls `onChange`, which the shell makes reload the
 app so the replica is read under the new time. The legacy toolbar's "Send due reminders"
@@ -114,9 +122,10 @@ guest's RSVPs). Times use the event's zone, never the ambient one; the now line 
 
 The pure parts (`grid-layout`, `column`, `meeting-column`, `agenda`, `fold`, `filters`,
 `search`, `meeting-rules`, `meeting-clash-text`) are copies of `utils/` with their tests: the
-legacy copies go with the legacy schedule at step 16. `model.ts` has the new pure rules
-(narrowing by room, matching, day folds). `links.ts` is the one place that decides where a
-session, a 1-on-1, add-session or booking link goes; today everything goes to `/legacy/...`.
+legacy copies stay until the meeting modal moves, since the legacy schedule still renders
+it. `model.ts` has the new pure rules (narrowing by room, matching, day folds). `links.ts`
+is the one place that decides where a session, a 1-on-1, add-session or booking link
+goes: a session opens in the SPA's own modal, the other links go to `/legacy/...`.
 
 `app/schedule-page.tsx` composes it: `useScheduleSession` (`replica/session.ts`: `openReplica`,
 `connectFeed`, `autosaveReplica`, hidden-tab and back/forward-cache handling, plus a command

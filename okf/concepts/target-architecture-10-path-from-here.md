@@ -6,7 +6,7 @@ path: /target-architecture/10-path-from-here/
 updated: 2026-10-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T06:24:32.358Z"
+  generated_at: "2026-10-26T20:12:03.487Z"
 ---
 # 10 · A path from the current code
 
@@ -54,7 +54,11 @@ sketch, not a plan; each step would get its own issue and ADR.
    actions.
 
    **Started** ([ADR 0015](../adr/0015-spa-alongside-next.md)): the SPA owns
-   every URL and Next moves under `/legacy` until all screens have moved.
+   every URL and Next moves under `/legacy` until all screens have moved. The
+   schedule is moved: grid, agenda, filters, kiosk, the session modal with RSVPs,
+   attendee counts and comments, and the schedule opening offline with a reload offer
+   after an upgrade. Proposals and voting, people and meetings, settings and admin
+   are still Next pages.
 
 6. **Identity and roles.** Persons, participations, login sessions, assurance,
    join links; migrate protected guests to verified credentials; replace the admin

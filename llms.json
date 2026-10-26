@@ -108,6 +108,13 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0016: The remaining screen families",
+      "url": "https://developers.schellingboard.org/adr/0016-remaining-screen-families/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",

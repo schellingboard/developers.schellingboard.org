@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-10-26T06:24:32.362Z",
+    "generated_at": "2026-10-26T20:12:03.491Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 47,
+    "concepts": 48,
     "by_type": {
-      "concept": 47
+      "concept": 48
     },
     "locales": [],
     "versions": []
@@ -190,6 +190,17 @@
       "description": "",
       "path": "/adr/0015-spa-alongside-next/",
       "file": "concepts/adr-0015-spa-alongside-next.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0016-remaining-screen-families",
+      "type": "concept",
+      "title": "ADR 0016: The remaining screen families",
+      "description": "",
+      "path": "/adr/0016-remaining-screen-families/",
+      "file": "concepts/adr-0016-remaining-screen-families.md",
       "locale": "",
       "version": "",
       "tags": []

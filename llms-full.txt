@@ -2119,7 +2119,7 @@ never see a write that is still open, also outside the unit of work.
 # ADR 0014: The change feed and the snapshot
 
 - **Status:** Accepted
-- **Date:** 2026-10-07
+- **Date:** 2026-10-07, amended 2026-10-25 (proposals and votes join the snapshot and feed, see [ADR 0016](0016-remaining-screen-families.md#amendment-to-adr-0014))
 - **Issue:** #1111
 
 ## Context
@@ -2576,6 +2576,74 @@ tests in a browser runner.
 
 ---
 
+## [ADR 0016: The remaining screen families](https://developers.schellingboard.org/adr/0016-remaining-screen-families/) (Adr)
+
+# ADR 0016: The remaining screen families
+
+- **Status:** Accepted
+- **Date:** 2026-10-25
+
+## Context
+
+[ADR 0015](0015-spa-alongside-next.md) moved the schedule to the SPA and left
+the other screens in Next under `/legacy`. This ADR settles how the rest move:
+proposals and voting, people and meetings, the session forms, settings and
+notifications, and admin. It also amends [ADR 0014](0014-change-feed-and-snapshot.md), because proposals and
+votes were not in the snapshot.
+
+## Decision
+
+1. **Proposals and votes are in the replica.** Public proposal fields and
+   hosts are in the snapshot and the feed. The viewer's own votes are in
+   `me.votes`, visible only to the voter. The vote breakdown stays an
+   on-demand query ([02](../target-architecture/02-domain.md)).
+2. **Failed commands name what failed**, so that the user can recover. The notice names the subject: a
+   session by title, day, time and room; a proposal by title; a 1-on-1 by the
+   other person and slot. It tells "refused" (a `4xx`, with the reason) apart
+   from "might not have been saved" (retries given up). It stays visible after
+   the control that started it unmounts. RSVPs and comments first, then every
+   new command.
+3. **The session forms move in this run**, after meetings. Then the Next
+   schedule goes.
+4. **The sign-in screens stay legacy** (guest password login, reset, `/login`,
+   admin login) until [path step 6](../target-architecture/10-path-from-here.md)
+   replaces them. No API for passwords: step 6 replaces identity, so it would be
+   thrown away.
+5. **Admin uses `queries/` and awaited mutations**, not the replica: admin data
+   spans events and is in no snapshot. A mutation waits for the response, maps
+   problem details onto fields, shows `409` as "changed by someone else", then
+   refetches.
+6. **Forms** (proposal, profile, session, settings, admin) use the same
+   awaited mutation helper and the zod contracts per field (ADR 0003, #639).
+   Forms need server validation per field before they close; votes, RSVPs,
+   comments, likes and 1-on-1 answers are optimistic commands, because a toggle
+   needs an instant response.
+7. **Addresses do not change.** The SPA keeps the legacy paths and query
+   params (`viewProposal`, `viewMeeting`, `bookMeeting`, …), so emails, push,
+   QR codes and bookmarks keep working.
+
+### Amendment to ADR 0014
+
+The snapshot gains the event's proposals (public fields and hosts) and
+`me.votes`; the feed gains proposal and vote changes. A vote change reaches
+only the voter's connection. Other viewers get no vote counts from the feed.
+
+## Consequences
+
+- Proposal lists and voting work from the replica, and update live.
+- The feed grows by proposal changes; vote changes are per viewer.
+- Admin screens refetch after every mutation and do not update live.
+- Two sets of form code (legacy and SPA) exist until each family's takeover.
+
+## Alternatives
+
+- **Proposals as on-demand queries.** Smaller snapshot, but voting would lose
+  optimistic updates and live changes.
+- **Admin in the replica.** Admin data spans events; a snapshot cannot hold it.
+
+
+---
+
 ## [Architecture decision records](https://developers.schellingboard.org/adr/) (Adr)
 
 # Architecture decision records
@@ -2607,6 +2675,7 @@ the tracking issue where there is one.
 | [0013](0013-unit-of-work.md)                         | The unit of work                                            | 2026-10-06 |
 | [0014](0014-change-feed-and-snapshot.md)             | The change feed and the snapshot                            | 2026-10-07 |
 | [0015](0015-spa-alongside-next.md)                   | The SPA alongside Next                                      | 2026-10-08 |
+| [0016](0016-remaining-screen-families.md)            | The remaining screen families                               | 2026-10-25 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and
@@ -4398,7 +4467,8 @@ server/
 The modules are `sessions` (sessions, RSVPs, room unavailability, attendee
 counts), `proposals` (proposals and votes), `comments`, `meetings`, `people`
 (profiles and the admin guest list), `notifications`, `events` (events and
-days), `venue` (locations) and `settings` (site settings).
+days), `venue` (locations), `settings` (site settings) and `updates` (the
+daily GitHub look-up of the latest release, shown to the admin).
 
 The Next mount is `app/api/v1/[[...route]]/route.ts`; `proxy.ts` gates it like
 any other route (site password or admin cookie for `/api/v1`, the admin cookie for
@@ -4443,7 +4513,7 @@ legacy login. The `selectUserAction` server action calls the same use case.
 [ADR 0014](adr/0014-change-feed-and-snapshot.md) has the decisions.
 `GET /api/v1/events/{slug}/snapshot` returns what one viewer may see of an
 event, with the `seq` of the newest change it includes and the server's `now`
-(the dev fake clock included); the feed's `ping` events carry `now` too, so a
+(the dev fake clock included); the feed's `ping` events (one as the stream opens, so the browser sees it open at once on a quiet event, then every 25 s) carry `now` too, so a
 client keeps its clock offset current. A ping reads the `time-override` cookie once, when the stream opens; changing the fake clock takes a reconnect. `GET
 /api/v1/events/{slug}/feed?since=` is a Server-Sent Events stream: it replays
 the `changes` table after `since`, then follows live changes registered with
@@ -4461,9 +4531,14 @@ A cascade change that carries `tellAttendees` (day and location deletes) makes
 the `changeNotifications` reaction notify the session's RSVPed guests, never its
 hosts; event and guest deletes record none.
 
+`GET /api/v1/updates` (the `updates` module) answers the admin with the running and
+the latest release, and anyone else with null. The server asks GitHub at most daily;
+`SB_UPDATE_CHECK=false` turns that off.
+
+`SB_API_RATE_BURST` sets the burst of the per-address API rate limit (default 1000).
+
 `GET /api/v1/health` also names the `version` and the `buildId` (Next's
-`.next/BUILD_ID`, the version outside a production build). A client that sees
-the build id change offers a reload. It stays behind the site password.
+`.next/BUILD_ID`, the version outside a production build). The SPA shell carries the build id it was served by (`<meta name="sb-build">`, added by `serveSpaShell`); a client that sees `health` report another one offers a reload, and a kiosk reloads by itself. It stays behind the site password.
 
 The in-app release notes live in `packages/domain/src/release-notes.ts` so the
 Next footer and the SPA import the same data.
@@ -5180,6 +5255,13 @@ the server as files, installable as a PWA. View `web` in the
 
 <likec4-view view-id="web"><a href="https://developers.schellingboard.org/diagrams/#/view/web">L3 web app components</a></likec4-view>
 
+> **Where the code is today.** `apps/web/src/` has `app/` (router, shell, viewer, footer,
+> reload offer), `replica/`, `commands/` (RSVP and comments), `queries/` (comments, attendees,
+> attendee count), `schedule/` (the grid, agenda, kiosk and session modal; it stands in for
+> `features/`) and `ui/`. There is no `pwa/` or `i18n/` yet: the service worker is
+> `public/sw.js`, served from the site root. The rest of the layout below is where the
+> remaining screen families go. [The web app](../web-app.md) describes what exists.
+
 ## Layout
 
 ```
@@ -5302,14 +5384,18 @@ scroll). Notable consequences:
 
 ## PWA
 
-- Service worker precaches the shell (hashed assets) and serves it offline;
-  API responses are never cached by the worker, because the replica already is the
-  cache and knows its own staleness.
+- Service worker (`public/sw.js`) caches the shell and its hashed assets and serves the
+  shell for SPA navigations when the network is gone (network first, so a new build shows
+  as soon as it is reachable); API responses are never cached by the worker, because the
+  replica already is the cache and knows its own staleness.
 - Push: one subscription per device, bound to the person, listed in settings.
   A push carries only a notification id; the app fetches the record when opened,
   so push payloads hold no content.
-- An update check compares the served version with the running one and offers a
-  reload ([#788](https://github.com/schellingboard/schellingboard/issues/788)).
+- A page compares its build id with `/api/v1/health` and offers a reload when the
+  server runs another build; a kiosk reloads by itself, once per build.
+- The server checks GitHub for a newer release at most daily; only the admin is told,
+  by a red dot in the footer (`GET /api/v1/updates`,
+  [#788](https://github.com/schellingboard/schellingboard/issues/788)).
 
 ## UI foundations
 
@@ -5567,6 +5653,14 @@ schellingboard/
     public/          attendee, organizer and self-hosting docs (published)
   Dockerfile, docker-compose.yml, Makefile, package.json (workspaces), bunfig.toml
 ```
+
+> **Today** the Next app and `server/` sit at the repository root; `apps/web` and
+> `packages/{domain,contracts,api-client}` exist as drawn. There is no `apps/server`,
+> `tools/` or `make new-use-case` yet. Of the rules below, these are enforced:
+> the dependency-cruiser ones (modules through `module.ts`, use cases on ports, `web`
+> imports only the shared packages), `make openapi-check` (the committed `openapi.json`
+> matches the contracts) and the ESLint ban on `new Date()` outside the request
+> boundary. See [Architecture rules](../architecture-rules.md).
 
 Bun workspaces. One `tsconfig` per package with project references so `tsc -b`
 checks the graph in dependency order and a package cannot see another's internals.
@@ -5987,7 +6081,11 @@ sketch, not a plan; each step would get its own issue and ADR.
    actions.
 
    **Started** ([ADR 0015](../adr/0015-spa-alongside-next.md)): the SPA owns
-   every URL and Next moves under `/legacy` until all screens have moved.
+   every URL and Next moves under `/legacy` until all screens have moved. The
+   schedule is moved: grid, agenda, filters, kiosk, the session modal with RSVPs,
+   attendee counts and comments, and the schedule opening offline with a reload offer
+   after an upgrade. Proposals and voting, people and meetings, settings and admin
+   are still Next pages.
 
 6. **Identity and roles.** Persons, participations, login sessions, assurance,
    join links; migrate protected guests to verified credentials; replace the admin
@@ -6146,9 +6244,39 @@ the sources parse. State machines are inline Mermaid in the documents.
 
 # Open questions
 
-None at the moment. D1–D11 and the product questions raised during review are
-recorded in [08-decisions.md](08-decisions.md), with the settled answers folded
-into the chapters they affect.
+Open from the SPA migration ([ADR 0015](../adr/0015-spa-alongside-next.md)), below.
+D1–D11 and the product questions raised during review are recorded in
+[08-decisions.md](08-decisions.md), with the settled answers folded into the chapters
+they affect.
+
+1. **Rate limit keying.** Open-name guests share one API bucket per address (burst
+   1000); at a venue behind one Wi-Fi address, or with `SB_TRUSTED_PROXIES` unset, all
+   attendees share it. Recommendation: key by address plus guest cookie with a cap per
+   address (the cookie is unsigned, so any id buys a fresh bucket).
+2. **Comment likes.** The SPA has neither the "Liked by" hover preview nor the avatars
+   the legacy comments show. Recommendation: add both when comments are next touched;
+   the data is in the snapshot already.
+3. **A toast in the SPA.** Saving or deleting a session still lands on `/legacy/{slug}`:
+   a hard navigation drops the confirmation toast, which is client state.
+   Recommendation: give the SPA its own toast, then move the session forms.
+4. **`server/` reaching `app/`.** `utils/guest-clashes.ts` imports
+   `@/app/(site)/session_utils`, which `server-does-not-reach-into-app` does not catch.
+   Recommendation: move the two helpers to `packages/domain`.
+5. **A session that loses its only room** reads `moved to No location (was Room A)` in
+   notices. Recommendation: reword to "no longer has a location (was Room A)".
+6. **User menu** roles copy the legacy markup without arrow-key support.
+   Recommendation: use the ARIA menu pattern with arrow keys when the menu is next
+   changed.
+7. **Flaky E2E.** `scheduling.spec` edit, delete and cancel flows flake about one run in
+   four at 8 workers (the retry sees the first attempt's leftover session);
+   `settings.spec:67` can abort its first `goto`; `attendee-count.spec` after an SPA to
+   legacy hop stays red unless the spec starts on `/legacy/...`. Recommendation: move
+   the scheduling forms into the SPA, which removes the hop, and keep each attempt's
+   trace (`--trace=retain-on-failure`) to find the rest.
+8. **Picking a name without being a member.** The SPA picker offers only the snapshot's
+   guests (members and hosts), because `GET /guests` is closed to anonymous visitors, so
+   a non-member cannot pick their name. Recommendation: a public guest-name list for the
+   picker that exposes names only.
 
 Add new questions here as numbered items with a recommendation; when one is
 decided, move the outcome into the relevant chapter and, if it is a design
@@ -6629,6 +6757,12 @@ colour tokens in `styles/tokens.css` (the Next pages import the same file).
 - Legacy pages link to the SPA with plain anchors, never Next's `Link` (`AppLink`, which
   does that for every root path outside `/legacy`): Next has nothing to fetch there.
 
+- `public/sw.js` (registered by `main.tsx` outside the dev server) caches the shell and the `/_spa/assets/`
+  files. SPA navigations go to the network first and fall back to the cached shell, so a new build shows as
+  soon as it is reachable; `/api`, `/legacy` and the other Next paths are never touched. A page compares
+  the shell's build id with `/api/v1/health` (`app/reload-offer.tsx`: on load, every 5 minutes, on `online`
+  and when the tab is shown). The viewer is remembered in `localStorage` so the saved schedule opens offline.
+
 The files are read relative to the working directory, so the same code serves
 `next start`, and the Docker image, which copies `apps/web/dist` next to
 `server.js`.
@@ -6667,9 +6801,9 @@ login, `/legacy/auth/login?guest=<id>`; a successful login lands on `/legacy`. T
 lists the guests it is given (the event snapshot's `guests`: members and hosts only, since
 `GET /guests` is closed to anonymous visitors, so a non-member cannot yet pick their name).
 Sign-out and a switch between names clear the device's persisted replicas
-(`persistence.clear()`); step 13 must also close the feed and reopen the replica, the
-command runner and the queries for the new `guestId` when it changes (`useScheduleSession` does:
-the viewer is part of its effect key). The provider asks
+(`persistence.clear()`); a change of `guestId` also closes the feed and reopens the
+replica, the command runner and the queries (`useScheduleSession` does: the viewer is
+part of its effect key). The provider asks
 again every 5 s while the first identity fetch fails. `app/keys.ts` holds the
 `newKey` the runner needs.
 
@@ -6678,7 +6812,9 @@ again every 5 s while the first identity fetch fails. `app/keys.ts` holds the
 `app/theme.tsx` keeps the ADR 0005 `sb-theme` cookie (read at start, written with the
 `light`/`dark` class on `<html>`; `index.html`'s inline script applies it before first
 paint, as the Next layout does). The footer's version and build come from
-`GET /api/v1/health` (`useHealth`); its release notes are `packages/domain`'s. The dev
+`GET /api/v1/health` (`useHealth`); for the admin, `GET /api/v1/updates`
+(`useUpdateStatus`) adds a red dot and the latest release; its release notes are
+`packages/domain`'s. The dev
 clock toolbar needs `devTools` from the same endpoint (`SB_ENABLE_DEV_TOOLS`) and `?dev=1`;
 it writes the `time-override` cookie and calls `onChange`, which the shell makes reload the
 app so the replica is read under the new time. The legacy toolbar's "Send due reminders"
@@ -6707,9 +6843,10 @@ guest's RSVPs). Times use the event's zone, never the ambient one; the now line 
 
 The pure parts (`grid-layout`, `column`, `meeting-column`, `agenda`, `fold`, `filters`,
 `search`, `meeting-rules`, `meeting-clash-text`) are copies of `utils/` with their tests: the
-legacy copies go with the legacy schedule at step 16. `model.ts` has the new pure rules
-(narrowing by room, matching, day folds). `links.ts` is the one place that decides where a
-session, a 1-on-1, add-session or booking link goes; today everything goes to `/legacy/...`.
+legacy copies stay until the meeting modal moves, since the legacy schedule still renders
+it. `model.ts` has the new pure rules (narrowing by room, matching, day folds). `links.ts`
+is the one place that decides where a session, a 1-on-1, add-session or booking link
+goes: a session opens in the SPA's own modal, the other links go to `/legacy/...`.
 
 `app/schedule-page.tsx` composes it: `useScheduleSession` (`replica/session.ts`: `openReplica`,
 `connectFeed`, `autosaveReplica`, hidden-tab and back/forward-cache handling, plus a command

@@ -6,12 +6,12 @@ path: /adr/0014-change-feed-and-snapshot/
 updated: 2026-10-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T06:24:32.341Z"
+  generated_at: "2026-10-26T20:12:03.472Z"
 ---
 # ADR 0014: The change feed and the snapshot
 
 - **Status:** Accepted
-- **Date:** 2026-10-07
+- **Date:** 2026-10-07, amended 2026-10-25 (proposals and votes join the snapshot and feed, see [ADR 0016](0016-remaining-screen-families.md#amendment-to-adr-0014))
 - **Issue:** #1111
 
 ## Context
