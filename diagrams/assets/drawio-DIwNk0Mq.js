@@ -1,1 +1,0 @@
-import{t as e}from"./main-Bxj8t_N9.js";var t={default:async()=>await e(()=>import(`./drawio-CFlng8fk.js`),[])};async function n(e){let n=t[e];if(!n){let n=Object.keys(t);throw console.error(`Unknown projectId: `+e+` (available: `+n+`)`),Error(`Project does not enable drawio export: `+e)}return await n()}export{n as loadDrawioSources};

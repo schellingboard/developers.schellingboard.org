@@ -3,10 +3,10 @@ type: concept
 title: Testing
 source: "https://developers.schellingboard.org/testing/"
 path: /testing/
-updated: 2026-10-25
+updated: 2026-10-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-25T11:58:55.043Z"
+  generated_at: "2026-10-26T06:24:32.360Z"
 ---
 # Testing
 

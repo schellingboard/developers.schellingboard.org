@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0003: Form handling and validation with React Hook Form and Zod"
 source: "https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/"
 path: /adr/0003-form-field-validation-with-zod/
-updated: 2026-10-25
+updated: 2026-10-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-25T11:58:55.023Z"
+  generated_at: "2026-10-26T06:24:32.334Z"
 ---
 # ADR 0003: Form handling and validation with React Hook Form and Zod
 
