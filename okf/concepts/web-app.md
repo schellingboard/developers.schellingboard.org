@@ -3,10 +3,10 @@ type: concept
 title: "The web app (`apps/web`)"
 source: "https://developers.schellingboard.org/web-app/"
 path: /web-app/
-updated: 2026-10-26
+updated: 2026-10-28
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T20:12:03.490Z"
+  generated_at: "2026-10-28T07:37:39.220Z"
 ---
 # The web app (`apps/web`)
 
@@ -63,7 +63,7 @@ The files are read relative to the working directory, so the same code serves
 ## Layout and rules
 
 `apps/web/src/` follows [the client layout](target-architecture/04-client.md#layout);
-`app/` (layout, nav bar, shell, pages), `ui/` (dialog, button, tooltip, icons), `schedule/`, `replica/`, `commands/` and `queries/` exist so far (the replica: store, `apply`, feed client, sync state, a server clock offset and IndexedDB persistence keyed by event and viewer, opened as `stale`). dependency-cruiser enforces that the package imports
+`app/` (layout, nav bar, shell, pages), `ui/` (dialog, button, tooltip, icons, notices), `features/schedule/`, `replica/`, `commands/` and `queries/` exist so far (the replica: store, `apply`, feed client, sync state, a server clock offset and IndexedDB persistence keyed by event and viewer, opened as `stale`). dependency-cruiser enforces that the package imports
 `packages/domain`, `packages/contracts` and `packages/api-client` only (never `app/`,
 `server/`, `utils/` or `next`), that nothing imports it, that `features/` never
 imports `api-client`, and that it declares what it imports. See
@@ -83,7 +83,7 @@ Sign-out and a switch between names clear the device's persisted replicas
 (`persistence.clear()`); a change of `guestId` also closes the feed and reopens the
 replica, the command runner and the queries (`useScheduleSession` does: the viewer is
 part of its effect key). The provider asks
-again every 5 s while the first identity fetch fails. `app/keys.ts` holds the
+again every 5 s while the first identity fetch fails. `commands/keys.ts` holds the
 `newKey` the runner needs.
 
 ## Theme, footer and dev clock
@@ -111,7 +111,7 @@ the frame shows. The schedule page mounts it.
 
 ## The schedule
 
-`src/schedule/` holds the schedule screens; `ScheduleScreen` is the entry: a snapshot, the
+`src/features/schedule/` holds the schedule screens; `ScheduleScreen` is the entry: a snapshot, the
 server's `now`, `links`, the page's search params (+ a setter) and slots for the sync indicator
 and footer. The view (`view=agenda`), filter chips (`filter=`) and narrowed rooms (`loc=`) live
 in the params; the search text and unfolded days are local. Everything is drawn from the
@@ -139,3 +139,24 @@ Unit tests sit next to the code (`*.test.ts(x)`) and run in the `web` Vitest pro
 under happy-dom as part of `make test`. Components are tested with `@testing-library/react` and `user-event` (cleanup is
 registered in `src/test-setup.ts`), through roles and names, never styling. Screens
 are covered by the E2E suite; there is no browser component runner.
+
+## Failure notices
+
+`NoticeProvider` (`ui/notices.tsx`, mounted in `ShellProviders`) shows failures as `role="alert"`
+and confirmations as `role="status"`, above any screen, so a notice outlives the control that
+raised it. Every `Command` has a `describe` (what it does to what, naming the session by title,
+day, time and room). The runner's `onFailure` gives that, the problem code, and whether the
+retries ran out; `failureMessage` turns it into "Could not …" (refused, with the reason) or "might
+not have been saved" (gave up). A notice can carry an action; the runner sets none, as a blind
+re-send would use a new idempotency key.
+
+## Forms
+
+A form waits for the server, unlike a command. `useFormMutation` (`commands/`) calls
+`awaitMutation` with an idempotency key kept only after an unreachable answer, so pressing Save again
+after "might not have been saved" cannot apply it twice. Any other answer, a refusal included,
+ends the key, because the server stores it and would refuse it with changed values. The result is one of: fields (the
+problem's `errors` by path), a `409` ("changed by someone else"), a refusal with its reason, or
+unreachable. `validateFields` runs a zod schema per field before sending. `ui/form.tsx` has
+the controlled fields (`TextField`, `TextAreaField`, `SelectField`, `DateTimeField`,
+`CheckboxField`): label, hint and error are tied to the input, and an error is a `role="alert"`.

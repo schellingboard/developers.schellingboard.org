@@ -3,10 +3,10 @@ type: concept
 title: "Architecture rules"
 source: "https://developers.schellingboard.org/architecture-rules/"
 path: /architecture-rules/
-updated: 2026-10-26
+updated: 2026-10-28
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T20:12:03.474Z"
+  generated_at: "2026-10-28T07:37:39.209Z"
 ---
 # Architecture rules
 

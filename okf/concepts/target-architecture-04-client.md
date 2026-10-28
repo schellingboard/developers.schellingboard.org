@@ -3,10 +3,10 @@ type: concept
 title: "4 · Web app"
 source: "https://developers.schellingboard.org/target-architecture/04-client/"
 path: /target-architecture/04-client/
-updated: 2026-10-26
+updated: 2026-10-28
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T20:12:03.483Z"
+  generated_at: "2026-10-28T07:37:39.215Z"
 ---
 # 4 · Web app
 
@@ -18,8 +18,8 @@ the server as files, installable as a PWA. View `web` in the
 
 > **Where the code is today.** `apps/web/src/` has `app/` (router, shell, viewer, footer,
 > reload offer), `replica/`, `commands/` (RSVP and comments), `queries/` (comments, attendees,
-> attendee count), `schedule/` (the grid, agenda, kiosk and session modal; it stands in for
-> `features/`) and `ui/`. There is no `pwa/` or `i18n/` yet: the service worker is
+> attendee count), `features/schedule/` (the grid, agenda, kiosk and session modal)
+> and `ui/`. There is no `pwa/` or `i18n/` yet: the service worker is
 > `public/sw.js`, served from the site root. The rest of the layout below is where the
 > remaining screen families go. [The web app](../web-app.md) describes what exists.
 

@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0008: Publish the developer docs at developers.schellingboard.org"
 source: "https://developers.schellingboard.org/adr/0008-publish-developer-docs/"
 path: /adr/0008-publish-developer-docs/
-updated: 2026-10-26
+updated: 2026-10-28
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T20:12:03.469Z"
+  generated_at: "2026-10-28T07:37:39.205Z"
 ---
 # ADR 0008: Publish the developer docs at developers.schellingboard.org
 

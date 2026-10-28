@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0012: A versioned HTTP API in the Next process"
 source: "https://developers.schellingboard.org/adr/0012-http-api-v1/"
 path: /adr/0012-http-api-v1/
-updated: 2026-10-26
+updated: 2026-10-28
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-26T20:12:03.471Z"
+  generated_at: "2026-10-28T07:37:39.206Z"
 ---
 # ADR 0012: A versioned HTTP API in the Next process
 
