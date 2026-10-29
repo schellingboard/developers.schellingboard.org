@@ -6,7 +6,7 @@ path: /adr/0002-testing-strategy/
 updated: 2026-10-29
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T10:39:22.122Z"
+  generated_at: "2026-10-29T11:22:39.403Z"
 ---
 # ADR 0002: Testing strategy
 

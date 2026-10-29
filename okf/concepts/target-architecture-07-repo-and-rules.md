@@ -6,7 +6,7 @@ path: /target-architecture/07-repo-and-rules/
 updated: 2026-10-29
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T10:39:22.130Z"
+  generated_at: "2026-10-29T11:22:39.421Z"
 ---
 # 7 · Repository, enforced rules, testing, agents
 

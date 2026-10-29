@@ -6,7 +6,7 @@ path: /version-control/
 updated: 2026-10-29
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T10:39:22.132Z"
+  generated_at: "2026-10-29T11:22:39.425Z"
 ---
 # Version control and pull requests
 
@@ -14,6 +14,10 @@ okf:
 
 - Use conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, etc.)
 - Subject line ≤ 72 chars; explain WHY in the body if not obvious
+- Wrap the body at 80 chars; a line with a URL, or one unbreakable word, may exceed it
+- `make commit-check` verifies the commits since `origin/main` (`RANGE=a..b` for another
+  range); CI runs it on pull requests. Check a draft first with
+  `echo "<message>" | bun scripts/check-commit-messages.ts --stdin`
 - Before committing, run `make precommit`
 - When working on a GitHub issue, add a footer: `issue #123` (partial work) or
   `fixes #123` (fully resolves it)
