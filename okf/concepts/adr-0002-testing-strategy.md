@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0002: Testing strategy"
 source: "https://developers.schellingboard.org/adr/0002-testing-strategy/"
 path: /adr/0002-testing-strategy/
-updated: 2026-10-28
+updated: 2026-10-29
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-28T07:37:39.203Z"
+  generated_at: "2026-10-29T10:39:22.122Z"
 ---
 # ADR 0002: Testing strategy
 
@@ -60,8 +60,8 @@ Post-condition state is verified through a read surface, not by inspecting
 DB rows. In order of preference:
 
 1. The corresponding GET endpoint or read action a user's browser would
-   hit (e.g., create via `POST /api/add-vote`, verify via
-   `GET /api/votes`).
+   hit (e.g., create via `PUT /api/v1/proposals/{id}/votes/{guestId}`, verify via
+   `GET /api/v1/guests/{id}/votes`).
 2. The repository's read methods (e.g., `sessionsRepo.listByEvent`) — the
    same interface server components use to render the page. Use this when
    no HTTP read surface exists.
