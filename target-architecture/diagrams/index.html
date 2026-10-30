@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Diagrams%0A%0AThe%20C4%20model%20of%20the%20target%20architecture%20as%20%5BLikeC4%5D(https%3A%2F%2Flikec4.dev)%20sources.%0A%0A%7C%20File%20%20%20%20%20%20%20%7C%20Holds%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------%20%7C%20----------------------------------------------------------------------------------%20%7C%0A%7C%20%60spec.c4%60%20%20%7C%20Element%20and%20relationship%20kinds%20(person%2C%20system%2C%20container%2C%20module%20%E2%80%A6)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60model.c4%60%20%7C%20The%20elements%20and%20their%20relationships%20%E2%80%94%20one%20model%2C%20every%20view%20is%20a%20projection%20of%20it%20%7C%0A%7C%20%60views.c4%60%20%7C%20L1%20context%2C%20L2%20containers%2C%20L3%20server%20%2F%20modules%20%2F%20web%20app%2C%20and%20four%20dynamic%20flows%20%20%20%7C%0A%0A%60likec4%60%20is%20a%20dev%20dependency%2C%20so%20these%20need%20no%20global%20install%3A%0A%0A%60%60%60bash%0Amake%20arch-diagrams%20%20%20%20%20%20%20%20%20%20%23%20interactive%2C%20with%20navigation%20between%20levels%0Amake%20arch-diagrams-check%20%20%20%20%23%20validates%20the%20sources%3B%20part%20of%20%60make%20arch%60%2C%20so%20CI%20runs%20it%0A%60%60%60%0A%0ANothing%20is%20rendered%20ahead%20of%20time.%20The%20published%20developer%20docs%20build%20the%20whole%0Aexplorer%20at%20%5B%60%2Fdiagrams%2F%60%5D(https%3A%2F%2Fdevelopers.schellingboard.org%2Fdiagrams%2F)%20and%20embed%0Aindividual%20views%20in%20the%20chapters%20as%20%60%3Clikec4-view%20view-id%3D%22%E2%80%A6%22%3E%60%2C%20both%20from%20these%0Asources%20on%20every%20build%20%E2%80%94%20so%20a%20view%20cannot%20go%20stale%2C%20and%20changing%20the%20model%20is%20the%20whole%0Ajob.%20The%20cost%20is%20that%20the%20chapters%20show%20no%20diagram%20when%20read%20on%20GitHub%2C%20only%20a%20link%20to%0Athe%20view.%0A%0AViews%2C%20in%20reading%20order%3A%0A%0A1.%20%60index%60%20%E2%80%94%20who%20uses%20the%20system%20and%20what%20it%20talks%20to%0A2.%20%60containers%60%20%E2%80%94%20web%20app%2C%20server%2C%20database%2C%20file%20store%0A3.%20%60server%60%20%E2%80%94%20HTTP%2C%20feed%2C%20jobs%2C%20kernel%20and%20the%20nine%20modules%0A4.%20%60modules%60%20%E2%80%94%20which%20module%20may%20call%20which%3B%20dashed%20edges%20are%20reactions%0A5.%20%60web%60%20%E2%80%94%20shell%2C%20replica%2C%20commands%2C%20features%2C%20PWA%20runtime%0A6.%20%60flowRsvp%60%2C%20%60flowSessionMoved%60%2C%20%60flowJoin%60%2C%20%60flowReconnect%60%20%E2%80%94%20the%20four%20flows%20the%20rest%20of%20the%20design%20keeps%20referring%20to%0A%0AKeep%20the%20model%20honest%3A%20when%20a%20document%20here%20changes%20a%20boundary%2C%20change%20%60model.c4%60%20in%0Athe%20same%20commit.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Diagrams%0A%0AThe%20C4%20model%20of%20the%20target%20architecture%20as%20%5BLikeC4%5D(https%3A%2F%2Flikec4.dev)%20sources.%0A%0A%7C%20File%20%20%20%20%20%20%20%7C%20Holds%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------%20%7C%20----------------------------------------------------------------------------------%20%7C%0A%7C%20%60spec.c4%60%20%20%7C%20Element%20and%20relationship%20kinds%20(person%2C%20system%2C%20container%2C%20module%20%E2%80%A6)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60model.c4%60%20%7C%20The%20elements%20and%20their%20relationships%20%E2%80%94%20one%20model%2C%20every%20view%20is%20a%20projection%20of%20it%20%7C%0A%7C%20%60views.c4%60%20%7C%20L1%20context%2C%20L2%20containers%2C%20L3%20server%20%2F%20modules%20%2F%20web%20app%2C%20and%20four%20dynamic%20flows%20%20%20%7C%0A%0A%60likec4%60%20is%20a%20dev%20dependency%2C%20so%20these%20need%20no%20global%20install%3A%0A%0A%60%60%60bash%0Amake%20arch-diagrams%20%20%20%20%20%20%20%20%20%20%23%20interactive%2C%20with%20navigation%20between%20levels%0Amake%20arch-diagrams-check%20%20%20%20%23%20validates%20the%20sources%3B%20part%20of%20%60make%20arch%60%2C%20so%20CI%20runs%20it%0A%60%60%60%0A%0ANothing%20is%20rendered%20ahead%20of%20time.%20The%20published%20developer%20docs%20build%20the%20whole%20explorer%20at%0A%5B%60%2Fdiagrams%2F%60%5D(https%3A%2F%2Fdevelopers.schellingboard.org%2Fdiagrams%2F)%20and%20embed%20individual%20views%20in%20the%0Achapters%20as%20%60%3Clikec4-view%20view-id%3D%22%E2%80%A6%22%3E%60%2C%20both%20from%20these%20sources%20on%20every%20build%20%E2%80%94%20so%20a%20view%20cannot%0Ago%20stale%2C%20and%20changing%20the%20model%20is%20the%20whole%20job.%20The%20cost%20is%20that%20the%20chapters%20show%20no%20diagram%0Awhen%20read%20on%20GitHub%2C%20only%20a%20link%20to%20the%20view.%0A%0AViews%2C%20in%20reading%20order%3A%0A%0A1.%20%60index%60%20%E2%80%94%20who%20uses%20the%20system%20and%20what%20it%20talks%20to%0A2.%20%60containers%60%20%E2%80%94%20web%20app%2C%20server%2C%20database%2C%20file%20store%0A3.%20%60server%60%20%E2%80%94%20HTTP%2C%20feed%2C%20jobs%2C%20kernel%20and%20the%20nine%20modules%0A4.%20%60modules%60%20%E2%80%94%20which%20module%20may%20call%20which%3B%20dashed%20edges%20are%20reactions%0A5.%20%60web%60%20%E2%80%94%20shell%2C%20replica%2C%20commands%2C%20features%2C%20PWA%20runtime%0A6.%20%60flowRsvp%60%2C%20%60flowSessionMoved%60%2C%20%60flowJoin%60%2C%20%60flowReconnect%60%20%E2%80%94%20the%20four%20flows%20the%20rest%20of%20the%0A%20%20%20design%20keeps%20referring%20to%0A%0AKeep%20the%20model%20honest%3A%20when%20a%20document%20here%20changes%20a%20boundary%2C%20change%20%60model.c4%60%20in%20the%20same%0Acommit.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1793,12 +1793,11 @@
 <pre class="hljs"><code class="language-bash">make arch<span class="hljs-operator">-</span>diagrams          <span class="hljs-comment"># interactive, with navigation between levels</span>
 make arch<span class="hljs-operator">-</span>diagrams<span class="hljs-operator">-</span>check    <span class="hljs-comment"># validates the sources; part of `make arch`, so CI runs it</span>
 </code></pre>
-<p>Nothing is rendered ahead of time. The published developer docs build the whole
-explorer at <a href="https://developers.schellingboard.org/diagrams/"><code>/diagrams/</code></a> and embed
-individual views in the chapters as <code>&lt;likec4-view view-id=&quot;…&quot;&gt;</code>, both from these
-sources on every build — so a view cannot go stale, and changing the model is the whole
-job. The cost is that the chapters show no diagram when read on GitHub, only a link to
-the view.</p>
+<p>Nothing is rendered ahead of time. The published developer docs build the whole explorer at
+<a href="https://developers.schellingboard.org/diagrams/"><code>/diagrams/</code></a> and embed individual views in the
+chapters as <code>&lt;likec4-view view-id=&quot;…&quot;&gt;</code>, both from these sources on every build — so a view cannot
+go stale, and changing the model is the whole job. The cost is that the chapters show no diagram
+when read on GitHub, only a link to the view.</p>
 <p>Views, in reading order:</p>
 <ol>
 <li><code>index</code> — who uses the system and what it talks to</li>
@@ -1806,10 +1805,11 @@ the view.</p>
 <li><code>server</code> — HTTP, feed, jobs, kernel and the nine modules</li>
 <li><code>modules</code> — which module may call which; dashed edges are reactions</li>
 <li><code>web</code> — shell, replica, commands, features, PWA runtime</li>
-<li><code>flowRsvp</code>, <code>flowSessionMoved</code>, <code>flowJoin</code>, <code>flowReconnect</code> — the four flows the rest of the design keeps referring to</li>
+<li><code>flowRsvp</code>, <code>flowSessionMoved</code>, <code>flowJoin</code>, <code>flowReconnect</code> — the four flows the rest of the
+design keeps referring to</li>
 </ol>
-<p>Keep the model honest: when a document here changes a boundary, change <code>model.c4</code> in
-the same commit.</p>
+<p>Keep the model honest: when a document here changes a boundary, change <code>model.c4</code> in the same
+commit.</p>
 
                 
                   <div class="page-navigation">
@@ -1881,17 +1881,32 @@ the same commit.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1789894100000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1789894100000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1949,13 +1964,13 @@ the same commit.</p>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2033,7 +2048,7 @@ the same commit.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

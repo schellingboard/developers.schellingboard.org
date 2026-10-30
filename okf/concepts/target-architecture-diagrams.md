@@ -3,10 +3,10 @@ type: concept
 title: Diagrams
 source: "https://developers.schellingboard.org/target-architecture/diagrams/"
 path: /target-architecture/diagrams/
-updated: 2026-10-29
+updated: 2026-10-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T11:22:39.423Z"
+  generated_at: "2026-10-30T20:48:13.680Z"
 ---
 # Diagrams
 
@@ -25,12 +25,11 @@ make arch-diagrams          # interactive, with navigation between levels
 make arch-diagrams-check    # validates the sources; part of `make arch`, so CI runs it
 ```
 
-Nothing is rendered ahead of time. The published developer docs build the whole
-explorer at [`/diagrams/`](https://developers.schellingboard.org/diagrams/) and embed
-individual views in the chapters as `<likec4-view view-id="…">`, both from these
-sources on every build — so a view cannot go stale, and changing the model is the whole
-job. The cost is that the chapters show no diagram when read on GitHub, only a link to
-the view.
+Nothing is rendered ahead of time. The published developer docs build the whole explorer at
+[`/diagrams/`](https://developers.schellingboard.org/diagrams/) and embed individual views in the
+chapters as `<likec4-view view-id="…">`, both from these sources on every build — so a view cannot
+go stale, and changing the model is the whole job. The cost is that the chapters show no diagram
+when read on GitHub, only a link to the view.
 
 Views, in reading order:
 
@@ -39,7 +38,8 @@ Views, in reading order:
 3. `server` — HTTP, feed, jobs, kernel and the nine modules
 4. `modules` — which module may call which; dashed edges are reactions
 5. `web` — shell, replica, commands, features, PWA runtime
-6. `flowRsvp`, `flowSessionMoved`, `flowJoin`, `flowReconnect` — the four flows the rest of the design keeps referring to
+6. `flowRsvp`, `flowSessionMoved`, `flowJoin`, `flowReconnect` — the four flows the rest of the
+   design keeps referring to
 
-Keep the model honest: when a document here changes a boundary, change `model.c4` in
-the same commit.
+Keep the model honest: when a document here changes a boundary, change `model.c4` in the same
+commit.

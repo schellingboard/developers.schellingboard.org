@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Changelog%20and%20release%20notes%0A%0A%23%23%20The%20changelog%0A%0AUpdate%0A%5B%60CHANGELOG.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FCHANGELOG.md)%0Aunder%20%60%5BUnreleased%5D%60%20alongside%20any%20user-facing%20change.%0A%0A**Audience**%3A%20event%20organizers%2C%20not%20developers.%20Plain%20language%2C%20no%20jargon%0A(framework%20names%2C%20file%2Ffunction%20names%2C%20library%20versions)%20%E2%80%94%20describe%20what%20changed%0Afor%20them%2C%20not%20how%20it%20was%20implemented.%0A%0A**Sections**%20(Keep%20a%20Changelog%20order%3B%20use%20only%20what%20applies)%3A%0A%0A-%20%60Added%60%20%E2%80%94%20new%20features%0A-%20%60Changed%60%20%E2%80%94%20changes%20to%20existing%20behavior%0A-%20%60Deprecated%60%20%E2%80%94%20features%20being%20phased%20out%0A-%20%60Removed%60%20%E2%80%94%20removed%20features%0A-%20%60Fixed%60%20%E2%80%94%20bug%20fixes%0A-%20%60Security%60%20%E2%80%94%20vulnerability%20fixes%0A-%20%60Internal%60%20%E2%80%94%20dev-only%20changes%20(tooling%2C%20tests%2C%20refactors%2C%20CI)%20with%20no%20visible%20effect%20on%20organizers%0A%0A**Conventions**%3A%0A%0A-%20One%20bullet%20per%20change%2C%20at%20most%20two%20lines%3A%20%60-%20**Bold%20lead%20phrase**%20(%23123)%3A%20what%20changed%2C%20and%20%E2%80%94%20where%20it%20isn&#039;t%20obvious%20%E2%80%94%20what%20was%20wrong%20before%60%0A-%20Reference%20the%20GitHub%20issue%20when%20one%20exists%2C%20taken%20from%20the%20commit&#039;s%20%60fixes%20%23123%60%20%2F%20%60issue%20%23123%60%20footer%20(not%20the%20PR%20number%20in%20a%20squashed%20subject)%0A-%20Several%20commits%20delivering%20one%20feature%20get%20one%20bullet%20between%20them%0A-%20Order%20bullets%20within%20a%20section%20roughly%20by%20importance%0A-%20Breaking%20changes%3A%20%60%3E%20**Breaking%20change**%3A%20...%60%20blockquote%20at%20the%20top%20of%20the%20release%0A-%20Leave%20out%20rationale%2C%20implementation%2C%20edge%20cases%20and%20how%20a%20bug%20was%20found%20%E2%80%94%20those%20belong%20in%20the%20commit%20message%2C%20an%20ADR%20or%20these%20developer%20docs%0A-%20%60Internal%60%20is%20not%20a%20second%20commit%20history%3A%20only%20internal%20changes%20that%20are%20particularly%20valuable%2C%20disruptive%20or%20a%20highlight%2C%20around%20three%20per%20release%2C%20one%20line%20each%0A%0AThe%20full%20rules%2C%20with%20the%20hard%20limits%20and%20worked%20examples%2C%20are%20in%0A%5B%60AGENTS.md%20%C2%A7%20Changelog%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md%23changelog).%0A%0A%23%23%20In-app%20release%20notes%0A%0AThe%20app%20carries%20a%20much%20shorter%20version%20of%20the%20changelog%3A%0A%5B%60packages%2Fdomain%2Fsrc%2Frelease-notes.ts%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2Fpackages%2Fdomain%2Fsrc%2Frelease-notes.ts)%2C%0Ashown%20when%20the%20footer&#039;s%20version%20is%20clicked.%20It%20holds%20**3%E2%80%935%20highlights**%20of%20the%0Acoming%20release%20%E2%80%94%20inline%20markdown%2C%20taking%20the%20same%20**bold**%20lead%20phrase%20as%20the%0Achangelog%20bullets.%0A%0AAdd%20yours%20to%20the%20first%20entry%20%E2%80%94%20the%20undated%20%60%22Unreleased%22%60%20one%20%E2%80%94%20as%20the%20change%0Alands%2C%20and%20replace%20a%20weaker%20highlight%20rather%20than%20adding%20a%20sixth.%20Finalizing%20the%0Arelease%20gives%20that%20entry%20its%20version%20and%20date%2C%20after%20checking%20its%20highlights%0Aagainst%20the%20changelog%20%E2%80%94%20see%20%5BReleasing%20a%20new%20version%5D(releasing.md).%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Changelog%20and%20release%20notes%0A%0A%23%23%20The%20changelog%0A%0AUpdate%20%5B%60CHANGELOG.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FCHANGELOG.md)%0Aunder%20%60%5BUnreleased%5D%60%20alongside%20any%20user-facing%20change.%0A%0A**Audience**%3A%20event%20organizers%2C%20not%20developers.%20Plain%20language%2C%20no%20jargon%20(framework%20names%2C%0Afile%2Ffunction%20names%2C%20library%20versions)%20%E2%80%94%20describe%20what%20changed%20for%20them%2C%20not%20how%20it%20was%20implemented.%0A%0A**Sections**%20(Keep%20a%20Changelog%20order%3B%20use%20only%20what%20applies)%3A%0A%0A-%20%60Added%60%20%E2%80%94%20new%20features%0A-%20%60Changed%60%20%E2%80%94%20changes%20to%20existing%20behavior%0A-%20%60Deprecated%60%20%E2%80%94%20features%20being%20phased%20out%0A-%20%60Removed%60%20%E2%80%94%20removed%20features%0A-%20%60Fixed%60%20%E2%80%94%20bug%20fixes%0A-%20%60Security%60%20%E2%80%94%20vulnerability%20fixes%0A-%20%60Internal%60%20%E2%80%94%20dev-only%20changes%20(tooling%2C%20tests%2C%20refactors%2C%20CI)%20with%20no%20visible%20effect%20on%20organizers%0A%0A**Conventions**%3A%0A%0A-%20One%20bullet%20per%20change%2C%20at%20most%20two%20lines%3A%0A%20%20%60-%20**Bold%20lead%20phrase**%20(%23123)%3A%20what%20changed%2C%20and%20%E2%80%94%20where%20it%20isn&#039;t%20obvious%20%E2%80%94%20what%20was%20wrong%20before%60%0A-%20Reference%20the%20GitHub%20issue%20when%20one%20exists%2C%20taken%20from%20the%20commit&#039;s%20%60fixes%20%23123%60%20%2F%20%60issue%20%23123%60%0A%20%20footer%20(not%20the%20PR%20number%20in%20a%20squashed%20subject)%0A-%20Several%20commits%20delivering%20one%20feature%20get%20one%20bullet%20between%20them%0A-%20Order%20bullets%20within%20a%20section%20roughly%20by%20importance%0A-%20Breaking%20changes%3A%20%60%3E%20**Breaking%20change**%3A%20...%60%20blockquote%20at%20the%20top%20of%20the%20release%0A-%20Leave%20out%20rationale%2C%20implementation%2C%20edge%20cases%20and%20how%20a%20bug%20was%20found%20%E2%80%94%20those%20belong%20in%20the%0A%20%20commit%20message%2C%20an%20ADR%20or%20these%20developer%20docs%0A-%20%60Internal%60%20is%20not%20a%20second%20commit%20history%3A%20only%20internal%20changes%20that%20are%20particularly%20valuable%2C%0A%20%20disruptive%20or%20a%20highlight%2C%20around%20three%20per%20release%2C%20one%20line%20each%0A%0AThe%20full%20rules%2C%20with%20the%20hard%20limits%20and%20worked%20examples%2C%20are%20in%0A%5B%60AGENTS.md%20%C2%A7%20Changelog%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md%23changelog).%0A%0A%23%23%20In-app%20release%20notes%0A%0AThe%20app%20carries%20a%20much%20shorter%20version%20of%20the%20changelog%3A%0A%5B%60packages%2Fdomain%2Fsrc%2Frelease-notes.ts%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2Fpackages%2Fdomain%2Fsrc%2Frelease-notes.ts)%2C%0Ashown%20when%20the%20footer&#039;s%20version%20is%20clicked.%20It%20holds%20**3%E2%80%935%20highlights**%20of%20the%20coming%20release%20%E2%80%94%0Ainline%20markdown%2C%20taking%20the%20same%20**bold**%20lead%20phrase%20as%20the%20changelog%20bullets.%0A%0AAdd%20yours%20to%20the%20first%20entry%20%E2%80%94%20the%20undated%20%60%22Unreleased%22%60%20one%20%E2%80%94%20as%20the%20change%20lands%2C%20and%20replace%20a%0Aweaker%20highlight%20rather%20than%20adding%20a%20sixth.%20Finalizing%20the%20release%20gives%20that%20entry%20its%20version%20and%0Adate%2C%20after%20checking%20its%20highlights%20against%20the%20changelog%20%E2%80%94%20see%0A%5BReleasing%20a%20new%20version%5D(releasing.md).%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1719,12 +1719,10 @@
                 
                 <h1 id="changelog-and-release-notes" class="docmd-heading"><a href="#changelog-and-release-notes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Changelog and release notes</h1>
 <h2 id="changelog-and-release-notes-the-changelog" class="docmd-heading"><a href="#changelog-and-release-notes-the-changelog" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The changelog</h2>
-<p>Update
-<a href="https://github.com/schellingboard/schellingboard/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a>
+<p>Update <a href="https://github.com/schellingboard/schellingboard/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a>
 under <code>[Unreleased]</code> alongside any user-facing change.</p>
-<p><strong>Audience</strong>: event organizers, not developers. Plain language, no jargon
-(framework names, file/function names, library versions) — describe what changed
-for them, not how it was implemented.</p>
+<p><strong>Audience</strong>: event organizers, not developers. Plain language, no jargon (framework names,
+file/function names, library versions) — describe what changed for them, not how it was implemented.</p>
 <p><strong>Sections</strong> (Keep a Changelog order; use only what applies):</p>
 <ul>
 <li><code>Added</code> — new features</li>
@@ -1737,26 +1735,29 @@ for them, not how it was implemented.</p>
 </ul>
 <p><strong>Conventions</strong>:</p>
 <ul>
-<li>One bullet per change, at most two lines: <code>- **Bold lead phrase** (#123): what changed, and — where it isn't obvious — what was wrong before</code></li>
-<li>Reference the GitHub issue when one exists, taken from the commit’s <code>fixes #123</code> / <code>issue #123</code> footer (not the PR number in a squashed subject)</li>
+<li>One bullet per change, at most two lines:
+<code>- **Bold lead phrase** (#123): what changed, and — where it isn't obvious — what was wrong before</code></li>
+<li>Reference the GitHub issue when one exists, taken from the commit’s <code>fixes #123</code> / <code>issue #123</code>
+footer (not the PR number in a squashed subject)</li>
 <li>Several commits delivering one feature get one bullet between them</li>
 <li>Order bullets within a section roughly by importance</li>
 <li>Breaking changes: <code>&gt; **Breaking change**: ...</code> blockquote at the top of the release</li>
-<li>Leave out rationale, implementation, edge cases and how a bug was found — those belong in the commit message, an ADR or these developer docs</li>
-<li><code>Internal</code> is not a second commit history: only internal changes that are particularly valuable, disruptive or a highlight, around three per release, one line each</li>
+<li>Leave out rationale, implementation, edge cases and how a bug was found — those belong in the
+commit message, an ADR or these developer docs</li>
+<li><code>Internal</code> is not a second commit history: only internal changes that are particularly valuable,
+disruptive or a highlight, around three per release, one line each</li>
 </ul>
 <p>The full rules, with the hard limits and worked examples, are in
 <a href="https://github.com/schellingboard/schellingboard/blob/main/AGENTS.md#changelog"><code>AGENTS.md § Changelog</code></a>.</p>
 <h2 id="changelog-and-release-notes-in-app-release-notes" class="docmd-heading"><a href="#changelog-and-release-notes-in-app-release-notes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>In-app release notes</h2>
 <p>The app carries a much shorter version of the changelog:
 <a href="https://github.com/schellingboard/schellingboard/blob/main/packages/domain/src/release-notes.ts"><code>packages/domain/src/release-notes.ts</code></a>,
-shown when the footer’s version is clicked. It holds <strong>3–5 highlights</strong> of the
-coming release — inline markdown, taking the same <strong>bold</strong> lead phrase as the
-changelog bullets.</p>
-<p>Add yours to the first entry — the undated <code>&quot;Unreleased&quot;</code> one — as the change
-lands, and replace a weaker highlight rather than adding a sixth. Finalizing the
-release gives that entry its version and date, after checking its highlights
-against the changelog — see <a href="../releasing/">Releasing a new version</a>.</p>
+shown when the footer’s version is clicked. It holds <strong>3–5 highlights</strong> of the coming release —
+inline markdown, taking the same <strong>bold</strong> lead phrase as the changelog bullets.</p>
+<p>Add yours to the first entry — the undated <code>&quot;Unreleased&quot;</code> one — as the change lands, and replace a
+weaker highlight rather than adding a sixth. Finalizing the release gives that entry its version and
+date, after checking its highlights against the changelog — see
+<a href="../releasing/">Releasing a new version</a>.</p>
 
                 
                   <div class="page-navigation">
@@ -1862,17 +1863,32 @@ against the changelog — see <a href="../releasing/">Releasing a new version</a
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1791810604000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1791810604000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1930,13 +1946,13 @@ against the changelog — see <a href="../releasing/">Releasing a new version</a
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2014,7 +2030,7 @@ against the changelog — see <a href="../releasing/">Releasing a new version</a
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

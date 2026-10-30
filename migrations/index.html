@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Database%20Migrations%0A%0A%60make%20dev-migrate-create%60%20(%60drizzle-kit%20generate%60)%20diffs%20%60db%2Fschema.ts%60%20against%20the%20latest%0Asnapshot%20in%20%60drizzle%2Fmeta%2F%60%20and%20writes%20a%20new%20%60NNNN_*.sql%60%20file%20plus%20an%20updated%0A%60drizzle%2Fmeta%2FNNNN_snapshot.json%60%20and%20%60drizzle%2Fmeta%2F_journal.json%60.%0A%0A%60make%20test%60%20applies%20every%20migration%20to%20each%20released%20version&#039;s%20database%20as%20well%20as%20to%20an%20empty%20one%2C%0Aso%20a%20migration%20that%20only%20fails%20against%20populated%20data%20fails%20there%20%E2%80%94%20see%0A%5BRelease-upgrade%20tests%5D(testing.md%23release-upgrade-tests).%0A%0A%23%23%20Resolving%20migration%20conflicts%0A%0AWhen%20two%20branches%20each%20add%20a%20migration%2C%20%60drizzle%2Fmeta%2F_journal.json%60%20and%20the%20latest%0A%60drizzle%2Fmeta%2FNNNN_snapshot.json%60%20conflict%20%E2%80%94%20both%20branches%20claim%20the%20same%20index.%20Don&#039;t%20hand-edit%0Athe%20conflicted%20JSON%3B%20regenerate%20it%20instead%3A%0A%0A1.%20Move%20your%20own%20new%20%60.sql%60%20migration%20file%20out%20of%20the%20way%20(e.g.%20to%20%60%2Ftmp%60)%20so%20it%20doesn&#039;t%20confuse%0A%20%20%20%60drizzle-kit%60.%20Note%20its%20name.%0A2.%20Restore%20%60drizzle%2Fmeta%2F%60%20to%20the%20stable%20version%20(%60main%60)%2C%20discarding%20your%20branch&#039;s%20snapshot%2Fjournal%0A%20%20%20changes%20%E2%80%94%20%60db%2Fschema.ts%60%20is%20unaffected%2C%20only%20the%20generated%20meta%20files%20reset%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20%23%20jj%0A%20%20%20jj%20restore%20--from%20main%20--%20drizzle%2Fmeta%0A%0A%20%20%20%23%20Git%0A%20%20%20git%20checkout%20main%20--%20drizzle%2Fmeta%0A%20%20%20%60%60%60%0A%0A3.%20Regenerate%20against%20the%20restored%20snapshot%2C%20in%20a%20real%20terminal%20(not%20piped%2Fnon-interactive%20%E2%80%94%20see%0A%20%20%20below)%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev-migrate-create%20NAME%3D%3Coriginal-migration-name%3E%0A%20%20%20%60%60%60%0A%0A%20%20%20%60--name%60%20gets%20you%20the%20right%20filename%20directly%3B%20without%20it%20you&#039;d%20rename%20the%20auto-generated%20file%0A%20%20%20afterward%20(keep%20drizzle-kit&#039;s%20index%2C%20drop%20the%20random%20suffix).%20If%20your%20change%20looks%20like%20a%20column%0A%20%20%20rename%20to%20drizzle-kit%20(e.g.%20drop%20one%20column%2C%20add%20another)%2C%20it%20opens%20an%20interactive%20prompt%20asking%0A%20%20%20whether%20to%20treat%20it%20as%20a%20rename%20or%20a%20create%2Bdrop%20%E2%80%94%20it%20needs%20a%20real%20TTY%2C%20so%20this%20step%20can&#039;t%20run%0A%20%20%20from%20a%20script%20or%20CI.%0A%0A4.%20Diff%20the%20regenerated%20%60.sql%60%20file%20against%20the%20copy%20you%20moved%20aside%20in%20step%201.%20For%20a%20plain%0A%20%20%20mechanical%20schema%20change%20they&#039;ll%20match%20%E2%80%94%20delete%20the%20moved-aside%20copy.%20But%20if%20your%20original%0A%20%20%20migration%20had%20hand-written%20SQL%20beyond%20what%20%60schema.ts%60%20alone%20implies%20(a%20data%20backfill%2C%20a%20value%0A%20%20%20transform%2C%20choosing%20%22rename%22%20over%20%22create%2Bdrop%22)%2C%20the%20regenerated%20file%20won&#039;t%20reproduce%20it%20%E2%80%94%0A%20%20%20drizzle-kit%20only%20knows%20what%20it%20can%20infer%20from%20the%20schema%20diff.%20In%20that%20case%20keep%20the%20_regenerated_%0A%20%20%20%60drizzle%2Fmeta%2F*_snapshot.json%60%20and%20journal%20entry%20(they%20carry%20the%20correct%20index)%2C%20but%20replace%20the%0A%20%20%20regenerated%20file&#039;s%20SQL%20body%20with%20your%20original%20hand-written%20SQL.%0A5.%20Run%20%60make%20dev-migrate-up%60%20to%20confirm%20the%20migration%20applies%20cleanly%2C%20then%20continue%20resolving%20the%0A%20%20%20rest%20of%20the%20conflict%20as%20usual.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Database%20Migrations%0A%0A%60make%20dev-migrate-create%60%20(%60drizzle-kit%20generate%60)%20diffs%20%60db%2Fschema.ts%60%20against%20the%20latest%20snapshot%0Ain%20%60drizzle%2Fmeta%2F%60%20and%20writes%20a%20new%20%60NNNN_*.sql%60%20file%20plus%20an%20updated%0A%60drizzle%2Fmeta%2FNNNN_snapshot.json%60%20and%20%60drizzle%2Fmeta%2F_journal.json%60.%0A%0A%60make%20test%60%20applies%20every%20migration%20to%20each%20released%20version&#039;s%20database%20as%20well%20as%20to%20an%20empty%20one%2C%0Aso%20a%20migration%20that%20only%20fails%20against%20populated%20data%20fails%20there%20%E2%80%94%20see%0A%5BRelease-upgrade%20tests%5D(testing.md%23release-upgrade-tests).%0A%0A%23%23%20Resolving%20migration%20conflicts%0A%0AWhen%20two%20branches%20each%20add%20a%20migration%2C%20%60drizzle%2Fmeta%2F_journal.json%60%20and%20the%20latest%0A%60drizzle%2Fmeta%2FNNNN_snapshot.json%60%20conflict%20%E2%80%94%20both%20branches%20claim%20the%20same%20index.%20Don&#039;t%20hand-edit%20the%0Aconflicted%20JSON%3B%20regenerate%20it%20instead%3A%0A%0A1.%20Move%20your%20own%20new%20%60.sql%60%20migration%20file%20out%20of%20the%20way%20(e.g.%20to%20%60%2Ftmp%60)%20so%20it%20doesn&#039;t%20confuse%0A%20%20%20%60drizzle-kit%60.%20Note%20its%20name.%0A2.%20Restore%20%60drizzle%2Fmeta%2F%60%20to%20the%20stable%20version%20(%60main%60)%2C%20discarding%20your%20branch&#039;s%20snapshot%2Fjournal%0A%20%20%20changes%20%E2%80%94%20%60db%2Fschema.ts%60%20is%20unaffected%2C%20only%20the%20generated%20meta%20files%20reset%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20%23%20jj%0A%20%20%20jj%20restore%20--from%20main%20--%20drizzle%2Fmeta%0A%0A%20%20%20%23%20Git%0A%20%20%20git%20checkout%20main%20--%20drizzle%2Fmeta%0A%20%20%20%60%60%60%0A%0A3.%20Regenerate%20against%20the%20restored%20snapshot%2C%20in%20a%20real%20terminal%20(not%20piped%2Fnon-interactive%20%E2%80%94%20see%0A%20%20%20below)%3A%0A%0A%20%20%20%60%60%60bash%0A%20%20%20make%20dev-migrate-create%20NAME%3D%3Coriginal-migration-name%3E%0A%20%20%20%60%60%60%0A%0A%20%20%20%60--name%60%20gets%20you%20the%20right%20filename%20directly%3B%20without%20it%20you&#039;d%20rename%20the%20auto-generated%20file%0A%20%20%20afterward%20(keep%20drizzle-kit&#039;s%20index%2C%20drop%20the%20random%20suffix).%20If%20your%20change%20looks%20like%20a%20column%0A%20%20%20rename%20to%20drizzle-kit%20(e.g.%20drop%20one%20column%2C%20add%20another)%2C%20it%20opens%20an%20interactive%20prompt%20asking%0A%20%20%20whether%20to%20treat%20it%20as%20a%20rename%20or%20a%20create%2Bdrop%20%E2%80%94%20it%20needs%20a%20real%20TTY%2C%20so%20this%20step%20can&#039;t%20run%0A%20%20%20from%20a%20script%20or%20CI.%0A%0A4.%20Diff%20the%20regenerated%20%60.sql%60%20file%20against%20the%20copy%20you%20moved%20aside%20in%20step%201.%20For%20a%20plain%0A%20%20%20mechanical%20schema%20change%20they&#039;ll%20match%20%E2%80%94%20delete%20the%20moved-aside%20copy.%20But%20if%20your%20original%0A%20%20%20migration%20had%20hand-written%20SQL%20beyond%20what%20%60schema.ts%60%20alone%20implies%20(a%20data%20backfill%2C%20a%20value%0A%20%20%20transform%2C%20choosing%20%22rename%22%20over%20%22create%2Bdrop%22)%2C%20the%20regenerated%20file%20won&#039;t%20reproduce%20it%20%E2%80%94%0A%20%20%20drizzle-kit%20only%20knows%20what%20it%20can%20infer%20from%20the%20schema%20diff.%20In%20that%20case%20keep%20the%0A%20%20%20_regenerated_%20%60drizzle%2Fmeta%2F*_snapshot.json%60%20and%20journal%20entry%20(they%20carry%20the%20correct%20index)%2C%0A%20%20%20but%20replace%20the%20regenerated%20file&#039;s%20SQL%20body%20with%20your%20original%20hand-written%20SQL.%0A5.%20Run%20%60make%20dev-migrate-up%60%20to%20confirm%20the%20migration%20applies%20cleanly%2C%20then%20continue%20resolving%20the%0A%20%20%20rest%20of%20the%20conflict%20as%20usual.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1742,16 +1742,16 @@
                   </h1>
                 
                 <h1 id="database-migrations" class="docmd-heading"><a href="#database-migrations" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Database Migrations</h1>
-<p><code>make dev-migrate-create</code> (<code>drizzle-kit generate</code>) diffs <code>db/schema.ts</code> against the latest
-snapshot in <code>drizzle/meta/</code> and writes a new <code>NNNN_*.sql</code> file plus an updated
+<p><code>make dev-migrate-create</code> (<code>drizzle-kit generate</code>) diffs <code>db/schema.ts</code> against the latest snapshot
+in <code>drizzle/meta/</code> and writes a new <code>NNNN_*.sql</code> file plus an updated
 <code>drizzle/meta/NNNN_snapshot.json</code> and <code>drizzle/meta/_journal.json</code>.</p>
 <p><code>make test</code> applies every migration to each released version’s database as well as to an empty one,
 so a migration that only fails against populated data fails there — see
 <a href="../testing/#release-upgrade-tests">Release-upgrade tests</a>.</p>
 <h2 id="database-migrations-resolving-migration-conflicts" class="docmd-heading"><a href="#database-migrations-resolving-migration-conflicts" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Resolving migration conflicts</h2>
 <p>When two branches each add a migration, <code>drizzle/meta/_journal.json</code> and the latest
-<code>drizzle/meta/NNNN_snapshot.json</code> conflict — both branches claim the same index. Don’t hand-edit
-the conflicted JSON; regenerate it instead:</p>
+<code>drizzle/meta/NNNN_snapshot.json</code> conflict — both branches claim the same index. Don’t hand-edit the
+conflicted JSON; regenerate it instead:</p>
 <ol>
 <li><p>Move your own new <code>.sql</code> migration file out of the way (e.g. to <code>/tmp</code>) so it doesn’t confuse
 <code>drizzle-kit</code>. Note its name.</p>
@@ -1779,9 +1779,9 @@ from a script or CI.</p>
 mechanical schema change they’ll match — delete the moved-aside copy. But if your original
 migration had hand-written SQL beyond what <code>schema.ts</code> alone implies (a data backfill, a value
 transform, choosing “rename” over “create+drop”), the regenerated file won’t reproduce it —
-drizzle-kit only knows what it can infer from the schema diff. In that case keep the <em>regenerated</em>
-<code>drizzle/meta/*_snapshot.json</code> and journal entry (they carry the correct index), but replace the
-regenerated file’s SQL body with your original hand-written SQL.</p>
+drizzle-kit only knows what it can infer from the schema diff. In that case keep the
+<em>regenerated</em> <code>drizzle/meta/*_snapshot.json</code> and journal entry (they carry the correct index),
+but replace the regenerated file’s SQL body with your original hand-written SQL.</p>
 </li>
 <li><p>Run <code>make dev-migrate-up</code> to confirm the migration applies cleanly, then continue resolving the
 rest of the conflict as usual.</p>
@@ -1888,17 +1888,32 @@ rest of the conflict as usual.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1788081989000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1788081989000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1956,13 +1971,13 @@ rest of the conflict as usual.</p>
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2040,7 +2055,7 @@ rest of the conflict as usual.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

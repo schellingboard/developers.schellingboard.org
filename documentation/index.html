@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Documentation%20and%20the%20sites%0A%0AThree%20sites%2C%20three%20audiences%2C%20three%20publishing%20rules%3A%0A%0A%7C%20Site%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Built%20from%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Published%20when%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------------------------%20%7C%20----------------------------%20%7C%20--------------------------------%20%7C%0A%7C%20%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60docs%2Fpublic%2F%60%2C%20at%20each%20tag%20%20%7C%20a%20release%20is%20tagged%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5Bdevelopers.schellingboard.org%5D(https%3A%2F%2Fdevelopers.schellingboard.org)%20%7C%20%60docs%2Fdev%2F%60%2C%20on%20%60main%60%20%20%20%20%20%20%20%7C%20%60docs%2Fdev%2F%60%20changes%20on%20%60main%60%20%20%20%20%7C%0A%7C%20%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60www%2F%60%20%2B%20%60docs%2Fscreenshots%2F%60%20%7C%20%60www%2F%60%20or%20the%20screenshots%20change%20%7C%0A%0AThe%20split%20of%20audiences%20is%20the%20point%3A%20attendees%20and%20organizers%20read%20the%20first%2C%0Acontributors%20the%20second%2C%20and%20nobody%20should%20land%20on%20the%20wrong%20one.%20Keeping%20the%0Adeveloper%20docs%20unversioned%20and%20the%20user%20docs%20versioned%20follows%20from%20the%20same%0Asplit%20%E2%80%94%20user%20docs%20must%20describe%20the%20release%20someone%20is%20running%2C%20while%20developer%0Adocs%20must%20describe%20the%20branch%20they%20are%20working%20on.%0A%0A%23%23%20The%20public%20docs%20site%0A%0ABuilt%20with%20%5Bdocmd%5D(https%3A%2F%2Fdocmd.io)%20from%20%60docs%2Fpublic%2F%60%2C%20which%20holds%20one%20copy%0Aof%20the%20documentation%20and%20no%20snapshots.%20Published%20versions%20are%20reconstructed%0Afrom%20git%3A%20%60scripts%2Fbuild-docs.sh%60%20walks%20the%20release%20tags%2C%20checks%20each%20one%20out%0Ainto%20a%20temporary%20worktree%2C%20and%20builds%20it%20as%20a%20version.%20The%20newest%20is%20served%20at%0Athe%20site%20root%2C%20older%20ones%20under%20%60%2F%3Cmajor.minor%3E%2F%60%2C%20all%20listed%20in%20the%20version%0Adropdown.%0A%0ASo%20%60docs%2Fpublic%2F%60%20is%20the%20_next_%20release&#039;s%20documentation.%20Edit%20it%20in%20the%20same%0Acommit%20as%20the%20change%20it%20describes%3B%20it%20is%20published%20when%20that%20release%20is%0Atagged.%0A%0A%7C%20Command%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20does%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20--------------------------------------------%20%7C%0A%7C%20%60make%20docs%60%20%20%20%20%20%20%20%20%20%20%7C%20Live%20preview%20of%20%60docs%2Fpublic%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-build%60%20%20%20%20%7C%20Build%20the%20published%20site%20into%20%60site%2F%60%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-validate%60%20%7C%20Check%20for%20broken%20internal%20links%20(runs%20in%20CI)%20%7C%0A%0A%60.github%2Fworkflows%2Fdocs.yml%60%20deploys%20on%20tag%20pushes%20and%20on%20pushes%20to%20%60release%2F*%60%0Abranches.%20Pushing%20to%20%60main%60%20deliberately%20publishes%20nothing%20%E2%80%94%20until%20a%20release%20is%0Atagged%2C%20%60make%20docs%60%20is%20the%20only%20place%20the%20new%20documentation%20exists.%0A%0ATwo%20consequences%20worth%20knowing%3A%0A%0A-%20**Releasing%20documentation%20is%20tagging%20the%20repository.**%20There%20is%20no%20snapshot%0A%20%20step%2C%20so%20nothing%20can%20drift%20out%20of%20sync%20with%20the%20release%20it%20documents.%0A-%20**A%20release%20tag%20that%20predates%20the%20docs%20site%20publishes%20nothing.**%20The%20build%0A%20%20skips%20any%20tag%20without%20%60docs%2Fpublic%2Findex.md%60%2C%20which%20is%20why%20%60v3.0.0%60%20and%0A%20%20%60v3.1.0%60%20never%20appear%20on%20the%20site.%0A%0A%60robots.txt%60%2C%20%60sitemap.xml%60%20and%20%60404.html%60%20are%20generated%20by%20docmd%20from%20the%0Aconfig&#039;s%20%60url%60%3B%20don&#039;t%20hand-write%20them.%0A%0A%23%23%23%20Dating%20each%20page%0A%0AEvery%20page%20ends%20with%20%22Last%20updated%22%2C%20and%20the%20commits%20that%20touched%20it%20in%20a%0Atooltip.%20docmd&#039;s%20own%20git%20plugin%20cannot%20produce%20that%20here%3A%20it%20delegates%20to%20its%0Abuild%20engine%2C%20which%20runs%20%60git%20log%60%20in%20the%20process%20working%20directory%2C%20so%20the%0Aworktrees%20the%20versions%20are%20built%20from%20are%20all%20%22outside%20repository%22%20%E2%80%94%20the%20error%0Ais%20swallowed%20and%20the%20site%20publishes%20undated.%20%60scripts%2Fdocmd-git-history.js%60%0A(loaded%20from%20%60docmd.config.json%60%20as%20a%20local%20plugin)%20resolves%20the%20repository%20per%0Apage%20instead%2C%20which%20also%20means%20each%20version%20is%20dated%20from%20its%20own%20ref%20rather%0Athan%20from%20%60main%60.%20Contributor%20avatars%20are%20deliberately%20left%20off%2C%20so%20no%20reader&#039;s%0Abrowser%20is%20sent%20to%20Gravatar.%20%60build-docs.sh%60%20fails%20the%20build%20if%20any%20page%20comes%0Aout%20undated.%0A%0A%23%23%23%20Hosting%20setup%20for%20the%20docs%20site%0A%0ATwo%20things%20live%20outside%20the%20repository%2C%20so%20a%20fresh%20fork%20or%20a%20moved%20domain%20needs%0Athem%20set%20up%20again%20before%20the%20first%20tag%20push%20can%20publish%20anything%3A%0A%0A-%20**GitHub%20Pages**%3A%20repository%20Settings%20%E2%86%92%20Pages%20%E2%86%92%20Source%20must%20be%20_GitHub%0A%20%20Actions_.%20%60actions%2Fdeploy-pages%60%20fails%20without%20it.%0A-%20**DNS**%3A%20a%20%60CNAME%60%20record%20for%20%60docs.schellingboard.org%60%20pointing%20at%0A%20%20%60schellingboard.github.io%60.%20The%20domain%20itself%20comes%20from%20%60url%60%20in%0A%20%20%60docmd.config.json%60%20%E2%80%94%20the%20build%20writes%20it%20to%20%60site%2FCNAME%60%20from%20there.%0A%0AUntil%20both%20are%20in%20place%20and%20%60v3.2.0%60%20is%20tagged%2C%20the%0A%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20links%20in%0A%5B%60README.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FREADME.md)%0Aare%20dead%3B%20the%20same%20pages%20are%20readable%20in%20%60docs%2Fpublic%2F%60.%0A%0A%23%23%23%20Correcting%20published%20documentation%0A%0ATo%20fix%20published%20docs%20without%20cutting%20a%20release%2C%20commit%20to%20the%20release%20branch%0Aof%20that%20version%20%E2%80%94%20%60release%2F3.2%60%20for%20the%203.2%20docs.%20The%20build%20prefers%20that%20branch%0Aover%20the%20tag%2C%20so%20pushing%20it%20republishes%20that%20version%2C%20and%20the%20deploy%20log%20names%0Athe%20ref%20each%20version%20came%20from%20(%60Version%203.2%20%E2%86%90%20release%2F3.2%60).%0A%0ARelease%20branches%20don&#039;t%20exist%20until%20something%20needs%20one.%20Create%20it%20from%20the%0Arelease%20tag%20the%20first%20time%20that%20minor%20release%20has%20to%20be%20corrected%20%E2%80%94%20a%20release%0Athat%20never%20needs%20a%20fix%20never%20gets%20a%20branch%20%E2%80%94%20and%20merge%20it%20back%20into%20%60main%60%20so%0Athe%20fix%20reaches%20the%20next%20release%20too.%20The%20same%20branch%20carries%20the%20commits%20of%20a%0Apatch%20release%2C%20so%20this%20is%20where%20a%20fix%20to%20an%20older%20version%20lives%20in%20general%2C%20not%0Aonly%20a%20documentation%20one%3B%20see%20%5BReleasing%20a%20new%20version%5D(releasing.md).%0A%0A%60%60%60bash%0Ajj%20new%20v3.2.0%0Ajj%20bookmark%20create%20release%2F3.2%20%20%20%23%20git%3A%20git%20switch%20-c%20release%2F3.2%20v3.2.0%0A%23%20fix%2C%20commit%2C%20push%20%E2%80%94%20the%20docs%20site%20redeploys%0A%60%60%60%0A%0ABecause%20the%20branch%20tip%20wins%20over%20the%20tag%2C%20anything%20committed%20to%20it%20is%20published%0Aas%20that%20version&#039;s%20documentation%20the%20moment%20it%20is%20pushed%2C%20released%20or%20not.%20Land%0Awork%20that%20isn&#039;t%20ready%20to%20be%20read%20on%20a%20separate%20branch.%0A%0A%23%23%20The%20developer%20docs%20site%0A%0AThe%20site%20you%20are%20reading.%20%60docmd.dev.config.mjs%60%20builds%20%60docs%2Fdev%2F%60%20into%0A%60dev-site%2F%60%20with%20its%20own%20title%2C%20navigation%20and%20search%20index%20%E2%80%94%20a%20second%20docmd%0Aproject%20in%20the%20same%20repository%2C%20sharing%20nothing%20with%20the%20user%20site%20but%20the%0Atheme%20and%20the%20logo.%20%5BADR%200008%5D(adr%2F0008-publish-developer-docs.md)%20has%20the%0Areasoning%2C%20including%20why%20it%20isn&#039;t%20a%20path%20under%20docs.schellingboard.org.%0A%0A%7C%20Command%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20does%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20------------------------%20%7C%20----------------------------------------------------%20%7C%0A%7C%20%60make%20docs-dev%60%20%20%20%20%20%20%20%20%20%20%7C%20Live%20preview%20of%20%60docs%2Fdev%60%20(no%20diagrams%20%E2%80%94%20see%20below)%20%7C%0A%7C%20%60make%20docs-dev-build%60%20%20%20%20%7C%20Build%20the%20published%20site%20into%20%60dev-site%2F%60%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-dev-validate%60%20%7C%20Check%20for%20broken%20internal%20links%20(runs%20in%20CI)%20%20%20%20%20%20%20%20%20%7C%0A%0AThe%20config&#039;s%20top%20level%20is%20hand-written%2C%20but%20the%20children%20under%20Decision%0Arecords%2C%20Target%20architecture%20and%20Attendance%20model%20are%20read%20off%20disk%20at%20build%0Atime%3A%20a%20new%20ADR%20gets%20its%20sidebar%20entry%2C%20breadcrumbs%20and%20prev%2Fnext%20links%20from%20its%0Aown%20%60%23%20%60%20heading%2C%20with%20no%20config%20edit.%20Only%20a%20page%20listed%20in%20%60navigation%60%20has%20a%0Aplace%20in%20the%20structure%2C%20so%20a%20directory%20added%20next%20to%20those%20needs%20a%20%60pagesIn%60%0Acall%20of%20its%20own.%0A%0AIt%20is%20not%20versioned.%20%60.github%2Fworkflows%2Fdevelopers.yml%60%20publishes%20on%20pushes%20to%0A%60main%60%20that%20touch%20%60docs%2Fdev%2F%60%2C%20so%20the%20site%20always%20describes%20the%20default%20branch%3B%0Aa%20contributor%20on%20a%20release%20branch%20reads%20that%20branch&#039;s%20%60docs%2Fdev%2F%60%20in%20the%0Arepository%20instead.%0A%0A**Links%20out%20of%20%60docs%2Fdev%2F%60%20must%20be%20absolute%20GitHub%20URLs.**%20The%20site&#039;s%20root%20is%0A%60docs%2Fdev%2F%60%2C%20so%20a%20relative%20%60..%2F..%2FCONTRIBUTING.md%60%20resolves%20to%20nothing%20once%0Apublished.%20%60make%20docs-dev-validate%60%20catches%20those%2C%20and%20is%20the%20reason%20to%20run%20it%0Aafter%20moving%20a%20file.%20Links%20to%20user%20documentation%20go%20to%0Adocs.schellingboard.org%20rather%20than%20to%20%60docs%2Fpublic%2F%60%20in%20the%20repository.%0A%0A%60docs%2Fdev%2FREADME.md%60%20is%20both%20the%20site&#039;s%20home%20page%20and%20the%20folder&#039;s%20index%20on%0AGitHub%2C%20which%20is%20what%20keeps%20the%20repository%20copy%20navigable.%0A%0A%23%23%23%20Why%20it%20deploys%20to%20a%20second%20repository%0A%0AThe%20same%20reason%20as%20the%20landing%20page%20below%3A%20GitHub%20Pages%20serves%20one%20custom%0Adomain%20per%20repository%2C%20and%20this%20one%20already%20serves%20docs.schellingboard.org.%20The%0Abuild%20is%20pushed%20to%0A%5Bschellingboard%2Fdevelopers.schellingboard.org%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fdevelopers.schellingboard.org)%2C%0Awhich%20holds%20nothing%20else%2C%20using%20the%20same%20organization-owned%20deploy%20app%20the%0Alanding%20page%20uses%20%E2%80%94%20see%0A%5BHosting%20setup%20for%20the%20pushed%20sites%5D(%23hosting-setup-for-the-pushed-sites).%0A%0A%23%23%23%20The%20architecture%20diagrams%0A%0AThe%20C4%20model%20in%20%60docs%2Fdev%2Ftarget-architecture%2Fdiagrams%2F%60%20reaches%20the%20site%20twice%3A%0A%0A-%20**%60%2Fdiagrams%2F%60**%20%E2%80%94%20the%20full%20LikeC4%20explorer%2C%20every%20view%20with%20drill-down%0A%20%20between%20levels%2C%20built%20by%20%60likec4%20build%60.%20It%20uses%20hash%20history%20(%60%2Fdiagrams%2F%23%2F%E2%80%A6%60)%0A%20%20because%20GitHub%20Pages%20can&#039;t%20route%20deep%20links%20into%20a%20single-page%20app.%0A-%20**%60%3Clikec4-view%20view-id%3D%22%E2%80%A6%22%3E%60**%20%E2%80%94%20chapters%20embed%20a%20single%20view%20inline%2C%20rendered%0A%20%20by%20the%20web%20component%20%60likec4%20gen%20webcomponent%60%20produces.%0A%0AThere%20are%20no%20committed%20PNG%20exports%2C%20so%20a%20diagram%20cannot%20go%20stale%3A%20the%20site%0Arenders%20from%20the%20%60.c4%60%20sources%20on%20every%20build.%20The%20cost%20is%20that%20GitHub%20shows%20no%0Adiagram%20at%20all%20when%20reading%20the%20chapters%20in%20the%20repository%2C%20and%20that%0A%60make%20docs-dev%60%20%E2%80%94%20plain%20%60docmd%20dev%60%2C%20with%20none%20of%20the%20LikeC4%20steps%20%E2%80%94%20doesn&#039;t%0Aeither.%20Use%20%60make%20arch-diagrams%60%20for%20the%20explorer%20while%20editing%20the%20model%2C%20and%0A%60make%20docs-dev-build%60%20to%20see%20an%20embedded%20view%20rendered.%0A%0AThe%20web%20component%20bundle%20is%20~2.5%20MB%2C%20which%20is%20why%20%60scripts%2Flikec4-embed.js%60%2C%0Anot%20the%20bundle%2C%20is%20the%20site-wide%20%60customJs%60%3A%20it%20loads%20the%20bundle%20only%20on%20pages%0Athat%20actually%20contain%20a%20%60%3Clikec4-view%3E%60%2C%20and%20mirrors%20docmd&#039;s%20theme%20onto%20each%0Aelement&#039;s%20%60color-scheme%60.%0A%0A%60build-dev-docs.sh%60%20fails%20if%20a%20chapter%20embeds%20a%20%60view-id%60%20that%20%60views.c4%60%0Adoesn&#039;t%20define.%20The%20element%20renders%20an%20empty%20box%20otherwise%2C%20which%20is%20the%20same%0Asilent%20staleness%20the%20PNGs%20had.%0A%0A%23%23%20The%20landing%20page%0A%0A%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20is%20hand-written%20HTML%20in%0A%60www%2F%60%20%E2%80%94%20a%20landing%20page%20and%20a%20screenshot%20gallery.%20%60make%20www%60%20copies%20it%2C%20plus%0A%60docs%2Fscreenshots%2F%60%2C%20into%20%60www-site%2F%60%3B%20open%20%60www-site%2Findex.html%60%20to%20preview.%0AThere%20is%20no%20generator%2C%20on%20purpose%3A%20the%20pages%20are%20two%20bespoke%20layouts%2C%20and%0Arendering%20them%20through%20docmd%20would%20mean%20custom%20templates%20to%20make%20a%20docs%20tool%0Astop%20looking%20like%20one.%0A%0A%60.github%2Fworkflows%2Fwww.yml%60%20publishes%20on%20pushes%20to%20%60main%60%20that%20touch%20%60www%2F%60%2C%0A%60docs%2Fscreenshots%2F%60%20or%20the%20build%20script.%20It%20does%20not%20follow%20the%20documentation%0Asite&#039;s%20release-tag%20rule%2C%20because%20the%20page%20describes%20the%20project%20rather%20than%20a%0Aversion%20%E2%80%94%20with%20the%20consequence%20that%20its%20screenshots%20can%20show%20interface%20changes%0Athat%20are%20merged%20but%20not%20yet%20released.%0A%0A%23%23%23%20Why%20it%20deploys%20to%20another%20repository%0A%0AGitHub%20Pages%20serves%20one%20custom%20domain%20per%20repository%20and%20this%20one%20already%0Aserves%20%60docs.schellingboard.org%60%2C%20so%20the%20built%20site%20is%20pushed%20to%0A%5Bschellingboard%2Fschellingboard.org%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard.org)%2C%0Awhich%20holds%20nothing%20but%20that%20output%20and%20is%20never%20edited%20directly.%20Its%20Pages%0Asource%20is%20the%20default%20branch%2C%20so%20the%20site%20keeps%20working%20even%20if%20the%20workflow%20is%0Adisabled.%0A%0A%23%23%23%20Screenshots%0A%0A%60docs%2Fscreenshots%2F%60%20is%20the%20only%20copy%20of%20the%20screenshots.%20The%20landing%20page%0Auses%20them%20directly%20and%20the%20documentation%20site%20can%20use%20them%20too%20%E2%80%94%20see%0A%5B%60docs%2Fscreenshots%2FREADME.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2Fdocs%2Fscreenshots%2FREADME.md)%0Afor%20the%20capture%20checklist%20and%20how%20to%20reference%20them%20from%20markdown.%0A%0AThey%20are%20not%20under%20%60docs%2Fpublic%2F%60%2C%20and%20cannot%20usefully%20be%3A%20docmd%20discovers%0Amarkdown%20and%20nothing%20else%2C%20so%20a%20PNG%20placed%20there%20is%20not%20copied%20to%20the%20output.%0ABoth%20build%20scripts%20do%20the%20copying%20themselves.%20One%20consequence%3A%20images%20appear%20in%0A%60make%20docs-build%60%20output%20but%20not%20in%20the%20%60make%20docs%60%20live%20preview%2C%20which%20serves%0Awhat%20docmd%20produced.%0A%0A%23%23%23%20Hosting%20setup%20for%20the%20pushed%20sites%0A%0ABoth%20the%20landing%20page%20and%20the%20developer%20docs%20are%20pushed%20into%20a%20repository%20of%0Atheir%20own%2C%20and%20both%20use%20the%20same%20setup.%0A%0A-%20**GitHub%20App**%3A%20these%20workflows%20write%20to%20a%20repository%20that%20is%20not%20their%20own%2C%0A%20%20so%20they%20mint%20a%20token%20from%20an%20organization-owned%20app%20rather%20than%20carrying%20a%0A%20%20standing%20credential.%20The%20token%20expires%20within%20the%20hour%2C%20the%20app%20belongs%20to%0A%20%20the%20organization%20instead%20of%20a%20person%2C%20and%20it%20is%20installed%20on%20the%20site%0A%20%20repositories%20alone.%0A%0A%20%201.%20Under%20the%20organization&#039;s%20Settings%20%E2%86%92%20Developer%20settings%20%E2%86%92%20GitHub%20Apps%2C%0A%20%20%20%20%20create%20an%20app%20with%20the%20repository%20permission%20**Contents%3A%20Read%20and%20write**%0A%20%20%20%20%20and%20nothing%20else.%20It%20needs%20no%20webhook%20and%20no%20account%20permissions.%0A%20%202.%20Install%20it%20on%20%60schellingboard%2Fschellingboard.org%60%20and%0A%20%20%20%20%20%60schellingboard%2Fdevelopers.schellingboard.org%60%20only.%20Each%20workflow%20still%0A%20%20%20%20%20narrows%20its%20own%20token%20to%20the%20one%20repository%20it%20publishes%2C%20so%20installing%0A%20%20%20%20%20the%20app%20on%20both%20does%20not%20let%20either%20job%20touch%20the%20other&#039;s%20site.%0A%20%203.%20In%20this%20repository%2C%20add%20the%20app&#039;s%20**Client%20ID**%20as%20the%0A%20%20%20%20%20%60PAGES_DEPLOY_APP_CLIENT_ID%60%20variable%20and%20a%20generated%20private%20key%20as%20the%0A%20%20%20%20%20%60PAGES_DEPLOY_APP_PRIVATE_KEY%60%20secret.%0A%0A%20%20To%20rotate%2C%20generate%20a%20new%20private%20key%20on%20the%20app%20and%20replace%20the%20secret%3B%20the%0A%20%20client%20ID%20does%20not%20change.%0A%0A-%20**DNS**%3A%20%60schellingboard.org%60%20and%20%60developers.schellingboard.org%60%20each%0A%20%20pointing%20at%20%60schellingboard.github.io%60%2C%20and%20each%20site%20repository&#039;s%20Pages%0A%20%20source%20set%20to%20its%20default%20branch%20%E2%80%94%20not%20_GitHub%20Actions_%2C%20which%20would%20ignore%0A%20%20the%20pushed%20files.%20The%20domain%20comes%20from%20%60www%2FCNAME%60%20for%20the%20landing%20page%2C%0A%20%20which%20the%20build%20copies%20verbatim%2C%20and%20from%20%60url%60%20in%20%60docmd.dev.config.mjs%60%0A%20%20for%20the%20developer%20site%2C%20which%20%60build-dev-docs.sh%60%20writes%20to%20%60dev-site%2FCNAME%60.%0A%0A-%20**A%20first%20commit**%3A%20the%20workflow%20clones%20the%20site%20repository%20before%20writing%20to%0A%20%20it%2C%20so%20an%20entirely%20empty%20one%20fails.%20Any%20initial%20commit%20does.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Documentation%20and%20the%20sites%0A%0AThree%20sites%2C%20three%20audiences%2C%20three%20publishing%20rules%3A%0A%0A%7C%20Site%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Built%20from%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Published%20when%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------------------------%20%7C%20----------------------------%20%7C%20--------------------------------%20%7C%0A%7C%20%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60docs%2Fpublic%2F%60%2C%20at%20each%20tag%20%20%7C%20a%20release%20is%20tagged%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5Bdevelopers.schellingboard.org%5D(https%3A%2F%2Fdevelopers.schellingboard.org)%20%7C%20%60docs%2Fdev%2F%60%2C%20on%20%60main%60%20%20%20%20%20%20%20%7C%20%60docs%2Fdev%2F%60%20changes%20on%20%60main%60%20%20%20%20%7C%0A%7C%20%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60www%2F%60%20%2B%20%60docs%2Fscreenshots%2F%60%20%7C%20%60www%2F%60%20or%20the%20screenshots%20change%20%7C%0A%0AThe%20split%20of%20audiences%20is%20the%20point%3A%20attendees%20and%20organizers%20read%20the%20first%2C%20contributors%20the%0Asecond%2C%20and%20nobody%20should%20land%20on%20the%20wrong%20one.%20Keeping%20the%20developer%20docs%20unversioned%20and%20the%20user%0Adocs%20versioned%20follows%20from%20the%20same%20split%20%E2%80%94%20user%20docs%20must%20describe%20the%20release%20someone%20is%20running%2C%0Awhile%20developer%20docs%20must%20describe%20the%20branch%20they%20are%20working%20on.%0A%0A%23%23%20The%20public%20docs%20site%0A%0ABuilt%20with%20%5Bdocmd%5D(https%3A%2F%2Fdocmd.io)%20from%20%60docs%2Fpublic%2F%60%2C%20which%20holds%20one%20copy%20of%20the%20documentation%0Aand%20no%20snapshots.%20Published%20versions%20are%20reconstructed%20from%20git%3A%20%60scripts%2Fbuild-docs.sh%60%20walks%20the%0Arelease%20tags%2C%20checks%20each%20one%20out%20into%20a%20temporary%20worktree%2C%20and%20builds%20it%20as%20a%20version.%20The%20newest%0Ais%20served%20at%20the%20site%20root%2C%20older%20ones%20under%20%60%2F%3Cmajor.minor%3E%2F%60%2C%20all%20listed%20in%20the%20version%20dropdown.%0A%0ASo%20%60docs%2Fpublic%2F%60%20is%20the%20_next_%20release&#039;s%20documentation.%20Edit%20it%20in%20the%20same%20commit%20as%20the%20change%20it%0Adescribes%3B%20it%20is%20published%20when%20that%20release%20is%20tagged.%0A%0A%7C%20Command%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20does%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20--------------------------------------------%20%7C%0A%7C%20%60make%20docs%60%20%20%20%20%20%20%20%20%20%20%7C%20Live%20preview%20of%20%60docs%2Fpublic%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-build%60%20%20%20%20%7C%20Build%20the%20published%20site%20into%20%60site%2F%60%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-validate%60%20%7C%20Check%20for%20broken%20internal%20links%20(runs%20in%20CI)%20%7C%0A%0A%60.github%2Fworkflows%2Fdocs.yml%60%20deploys%20on%20tag%20pushes%20and%20on%20pushes%20to%20%60release%2F*%60%20branches.%20Pushing%20to%0A%60main%60%20deliberately%20publishes%20nothing%20%E2%80%94%20until%20a%20release%20is%20tagged%2C%20%60make%20docs%60%20is%20the%20only%20place%20the%0Anew%20documentation%20exists.%0A%0ATwo%20consequences%20worth%20knowing%3A%0A%0A-%20**Releasing%20documentation%20is%20tagging%20the%20repository.**%20There%20is%20no%20snapshot%20step%2C%20so%20nothing%20can%0A%20%20drift%20out%20of%20sync%20with%20the%20release%20it%20documents.%0A-%20**A%20release%20tag%20that%20predates%20the%20docs%20site%20publishes%20nothing.**%20The%20build%20skips%20any%20tag%20without%0A%20%20%60docs%2Fpublic%2Findex.md%60%2C%20which%20is%20why%20%60v3.0.0%60%20and%20%60v3.1.0%60%20never%20appear%20on%20the%20site.%0A%0A%60robots.txt%60%2C%20%60sitemap.xml%60%20and%20%60404.html%60%20are%20generated%20by%20docmd%20from%20the%20config&#039;s%20%60url%60%3B%20don&#039;t%0Ahand-write%20them.%0A%0A%23%23%23%20Dating%20each%20page%0A%0AEvery%20page%20ends%20with%20%22Last%20updated%22%2C%20and%20the%20commits%20that%20touched%20it%20in%20a%20tooltip.%20docmd&#039;s%20own%20git%0Aplugin%20cannot%20produce%20that%20here%3A%20it%20delegates%20to%20its%20build%20engine%2C%20which%20runs%20%60git%20log%60%20in%20the%0Aprocess%20working%20directory%2C%20so%20the%20worktrees%20the%20versions%20are%20built%20from%20are%20all%20%22outside%20repository%22%0A%E2%80%94%20the%20error%20is%20swallowed%20and%20the%20site%20publishes%20undated.%20%60scripts%2Fdocmd-git-history.js%60%20(loaded%20from%0A%60docmd.config.json%60%20as%20a%20local%20plugin)%20resolves%20the%20repository%20per%20page%20instead%2C%20which%20also%20means%0Aeach%20version%20is%20dated%20from%20its%20own%20ref%20rather%20than%20from%20%60main%60.%20Contributor%20avatars%20are%20deliberately%0Aleft%20off%2C%20so%20no%20reader&#039;s%20browser%20is%20sent%20to%20Gravatar.%20%60build-docs.sh%60%20fails%20the%20build%20if%20any%20page%0Acomes%20out%20undated.%0A%0A%23%23%23%20Hosting%20setup%20for%20the%20docs%20site%0A%0ATwo%20things%20live%20outside%20the%20repository%2C%20so%20a%20fresh%20fork%20or%20a%20moved%20domain%20needs%20them%20set%20up%20again%0Abefore%20the%20first%20tag%20push%20can%20publish%20anything%3A%0A%0A-%20**GitHub%20Pages**%3A%20repository%20Settings%20%E2%86%92%20Pages%20%E2%86%92%20Source%20must%20be%20_GitHub%20Actions_.%0A%20%20%60actions%2Fdeploy-pages%60%20fails%20without%20it.%0A-%20**DNS**%3A%20a%20%60CNAME%60%20record%20for%20%60docs.schellingboard.org%60%20pointing%20at%20%60schellingboard.github.io%60.%0A%20%20The%20domain%20itself%20comes%20from%20%60url%60%20in%20%60docmd.config.json%60%20%E2%80%94%20the%20build%20writes%20it%20to%20%60site%2FCNAME%60%0A%20%20from%20there.%0A%0AUntil%20both%20are%20in%20place%20and%20%60v3.2.0%60%20is%20tagged%2C%20the%0A%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20links%20in%0A%5B%60README.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FREADME.md)%20are%20dead%3B%20the%0Asame%20pages%20are%20readable%20in%20%60docs%2Fpublic%2F%60.%0A%0A%23%23%23%20Correcting%20published%20documentation%0A%0ATo%20fix%20published%20docs%20without%20cutting%20a%20release%2C%20commit%20to%20the%20release%20branch%20of%20that%20version%20%E2%80%94%0A%60release%2F3.2%60%20for%20the%203.2%20docs.%20The%20build%20prefers%20that%20branch%20over%20the%20tag%2C%20so%20pushing%20it%0Arepublishes%20that%20version%2C%20and%20the%20deploy%20log%20names%20the%20ref%20each%20version%20came%20from%0A(%60Version%203.2%20%E2%86%90%20release%2F3.2%60).%0A%0ARelease%20branches%20don&#039;t%20exist%20until%20something%20needs%20one.%20Create%20it%20from%20the%20release%20tag%20the%20first%0Atime%20that%20minor%20release%20has%20to%20be%20corrected%20%E2%80%94%20a%20release%20that%20never%20needs%20a%20fix%20never%20gets%20a%20branch%20%E2%80%94%0Aand%20merge%20it%20back%20into%20%60main%60%20so%20the%20fix%20reaches%20the%20next%20release%20too.%20The%20same%20branch%20carries%20the%0Acommits%20of%20a%20patch%20release%2C%20so%20this%20is%20where%20a%20fix%20to%20an%20older%20version%20lives%20in%20general%2C%20not%20only%20a%0Adocumentation%20one%3B%20see%20%5BReleasing%20a%20new%20version%5D(releasing.md).%0A%0A%60%60%60bash%0Ajj%20new%20v3.2.0%0Ajj%20bookmark%20create%20release%2F3.2%20%20%20%23%20git%3A%20git%20switch%20-c%20release%2F3.2%20v3.2.0%0A%23%20fix%2C%20commit%2C%20push%20%E2%80%94%20the%20docs%20site%20redeploys%0A%60%60%60%0A%0ABecause%20the%20branch%20tip%20wins%20over%20the%20tag%2C%20anything%20committed%20to%20it%20is%20published%20as%20that%20version&#039;s%0Adocumentation%20the%20moment%20it%20is%20pushed%2C%20released%20or%20not.%20Land%20work%20that%20isn&#039;t%20ready%20to%20be%20read%20on%20a%0Aseparate%20branch.%0A%0A%23%23%20The%20developer%20docs%20site%0A%0AThe%20site%20you%20are%20reading.%20%60docmd.dev.config.mjs%60%20builds%20%60docs%2Fdev%2F%60%20into%20%60dev-site%2F%60%20with%20its%20own%0Atitle%2C%20navigation%20and%20search%20index%20%E2%80%94%20a%20second%20docmd%20project%20in%20the%20same%20repository%2C%20sharing%20nothing%0Awith%20the%20user%20site%20but%20the%20theme%20and%20the%20logo.%20%5BADR%200008%5D(adr%2F0008-publish-developer-docs.md)%20has%0Athe%20reasoning%2C%20including%20why%20it%20isn&#039;t%20a%20path%20under%20docs.schellingboard.org.%0A%0A%7C%20Command%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20does%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20------------------------%20%7C%20----------------------------------------------------%20%7C%0A%7C%20%60make%20docs-dev%60%20%20%20%20%20%20%20%20%20%20%7C%20Live%20preview%20of%20%60docs%2Fdev%60%20(no%20diagrams%20%E2%80%94%20see%20below)%20%7C%0A%7C%20%60make%20docs-dev-build%60%20%20%20%20%7C%20Build%20the%20published%20site%20into%20%60dev-site%2F%60%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60make%20docs-dev-validate%60%20%7C%20Check%20for%20broken%20internal%20links%20(runs%20in%20CI)%20%20%20%20%20%20%20%20%20%7C%0A%0AThe%20config&#039;s%20top%20level%20is%20hand-written%2C%20but%20the%20children%20under%20Decision%20records%2C%20Target%20architecture%0Aand%20Attendance%20model%20are%20read%20off%20disk%20at%20build%20time%3A%20a%20new%20ADR%20gets%20its%20sidebar%20entry%2C%20breadcrumbs%0Aand%20prev%2Fnext%20links%20from%20its%20own%20%60%23%20%60%20heading%2C%20with%20no%20config%20edit.%20Only%20a%20page%20listed%20in%0A%60navigation%60%20has%20a%20place%20in%20the%20structure%2C%20so%20a%20directory%20added%20next%20to%20those%20needs%20a%20%60pagesIn%60%20call%0Aof%20its%20own.%0A%0AIt%20is%20not%20versioned.%20%60.github%2Fworkflows%2Fdevelopers.yml%60%20publishes%20on%20pushes%20to%20%60main%60%20that%20touch%0A%60docs%2Fdev%2F%60%2C%20so%20the%20site%20always%20describes%20the%20default%20branch%3B%20a%20contributor%20on%20a%20release%20branch%0Areads%20that%20branch&#039;s%20%60docs%2Fdev%2F%60%20in%20the%20repository%20instead.%0A%0A**Links%20out%20of%20%60docs%2Fdev%2F%60%20must%20be%20absolute%20GitHub%20URLs.**%20The%20site&#039;s%20root%20is%20%60docs%2Fdev%2F%60%2C%20so%20a%0Arelative%20%60..%2F..%2FCONTRIBUTING.md%60%20resolves%20to%20nothing%20once%20published.%20%60make%20docs-dev-validate%60%0Acatches%20those%2C%20and%20is%20the%20reason%20to%20run%20it%20after%20moving%20a%20file.%20Links%20to%20user%20documentation%20go%20to%0Adocs.schellingboard.org%20rather%20than%20to%20%60docs%2Fpublic%2F%60%20in%20the%20repository.%0A%0A%60docs%2Fdev%2FREADME.md%60%20is%20both%20the%20site&#039;s%20home%20page%20and%20the%20folder&#039;s%20index%20on%20GitHub%2C%20which%20is%20what%0Akeeps%20the%20repository%20copy%20navigable.%0A%0A%23%23%23%20Why%20it%20deploys%20to%20a%20second%20repository%0A%0AThe%20same%20reason%20as%20the%20landing%20page%20below%3A%20GitHub%20Pages%20serves%20one%20custom%20domain%20per%20repository%2C%20and%0Athis%20one%20already%20serves%20docs.schellingboard.org.%20The%20build%20is%20pushed%20to%0A%5Bschellingboard%2Fdevelopers.schellingboard.org%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fdevelopers.schellingboard.org)%2C%0Awhich%20holds%20nothing%20else%2C%20using%20the%20same%20organization-owned%20deploy%20app%20the%20landing%20page%20uses%20%E2%80%94%20see%0A%5BHosting%20setup%20for%20the%20pushed%20sites%5D(%23hosting-setup-for-the-pushed-sites).%0A%0A%23%23%23%20The%20architecture%20diagrams%0A%0AThe%20C4%20model%20in%20%60docs%2Fdev%2Ftarget-architecture%2Fdiagrams%2F%60%20reaches%20the%20site%20twice%3A%0A%0A-%20**%60%2Fdiagrams%2F%60**%20%E2%80%94%20the%20full%20LikeC4%20explorer%2C%20every%20view%20with%20drill-down%20between%20levels%2C%20built%20by%0A%20%20%60likec4%20build%60.%20It%20uses%20hash%20history%20(%60%2Fdiagrams%2F%23%2F%E2%80%A6%60)%20because%20GitHub%20Pages%20can&#039;t%20route%20deep%20links%0A%20%20into%20a%20single-page%20app.%0A-%20**%60%3Clikec4-view%20view-id%3D%22%E2%80%A6%22%3E%60**%20%E2%80%94%20chapters%20embed%20a%20single%20view%20inline%2C%20rendered%20by%20the%20web%0A%20%20component%20%60likec4%20gen%20webcomponent%60%20produces.%0A%0AThere%20are%20no%20committed%20PNG%20exports%2C%20so%20a%20diagram%20cannot%20go%20stale%3A%20the%20site%20renders%20from%20the%20%60.c4%60%0Asources%20on%20every%20build.%20The%20cost%20is%20that%20GitHub%20shows%20no%20diagram%20at%20all%20when%20reading%20the%20chapters%20in%0Athe%20repository%2C%20and%20that%20%60make%20docs-dev%60%20%E2%80%94%20plain%20%60docmd%20dev%60%2C%20with%20none%20of%20the%20LikeC4%20steps%20%E2%80%94%0Adoesn&#039;t%20either.%20Use%20%60make%20arch-diagrams%60%20for%20the%20explorer%20while%20editing%20the%20model%2C%20and%0A%60make%20docs-dev-build%60%20to%20see%20an%20embedded%20view%20rendered.%0A%0AThe%20web%20component%20bundle%20is%20~2.5%20MB%2C%20which%20is%20why%20%60scripts%2Flikec4-embed.js%60%2C%20not%20the%20bundle%2C%20is%20the%0Asite-wide%20%60customJs%60%3A%20it%20loads%20the%20bundle%20only%20on%20pages%20that%20actually%20contain%20a%20%60%3Clikec4-view%3E%60%2C%20and%0Amirrors%20docmd&#039;s%20theme%20onto%20each%20element&#039;s%20%60color-scheme%60.%0A%0A%60build-dev-docs.sh%60%20fails%20if%20a%20chapter%20embeds%20a%20%60view-id%60%20that%20%60views.c4%60%20doesn&#039;t%20define.%20The%0Aelement%20renders%20an%20empty%20box%20otherwise%2C%20which%20is%20the%20same%20silent%20staleness%20the%20PNGs%20had.%0A%0A%23%23%20The%20landing%20page%0A%0A%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20is%20hand-written%20HTML%20in%20%60www%2F%60%20%E2%80%94%20a%20landing%20page%20and%0Aa%20screenshot%20gallery.%20%60make%20www%60%20copies%20it%2C%20plus%20%60docs%2Fscreenshots%2F%60%2C%20into%20%60www-site%2F%60%3B%20open%0A%60www-site%2Findex.html%60%20to%20preview.%20There%20is%20no%20generator%2C%20on%20purpose%3A%20the%20pages%20are%20two%20bespoke%0Alayouts%2C%20and%20rendering%20them%20through%20docmd%20would%20mean%20custom%20templates%20to%20make%20a%20docs%20tool%20stop%0Alooking%20like%20one.%0A%0A%60.github%2Fworkflows%2Fwww.yml%60%20publishes%20on%20pushes%20to%20%60main%60%20that%20touch%20%60www%2F%60%2C%20%60docs%2Fscreenshots%2F%60%20or%0Athe%20build%20script.%20It%20does%20not%20follow%20the%20documentation%20site&#039;s%20release-tag%20rule%2C%20because%20the%20page%0Adescribes%20the%20project%20rather%20than%20a%20version%20%E2%80%94%20with%20the%20consequence%20that%20its%20screenshots%20can%20show%0Ainterface%20changes%20that%20are%20merged%20but%20not%20yet%20released.%0A%0A%23%23%23%20Why%20it%20deploys%20to%20another%20repository%0A%0AGitHub%20Pages%20serves%20one%20custom%20domain%20per%20repository%20and%20this%20one%20already%20serves%0A%60docs.schellingboard.org%60%2C%20so%20the%20built%20site%20is%20pushed%20to%0A%5Bschellingboard%2Fschellingboard.org%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard.org)%2C%20which%0Aholds%20nothing%20but%20that%20output%20and%20is%20never%20edited%20directly.%20Its%20Pages%20source%20is%20the%20default%20branch%2C%0Aso%20the%20site%20keeps%20working%20even%20if%20the%20workflow%20is%20disabled.%0A%0A%23%23%23%20Screenshots%0A%0A%60docs%2Fscreenshots%2F%60%20is%20the%20only%20copy%20of%20the%20screenshots.%20The%20landing%20page%20uses%20them%20directly%20and%20the%0Adocumentation%20site%20can%20use%20them%20too%20%E2%80%94%20see%0A%5B%60docs%2Fscreenshots%2FREADME.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2Fdocs%2Fscreenshots%2FREADME.md)%0Afor%20the%20capture%20checklist%20and%20how%20to%20reference%20them%20from%20markdown.%0A%0AThey%20are%20not%20under%20%60docs%2Fpublic%2F%60%2C%20and%20cannot%20usefully%20be%3A%20docmd%20discovers%20markdown%20and%20nothing%0Aelse%2C%20so%20a%20PNG%20placed%20there%20is%20not%20copied%20to%20the%20output.%20Both%20build%20scripts%20do%20the%20copying%0Athemselves.%20One%20consequence%3A%20images%20appear%20in%20%60make%20docs-build%60%20output%20but%20not%20in%20the%20%60make%20docs%60%0Alive%20preview%2C%20which%20serves%20what%20docmd%20produced.%0A%0A%23%23%23%20Hosting%20setup%20for%20the%20pushed%20sites%0A%0ABoth%20the%20landing%20page%20and%20the%20developer%20docs%20are%20pushed%20into%20a%20repository%20of%20their%20own%2C%20and%20both%20use%0Athe%20same%20setup.%0A%0A-%20**GitHub%20App**%3A%20these%20workflows%20write%20to%20a%20repository%20that%20is%20not%20their%20own%2C%20so%20they%20mint%20a%20token%0A%20%20from%20an%20organization-owned%20app%20rather%20than%20carrying%20a%20standing%20credential.%20The%20token%20expires%0A%20%20within%20the%20hour%2C%20the%20app%20belongs%20to%20the%20organization%20instead%20of%20a%20person%2C%20and%20it%20is%20installed%20on%0A%20%20the%20site%20repositories%20alone.%0A%0A%20%201.%20Under%20the%20organization&#039;s%20Settings%20%E2%86%92%20Developer%20settings%20%E2%86%92%20GitHub%20Apps%2C%20create%20an%20app%20with%20the%0A%20%20%20%20%20repository%20permission%20**Contents%3A%20Read%20and%20write**%20and%20nothing%20else.%20It%20needs%20no%20webhook%20and%20no%0A%20%20%20%20%20account%20permissions.%0A%20%202.%20Install%20it%20on%20%60schellingboard%2Fschellingboard.org%60%20and%0A%20%20%20%20%20%60schellingboard%2Fdevelopers.schellingboard.org%60%20only.%20Each%20workflow%20still%20narrows%20its%20own%20token%0A%20%20%20%20%20to%20the%20one%20repository%20it%20publishes%2C%20so%20installing%20the%20app%20on%20both%20does%20not%20let%20either%20job%20touch%0A%20%20%20%20%20the%20other&#039;s%20site.%0A%20%203.%20In%20this%20repository%2C%20add%20the%20app&#039;s%20**Client%20ID**%20as%20the%20%60PAGES_DEPLOY_APP_CLIENT_ID%60%20variable%0A%20%20%20%20%20and%20a%20generated%20private%20key%20as%20the%20%60PAGES_DEPLOY_APP_PRIVATE_KEY%60%20secret.%0A%0A%20%20To%20rotate%2C%20generate%20a%20new%20private%20key%20on%20the%20app%20and%20replace%20the%20secret%3B%20the%20client%20ID%20does%20not%0A%20%20change.%0A%0A-%20**DNS**%3A%20%60schellingboard.org%60%20and%20%60developers.schellingboard.org%60%20each%20pointing%20at%0A%20%20%60schellingboard.github.io%60%2C%20and%20each%20site%20repository&#039;s%20Pages%20source%20set%20to%20its%20default%20branch%20%E2%80%94%0A%20%20not%20_GitHub%20Actions_%2C%20which%20would%20ignore%20the%20pushed%20files.%20The%20domain%20comes%20from%20%60www%2FCNAME%60%20for%0A%20%20the%20landing%20page%2C%20which%20the%20build%20copies%20verbatim%2C%20and%20from%20%60url%60%20in%20%60docmd.dev.config.mjs%60%20for%0A%20%20the%20developer%20site%2C%20which%20%60build-dev-docs.sh%60%20writes%20to%20%60dev-site%2FCNAME%60.%0A%0A-%20**A%20first%20commit**%3A%20the%20workflow%20clones%20the%20site%20repository%20before%20writing%20to%20it%2C%20so%20an%20entirely%0A%20%20empty%20one%20fails.%20Any%20initial%20commit%20does.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1769,21 +1769,17 @@
 </tr>
 </tbody>
 </table>
-</div><p>The split of audiences is the point: attendees and organizers read the first,
-contributors the second, and nobody should land on the wrong one. Keeping the
-developer docs unversioned and the user docs versioned follows from the same
-split — user docs must describe the release someone is running, while developer
-docs must describe the branch they are working on.</p>
+</div><p>The split of audiences is the point: attendees and organizers read the first, contributors the
+second, and nobody should land on the wrong one. Keeping the developer docs unversioned and the user
+docs versioned follows from the same split — user docs must describe the release someone is running,
+while developer docs must describe the branch they are working on.</p>
 <h2 id="documentation-and-the-sites-the-public-docs-site" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The public docs site</h2>
-<p>Built with <a href="https://docmd.io">docmd</a> from <code>docs/public/</code>, which holds one copy
-of the documentation and no snapshots. Published versions are reconstructed
-from git: <code>scripts/build-docs.sh</code> walks the release tags, checks each one out
-into a temporary worktree, and builds it as a version. The newest is served at
-the site root, older ones under <code>/&lt;major.minor&gt;/</code>, all listed in the version
-dropdown.</p>
-<p>So <code>docs/public/</code> is the <em>next</em> release’s documentation. Edit it in the same
-commit as the change it describes; it is published when that release is
-tagged.</p>
+<p>Built with <a href="https://docmd.io">docmd</a> from <code>docs/public/</code>, which holds one copy of the documentation
+and no snapshots. Published versions are reconstructed from git: <code>scripts/build-docs.sh</code> walks the
+release tags, checks each one out into a temporary worktree, and builds it as a version. The newest
+is served at the site root, older ones under <code>/&lt;major.minor&gt;/</code>, all listed in the version dropdown.</p>
+<p>So <code>docs/public/</code> is the <em>next</em> release’s documentation. Edit it in the same commit as the change it
+describes; it is published when that release is tagged.</p>
 <div class="table-wrapper"><table>
 <thead>
 <tr>
@@ -1806,68 +1802,63 @@ tagged.</p>
 </tr>
 </tbody>
 </table>
-</div><p><code>.github/workflows/docs.yml</code> deploys on tag pushes and on pushes to <code>release/*</code>
-branches. Pushing to <code>main</code> deliberately publishes nothing — until a release is
-tagged, <code>make docs</code> is the only place the new documentation exists.</p>
+</div><p><code>.github/workflows/docs.yml</code> deploys on tag pushes and on pushes to <code>release/*</code> branches. Pushing to
+<code>main</code> deliberately publishes nothing — until a release is tagged, <code>make docs</code> is the only place the
+new documentation exists.</p>
 <p>Two consequences worth knowing:</p>
 <ul>
-<li><strong>Releasing documentation is tagging the repository.</strong> There is no snapshot
-step, so nothing can drift out of sync with the release it documents.</li>
-<li><strong>A release tag that predates the docs site publishes nothing.</strong> The build
-skips any tag without <code>docs/public/index.md</code>, which is why <code>v3.0.0</code> and
-<code>v3.1.0</code> never appear on the site.</li>
+<li><strong>Releasing documentation is tagging the repository.</strong> There is no snapshot step, so nothing can
+drift out of sync with the release it documents.</li>
+<li><strong>A release tag that predates the docs site publishes nothing.</strong> The build skips any tag without
+<code>docs/public/index.md</code>, which is why <code>v3.0.0</code> and <code>v3.1.0</code> never appear on the site.</li>
 </ul>
-<p><code>robots.txt</code>, <code>sitemap.xml</code> and <code>404.html</code> are generated by docmd from the
-config’s <code>url</code>; don’t hand-write them.</p>
+<p><code>robots.txt</code>, <code>sitemap.xml</code> and <code>404.html</code> are generated by docmd from the config’s <code>url</code>; don’t
+hand-write them.</p>
 <h3 id="documentation-and-the-sites-the-public-docs-site-dating-each-page" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site-dating-each-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Dating each page</h3>
-<p>Every page ends with “Last updated”, and the commits that touched it in a
-tooltip. docmd’s own git plugin cannot produce that here: it delegates to its
-build engine, which runs <code>git log</code> in the process working directory, so the
-worktrees the versions are built from are all “outside repository” — the error
-is swallowed and the site publishes undated. <code>scripts/docmd-git-history.js</code>
-(loaded from <code>docmd.config.json</code> as a local plugin) resolves the repository per
-page instead, which also means each version is dated from its own ref rather
-than from <code>main</code>. Contributor avatars are deliberately left off, so no reader’s
-browser is sent to Gravatar. <code>build-docs.sh</code> fails the build if any page comes
-out undated.</p>
+<p>Every page ends with “Last updated”, and the commits that touched it in a tooltip. docmd’s own git
+plugin cannot produce that here: it delegates to its build engine, which runs <code>git log</code> in the
+process working directory, so the worktrees the versions are built from are all “outside repository”
+— the error is swallowed and the site publishes undated. <code>scripts/docmd-git-history.js</code> (loaded from
+<code>docmd.config.json</code> as a local plugin) resolves the repository per page instead, which also means
+each version is dated from its own ref rather than from <code>main</code>. Contributor avatars are deliberately
+left off, so no reader’s browser is sent to Gravatar. <code>build-docs.sh</code> fails the build if any page
+comes out undated.</p>
 <h3 id="documentation-and-the-sites-the-public-docs-site-hosting-setup-for-the-docs-site" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site-hosting-setup-for-the-docs-site" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Hosting setup for the docs site</h3>
-<p>Two things live outside the repository, so a fresh fork or a moved domain needs
-them set up again before the first tag push can publish anything:</p>
+<p>Two things live outside the repository, so a fresh fork or a moved domain needs them set up again
+before the first tag push can publish anything:</p>
 <ul>
-<li><strong>GitHub Pages</strong>: repository Settings → Pages → Source must be <em>GitHub
-Actions</em>. <code>actions/deploy-pages</code> fails without it.</li>
-<li><strong>DNS</strong>: a <code>CNAME</code> record for <code>docs.schellingboard.org</code> pointing at
-<code>schellingboard.github.io</code>. The domain itself comes from <code>url</code> in
-<code>docmd.config.json</code> — the build writes it to <code>site/CNAME</code> from there.</li>
+<li><strong>GitHub Pages</strong>: repository Settings → Pages → Source must be <em>GitHub Actions</em>.
+<code>actions/deploy-pages</code> fails without it.</li>
+<li><strong>DNS</strong>: a <code>CNAME</code> record for <code>docs.schellingboard.org</code> pointing at <code>schellingboard.github.io</code>.
+The domain itself comes from <code>url</code> in <code>docmd.config.json</code> — the build writes it to <code>site/CNAME</code>
+from there.</li>
 </ul>
 <p>Until both are in place and <code>v3.2.0</code> is tagged, the
 <a href="https://docs.schellingboard.org">docs.schellingboard.org</a> links in
-<a href="https://github.com/schellingboard/schellingboard/blob/main/README.md"><code>README.md</code></a>
-are dead; the same pages are readable in <code>docs/public/</code>.</p>
+<a href="https://github.com/schellingboard/schellingboard/blob/main/README.md"><code>README.md</code></a> are dead; the
+same pages are readable in <code>docs/public/</code>.</p>
 <h3 id="documentation-and-the-sites-the-public-docs-site-correcting-published-documentation" class="docmd-heading"><a href="#documentation-and-the-sites-the-public-docs-site-correcting-published-documentation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Correcting published documentation</h3>
-<p>To fix published docs without cutting a release, commit to the release branch
-of that version — <code>release/3.2</code> for the 3.2 docs. The build prefers that branch
-over the tag, so pushing it republishes that version, and the deploy log names
-the ref each version came from (<code>Version 3.2 ← release/3.2</code>).</p>
-<p>Release branches don’t exist until something needs one. Create it from the
-release tag the first time that minor release has to be corrected — a release
-that never needs a fix never gets a branch — and merge it back into <code>main</code> so
-the fix reaches the next release too. The same branch carries the commits of a
-patch release, so this is where a fix to an older version lives in general, not
-only a documentation one; see <a href="../releasing/">Releasing a new version</a>.</p>
+<p>To fix published docs without cutting a release, commit to the release branch of that version —
+<code>release/3.2</code> for the 3.2 docs. The build prefers that branch over the tag, so pushing it
+republishes that version, and the deploy log names the ref each version came from
+(<code>Version 3.2 ← release/3.2</code>).</p>
+<p>Release branches don’t exist until something needs one. Create it from the release tag the first
+time that minor release has to be corrected — a release that never needs a fix never gets a branch —
+and merge it back into <code>main</code> so the fix reaches the next release too. The same branch carries the
+commits of a patch release, so this is where a fix to an older version lives in general, not only a
+documentation one; see <a href="../releasing/">Releasing a new version</a>.</p>
 <pre class="hljs"><code class="language-bash">jj <span class="hljs-keyword">new</span> v3.<span class="hljs-number">2.0</span>
 jj bookmark create release<span class="hljs-operator">/</span><span class="hljs-number">3.2</span>   <span class="hljs-comment"># git: git switch -c release/3.2 v3.2.0</span>
 <span class="hljs-comment"># fix, commit, push — the docs site redeploys</span>
 </code></pre>
-<p>Because the branch tip wins over the tag, anything committed to it is published
-as that version’s documentation the moment it is pushed, released or not. Land
-work that isn’t ready to be read on a separate branch.</p>
+<p>Because the branch tip wins over the tag, anything committed to it is published as that version’s
+documentation the moment it is pushed, released or not. Land work that isn’t ready to be read on a
+separate branch.</p>
 <h2 id="documentation-and-the-sites-the-developer-docs-site" class="docmd-heading"><a href="#documentation-and-the-sites-the-developer-docs-site" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The developer docs site</h2>
-<p>The site you are reading. <code>docmd.dev.config.mjs</code> builds <code>docs/dev/</code> into
-<code>dev-site/</code> with its own title, navigation and search index — a second docmd
-project in the same repository, sharing nothing with the user site but the
-theme and the logo. <a href="../adr/0008-publish-developer-docs/">ADR 0008</a> has the
-reasoning, including why it isn’t a path under <a href="https://docs.schellingboard.org">docs.schellingboard.org</a>.</p>
+<p>The site you are reading. <code>docmd.dev.config.mjs</code> builds <code>docs/dev/</code> into <code>dev-site/</code> with its own
+title, navigation and search index — a second docmd project in the same repository, sharing nothing
+with the user site but the theme and the logo. <a href="../adr/0008-publish-developer-docs/">ADR 0008</a> has
+the reasoning, including why it isn’t a path under <a href="https://docs.schellingboard.org">docs.schellingboard.org</a>.</p>
 <div class="table-wrapper"><table>
 <thead>
 <tr>
@@ -1890,115 +1881,100 @@ reasoning, including why it isn’t a path under <a href="https://docs.schelling
 </tr>
 </tbody>
 </table>
-</div><p>The config’s top level is hand-written, but the children under Decision
-records, Target architecture and Attendance model are read off disk at build
-time: a new ADR gets its sidebar entry, breadcrumbs and prev/next links from its
-own <code># </code> heading, with no config edit. Only a page listed in <code>navigation</code> has a
-place in the structure, so a directory added next to those needs a <code>pagesIn</code>
-call of its own.</p>
-<p>It is not versioned. <code>.github/workflows/developers.yml</code> publishes on pushes to
-<code>main</code> that touch <code>docs/dev/</code>, so the site always describes the default branch;
-a contributor on a release branch reads that branch’s <code>docs/dev/</code> in the
-repository instead.</p>
-<p><strong>Links out of <code>docs/dev/</code> must be absolute GitHub URLs.</strong> The site’s root is
-<code>docs/dev/</code>, so a relative <code>../../CONTRIBUTING.md</code> resolves to nothing once
-published. <code>make docs-dev-validate</code> catches those, and is the reason to run it
-after moving a file. Links to user documentation go to
+</div><p>The config’s top level is hand-written, but the children under Decision records, Target architecture
+and Attendance model are read off disk at build time: a new ADR gets its sidebar entry, breadcrumbs
+and prev/next links from its own <code># </code> heading, with no config edit. Only a page listed in
+<code>navigation</code> has a place in the structure, so a directory added next to those needs a <code>pagesIn</code> call
+of its own.</p>
+<p>It is not versioned. <code>.github/workflows/developers.yml</code> publishes on pushes to <code>main</code> that touch
+<code>docs/dev/</code>, so the site always describes the default branch; a contributor on a release branch
+reads that branch’s <code>docs/dev/</code> in the repository instead.</p>
+<p><strong>Links out of <code>docs/dev/</code> must be absolute GitHub URLs.</strong> The site’s root is <code>docs/dev/</code>, so a
+relative <code>../../CONTRIBUTING.md</code> resolves to nothing once published. <code>make docs-dev-validate</code>
+catches those, and is the reason to run it after moving a file. Links to user documentation go to
 <a href="https://docs.schellingboard.org">docs.schellingboard.org</a> rather than to <code>docs/public/</code> in the repository.</p>
-<p><code>docs/dev/README.md</code> is both the site’s home page and the folder’s index on
-GitHub, which is what keeps the repository copy navigable.</p>
+<p><code>docs/dev/README.md</code> is both the site’s home page and the folder’s index on GitHub, which is what
+keeps the repository copy navigable.</p>
 <h3 id="documentation-and-the-sites-the-developer-docs-site-why-it-deploys-to-a-second-repository" class="docmd-heading"><a href="#documentation-and-the-sites-the-developer-docs-site-why-it-deploys-to-a-second-repository" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Why it deploys to a second repository</h3>
-<p>The same reason as the landing page below: GitHub Pages serves one custom
-domain per repository, and this one already serves <a href="https://docs.schellingboard.org">docs.schellingboard.org</a>. The
-build is pushed to
+<p>The same reason as the landing page below: GitHub Pages serves one custom domain per repository, and
+this one already serves <a href="https://docs.schellingboard.org">docs.schellingboard.org</a>. The build is pushed to
 <a href="https://github.com/schellingboard/developers.schellingboard.org">schellingboard/developers.schellingboard.org</a>,
-which holds nothing else, using the same organization-owned deploy app the
-landing page uses — see
+which holds nothing else, using the same organization-owned deploy app the landing page uses — see
 <a href="#hosting-setup-for-the-pushed-sites">Hosting setup for the pushed sites</a>.</p>
 <h3 id="documentation-and-the-sites-the-developer-docs-site-the-architecture-diagrams" class="docmd-heading"><a href="#documentation-and-the-sites-the-developer-docs-site-the-architecture-diagrams" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The architecture diagrams</h3>
 <p>The C4 model in <code>docs/dev/target-architecture/diagrams/</code> reaches the site twice:</p>
 <ul>
-<li><strong><code>/diagrams/</code></strong> — the full LikeC4 explorer, every view with drill-down
-between levels, built by <code>likec4 build</code>. It uses hash history (<code>/diagrams/#/…</code>)
-because GitHub Pages can’t route deep links into a single-page app.</li>
-<li><strong><code>&lt;likec4-view view-id=&quot;…&quot;&gt;</code></strong> — chapters embed a single view inline, rendered
-by the web component <code>likec4 gen webcomponent</code> produces.</li>
+<li><strong><code>/diagrams/</code></strong> — the full LikeC4 explorer, every view with drill-down between levels, built by
+<code>likec4 build</code>. It uses hash history (<code>/diagrams/#/…</code>) because GitHub Pages can’t route deep links
+into a single-page app.</li>
+<li><strong><code>&lt;likec4-view view-id=&quot;…&quot;&gt;</code></strong> — chapters embed a single view inline, rendered by the web
+component <code>likec4 gen webcomponent</code> produces.</li>
 </ul>
-<p>There are no committed PNG exports, so a diagram cannot go stale: the site
-renders from the <code>.c4</code> sources on every build. The cost is that GitHub shows no
-diagram at all when reading the chapters in the repository, and that
-<code>make docs-dev</code> — plain <code>docmd dev</code>, with none of the LikeC4 steps — doesn’t
-either. Use <code>make arch-diagrams</code> for the explorer while editing the model, and
+<p>There are no committed PNG exports, so a diagram cannot go stale: the site renders from the <code>.c4</code>
+sources on every build. The cost is that GitHub shows no diagram at all when reading the chapters in
+the repository, and that <code>make docs-dev</code> — plain <code>docmd dev</code>, with none of the LikeC4 steps —
+doesn’t either. Use <code>make arch-diagrams</code> for the explorer while editing the model, and
 <code>make docs-dev-build</code> to see an embedded view rendered.</p>
-<p>The web component bundle is ~2.5 MB, which is why <code>scripts/likec4-embed.js</code>,
-not the bundle, is the site-wide <code>customJs</code>: it loads the bundle only on pages
-that actually contain a <code>&lt;likec4-view&gt;</code>, and mirrors docmd’s theme onto each
-element’s <code>color-scheme</code>.</p>
-<p><code>build-dev-docs.sh</code> fails if a chapter embeds a <code>view-id</code> that <code>views.c4</code>
-doesn’t define. The element renders an empty box otherwise, which is the same
-silent staleness the PNGs had.</p>
+<p>The web component bundle is ~2.5 MB, which is why <code>scripts/likec4-embed.js</code>, not the bundle, is the
+site-wide <code>customJs</code>: it loads the bundle only on pages that actually contain a <code>&lt;likec4-view&gt;</code>, and
+mirrors docmd’s theme onto each element’s <code>color-scheme</code>.</p>
+<p><code>build-dev-docs.sh</code> fails if a chapter embeds a <code>view-id</code> that <code>views.c4</code> doesn’t define. The
+element renders an empty box otherwise, which is the same silent staleness the PNGs had.</p>
 <h2 id="documentation-and-the-sites-the-landing-page" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The landing page</h2>
-<p><a href="https://schellingboard.org">schellingboard.org</a> is hand-written HTML in
-<code>www/</code> — a landing page and a screenshot gallery. <code>make www</code> copies it, plus
-<code>docs/screenshots/</code>, into <code>www-site/</code>; open <code>www-site/index.html</code> to preview.
-There is no generator, on purpose: the pages are two bespoke layouts, and
-rendering them through docmd would mean custom templates to make a docs tool
-stop looking like one.</p>
-<p><code>.github/workflows/www.yml</code> publishes on pushes to <code>main</code> that touch <code>www/</code>,
-<code>docs/screenshots/</code> or the build script. It does not follow the documentation
-site’s release-tag rule, because the page describes the project rather than a
-version — with the consequence that its screenshots can show interface changes
-that are merged but not yet released.</p>
+<p><a href="https://schellingboard.org">schellingboard.org</a> is hand-written HTML in <code>www/</code> — a landing page and
+a screenshot gallery. <code>make www</code> copies it, plus <code>docs/screenshots/</code>, into <code>www-site/</code>; open
+<code>www-site/index.html</code> to preview. There is no generator, on purpose: the pages are two bespoke
+layouts, and rendering them through docmd would mean custom templates to make a docs tool stop
+looking like one.</p>
+<p><code>.github/workflows/www.yml</code> publishes on pushes to <code>main</code> that touch <code>www/</code>, <code>docs/screenshots/</code> or
+the build script. It does not follow the documentation site’s release-tag rule, because the page
+describes the project rather than a version — with the consequence that its screenshots can show
+interface changes that are merged but not yet released.</p>
 <h3 id="documentation-and-the-sites-the-landing-page-why-it-deploys-to-another-repository" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page-why-it-deploys-to-another-repository" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Why it deploys to another repository</h3>
-<p>GitHub Pages serves one custom domain per repository and this one already
-serves <code>docs.schellingboard.org</code>, so the built site is pushed to
-<a href="https://github.com/schellingboard/schellingboard.org">schellingboard/schellingboard.org</a>,
-which holds nothing but that output and is never edited directly. Its Pages
-source is the default branch, so the site keeps working even if the workflow is
-disabled.</p>
+<p>GitHub Pages serves one custom domain per repository and this one already serves
+<code>docs.schellingboard.org</code>, so the built site is pushed to
+<a href="https://github.com/schellingboard/schellingboard.org">schellingboard/schellingboard.org</a>, which
+holds nothing but that output and is never edited directly. Its Pages source is the default branch,
+so the site keeps working even if the workflow is disabled.</p>
 <h3 id="documentation-and-the-sites-the-landing-page-screenshots" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page-screenshots" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Screenshots</h3>
-<p><code>docs/screenshots/</code> is the only copy of the screenshots. The landing page
-uses them directly and the documentation site can use them too — see
+<p><code>docs/screenshots/</code> is the only copy of the screenshots. The landing page uses them directly and the
+documentation site can use them too — see
 <a href="https://github.com/schellingboard/schellingboard/blob/main/docs/screenshots/README.md"><code>docs/screenshots/README.md</code></a>
 for the capture checklist and how to reference them from markdown.</p>
-<p>They are not under <code>docs/public/</code>, and cannot usefully be: docmd discovers
-markdown and nothing else, so a PNG placed there is not copied to the output.
-Both build scripts do the copying themselves. One consequence: images appear in
-<code>make docs-build</code> output but not in the <code>make docs</code> live preview, which serves
-what docmd produced.</p>
+<p>They are not under <code>docs/public/</code>, and cannot usefully be: docmd discovers markdown and nothing
+else, so a PNG placed there is not copied to the output. Both build scripts do the copying
+themselves. One consequence: images appear in <code>make docs-build</code> output but not in the <code>make docs</code>
+live preview, which serves what docmd produced.</p>
 <h3 id="documentation-and-the-sites-the-landing-page-hosting-setup-for-the-pushed-sites" class="docmd-heading"><a href="#documentation-and-the-sites-the-landing-page-hosting-setup-for-the-pushed-sites" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Hosting setup for the pushed sites</h3>
-<p>Both the landing page and the developer docs are pushed into a repository of
-their own, and both use the same setup.</p>
+<p>Both the landing page and the developer docs are pushed into a repository of their own, and both use
+the same setup.</p>
 <ul>
-<li><p><strong>GitHub App</strong>: these workflows write to a repository that is not their own,
-so they mint a token from an organization-owned app rather than carrying a
-standing credential. The token expires within the hour, the app belongs to
-the organization instead of a person, and it is installed on the site
-repositories alone.</p>
+<li><p><strong>GitHub App</strong>: these workflows write to a repository that is not their own, so they mint a token
+from an organization-owned app rather than carrying a standing credential. The token expires
+within the hour, the app belongs to the organization instead of a person, and it is installed on
+the site repositories alone.</p>
 <ol>
-<li>Under the organization’s Settings → Developer settings → GitHub Apps,
-create an app with the repository permission <strong>Contents: Read and write</strong>
-and nothing else. It needs no webhook and no account permissions.</li>
+<li>Under the organization’s Settings → Developer settings → GitHub Apps, create an app with the
+repository permission <strong>Contents: Read and write</strong> and nothing else. It needs no webhook and no
+account permissions.</li>
 <li>Install it on <code>schellingboard/schellingboard.org</code> and
-<code>schellingboard/developers.schellingboard.org</code> only. Each workflow still
-narrows its own token to the one repository it publishes, so installing
-the app on both does not let either job touch the other’s site.</li>
-<li>In this repository, add the app’s <strong>Client ID</strong> as the
-<code>PAGES_DEPLOY_APP_CLIENT_ID</code> variable and a generated private key as the
-<code>PAGES_DEPLOY_APP_PRIVATE_KEY</code> secret.</li>
+<code>schellingboard/developers.schellingboard.org</code> only. Each workflow still narrows its own token
+to the one repository it publishes, so installing the app on both does not let either job touch
+the other’s site.</li>
+<li>In this repository, add the app’s <strong>Client ID</strong> as the <code>PAGES_DEPLOY_APP_CLIENT_ID</code> variable
+and a generated private key as the <code>PAGES_DEPLOY_APP_PRIVATE_KEY</code> secret.</li>
 </ol>
-<p>To rotate, generate a new private key on the app and replace the secret; the
-client ID does not change.</p>
+<p>To rotate, generate a new private key on the app and replace the secret; the client ID does not
+change.</p>
 </li>
-<li><p><strong>DNS</strong>: <code>schellingboard.org</code> and <code>developers.schellingboard.org</code> each
-pointing at <code>schellingboard.github.io</code>, and each site repository’s Pages
-source set to its default branch — not <em>GitHub Actions</em>, which would ignore
-the pushed files. The domain comes from <code>www/CNAME</code> for the landing page,
-which the build copies verbatim, and from <code>url</code> in <code>docmd.dev.config.mjs</code>
-for the developer site, which <code>build-dev-docs.sh</code> writes to <code>dev-site/CNAME</code>.</p>
+<li><p><strong>DNS</strong>: <code>schellingboard.org</code> and <code>developers.schellingboard.org</code> each pointing at
+<code>schellingboard.github.io</code>, and each site repository’s Pages source set to its default branch —
+not <em>GitHub Actions</em>, which would ignore the pushed files. The domain comes from <code>www/CNAME</code> for
+the landing page, which the build copies verbatim, and from <code>url</code> in <code>docmd.dev.config.mjs</code> for
+the developer site, which <code>build-dev-docs.sh</code> writes to <code>dev-site/CNAME</code>.</p>
 </li>
-<li><p><strong>A first commit</strong>: the workflow clones the site repository before writing to
-it, so an entirely empty one fails. Any initial commit does.</p>
+<li><p><strong>A first commit</strong>: the workflow clones the site repository before writing to it, so an entirely
+empty one fails. Any initial commit does.</p>
 </li>
 </ul>
 
@@ -2142,17 +2118,32 @@ it, so an entirely empty one fails. Any initial commit does.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1789901893000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1789901893000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -2214,21 +2205,6 @@ it, so an entirely empty one fails. Any initial commit does.</p>
                           </div>
                         </li>
                       
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
                     </ul>
                   </div>
                   
@@ -2255,13 +2231,13 @@ it, so an entirely empty one fails. Any initial commit does.</p>
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2339,7 +2315,7 @@ it, so an entirely empty one fails. Any initial commit does.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20The%20web%20app%20(%60apps%2Fweb%60)%0A%0A%60apps%2Fweb%60%20is%20the%20single-page%20app%20that%20is%20replacing%20the%20Next%20pages%20one%20screen%0Afamily%20at%20a%20time%20(%5BADR%200015%5D(adr%2F0015-spa-alongside-next.md)).%20It%20is%20a%20workspace%0Apackage%20built%20with%20Vite%2C%20React%20and%20TanStack%20Router%2C%20styled%20with%20Tailwind%20and%20the%0Acolour%20tokens%20in%20%60styles%2Ftokens.css%60%20(the%20Next%20pages%20import%20the%20same%20file).%0A%5BClient%20design%5D(target-architecture%2F04-client.md)%20describes%20where%20it%20is%20going.%0A%0A%23%23%20How%20it%20reaches%20the%20browser%0A%0A-%20The%20Next%20pages%20live%20under%20%60%2Flegacy%60.%20Every%20other%20root%20path%20that%20is%20not%20%60%2Fapi%60%2C%0A%20%20%60%2Fmedia%60%2C%20%60%2Flocations%60%2C%20%60%2Fsw.js%60%2C%20an%20icon%20or%20the%20manifest%20is%20a%20page%20of%20the%20SPA.%0A-%20%60proxy.ts%60%20applies%20the%20site%20password%20to%20those%20paths%2C%20then%20rewrites%20them%20to%0A%20%20%60%2Fapi%2Fspa%2Fshell%60%2C%20which%20reads%20%60apps%2Fweb%2Fdist%2Findex.html%60%20from%20disk%20on%20each%0A%20%20request%20and%20answers%20%60no-store%60.%0A-%20Hashed%20files%20are%20requested%20as%20%60%2F_spa%2Fassets%2F%E2%80%A6%60.%20The%20proxy%20skips%20them%3B%20a%20rewrite%20in%0A%20%20%60next.config.js%60%20hands%20them%20to%20%60%2Fapi%2Fspa%2Fassets%2F%E2%80%A6%60%2C%20which%20serves%20them%20as%0A%20%20immutable%20and%20answers%20404%20for%20anything%20missing%2C%20never%20the%20shell.%0A-%20The%20router%20owns%20%60%2F%7Bslug%7D%60%2C%20an%20event&#039;s%20schedule%2C%20and%20%60%2F%7Bslug%7D%2Fproposals%2F**%60%20(list%2C%20quick%20voting%2C%20new%2C%20edit%3B%20%60%3FviewProposal%3D%60%20opens%20the%20modal).%20Everything%20else%20the%20SPA%20does%20not%20own%20is%0A%20%20forwarded%3A%20the%20catch-all%20route%20replaces%20the%20location%20with%20%60%2Flegacy%60%20%2B%20path%20%2B%20query%20(a%20path%0A%20%20already%20under%20%60%2Flegacy%60%20is%20left%20alone)%2C%20and%20a%20static%20route%20per%20legacy%20root%20page%0A%20%20(%60app%2Flegacy-pages.ts%60%2C%20checked%20against%20%60app%2Flegacy%2F%60%20by%20%60tests%2Funit%2Fspa-legacy-pages.test.ts%60)%0A%20%20keeps%20an%20event%20slug%20from%20shadowing%20%60%2Fsettings%60%2C%20%60%2Fadmin%60%2C%20and%20so%20on.%0A-%20Legacy%20pages%20link%20to%20the%20SPA%20with%20plain%20anchors%2C%20never%20Next&#039;s%20%60Link%60%20(%60AppLink%60%2C%20which%0A%20%20does%20that%20for%20every%20root%20path%20outside%20%60%2Flegacy%60)%3A%20Next%20has%20nothing%20to%20fetch%20there.%0A%0A-%20%60public%2Fsw.js%60%20(registered%20by%20%60main.tsx%60%20outside%20the%20dev%20server)%20caches%20the%20shell%20and%20the%20%60%2F_spa%2Fassets%2F%60%0A%20%20files.%20SPA%20navigations%20go%20to%20the%20network%20first%20and%20fall%20back%20to%20the%20cached%20shell%2C%20so%20a%20new%20build%20shows%20as%0A%20%20soon%20as%20it%20is%20reachable%3B%20%60%2Fapi%60%2C%20%60%2Flegacy%60%20and%20the%20other%20Next%20paths%20are%20never%20touched.%20A%20page%20compares%0A%20%20the%20shell&#039;s%20build%20id%20with%20%60%2Fapi%2Fv1%2Fhealth%60%20(%60app%2Freload-offer.tsx%60%3A%20on%20load%2C%20every%205%20minutes%2C%20on%20%60online%60%0A%20%20and%20when%20the%20tab%20is%20shown).%20The%20viewer%20is%20remembered%20in%20%60localStorage%60%20so%20the%20saved%20schedule%20opens%20offline.%0A%0AThe%20files%20are%20read%20relative%20to%20the%20working%20directory%2C%20so%20the%20same%20code%20serves%0A%60next%20start%60%2C%20and%20the%20Docker%20image%2C%20which%20copies%20%60apps%2Fweb%2Fdist%60%20next%20to%0A%60server.js%60.%0A%0A%23%23%20Build%20and%20run%0A%0A-%20%60make%20build%60%20and%20the%20E2E%20web%20server%20run%20%60vite%20build%20apps%2Fweb%60%20before%20%60next%20build%60%3B%0A%20%20the%20Dockerfile%20does%20the%20same.%20Next%20serves%20what%20is%20in%20%60apps%2Fweb%2Fdist%60%2C%20so%20rebuild%0A%20%20the%20SPA%20after%20changing%20it%20when%20testing%20through%20Next.%0A-%20%60make%20dev%60%20runs%20Next%20on%20%60PORT%20%2B%201%60%20and%20Vite%20on%20%60PORT%60%20(default%203000).%20Open%20the%0A%20%20Vite%20port%3A%20it%20serves%20the%20SPA%20with%20hot%20reload%20and%20proxies%20%60%2Flegacy%60%2C%20%60%2Fapi%60%2C%0A%20%20%60%2Fmedia%60%20and%20the%20other%20Next%20paths%20to%20Next.%20The%20shell%20gate%20does%20not%20apply%20in%20dev.%0A%20%20A%20bare%20%60next%20dev%60%20answers%20root%20pages%20with%20the%20shell%20(503%20until%20the%20SPA%20is%20built)%3A%0A%20%20use%20%60%2Flegacy%2F...%60%20URLs%20with%20it%2C%20as%20the%20screenshots%20script%20does.%0A-%20E2E%20specs%20call%20%60page.goto%60%20with%20root%20paths%3B%20the%20fixture%20sends%20them%20to%20%60%2Flegacy%2F...%60%20so%20a%0A%20%20click%20never%20lands%20before%20hydration%2C%20except%20an%20event&#039;s%20own%20address%20(%60%2F%7Bslug%7D%60%2C%20any%20query%2C%20and%20%60%2F%7Bslug%7D%2Fproposals%2F%E2%80%A6%60)%20and%20%60%2Fguests%2F%E2%80%A6%60%2C%0A%20%20which%20the%20SPA%20owns%20and%20opens%20as%20it%20is.%20One%20spec%20covers%20the%20shell&#039;s%20forward.%0A%0A%23%23%20Layout%20and%20rules%0A%0A%60apps%2Fweb%2Fsrc%2F%60%20follows%20%5Bthe%20client%20layout%5D(target-architecture%2F04-client.md%23layout)%3B%0A%60app%2F%60%20(layout%2C%20nav%20bar%2C%20shell%2C%20pages)%2C%20%60ui%2F%60%20(dialog%2C%20button%2C%20tooltip%2C%20icons%2C%20notices)%2C%20%60features%2Fschedule%2F%60%2C%20%60replica%2F%60%2C%20%60commands%2F%60%20and%20%60queries%2F%60%20exist%20so%20far%20(the%20replica%3A%20store%2C%20%60apply%60%2C%20feed%20client%2C%20sync%20state%2C%20a%20server%20clock%20offset%20and%20IndexedDB%20persistence%20keyed%20by%20event%20and%20viewer%2C%20opened%20as%20%60stale%60).%20dependency-cruiser%20enforces%20that%20the%20package%20imports%0A%60packages%2Fdomain%60%2C%20%60packages%2Fcontracts%60%20and%20%60packages%2Fapi-client%60%20only%20(never%20%60app%2F%60%2C%0A%60server%2F%60%2C%20%60utils%2F%60%20or%20%60next%60)%2C%20that%20nothing%20imports%20it%2C%20that%20%60features%2F%60%20never%0Aimports%20%60api-client%60%2C%20and%20that%20it%20declares%20what%20it%20imports.%20See%0A%5BArchitecture%20rules%5D(architecture-rules.md).%0A%0A%23%23%20The%20viewer%20and%20the%20user%20picker%0A%0AWho%20the%20browser%20acts%20as%20comes%20from%20%60GET%20%2Fapi%2Fv1%2Fme%2Fidentity%60%20(%60ViewerProvider%60%2C%0A%60app%2Fviewer.tsx%60)%3A%20%60guestId%60%20is%20%60undefined%60%20until%20the%20server%20answers%2C%20then%20a%20guest%20id%20or%0A%60null%60.%20The%20replica%20and%20the%20command%20runner%20are%20opened%20for%20that%20guest%2C%20never%20for%20one%20read%0Afrom%20a%20persisted%20copy.%20%60choose%60%20and%20%60signOut%60%20call%20%60PUT%60%2F%60DELETE%60%20on%20the%20same%20path.%20A%0Aprotected%20name%20answers%20%60guest.protected%60%20and%20%60UserMenu%60%20sends%20the%20user%20to%20the%20legacy%0Alogin%2C%20%60%2Flegacy%2Fauth%2Flogin%3Fguest%3D%3Cid%3E%60%3B%20a%20successful%20login%20lands%20on%20%60%2Flegacy%60.%20The%20picker%0Alists%20the%20guests%20it%20is%20given%3A%20the%20event%20snapshot&#039;s%20%60guests%60%20(members%20and%20hosts)%20on%20an%20event%0Apage%2C%20the%20attendee%20directory%20(%60GET%20%2Fattendees%60%2C%20everyone)%20on%20%60%2Fguests%60.%0ASign-out%20and%20a%20switch%20between%20names%20clear%20the%20device&#039;s%20persisted%20replicas%0A(%60persistence.clear()%60)%3B%20a%20change%20of%20%60guestId%60%20also%20closes%20the%20feed%20and%20reopens%20the%0Areplica%2C%20the%20command%20runner%20and%20the%20queries%20(%60useScheduleSession%60%20does%3A%20the%20viewer%20is%0Apart%20of%20its%20effect%20key).%20The%20provider%20asks%0Aagain%20every%205%20s%20while%20the%20first%20identity%20fetch%20fails.%20%60commands%2Fkeys.ts%60%20holds%20the%0A%60newKey%60%20the%20runner%20needs.%0A%0A%23%23%20Theme%2C%20footer%20and%20dev%20clock%0A%0A%60app%2Ftheme.tsx%60%20keeps%20the%20ADR%200005%20%60sb-theme%60%20cookie%20(read%20at%20start%2C%20written%20with%20the%0A%60light%60%2F%60dark%60%20class%20on%20%60%3Chtml%3E%60%3B%20%60index.html%60&#039;s%20inline%20script%20applies%20it%20before%20first%0Apaint%2C%20as%20the%20Next%20layout%20does).%20The%20footer&#039;s%20version%20and%20build%20come%20from%0A%60GET%20%2Fapi%2Fv1%2Fhealth%60%20(%60useHealth%60)%3B%20for%20the%20admin%2C%20%60GET%20%2Fapi%2Fv1%2Fupdates%60%0A(%60useUpdateStatus%60)%20adds%20a%20red%20dot%20and%20the%20latest%20release%3B%20its%20release%20notes%20are%0A%60packages%2Fdomain%60&#039;s.%20The%20dev%0Aclock%20toolbar%20needs%20%60devTools%60%20from%20the%20same%20endpoint%20(%60SB_ENABLE_DEV_TOOLS%60)%20and%20%60%3Fdev%3D1%60%3B%0Ait%20writes%20the%20%60time-override%60%20cookie%20and%20calls%20%60onChange%60%2C%20which%20the%20shell%20makes%20reload%20the%0Aapp%20so%20the%20replica%20is%20read%20under%20the%20new%20time.%20The%20legacy%20toolbar&#039;s%20%22Send%20due%20reminders%22%0Abutton%20has%20no%20SPA%20counterpart.%0A%0A%23%23%20Sync%20indicator%2C%20error%20boundary%20and%20the%20shell%0A%0A%60SyncIndicator%60%20shows%20the%20replica&#039;s%20link%20state%20(%60useSyncState%60%3A%20live%2C%20reconnecting%20after%20a%0Ashort%20grace%2C%20stale)%20and%20re-renders%20at%20the%20instant%20it%20next%20changes.%20%60ErrorBoundary%60%20keeps%0Athe%20nav%20and%20footer%20when%20one%20screen%20crashes%20(try%20again%2C%20reload%2C%20or%20open%20%60%2Flegacy%60).%20%60Shell%60%0A(%60app%2Fshell.tsx%60)%20composes%20theme%2C%20viewer%2C%20layout%2C%20nav%2C%20user%20menu%2C%20footer%2C%20boundary%20and%20dev%0Aclock%20from%20props%20(events%2C%20the%20picker&#039;s%20guests%2C%20location).%20%60ShellProviders%60%20(theme%20and%20viewer)%0Aand%20%60ShellFrame%60%20are%20also%20exported%2C%20for%20a%20screen%20that%20needs%20the%20viewer%20before%20it%20can%20say%20what%0Athe%20frame%20shows.%20The%20schedule%20page%20mounts%20it.%0A%0A%23%23%20The%20schedule%0A%0A%60src%2Ffeatures%2Fschedule%2F%60%20holds%20the%20schedule%20screens%3B%20%60ScheduleScreen%60%20is%20the%20entry%3A%20a%20snapshot%2C%20the%0Aserver&#039;s%20%60now%60%2C%20%60links%60%2C%20the%20page&#039;s%20search%20params%20(%2B%20a%20setter)%20and%20slots%20for%20the%20sync%20indicator%0Aand%20footer.%20The%20view%20(%60view%3Dagenda%60)%2C%20filter%20chips%20(%60filter%3D%60)%20and%20narrowed%20rooms%20(%60loc%3D%60)%20live%0Ain%20the%20params%3B%20the%20search%20text%20and%20unfolded%20days%20are%20local.%20Everything%20is%20drawn%20from%20the%0Areplica%3A%20sessions%2C%20rooms%20and%20RSVPs%20from%20the%20snapshot%2C%20the%20viewer&#039;s%20own%201-on-1s%20from%0A%60snapshot.me.meetings%60%20(%60meetingViewsFrom%60).%20Clash%20lines%20rest%20on%20other%20guests&#039;%20RSVPs%2C%20which%20the%0Areplica%20lacks%3A%20%60queries%2Fmeeting-clashes.ts%60%20fetches%20them%20from%20%60GET%20%2Fmeetings%60%20(debounced%2C%20after%0Aany%20change%20in%20%60store.meetingsRevision()%60)%20and%20%60withClashes%60%20merges%20them%20in.%20Times%20use%20the%20event&#039;s%20zone%2C%20never%20the%20ambient%20one%3B%20the%20now%20line%20follows%0A%60store.serverNow()%60%20(%60useServerNow%60).%0A%0AThe%20pure%20parts%20(%60grid-layout%60%2C%20%60column%60%2C%20%60meeting-column%60%2C%20%60agenda%60%2C%20%60fold%60%2C%20%60filters%60%2C%0A%60search%60%2C%20%60meeting-rules%60%2C%20%60meeting-clash-text%60)%20are%20copies%20of%20%60utils%2F%60%20with%20their%20tests%3A%20the%0Alegacy%20copies%20stay%20until%20the%20Next%20schedule%20goes%2C%20since%20it%20still%20renders%20them.%20%60model.ts%60%20has%20the%20new%20pure%20rules%20(narrowing%20by%20room%2C%20matching%2C%20day%20folds).%20%60links.ts%60%0Ais%20the%20one%20place%20that%20decides%20where%20a%20session%2C%20a%201-on-1%2C%20add-session%20or%20booking%20link%0Agoes%3A%20a%20session%20and%20a%201-on-1%20(%60%3FviewMeeting%3D%60%2C%20%60%3FbookMeeting%3D%60)%20open%20in%20the%20SPA&#039;s%20own%20modals%0Aover%20the%20schedule%2C%20the%20add%20and%20edit%20session%20links%20go%20to%20%60%2Flegacy%2F...%60.%20%60%2F%7Bslug%7D%2Fmeetings%60%0A(%60app%2Fmeetings-page.tsx%60)%20is%20where%20a%20meeting%20notification%20lands%3A%20it%20hands%20the%20meeting%20to%20the%0Aschedule%2C%20or%20opens%20it%20read-only%20outside%20the%20scheduling%20phase.%0A%0A%60app%2Fschedule-page.tsx%60%20composes%20it%3A%20%60useScheduleSession%60%20(%60replica%2Fsession.ts%60%3A%20%60openReplica%60%2C%0A%60connectFeed%60%2C%20%60autosaveReplica%60%2C%20hidden-tab%20and%20back%2Fforward-cache%20handling%2C%20plus%20a%20command%0Arunner)%20for%20the%20viewer%20from%20%60useViewer()%60%2C%20the%20events%20for%20the%20nav%20(%60GET%20%2Fapi%2Fv1%2Fevents%60)%2C%20the%0Asnapshot&#039;s%20guests%20for%20the%20picker%2C%20the%20proposals%20redirect%20for%20an%20event%20not%20in%20its%20scheduling%0Aphase.%20A%20viewer%20change%20closes%20the%20feed%20and%20opens%20the%20event%20again.%0A%0A%23%23%20Tests%0A%0AUnit%20tests%20sit%20next%20to%20the%20code%20(%60*.test.ts(x)%60)%20and%20run%20in%20the%20%60web%60%20Vitest%20project%0Aunder%20happy-dom%20as%20part%20of%20%60make%20test%60.%20Components%20are%20tested%20with%20%60%40testing-library%2Freact%60%20and%20%60user-event%60%20(cleanup%20is%0Aregistered%20in%20%60src%2Ftest-setup.ts%60)%2C%20through%20roles%20and%20names%2C%20never%20styling.%20Screens%0Aare%20covered%20by%20the%20E2E%20suite%3B%20there%20is%20no%20browser%20component%20runner.%0A%0A%23%23%20Failure%20notices%0A%0A%60NoticeProvider%60%20(%60ui%2Fnotices.tsx%60%2C%20mounted%20in%20%60ShellProviders%60)%20shows%20failures%20as%20%60role%3D%22alert%22%60%0Aand%20confirmations%20as%20%60role%3D%22status%22%60%2C%20above%20any%20screen%2C%20so%20a%20notice%20outlives%20the%20control%20that%0Araised%20it.%20Every%20%60Command%60%20has%20a%20%60describe%60%20(what%20it%20does%20to%20what%2C%20naming%20the%20session%20by%20title%2C%0Aday%2C%20time%20and%20room).%20The%20runner&#039;s%20%60onFailure%60%20gives%20that%2C%20the%20problem%20code%2C%20and%20whether%20the%0Aretries%20ran%20out%3B%20%60failureMessage%60%20turns%20it%20into%20%22Could%20not%20%E2%80%A6%22%20(refused%2C%20with%20the%20reason)%20or%20%22might%0Anot%20have%20been%20saved%22%20(gave%20up).%20A%20notice%20can%20carry%20an%20action%3B%20the%20runner%20sets%20none%2C%20as%20a%20blind%0Are-send%20would%20use%20a%20new%20idempotency%20key.%0A%0A%23%23%20Forms%0A%0AA%20form%20waits%20for%20the%20server%2C%20unlike%20a%20command.%20%60useFormMutation%60%20(%60commands%2F%60)%20calls%0A%60awaitMutation%60%20with%20an%20idempotency%20key%20kept%20only%20after%20an%20unreachable%20answer%2C%20so%20pressing%20Save%20again%0Aafter%20%22might%20not%20have%20been%20saved%22%20cannot%20apply%20it%20twice.%20Any%20other%20answer%2C%20a%20refusal%20included%2C%0Aends%20the%20key%2C%20because%20the%20server%20stores%20it%20and%20would%20refuse%20it%20with%20changed%20values.%20The%20result%20is%20one%20of%3A%20fields%20(the%0Aproblem&#039;s%20%60errors%60%20by%20path)%2C%20a%20%60409%60%20(%22changed%20by%20someone%20else%22)%2C%20a%20refusal%20with%20its%20reason%2C%20or%0Aunreachable.%20%60validateFields%60%20runs%20a%20zod%20schema%20per%20field%20before%20sending.%20%60ui%2Fform.tsx%60%20has%0Athe%20controlled%20fields%20(%60TextField%60%2C%20%60TextAreaField%60%2C%20%60SelectField%60%2C%20%60DateTimeField%60%2C%0A%60CheckboxField%60)%3A%20label%2C%20hint%20and%20error%20are%20tied%20to%20the%20input%2C%20and%20an%20error%20is%20a%20%60role%3D%22alert%22%60.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20The%20web%20app%20(%60apps%2Fweb%60)%0A%0A%60apps%2Fweb%60%20is%20the%20single-page%20app%20that%20is%20replacing%20the%20Next%20pages%20one%20screen%20family%20at%20a%20time%0A(%5BADR%200015%5D(adr%2F0015-spa-alongside-next.md)).%20It%20is%20a%20workspace%20package%20built%20with%20Vite%2C%20React%20and%0ATanStack%20Router%2C%20styled%20with%20Tailwind%20and%20the%20colour%20tokens%20in%20%60styles%2Ftokens.css%60%20(the%20Next%20pages%0Aimport%20the%20same%20file).%20%5BClient%20design%5D(target-architecture%2F04-client.md)%20describes%20where%20it%20is%0Agoing.%0A%0A%23%23%20How%20it%20reaches%20the%20browser%0A%0A-%20The%20Next%20pages%20live%20under%20%60%2Flegacy%60.%20Every%20other%20root%20path%20that%20is%20not%20%60%2Fapi%60%2C%20%60%2Fmedia%60%2C%0A%20%20%60%2Flocations%60%2C%20%60%2Fsw.js%60%2C%20an%20icon%20or%20the%20manifest%20is%20a%20page%20of%20the%20SPA.%0A-%20%60proxy.ts%60%20applies%20the%20site%20password%20to%20those%20paths%2C%20then%20rewrites%20them%20to%20%60%2Fapi%2Fspa%2Fshell%60%2C%20which%0A%20%20reads%20%60apps%2Fweb%2Fdist%2Findex.html%60%20from%20disk%20on%20each%20request%20and%20answers%20%60no-store%60.%0A-%20Hashed%20files%20are%20requested%20as%20%60%2F_spa%2Fassets%2F%E2%80%A6%60.%20The%20proxy%20skips%20them%3B%20a%20rewrite%20in%0A%20%20%60next.config.js%60%20hands%20them%20to%20%60%2Fapi%2Fspa%2Fassets%2F%E2%80%A6%60%2C%20which%20serves%20them%20as%20immutable%20and%20answers%20404%0A%20%20for%20anything%20missing%2C%20never%20the%20shell.%0A-%20The%20router%20owns%20%60%2F%7Bslug%7D%60%2C%20an%20event&#039;s%20schedule%2C%20and%20%60%2F%7Bslug%7D%2Fproposals%2F**%60%20(list%2C%20quick%20voting%2C%0A%20%20new%2C%20edit%3B%20%60%3FviewProposal%3D%60%20opens%20the%20modal).%20Everything%20else%20the%20SPA%20does%20not%20own%20is%20forwarded%3A%0A%20%20the%20catch-all%20route%20replaces%20the%20location%20with%20%60%2Flegacy%60%20%2B%20path%20%2B%20query%20(a%20path%20already%20under%0A%20%20%60%2Flegacy%60%20is%20left%20alone)%2C%20and%20a%20static%20route%20per%20legacy%20root%20page%20(%60app%2Flegacy-pages.ts%60%2C%20checked%0A%20%20against%20%60app%2Flegacy%2F%60%20by%20%60tests%2Funit%2Fspa-legacy-pages.test.ts%60)%20keeps%20an%20event%20slug%20from%20shadowing%0A%20%20%60%2Fsettings%60%2C%20%60%2Fadmin%60%2C%20and%20so%20on.%0A-%20Legacy%20pages%20link%20to%20the%20SPA%20with%20plain%20anchors%2C%20never%20Next&#039;s%20%60Link%60%20(%60AppLink%60%2C%20which%20does%20that%0A%20%20for%20every%20root%20path%20outside%20%60%2Flegacy%60)%3A%20Next%20has%20nothing%20to%20fetch%20there.%0A%0A-%20%60public%2Fsw.js%60%20(registered%20by%20%60main.tsx%60%20outside%20the%20dev%20server)%20caches%20the%20shell%20and%20the%0A%20%20%60%2F_spa%2Fassets%2F%60%20files.%20SPA%20navigations%20go%20to%20the%20network%20first%20and%20fall%20back%20to%20the%20cached%20shell%2C%0A%20%20so%20a%20new%20build%20shows%20as%20soon%20as%20it%20is%20reachable%3B%20%60%2Fapi%60%2C%20%60%2Flegacy%60%20and%20the%20other%20Next%20paths%20are%0A%20%20never%20touched.%20A%20page%20compares%20the%20shell&#039;s%20build%20id%20with%20%60%2Fapi%2Fv1%2Fhealth%60%20(%60app%2Freload-offer.tsx%60%3A%0A%20%20on%20load%2C%20every%205%20minutes%2C%20on%20%60online%60%20and%20when%20the%20tab%20is%20shown).%20The%20viewer%20is%20remembered%20in%0A%20%20%60localStorage%60%20so%20the%20saved%20schedule%20opens%20offline.%0A%0AThe%20files%20are%20read%20relative%20to%20the%20working%20directory%2C%20so%20the%20same%20code%20serves%20%60next%20start%60%2C%20and%20the%0ADocker%20image%2C%20which%20copies%20%60apps%2Fweb%2Fdist%60%20next%20to%20%60server.js%60.%0A%0A%23%23%20Build%20and%20run%0A%0A-%20%60make%20build%60%20and%20the%20E2E%20web%20server%20run%20%60vite%20build%20apps%2Fweb%60%20before%20%60next%20build%60%3B%20the%20Dockerfile%0A%20%20does%20the%20same.%20Next%20serves%20what%20is%20in%20%60apps%2Fweb%2Fdist%60%2C%20so%20rebuild%20the%20SPA%20after%20changing%20it%20when%0A%20%20testing%20through%20Next.%0A-%20%60make%20dev%60%20runs%20Next%20on%20%60PORT%20%2B%201%60%20and%20Vite%20on%20%60PORT%60%20(default%203000).%20Open%20the%20Vite%20port%3A%20it%0A%20%20serves%20the%20SPA%20with%20hot%20reload%20and%20proxies%20%60%2Flegacy%60%2C%20%60%2Fapi%60%2C%20%60%2Fmedia%60%20and%20the%20other%20Next%20paths%20to%0A%20%20Next.%20The%20shell%20gate%20does%20not%20apply%20in%20dev.%20A%20bare%20%60next%20dev%60%20answers%20root%20pages%20with%20the%20shell%0A%20%20(503%20until%20the%20SPA%20is%20built)%3A%20use%20%60%2Flegacy%2F...%60%20URLs%20with%20it%2C%20as%20the%20screenshots%20script%20does.%0A-%20E2E%20specs%20call%20%60page.goto%60%20with%20root%20paths%3B%20the%20fixture%20sends%20them%20to%20%60%2Flegacy%2F...%60%20so%20a%20click%0A%20%20never%20lands%20before%20hydration%2C%20except%20an%20event&#039;s%20own%20address%20(%60%2F%7Bslug%7D%60%2C%20any%20query%2C%20and%0A%20%20%60%2F%7Bslug%7D%2Fproposals%2F%E2%80%A6%60)%20and%20%60%2Fguests%2F%E2%80%A6%60%2C%20which%20the%20SPA%20owns%20and%20opens%20as%20it%20is.%20One%20spec%20covers%20the%0A%20%20shell&#039;s%20forward.%0A%0A%23%23%20Layout%20and%20rules%0A%0A%60apps%2Fweb%2Fsrc%2F%60%20follows%20%5Bthe%20client%20layout%5D(target-architecture%2F04-client.md%23layout)%3B%20%60app%2F%60%0A(layout%2C%20nav%20bar%2C%20shell%2C%20pages)%2C%20%60ui%2F%60%20(dialog%2C%20button%2C%20tooltip%2C%20icons%2C%20notices)%2C%0A%60features%2Fschedule%2F%60%2C%20%60replica%2F%60%2C%20%60commands%2F%60%20and%20%60queries%2F%60%20exist%20so%20far%20(the%20replica%3A%20store%2C%0A%60apply%60%20from%20%60packages%2Fcontracts%2Fsrc%2Ffeed-apply.ts%60%2C%20feed%20client%2C%20sync%20state%2C%20a%20server%20clock%20offset%0Aand%20IndexedDB%20persistence%20keyed%20by%20event%20and%20viewer%2C%20opened%20as%20%60stale%60).%20dependency-cruiser%20enforces%0Athat%20the%20package%20imports%20%60packages%2Fdomain%60%2C%20%60packages%2Fcontracts%60%20and%20%60packages%2Fapi-client%60%20only%0A(never%20%60app%2F%60%2C%20%60server%2F%60%2C%20%60utils%2F%60%20or%20%60next%60)%2C%20that%20nothing%20imports%20it%2C%20that%20%60features%2F%60%20never%0Aimports%20%60api-client%60%2C%20and%20that%20it%20declares%20what%20it%20imports.%20See%0A%5BArchitecture%20rules%5D(architecture-rules.md).%0A%0A%23%23%20The%20viewer%20and%20the%20user%20picker%0A%0AWho%20the%20browser%20acts%20as%20comes%20from%20%60GET%20%2Fapi%2Fv1%2Fme%2Fidentity%60%20(%60ViewerProvider%60%2C%20%60app%2Fviewer.tsx%60)%3A%0A%60guestId%60%20is%20%60undefined%60%20until%20the%20server%20answers%2C%20then%20a%20guest%20id%20or%20%60null%60.%20The%20replica%20and%20the%0Acommand%20runner%20are%20opened%20for%20that%20guest%2C%20never%20for%20one%20read%20from%20a%20persisted%20copy.%20%60choose%60%20and%0A%60signOut%60%20call%20%60PUT%60%2F%60DELETE%60%20on%20the%20same%20path.%20A%20protected%20name%20answers%20%60guest.protected%60%20and%0A%60UserMenu%60%20sends%20the%20user%20to%20the%20legacy%20login%2C%20%60%2Flegacy%2Fauth%2Flogin%3Fguest%3D%3Cid%3E%60%3B%20a%20successful%20login%0Alands%20on%20%60%2Flegacy%60.%20The%20picker%20lists%20the%20guests%20it%20is%20given%3A%20the%20event%20snapshot&#039;s%20%60guests%60%20(members%0Aand%20hosts)%20on%20an%20event%20page%2C%20the%20attendee%20directory%20(%60GET%20%2Fattendees%60%2C%20everyone)%20on%20%60%2Fguests%60.%0ASign-out%20and%20a%20switch%20between%20names%20clear%20the%20device&#039;s%20persisted%20replicas%20(%60persistence.clear()%60)%3B%20a%0Achange%20of%20%60guestId%60%20also%20closes%20the%20feed%20and%20reopens%20the%20replica%2C%20the%20command%20runner%20and%20the%20queries%0A(%60useScheduleSession%60%20does%3A%20the%20viewer%20is%20part%20of%20its%20effect%20key).%20The%20provider%20asks%20again%20every%205%20s%0Awhile%20the%20first%20identity%20fetch%20fails.%20%60commands%2Fkeys.ts%60%20holds%20the%20%60newKey%60%20the%20runner%20needs.%0A%0A%23%23%20Theme%2C%20footer%20and%20dev%20clock%0A%0A%60app%2Ftheme.tsx%60%20keeps%20the%20ADR%200005%20%60sb-theme%60%20cookie%20(read%20at%20start%2C%20written%20with%20the%20%60light%60%2F%60dark%60%0Aclass%20on%20%60%3Chtml%3E%60%3B%20%60index.html%60&#039;s%20inline%20script%20applies%20it%20before%20first%20paint%2C%20as%20the%20Next%20layout%0Adoes).%20The%20footer&#039;s%20version%20and%20build%20come%20from%20%60GET%20%2Fapi%2Fv1%2Fhealth%60%20(%60useHealth%60)%3B%20for%20the%20admin%2C%0A%60GET%20%2Fapi%2Fv1%2Fupdates%60%20(%60useUpdateStatus%60)%20adds%20a%20red%20dot%20and%20the%20latest%20release%3B%20its%20release%20notes%0Aare%20%60packages%2Fdomain%60&#039;s.%20The%20dev%20clock%20toolbar%20needs%20%60devTools%60%20from%20the%20same%20endpoint%0A(%60SB_ENABLE_DEV_TOOLS%60)%20and%20%60%3Fdev%3D1%60%3B%20it%20writes%20the%20%60time-override%60%20cookie%20and%20calls%20%60onChange%60%2C%0Awhich%20the%20shell%20makes%20reload%20the%20app%20so%20the%20replica%20is%20read%20under%20the%20new%20time.%20The%20legacy%20toolbar&#039;s%0A%22Send%20due%20reminders%22%20button%20has%20no%20SPA%20counterpart.%0A%0A%23%23%20Sync%20indicator%2C%20error%20boundary%20and%20the%20shell%0A%0A%60SyncIndicator%60%20shows%20the%20replica&#039;s%20link%20state%20(%60useSyncState%60%3A%20live%2C%20reconnecting%20after%20a%20short%0Agrace%2C%20stale)%20and%20re-renders%20at%20the%20instant%20it%20next%20changes.%20%60ErrorBoundary%60%20keeps%20the%20nav%20and%0Afooter%20when%20one%20screen%20crashes%20(try%20again%2C%20reload%2C%20or%20open%20%60%2Flegacy%60).%20%60Shell%60%20(%60app%2Fshell.tsx%60)%0Acomposes%20theme%2C%20viewer%2C%20layout%2C%20nav%2C%20user%20menu%2C%20footer%2C%20boundary%20and%20dev%20clock%20from%20props%20(events%2C%0Athe%20picker&#039;s%20guests%2C%20location).%20%60ShellProviders%60%20(theme%20and%20viewer)%20and%20%60ShellFrame%60%20are%20also%0Aexported%2C%20for%20a%20screen%20that%20needs%20the%20viewer%20before%20it%20can%20say%20what%20the%20frame%20shows.%20The%20schedule%0Apage%20mounts%20it.%0A%0A%23%23%20The%20schedule%0A%0A%60src%2Ffeatures%2Fschedule%2F%60%20holds%20the%20schedule%20screens%3B%20%60ScheduleScreen%60%20is%20the%20entry%3A%20a%20snapshot%2C%20the%0Aserver&#039;s%20%60now%60%2C%20%60links%60%2C%20the%20page&#039;s%20search%20params%20(%2B%20a%20setter)%20and%20slots%20for%20the%20sync%20indicator%20and%0Afooter.%20The%20view%20(%60view%3Dagenda%60)%2C%20filter%20chips%20(%60filter%3D%60)%20and%20narrowed%20rooms%20(%60loc%3D%60)%20live%20in%20the%0Aparams%3B%20the%20search%20text%20and%20unfolded%20days%20are%20local.%20Everything%20is%20drawn%20from%20the%20replica%3A%20sessions%2C%0Arooms%20and%20RSVPs%20from%20the%20snapshot%2C%20the%20viewer&#039;s%20own%201-on-1s%20from%20%60snapshot.me.meetings%60%0A(%60meetingViewsFrom%60).%20Clash%20lines%20rest%20on%20other%20guests&#039;%20RSVPs%2C%20which%20the%20replica%20lacks%3A%0A%60queries%2Fmeeting-clashes.ts%60%20fetches%20them%20from%20%60GET%20%2Fmeetings%60%20(debounced%2C%20after%20any%20change%20in%0A%60store.meetingsRevision()%60)%20and%20%60withClashes%60%20merges%20them%20in.%20Times%20use%20the%20event&#039;s%20zone%2C%20never%20the%0Aambient%20one%3B%20the%20now%20line%20follows%20%60store.serverNow()%60%20(%60useServerNow%60).%0A%0AThe%20pure%20parts%20(%60grid-layout%60%2C%20%60column%60%2C%20%60meeting-column%60%2C%20%60agenda%60%2C%20%60fold%60%2C%20%60filters%60%2C%20%60search%60%2C%0A%60meeting-rules%60%2C%20%60meeting-clash-text%60)%20are%20the%20schedule&#039;s%20own%3B%20the%20legacy%20copies%20went%20with%20the%20Next%0Aschedule.%20%60model.ts%60%20has%20the%20new%20pure%20rules%20(narrowing%20by%20room%2C%20matching%2C%20day%20folds).%20%60links.ts%60%20is%0Athe%20one%20place%20that%20decides%20where%20a%20session%2C%20a%201-on-1%2C%20add-session%20or%20booking%20link%20goes%3A%20a%20session%0Aand%20a%201-on-1%20(%60%3FviewMeeting%3D%60%2C%20%60%3FbookMeeting%3D%60)%20open%20in%20the%20SPA&#039;s%20own%20modals%20over%20the%20schedule%2C%20the%0Aadd%20and%20edit%20session%20links%20go%20to%20the%20session%20form%20(%60app%2Fsessions-pages.tsx%60%2C%20%60%2F%7Bslug%7D%2Fadd-session%60%2C%0A%60%2F%7Bslug%7D%2Fedit-session%60).%20%60%2F%7Bslug%7D%2Fmeetings%60%20(%60app%2Fmeetings-page.tsx%60)%20is%20where%20a%20meeting%0Anotification%20lands%3A%20it%20hands%20the%20meeting%20to%20the%20schedule%2C%20or%20opens%20it%20read-only%20outside%20the%0Ascheduling%20phase.%0A%0A%60app%2Fschedule-page.tsx%60%20composes%20it%3A%20%60useScheduleSession%60%20(%60replica%2Fsession.ts%60%3A%20%60openReplica%60%2C%0A%60connectFeed%60%2C%20%60autosaveReplica%60%2C%20hidden-tab%20and%20back%2Fforward-cache%20handling%2C%20plus%20a%20command%20runner)%0Afor%20the%20viewer%20from%20%60useViewer()%60%2C%20the%20events%20for%20the%20nav%20(%60GET%20%2Fapi%2Fv1%2Fevents%60)%2C%20the%20snapshot&#039;s%0Aguests%20for%20the%20picker%2C%20the%20proposals%20redirect%20for%20an%20event%20not%20in%20its%20scheduling%20phase.%20A%20viewer%0Achange%20closes%20the%20feed%20and%20opens%20the%20event%20again.%0A%0A%23%23%20Tests%0A%0AUnit%20tests%20sit%20next%20to%20the%20code%20(%60*.test.ts(x)%60)%20and%20run%20in%20the%20%60web%60%20Vitest%20project%20under%20happy-dom%0Aas%20part%20of%20%60make%20test%60.%20Components%20are%20tested%20with%20%60%40testing-library%2Freact%60%20and%20%60user-event%60%0A(cleanup%20is%20registered%20in%20%60src%2Ftest-setup.ts%60)%2C%20through%20roles%20and%20names%2C%20never%20styling.%20Screens%20are%0Acovered%20by%20the%20E2E%20suite%3B%20there%20is%20no%20browser%20component%20runner.%0A%0A%23%23%20Opening%20a%20modal%20and%20closing%20it%0A%0A(anchor%3A%20MnpjIo7Y)%0A%0AThe%20session%2C%20proposal%20and%201-on-1%20modals%20are%20%60%3FviewSession%3D%60%2C%20%60%3FviewProposal%3D%60%20and%20%60%3FviewMeeting%3D%60%20on%0Athe%20page%20behind%20them.%20A%20click%20on%20a%20link%20inside%20the%20SPA%20pushes%20the%20address%2C%20so%20Back%20closes%20the%20modal%0A(%60SpaLinks%60%20arms%20this%3B%20%60app%2Fproposal-nav.ts%60%20holds%20the%20flag).%20An%20address%20opened%20directly%2C%20or%20reached%0Afrom%20a%20notification%20or%20an%20email%2C%20has%20no%20entry%20of%20ours%20to%20pop%2C%20so%20closing%20it%20removes%20the%20parameter.%0AThe%20flag%20must%20be%20taken%20when%20the%20modal%20closes%20and%20cleared%20when%20none%20is%20open%2C%20or%20a%20later%20modal%0Ainherits%20%22close%20by%20going%20back%22%20(two%20E2E%20specs%20cover%20it).%20Links%20from%20legacy%20pages%20and%20emails%20are%0Aplain%20anchors%3A%20build%20them%20with%20%60links.ts%60%20and%20%60utils%2Fnotifications.ts%60%2C%20never%20a%20second%20copy.%0A%0A%23%23%20Failure%20notices%0A%0A%60NoticeProvider%60%20(%60ui%2Fnotices.tsx%60%2C%20mounted%20in%20%60ShellProviders%60)%20shows%20failures%20as%20%60role%3D%22alert%22%60%0Aand%20confirmations%20as%20%60role%3D%22status%22%60%2C%20above%20any%20screen%2C%20so%20a%20notice%20outlives%20the%20control%20that%20raised%0Ait.%20Every%20%60Command%60%20has%20a%20%60describe%60%20(what%20it%20does%20to%20what%2C%20naming%20the%20session%20by%20title%2C%20day%2C%20time%0Aand%20room).%20The%20runner&#039;s%20%60onFailure%60%20gives%20that%2C%20the%20problem%20code%2C%20and%20whether%20the%20retries%20ran%20out%3B%0A%60failureMessage%60%20turns%20it%20into%20%22Could%20not%20%E2%80%A6%22%20(refused%2C%20with%20the%20reason)%20or%20%22might%20not%20have%20been%0Asaved%22%20(gave%20up).%20A%20notice%20can%20carry%20an%20action%3B%20the%20runner%20sets%20none%2C%20as%20a%20blind%20re-send%20would%20use%20a%0Anew%20idempotency%20key.%0A%0A%23%23%20Forms%0A%0AA%20form%20waits%20for%20the%20server%2C%20unlike%20a%20command.%20%60useFormMutation%60%20(%60commands%2F%60)%20calls%20%60awaitMutation%60%0Awith%20an%20idempotency%20key%20kept%20only%20after%20an%20unreachable%20answer%2C%20so%20pressing%20Save%20again%20after%20%22might%0Anot%20have%20been%20saved%22%20cannot%20apply%20it%20twice.%20Any%20other%20answer%2C%20a%20refusal%20included%2C%20ends%20the%20key%2C%0Abecause%20the%20server%20stores%20it%20and%20would%20refuse%20it%20with%20changed%20values.%20The%20result%20is%20one%20of%3A%20fields%0A(the%20problem&#039;s%20%60errors%60%20by%20path)%2C%20a%20%60409%60%20(%22changed%20by%20someone%20else%22)%2C%20a%20refusal%20with%20its%20reason%2C%20or%0Aunreachable.%20%60validateFields%60%20runs%20a%20zod%20schema%20per%20field%20before%20sending.%20%60ui%2Fform.tsx%60%20has%20the%0Acontrolled%20fields%20(%60TextField%60%2C%20%60TextAreaField%60%2C%20%60SelectField%60%2C%20%60DateTimeField%60%2C%20%60CheckboxField%60)%3A%0Alabel%2C%20hint%20and%20error%20are%20tied%20to%20the%20input%2C%20and%20an%20error%20is%20a%20%60role%3D%22alert%22%60.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1742,143 +1742,151 @@
                   </h1>
                 
                 <h1 id="the-web-app-appsweb" class="docmd-heading"><a href="#the-web-app-appsweb" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The web app (<code>apps/web</code>)</h1>
-<p><code>apps/web</code> is the single-page app that is replacing the Next pages one screen
-family at a time (<a href="../adr/0015-spa-alongside-next/">ADR 0015</a>). It is a workspace
-package built with Vite, React and TanStack Router, styled with Tailwind and the
-colour tokens in <code>styles/tokens.css</code> (the Next pages import the same file).
-<a href="../target-architecture/04-client/">Client design</a> describes where it is going.</p>
+<p><code>apps/web</code> is the single-page app that is replacing the Next pages one screen family at a time
+(<a href="../adr/0015-spa-alongside-next/">ADR 0015</a>). It is a workspace package built with Vite, React and
+TanStack Router, styled with Tailwind and the colour tokens in <code>styles/tokens.css</code> (the Next pages
+import the same file). <a href="../target-architecture/04-client/">Client design</a> describes where it is
+going.</p>
 <h2 id="the-web-app-appsweb-how-it-reaches-the-browser" class="docmd-heading"><a href="#the-web-app-appsweb-how-it-reaches-the-browser" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>How it reaches the browser</h2>
 <ul>
-<li><p>The Next pages live under <code>/legacy</code>. Every other root path that is not <code>/api</code>,
-<code>/media</code>, <code>/locations</code>, <code>/sw.js</code>, an icon or the manifest is a page of the SPA.</p>
+<li><p>The Next pages live under <code>/legacy</code>. Every other root path that is not <code>/api</code>, <code>/media</code>,
+<code>/locations</code>, <code>/sw.js</code>, an icon or the manifest is a page of the SPA.</p>
 </li>
-<li><p><code>proxy.ts</code> applies the site password to those paths, then rewrites them to
-<code>/api/spa/shell</code>, which reads <code>apps/web/dist/index.html</code> from disk on each
-request and answers <code>no-store</code>.</p>
+<li><p><code>proxy.ts</code> applies the site password to those paths, then rewrites them to <code>/api/spa/shell</code>, which
+reads <code>apps/web/dist/index.html</code> from disk on each request and answers <code>no-store</code>.</p>
 </li>
 <li><p>Hashed files are requested as <code>/_spa/assets/…</code>. The proxy skips them; a rewrite in
-<code>next.config.js</code> hands them to <code>/api/spa/assets/…</code>, which serves them as
-immutable and answers 404 for anything missing, never the shell.</p>
+<code>next.config.js</code> hands them to <code>/api/spa/assets/…</code>, which serves them as immutable and answers 404
+for anything missing, never the shell.</p>
 </li>
-<li><p>The router owns <code>/{slug}</code>, an event’s schedule, and <code>/{slug}/proposals/**</code> (list, quick voting, new, edit; <code>?viewProposal=</code> opens the modal). Everything else the SPA does not own is
-forwarded: the catch-all route replaces the location with <code>/legacy</code> + path + query (a path
-already under <code>/legacy</code> is left alone), and a static route per legacy root page
-(<code>app/legacy-pages.ts</code>, checked against <code>app/legacy/</code> by <code>tests/unit/spa-legacy-pages.test.ts</code>)
-keeps an event slug from shadowing <code>/settings</code>, <code>/admin</code>, and so on.</p>
+<li><p>The router owns <code>/{slug}</code>, an event’s schedule, and <code>/{slug}/proposals/**</code> (list, quick voting,
+new, edit; <code>?viewProposal=</code> opens the modal). Everything else the SPA does not own is forwarded:
+the catch-all route replaces the location with <code>/legacy</code> + path + query (a path already under
+<code>/legacy</code> is left alone), and a static route per legacy root page (<code>app/legacy-pages.ts</code>, checked
+against <code>app/legacy/</code> by <code>tests/unit/spa-legacy-pages.test.ts</code>) keeps an event slug from shadowing
+<code>/settings</code>, <code>/admin</code>, and so on.</p>
 </li>
-<li><p>Legacy pages link to the SPA with plain anchors, never Next’s <code>Link</code> (<code>AppLink</code>, which
-does that for every root path outside <code>/legacy</code>): Next has nothing to fetch there.</p>
+<li><p>Legacy pages link to the SPA with plain anchors, never Next’s <code>Link</code> (<code>AppLink</code>, which does that
+for every root path outside <code>/legacy</code>): Next has nothing to fetch there.</p>
 </li>
-<li><p><code>public/sw.js</code> (registered by <code>main.tsx</code> outside the dev server) caches the shell and the <code>/_spa/assets/</code>
-files. SPA navigations go to the network first and fall back to the cached shell, so a new build shows as
-soon as it is reachable; <code>/api</code>, <code>/legacy</code> and the other Next paths are never touched. A page compares
-the shell’s build id with <code>/api/v1/health</code> (<code>app/reload-offer.tsx</code>: on load, every 5 minutes, on <code>online</code>
-and when the tab is shown). The viewer is remembered in <code>localStorage</code> so the saved schedule opens offline.</p>
+<li><p><code>public/sw.js</code> (registered by <code>main.tsx</code> outside the dev server) caches the shell and the
+<code>/_spa/assets/</code> files. SPA navigations go to the network first and fall back to the cached shell,
+so a new build shows as soon as it is reachable; <code>/api</code>, <code>/legacy</code> and the other Next paths are
+never touched. A page compares the shell’s build id with <code>/api/v1/health</code> (<code>app/reload-offer.tsx</code>:
+on load, every 5 minutes, on <code>online</code> and when the tab is shown). The viewer is remembered in
+<code>localStorage</code> so the saved schedule opens offline.</p>
 </li>
 </ul>
-<p>The files are read relative to the working directory, so the same code serves
-<code>next start</code>, and the Docker image, which copies <code>apps/web/dist</code> next to
-<code>server.js</code>.</p>
+<p>The files are read relative to the working directory, so the same code serves <code>next start</code>, and the
+Docker image, which copies <code>apps/web/dist</code> next to <code>server.js</code>.</p>
 <h2 id="the-web-app-appsweb-build-and-run" class="docmd-heading"><a href="#the-web-app-appsweb-build-and-run" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Build and run</h2>
 <ul>
-<li><code>make build</code> and the E2E web server run <code>vite build apps/web</code> before <code>next build</code>;
-the Dockerfile does the same. Next serves what is in <code>apps/web/dist</code>, so rebuild
-the SPA after changing it when testing through Next.</li>
-<li><code>make dev</code> runs Next on <code>PORT + 1</code> and Vite on <code>PORT</code> (default 3000). Open the
-Vite port: it serves the SPA with hot reload and proxies <code>/legacy</code>, <code>/api</code>,
-<code>/media</code> and the other Next paths to Next. The shell gate does not apply in dev.
-A bare <code>next dev</code> answers root pages with the shell (503 until the SPA is built):
-use <code>/legacy/...</code> URLs with it, as the screenshots script does.</li>
-<li>E2E specs call <code>page.goto</code> with root paths; the fixture sends them to <code>/legacy/...</code> so a
-click never lands before hydration, except an event’s own address (<code>/{slug}</code>, any query, and <code>/{slug}/proposals/…</code>) and <code>/guests/…</code>,
-which the SPA owns and opens as it is. One spec covers the shell’s forward.</li>
+<li><code>make build</code> and the E2E web server run <code>vite build apps/web</code> before <code>next build</code>; the Dockerfile
+does the same. Next serves what is in <code>apps/web/dist</code>, so rebuild the SPA after changing it when
+testing through Next.</li>
+<li><code>make dev</code> runs Next on <code>PORT + 1</code> and Vite on <code>PORT</code> (default 3000). Open the Vite port: it
+serves the SPA with hot reload and proxies <code>/legacy</code>, <code>/api</code>, <code>/media</code> and the other Next paths to
+Next. The shell gate does not apply in dev. A bare <code>next dev</code> answers root pages with the shell
+(503 until the SPA is built): use <code>/legacy/...</code> URLs with it, as the screenshots script does.</li>
+<li>E2E specs call <code>page.goto</code> with root paths; the fixture sends them to <code>/legacy/...</code> so a click
+never lands before hydration, except an event’s own address (<code>/{slug}</code>, any query, and
+<code>/{slug}/proposals/…</code>) and <code>/guests/…</code>, which the SPA owns and opens as it is. One spec covers the
+shell’s forward.</li>
 </ul>
 <h2 id="the-web-app-appsweb-layout-and-rules" class="docmd-heading"><a href="#the-web-app-appsweb-layout-and-rules" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Layout and rules</h2>
-<p><code>apps/web/src/</code> follows <a href="../target-architecture/04-client/#layout">the client layout</a>;
-<code>app/</code> (layout, nav bar, shell, pages), <code>ui/</code> (dialog, button, tooltip, icons, notices), <code>features/schedule/</code>, <code>replica/</code>, <code>commands/</code> and <code>queries/</code> exist so far (the replica: store, <code>apply</code>, feed client, sync state, a server clock offset and IndexedDB persistence keyed by event and viewer, opened as <code>stale</code>). dependency-cruiser enforces that the package imports
-<code>packages/domain</code>, <code>packages/contracts</code> and <code>packages/api-client</code> only (never <code>app/</code>,
-<code>server/</code>, <code>utils/</code> or <code>next</code>), that nothing imports it, that <code>features/</code> never
+<p><code>apps/web/src/</code> follows <a href="../target-architecture/04-client/#layout">the client layout</a>; <code>app/</code>
+(layout, nav bar, shell, pages), <code>ui/</code> (dialog, button, tooltip, icons, notices),
+<code>features/schedule/</code>, <code>replica/</code>, <code>commands/</code> and <code>queries/</code> exist so far (the replica: store,
+<code>apply</code> from <code>packages/contracts/src/feed-apply.ts</code>, feed client, sync state, a server clock offset
+and IndexedDB persistence keyed by event and viewer, opened as <code>stale</code>). dependency-cruiser enforces
+that the package imports <code>packages/domain</code>, <code>packages/contracts</code> and <code>packages/api-client</code> only
+(never <code>app/</code>, <code>server/</code>, <code>utils/</code> or <code>next</code>), that nothing imports it, that <code>features/</code> never
 imports <code>api-client</code>, and that it declares what it imports. See
 <a href="../architecture-rules/">Architecture rules</a>.</p>
 <h2 id="the-web-app-appsweb-the-viewer-and-the-user-picker" class="docmd-heading"><a href="#the-web-app-appsweb-the-viewer-and-the-user-picker" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The viewer and the user picker</h2>
-<p>Who the browser acts as comes from <code>GET /api/v1/me/identity</code> (<code>ViewerProvider</code>,
-<code>app/viewer.tsx</code>): <code>guestId</code> is <code>undefined</code> until the server answers, then a guest id or
-<code>null</code>. The replica and the command runner are opened for that guest, never for one read
-from a persisted copy. <code>choose</code> and <code>signOut</code> call <code>PUT</code>/<code>DELETE</code> on the same path. A
-protected name answers <code>guest.protected</code> and <code>UserMenu</code> sends the user to the legacy
-login, <code>/legacy/auth/login?guest=&lt;id&gt;</code>; a successful login lands on <code>/legacy</code>. The picker
-lists the guests it is given: the event snapshot’s <code>guests</code> (members and hosts) on an event
-page, the attendee directory (<code>GET /attendees</code>, everyone) on <code>/guests</code>.
-Sign-out and a switch between names clear the device’s persisted replicas
-(<code>persistence.clear()</code>); a change of <code>guestId</code> also closes the feed and reopens the
-replica, the command runner and the queries (<code>useScheduleSession</code> does: the viewer is
-part of its effect key). The provider asks
-again every 5 s while the first identity fetch fails. <code>commands/keys.ts</code> holds the
-<code>newKey</code> the runner needs.</p>
+<p>Who the browser acts as comes from <code>GET /api/v1/me/identity</code> (<code>ViewerProvider</code>, <code>app/viewer.tsx</code>):
+<code>guestId</code> is <code>undefined</code> until the server answers, then a guest id or <code>null</code>. The replica and the
+command runner are opened for that guest, never for one read from a persisted copy. <code>choose</code> and
+<code>signOut</code> call <code>PUT</code>/<code>DELETE</code> on the same path. A protected name answers <code>guest.protected</code> and
+<code>UserMenu</code> sends the user to the legacy login, <code>/legacy/auth/login?guest=&lt;id&gt;</code>; a successful login
+lands on <code>/legacy</code>. The picker lists the guests it is given: the event snapshot’s <code>guests</code> (members
+and hosts) on an event page, the attendee directory (<code>GET /attendees</code>, everyone) on <code>/guests</code>.
+Sign-out and a switch between names clear the device’s persisted replicas (<code>persistence.clear()</code>); a
+change of <code>guestId</code> also closes the feed and reopens the replica, the command runner and the queries
+(<code>useScheduleSession</code> does: the viewer is part of its effect key). The provider asks again every 5 s
+while the first identity fetch fails. <code>commands/keys.ts</code> holds the <code>newKey</code> the runner needs.</p>
 <h2 id="the-web-app-appsweb-theme-footer-and-dev-clock" class="docmd-heading"><a href="#the-web-app-appsweb-theme-footer-and-dev-clock" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Theme, footer and dev clock</h2>
-<p><code>app/theme.tsx</code> keeps the ADR 0005 <code>sb-theme</code> cookie (read at start, written with the
-<code>light</code>/<code>dark</code> class on <code>&lt;html&gt;</code>; <code>index.html</code>’s inline script applies it before first
-paint, as the Next layout does). The footer’s version and build come from
-<code>GET /api/v1/health</code> (<code>useHealth</code>); for the admin, <code>GET /api/v1/updates</code>
-(<code>useUpdateStatus</code>) adds a red dot and the latest release; its release notes are
-<code>packages/domain</code>’s. The dev
-clock toolbar needs <code>devTools</code> from the same endpoint (<code>SB_ENABLE_DEV_TOOLS</code>) and <code>?dev=1</code>;
-it writes the <code>time-override</code> cookie and calls <code>onChange</code>, which the shell makes reload the
-app so the replica is read under the new time. The legacy toolbar’s “Send due reminders”
-button has no SPA counterpart.</p>
+<p><code>app/theme.tsx</code> keeps the ADR 0005 <code>sb-theme</code> cookie (read at start, written with the <code>light</code>/<code>dark</code>
+class on <code>&lt;html&gt;</code>; <code>index.html</code>’s inline script applies it before first paint, as the Next layout
+does). The footer’s version and build come from <code>GET /api/v1/health</code> (<code>useHealth</code>); for the admin,
+<code>GET /api/v1/updates</code> (<code>useUpdateStatus</code>) adds a red dot and the latest release; its release notes
+are <code>packages/domain</code>’s. The dev clock toolbar needs <code>devTools</code> from the same endpoint
+(<code>SB_ENABLE_DEV_TOOLS</code>) and <code>?dev=1</code>; it writes the <code>time-override</code> cookie and calls <code>onChange</code>,
+which the shell makes reload the app so the replica is read under the new time. The legacy toolbar’s
+“Send due reminders” button has no SPA counterpart.</p>
 <h2 id="the-web-app-appsweb-sync-indicator-error-boundary-and-the-shell" class="docmd-heading"><a href="#the-web-app-appsweb-sync-indicator-error-boundary-and-the-shell" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Sync indicator, error boundary and the shell</h2>
-<p><code>SyncIndicator</code> shows the replica’s link state (<code>useSyncState</code>: live, reconnecting after a
-short grace, stale) and re-renders at the instant it next changes. <code>ErrorBoundary</code> keeps
-the nav and footer when one screen crashes (try again, reload, or open <code>/legacy</code>). <code>Shell</code>
-(<code>app/shell.tsx</code>) composes theme, viewer, layout, nav, user menu, footer, boundary and dev
-clock from props (events, the picker’s guests, location). <code>ShellProviders</code> (theme and viewer)
-and <code>ShellFrame</code> are also exported, for a screen that needs the viewer before it can say what
-the frame shows. The schedule page mounts it.</p>
+<p><code>SyncIndicator</code> shows the replica’s link state (<code>useSyncState</code>: live, reconnecting after a short
+grace, stale) and re-renders at the instant it next changes. <code>ErrorBoundary</code> keeps the nav and
+footer when one screen crashes (try again, reload, or open <code>/legacy</code>). <code>Shell</code> (<code>app/shell.tsx</code>)
+composes theme, viewer, layout, nav, user menu, footer, boundary and dev clock from props (events,
+the picker’s guests, location). <code>ShellProviders</code> (theme and viewer) and <code>ShellFrame</code> are also
+exported, for a screen that needs the viewer before it can say what the frame shows. The schedule
+page mounts it.</p>
 <h2 id="the-web-app-appsweb-the-schedule" class="docmd-heading"><a href="#the-web-app-appsweb-the-schedule" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The schedule</h2>
 <p><code>src/features/schedule/</code> holds the schedule screens; <code>ScheduleScreen</code> is the entry: a snapshot, the
-server’s <code>now</code>, <code>links</code>, the page’s search params (+ a setter) and slots for the sync indicator
-and footer. The view (<code>view=agenda</code>), filter chips (<code>filter=</code>) and narrowed rooms (<code>loc=</code>) live
-in the params; the search text and unfolded days are local. Everything is drawn from the
-replica: sessions, rooms and RSVPs from the snapshot, the viewer’s own 1-on-1s from
-<code>snapshot.me.meetings</code> (<code>meetingViewsFrom</code>). Clash lines rest on other guests’ RSVPs, which the
-replica lacks: <code>queries/meeting-clashes.ts</code> fetches them from <code>GET /meetings</code> (debounced, after
-any change in <code>store.meetingsRevision()</code>) and <code>withClashes</code> merges them in. Times use the event’s zone, never the ambient one; the now line follows
-<code>store.serverNow()</code> (<code>useServerNow</code>).</p>
-<p>The pure parts (<code>grid-layout</code>, <code>column</code>, <code>meeting-column</code>, <code>agenda</code>, <code>fold</code>, <code>filters</code>,
-<code>search</code>, <code>meeting-rules</code>, <code>meeting-clash-text</code>) are copies of <code>utils/</code> with their tests: the
-legacy copies stay until the Next schedule goes, since it still renders them. <code>model.ts</code> has the new pure rules (narrowing by room, matching, day folds). <code>links.ts</code>
-is the one place that decides where a session, a 1-on-1, add-session or booking link
-goes: a session and a 1-on-1 (<code>?viewMeeting=</code>, <code>?bookMeeting=</code>) open in the SPA’s own modals
-over the schedule, the add and edit session links go to <code>/legacy/...</code>. <code>/{slug}/meetings</code>
-(<code>app/meetings-page.tsx</code>) is where a meeting notification lands: it hands the meeting to the
-schedule, or opens it read-only outside the scheduling phase.</p>
+server’s <code>now</code>, <code>links</code>, the page’s search params (+ a setter) and slots for the sync indicator and
+footer. The view (<code>view=agenda</code>), filter chips (<code>filter=</code>) and narrowed rooms (<code>loc=</code>) live in the
+params; the search text and unfolded days are local. Everything is drawn from the replica: sessions,
+rooms and RSVPs from the snapshot, the viewer’s own 1-on-1s from <code>snapshot.me.meetings</code>
+(<code>meetingViewsFrom</code>). Clash lines rest on other guests’ RSVPs, which the replica lacks:
+<code>queries/meeting-clashes.ts</code> fetches them from <code>GET /meetings</code> (debounced, after any change in
+<code>store.meetingsRevision()</code>) and <code>withClashes</code> merges them in. Times use the event’s zone, never the
+ambient one; the now line follows <code>store.serverNow()</code> (<code>useServerNow</code>).</p>
+<p>The pure parts (<code>grid-layout</code>, <code>column</code>, <code>meeting-column</code>, <code>agenda</code>, <code>fold</code>, <code>filters</code>, <code>search</code>,
+<code>meeting-rules</code>, <code>meeting-clash-text</code>) are the schedule’s own; the legacy copies went with the Next
+schedule. <code>model.ts</code> has the new pure rules (narrowing by room, matching, day folds). <code>links.ts</code> is
+the one place that decides where a session, a 1-on-1, add-session or booking link goes: a session
+and a 1-on-1 (<code>?viewMeeting=</code>, <code>?bookMeeting=</code>) open in the SPA’s own modals over the schedule, the
+add and edit session links go to the session form (<code>app/sessions-pages.tsx</code>, <code>/{slug}/add-session</code>,
+<code>/{slug}/edit-session</code>). <code>/{slug}/meetings</code> (<code>app/meetings-page.tsx</code>) is where a meeting
+notification lands: it hands the meeting to the schedule, or opens it read-only outside the
+scheduling phase.</p>
 <p><code>app/schedule-page.tsx</code> composes it: <code>useScheduleSession</code> (<code>replica/session.ts</code>: <code>openReplica</code>,
-<code>connectFeed</code>, <code>autosaveReplica</code>, hidden-tab and back/forward-cache handling, plus a command
-runner) for the viewer from <code>useViewer()</code>, the events for the nav (<code>GET /api/v1/events</code>), the
-snapshot’s guests for the picker, the proposals redirect for an event not in its scheduling
-phase. A viewer change closes the feed and opens the event again.</p>
+<code>connectFeed</code>, <code>autosaveReplica</code>, hidden-tab and back/forward-cache handling, plus a command runner)
+for the viewer from <code>useViewer()</code>, the events for the nav (<code>GET /api/v1/events</code>), the snapshot’s
+guests for the picker, the proposals redirect for an event not in its scheduling phase. A viewer
+change closes the feed and opens the event again.</p>
 <h2 id="the-web-app-appsweb-tests" class="docmd-heading"><a href="#the-web-app-appsweb-tests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Tests</h2>
-<p>Unit tests sit next to the code (<code>*.test.ts(x)</code>) and run in the <code>web</code> Vitest project
-under happy-dom as part of <code>make test</code>. Components are tested with <code>@testing-library/react</code> and <code>user-event</code> (cleanup is
-registered in <code>src/test-setup.ts</code>), through roles and names, never styling. Screens
-are covered by the E2E suite; there is no browser component runner.</p>
+<p>Unit tests sit next to the code (<code>*.test.ts(x)</code>) and run in the <code>web</code> Vitest project under happy-dom
+as part of <code>make test</code>. Components are tested with <code>@testing-library/react</code> and <code>user-event</code>
+(cleanup is registered in <code>src/test-setup.ts</code>), through roles and names, never styling. Screens are
+covered by the E2E suite; there is no browser component runner.</p>
+<h2 id="the-web-app-appsweb-opening-a-modal-and-closing-it" class="docmd-heading"><a href="#the-web-app-appsweb-opening-a-modal-and-closing-it" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Opening a modal and closing it</h2>
+<p>(anchor: MnpjIo7Y)</p>
+<p>The session, proposal and 1-on-1 modals are <code>?viewSession=</code>, <code>?viewProposal=</code> and <code>?viewMeeting=</code> on
+the page behind them. A click on a link inside the SPA pushes the address, so Back closes the modal
+(<code>SpaLinks</code> arms this; <code>app/proposal-nav.ts</code> holds the flag). An address opened directly, or reached
+from a notification or an email, has no entry of ours to pop, so closing it removes the parameter.
+The flag must be taken when the modal closes and cleared when none is open, or a later modal
+inherits “close by going back” (two E2E specs cover it). Links from legacy pages and emails are
+plain anchors: build them with <code>links.ts</code> and <code>utils/notifications.ts</code>, never a second copy.</p>
 <h2 id="the-web-app-appsweb-failure-notices" class="docmd-heading"><a href="#the-web-app-appsweb-failure-notices" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Failure notices</h2>
 <p><code>NoticeProvider</code> (<code>ui/notices.tsx</code>, mounted in <code>ShellProviders</code>) shows failures as <code>role=&quot;alert&quot;</code>
-and confirmations as <code>role=&quot;status&quot;</code>, above any screen, so a notice outlives the control that
-raised it. Every <code>Command</code> has a <code>describe</code> (what it does to what, naming the session by title,
-day, time and room). The runner’s <code>onFailure</code> gives that, the problem code, and whether the
-retries ran out; <code>failureMessage</code> turns it into “Could not …” (refused, with the reason) or “might
-not have been saved” (gave up). A notice can carry an action; the runner sets none, as a blind
-re-send would use a new idempotency key.</p>
+and confirmations as <code>role=&quot;status&quot;</code>, above any screen, so a notice outlives the control that raised
+it. Every <code>Command</code> has a <code>describe</code> (what it does to what, naming the session by title, day, time
+and room). The runner’s <code>onFailure</code> gives that, the problem code, and whether the retries ran out;
+<code>failureMessage</code> turns it into “Could not …” (refused, with the reason) or “might not have been
+saved” (gave up). A notice can carry an action; the runner sets none, as a blind re-send would use a
+new idempotency key.</p>
 <h2 id="the-web-app-appsweb-forms" class="docmd-heading"><a href="#the-web-app-appsweb-forms" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Forms</h2>
-<p>A form waits for the server, unlike a command. <code>useFormMutation</code> (<code>commands/</code>) calls
-<code>awaitMutation</code> with an idempotency key kept only after an unreachable answer, so pressing Save again
-after “might not have been saved” cannot apply it twice. Any other answer, a refusal included,
-ends the key, because the server stores it and would refuse it with changed values. The result is one of: fields (the
-problem’s <code>errors</code> by path), a <code>409</code> (“changed by someone else”), a refusal with its reason, or
-unreachable. <code>validateFields</code> runs a zod schema per field before sending. <code>ui/form.tsx</code> has
-the controlled fields (<code>TextField</code>, <code>TextAreaField</code>, <code>SelectField</code>, <code>DateTimeField</code>,
-<code>CheckboxField</code>): label, hint and error are tied to the input, and an error is a <code>role=&quot;alert&quot;</code>.</p>
+<p>A form waits for the server, unlike a command. <code>useFormMutation</code> (<code>commands/</code>) calls <code>awaitMutation</code>
+with an idempotency key kept only after an unreachable answer, so pressing Save again after “might
+not have been saved” cannot apply it twice. Any other answer, a refusal included, ends the key,
+because the server stores it and would refuse it with changed values. The result is one of: fields
+(the problem’s <code>errors</code> by path), a <code>409</code> (“changed by someone else”), a refusal with its reason, or
+unreachable. <code>validateFields</code> runs a zod schema per field before sending. <code>ui/form.tsx</code> has the
+controlled fields (<code>TextField</code>, <code>TextAreaField</code>, <code>SelectField</code>, <code>DateTimeField</code>, <code>CheckboxField</code>):
+label, hint and error are tied to the input, and an error is a <code>role=&quot;alert&quot;</code>.</p>
 
                 
                   <div class="page-navigation">
@@ -1998,6 +2006,10 @@ the controlled fields (<code>TextField</code>, <code>TextAreaField</code>, <code
         </li>
       
         <li class="toc-item toc-level-2">
+          <a href="#the-web-app-appsweb-opening-a-modal-and-closing-it" class="toc-link">Opening a modal and closing it</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
           <a href="#the-web-app-appsweb-failure-notices" class="toc-link">Failure notices</a>
         </li>
       
@@ -2016,17 +2028,62 @@ the controlled fields (<code>TextField</code>, <code>TextAreaField</code>, <code
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1793214683000">
+                <span class="git-last-updated" data-timestamp="1793257821000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1793214683000"></span>
+                  <span class="git-time" data-timestamp="1793257821000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="refactor: retire the Next schedule">refactor: retire the Next schedule</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793257821000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat(web): session forms are SPA pages">feat(web): session forms are SPA pages</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793257392000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -2058,51 +2115,6 @@ the controlled fields (<code>TextField</code>, <code>TextAreaField</code>, <code
                           </div>
                         </li>
                       
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="feat: the SPA owns the proposals screens">feat: the SPA owns the proposals screens</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1793044430000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="feat: awaited form mutations and form fields for the SPA">feat: awaited form mutations and form...</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1792946274000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="feat: failed commands tell the user what failed">feat: failed commands tell the user w...</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1792945393000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
                     </ul>
                   </div>
                   
@@ -2129,13 +2141,13 @@ the controlled fields (<code>TextField</code>, <code>TextAreaField</code>, <code
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2213,7 +2225,7 @@ the controlled fields (<code>TextField</code>, <code>TextAreaField</code>, <code
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

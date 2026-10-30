@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200016%3A%20The%20remaining%20screen%20families%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-25%0A%0A%23%23%20Context%0A%0A%5BADR%200015%5D(0015-spa-alongside-next.md)%20moved%20the%20schedule%20to%20the%20SPA%20and%20left%0Athe%20other%20screens%20in%20Next%20under%20%60%2Flegacy%60.%20This%20ADR%20settles%20how%20the%20rest%20move%3A%0Aproposals%20and%20voting%2C%20people%20and%20meetings%2C%20the%20session%20forms%2C%20settings%20and%0Anotifications%2C%20and%20admin.%20It%20also%20amends%20%5BADR%200014%5D(0014-change-feed-and-snapshot.md)%2C%20because%20proposals%20and%0Avotes%20were%20not%20in%20the%20snapshot.%0A%0A%23%23%20Decision%0A%0A1.%20**Proposals%20and%20votes%20are%20in%20the%20replica.**%20Public%20proposal%20fields%20and%0A%20%20%20hosts%20are%20in%20the%20snapshot%20and%20the%20feed.%20The%20viewer&#039;s%20own%20votes%20are%20in%0A%20%20%20%60me.votes%60%2C%20visible%20only%20to%20the%20voter.%20The%20vote%20breakdown%20stays%20an%0A%20%20%20on-demand%20query%20(%5B02%5D(..%2Ftarget-architecture%2F02-domain.md)).%0A2.%20**Failed%20commands%20name%20what%20failed**%2C%20so%20that%20the%20user%20can%20recover.%20The%20notice%20names%20the%20subject%3A%20a%0A%20%20%20session%20by%20title%2C%20day%2C%20time%20and%20room%3B%20a%20proposal%20by%20title%3B%20a%201-on-1%20by%20the%0A%20%20%20other%20person%20and%20slot.%20It%20tells%20%22refused%22%20(a%20%604xx%60%2C%20with%20the%20reason)%20apart%0A%20%20%20from%20%22might%20not%20have%20been%20saved%22%20(retries%20given%20up).%20It%20stays%20visible%20after%0A%20%20%20the%20control%20that%20started%20it%20unmounts.%20RSVPs%20and%20comments%20first%2C%20then%20every%0A%20%20%20new%20command.%0A3.%20**The%20session%20forms%20move%20in%20this%20run**%2C%20after%20meetings.%20Then%20the%20Next%0A%20%20%20schedule%20goes.%0A4.%20**The%20sign-in%20screens%20stay%20legacy**%20(guest%20password%20login%2C%20reset%2C%20%60%2Flogin%60%2C%0A%20%20%20admin%20login)%20until%20%5Bpath%20step%206%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%0A%20%20%20replaces%20them.%20No%20API%20for%20passwords%3A%20step%206%20replaces%20identity%2C%20so%20it%20would%20be%0A%20%20%20thrown%20away.%0A5.%20**Admin%20uses%20%60queries%2F%60%20and%20awaited%20mutations**%2C%20not%20the%20replica%3A%20admin%20data%0A%20%20%20spans%20events%20and%20is%20in%20no%20snapshot.%20A%20mutation%20waits%20for%20the%20response%2C%20maps%0A%20%20%20problem%20details%20onto%20fields%2C%20shows%20%60409%60%20as%20%22changed%20by%20someone%20else%22%2C%20then%0A%20%20%20refetches.%0A6.%20**Forms**%20(proposal%2C%20profile%2C%20session%2C%20settings%2C%20admin)%20use%20the%20same%0A%20%20%20awaited%20mutation%20helper%20and%20the%20zod%20contracts%20per%20field%20(ADR%200003%2C%20%23639).%0A%20%20%20Forms%20need%20server%20validation%20per%20field%20before%20they%20close%3B%20votes%2C%20RSVPs%2C%0A%20%20%20comments%2C%20likes%20and%201-on-1%20answers%20are%20optimistic%20commands%2C%20because%20a%20toggle%0A%20%20%20needs%20an%20instant%20response.%0A7.%20**Addresses%20do%20not%20change.**%20The%20SPA%20keeps%20the%20legacy%20paths%20and%20query%0A%20%20%20params%20(%60viewProposal%60%2C%20%60viewMeeting%60%2C%20%60bookMeeting%60%2C%20%E2%80%A6)%2C%20so%20emails%2C%20push%2C%0A%20%20%20QR%20codes%20and%20bookmarks%20keep%20working.%0A%0A%23%23%23%20Amendment%20to%20ADR%200014%0A%0AThe%20snapshot%20gains%20the%20event&#039;s%20proposals%20and%20%60me.votes%60%3B%20the%20feed%20gains%0Aproposal%20and%20vote%20changes.%20A%20proposal%20is%20its%20public%20fields%20and%20hosts%20(with%0Anames)%3A%20not%20%60sessionIds%60%2C%20which%20the%20sessions&#039;%20%60proposalId%60%20give%2C%20and%20not%20the%0Atally%20or%20breakdown%2C%20which%20depend%20on%20votes%20and%20phase.%20%60proposal.changed%60%20is%20also%0Arecorded%20when%20a%20host%20joins%2C%20and%20when%20deleting%20or%20renaming%20a%20guest%20changes%20the%0Ahosts%20of%20their%20proposals%20(a%20host&#039;s%20name%20is%20not%20in%20the%20event&#039;s%20guests%20unless%0Athey%20are%20a%20member).%20The%20logged%20proposal%20carries%20no%20vote%20counts.%20Votes%20are%20%60vote.cast%60%20(a%20new%20or%20changed%0Achoice)%20and%20%60vote.withdrawn%60%3B%20both%20reach%20only%20the%20voter&#039;s%20connection.%20A%20vote%20lost%0Aby%20becoming%20a%20host%20or%20with%20its%20proposal%20is%20recorded%20as%20%60vote.withdrawn%60.%20Other%0Aviewers%20get%20no%20vote%20counts%20from%20the%20feed.%0A%0A%23%23%20Consequences%0A%0A-%20Proposal%20lists%20and%20voting%20work%20from%20the%20replica%2C%20and%20update%20live.%0A-%20The%20feed%20grows%20by%20proposal%20changes%3B%20vote%20changes%20are%20per%20viewer.%0A-%20Admin%20screens%20refetch%20after%20every%20mutation%20and%20do%20not%20update%20live.%0A-%20Two%20sets%20of%20form%20code%20(legacy%20and%20SPA)%20exist%20until%20each%20family&#039;s%20takeover.%0A%0A%23%23%20Alternatives%0A%0A-%20**Proposals%20as%20on-demand%20queries.**%20Smaller%20snapshot%2C%20but%20voting%20would%20lose%0A%20%20optimistic%20updates%20and%20live%20changes.%0A-%20**Admin%20in%20the%20replica.**%20Admin%20data%20spans%20events%3B%20a%20snapshot%20cannot%20hold%20it.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200016%3A%20The%20remaining%20screen%20families%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-25%0A%0A%23%23%20Context%0A%0A%5BADR%200015%5D(0015-spa-alongside-next.md)%20moved%20the%20schedule%20to%20the%20SPA%20and%20left%20the%20other%20screens%20in%0ANext%20under%20%60%2Flegacy%60.%20This%20ADR%20settles%20how%20the%20rest%20move%3A%20proposals%20and%20voting%2C%20people%20and%20meetings%2C%0Athe%20session%20forms%2C%20settings%20and%20notifications%2C%20and%20admin.%20It%20also%20amends%0A%5BADR%200014%5D(0014-change-feed-and-snapshot.md)%2C%20because%20proposals%20and%20votes%20were%20not%20in%20the%20snapshot.%0A%0A%23%23%20Decision%0A%0A1.%20**Proposals%20and%20votes%20are%20in%20the%20replica.**%20Public%20proposal%20fields%20and%20hosts%20are%20in%20the%20snapshot%0A%20%20%20and%20the%20feed.%20The%20viewer&#039;s%20own%20votes%20are%20in%20%60me.votes%60%2C%20visible%20only%20to%20the%20voter.%20The%20vote%0A%20%20%20breakdown%20stays%20an%20on-demand%20query%20(%5B02%5D(..%2Ftarget-architecture%2F02-domain.md)).%0A2.%20**Failed%20commands%20name%20what%20failed**%2C%20so%20that%20the%20user%20can%20recover.%20The%20notice%20names%20the%20subject%3A%0A%20%20%20a%20session%20by%20title%2C%20day%2C%20time%20and%20room%3B%20a%20proposal%20by%20title%3B%20a%201-on-1%20by%20the%20other%20person%20and%0A%20%20%20slot.%20It%20tells%20%22refused%22%20(a%20%604xx%60%2C%20with%20the%20reason)%20apart%20from%20%22might%20not%20have%20been%20saved%22%0A%20%20%20(retries%20given%20up).%20It%20stays%20visible%20after%20the%20control%20that%20started%20it%20unmounts.%20RSVPs%20and%0A%20%20%20comments%20first%2C%20then%20every%20new%20command.%0A3.%20**The%20session%20forms%20move%20in%20this%20run**%2C%20after%20meetings.%20Then%20the%20Next%20schedule%20goes.%0A4.%20**The%20sign-in%20screens%20stay%20legacy**%20(guest%20password%20login%2C%20reset%2C%20%60%2Flogin%60%2C%20admin%20login)%20until%0A%20%20%20%5Bpath%20step%206%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20replaces%20them.%20No%20API%20for%20passwords%3A%0A%20%20%20step%206%20replaces%20identity%2C%20so%20it%20would%20be%20thrown%20away.%0A5.%20**Admin%20uses%20%60queries%2F%60%20and%20awaited%20mutations**%2C%20not%20the%20replica%3A%20admin%20data%20spans%20events%20and%20is%0A%20%20%20in%20no%20snapshot.%20A%20mutation%20waits%20for%20the%20response%2C%20maps%20problem%20details%20onto%20fields%2C%20shows%20%60409%60%0A%20%20%20as%20%22changed%20by%20someone%20else%22%2C%20then%20refetches.%0A6.%20**Forms**%20(proposal%2C%20profile%2C%20session%2C%20settings%2C%20admin)%20use%20the%20same%20awaited%20mutation%20helper%20and%0A%20%20%20the%20zod%20contracts%20per%20field%20(ADR%200003%2C%20%23639).%20Forms%20need%20server%20validation%20per%20field%20before%20they%0A%20%20%20close%3B%20votes%2C%20RSVPs%2C%20comments%2C%20likes%20and%201-on-1%20answers%20are%20optimistic%20commands%2C%20because%20a%20toggle%0A%20%20%20needs%20an%20instant%20response.%0A7.%20**Addresses%20do%20not%20change.**%20The%20SPA%20keeps%20the%20legacy%20paths%20and%20query%20params%20(%60viewProposal%60%2C%0A%20%20%20%60viewMeeting%60%2C%20%60bookMeeting%60%2C%20%E2%80%A6)%2C%20so%20emails%2C%20push%2C%20QR%20codes%20and%20bookmarks%20keep%20working.%0A%0A%23%23%23%20Amendment%20to%20ADR%200014%0A%0AThe%20snapshot%20gains%20the%20event&#039;s%20proposals%20and%20%60me.votes%60%3B%20the%20feed%20gains%20proposal%20and%20vote%20changes.%20A%0Aproposal%20is%20its%20public%20fields%20and%20hosts%20(with%20names)%3A%20not%20%60sessionIds%60%2C%20which%20the%20sessions&#039;%0A%60proposalId%60%20give%2C%20and%20not%20the%20tally%20or%20breakdown%2C%20which%20depend%20on%20votes%20and%20phase.%0A%60proposal.changed%60%20is%20also%20recorded%20when%20a%20host%20joins%2C%20and%20when%20deleting%20or%20renaming%20a%20guest%20changes%0Athe%20hosts%20of%20their%20proposals%20(a%20host&#039;s%20name%20is%20not%20in%20the%20event&#039;s%20guests%20unless%20they%20are%20a%20member).%0AThe%20logged%20proposal%20carries%20no%20vote%20counts.%20Votes%20are%20%60vote.cast%60%20(a%20new%20or%20changed%20choice)%20and%0A%60vote.withdrawn%60%3B%20both%20reach%20only%20the%20voter&#039;s%20connection.%20A%20vote%20lost%20by%20becoming%20a%20host%20or%20with%20its%0Aproposal%20is%20recorded%20as%20%60vote.withdrawn%60.%20Other%20viewers%20get%20no%20vote%20counts%20from%20the%20feed.%0A%0A%23%23%20Consequences%0A%0A-%20Proposal%20lists%20and%20voting%20work%20from%20the%20replica%2C%20and%20update%20live.%0A-%20The%20feed%20grows%20by%20proposal%20changes%3B%20vote%20changes%20are%20per%20viewer.%0A-%20Admin%20screens%20refetch%20after%20every%20mutation%20and%20do%20not%20update%20live.%0A-%20Two%20sets%20of%20form%20code%20(legacy%20and%20SPA)%20exist%20until%20each%20family&#039;s%20takeover.%0A%0A%23%23%20Alternatives%0A%0A-%20**Proposals%20as%20on-demand%20queries.**%20Smaller%20snapshot%2C%20but%20voting%20would%20lose%20optimistic%20updates%20and%0A%20%20live%20changes.%0A-%20**Admin%20in%20the%20replica.**%20Admin%20data%20spans%20events%3B%20a%20snapshot%20cannot%20hold%20it.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1771,53 +1771,43 @@
 <li><strong>Date:</strong> 2026-10-25</li>
 </ul>
 <h2 id="adr-0016-the-remaining-screen-families-context" class="docmd-heading"><a href="#adr-0016-the-remaining-screen-families-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
-<p><a href="../0015-spa-alongside-next/">ADR 0015</a> moved the schedule to the SPA and left
-the other screens in Next under <code>/legacy</code>. This ADR settles how the rest move:
-proposals and voting, people and meetings, the session forms, settings and
-notifications, and admin. It also amends <a href="../0014-change-feed-and-snapshot/">ADR 0014</a>, because proposals and
-votes were not in the snapshot.</p>
+<p><a href="../0015-spa-alongside-next/">ADR 0015</a> moved the schedule to the SPA and left the other screens in
+Next under <code>/legacy</code>. This ADR settles how the rest move: proposals and voting, people and meetings,
+the session forms, settings and notifications, and admin. It also amends
+<a href="../0014-change-feed-and-snapshot/">ADR 0014</a>, because proposals and votes were not in the snapshot.</p>
 <h2 id="adr-0016-the-remaining-screen-families-decision" class="docmd-heading"><a href="#adr-0016-the-remaining-screen-families-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
 <ol>
-<li><strong>Proposals and votes are in the replica.</strong> Public proposal fields and
-hosts are in the snapshot and the feed. The viewer’s own votes are in
-<code>me.votes</code>, visible only to the voter. The vote breakdown stays an
-on-demand query (<a href="../../target-architecture/02-domain/">02</a>).</li>
-<li><strong>Failed commands name what failed</strong>, so that the user can recover. The notice names the subject: a
-session by title, day, time and room; a proposal by title; a 1-on-1 by the
-other person and slot. It tells “refused” (a <code>4xx</code>, with the reason) apart
-from “might not have been saved” (retries given up). It stays visible after
-the control that started it unmounts. RSVPs and comments first, then every
-new command.</li>
-<li><strong>The session forms move in this run</strong>, after meetings. Then the Next
-schedule goes.</li>
-<li><strong>The sign-in screens stay legacy</strong> (guest password login, reset, <code>/login</code>,
-admin login) until <a href="../../target-architecture/10-path-from-here/">path step 6</a>
-replaces them. No API for passwords: step 6 replaces identity, so it would be
-thrown away.</li>
-<li><strong>Admin uses <code>queries/</code> and awaited mutations</strong>, not the replica: admin data
-spans events and is in no snapshot. A mutation waits for the response, maps
-problem details onto fields, shows <code>409</code> as “changed by someone else”, then
-refetches.</li>
-<li><strong>Forms</strong> (proposal, profile, session, settings, admin) use the same
-awaited mutation helper and the zod contracts per field (ADR 0003, #639).
-Forms need server validation per field before they close; votes, RSVPs,
-comments, likes and 1-on-1 answers are optimistic commands, because a toggle
+<li><strong>Proposals and votes are in the replica.</strong> Public proposal fields and hosts are in the snapshot
+and the feed. The viewer’s own votes are in <code>me.votes</code>, visible only to the voter. The vote
+breakdown stays an on-demand query (<a href="../../target-architecture/02-domain/">02</a>).</li>
+<li><strong>Failed commands name what failed</strong>, so that the user can recover. The notice names the subject:
+a session by title, day, time and room; a proposal by title; a 1-on-1 by the other person and
+slot. It tells “refused” (a <code>4xx</code>, with the reason) apart from “might not have been saved”
+(retries given up). It stays visible after the control that started it unmounts. RSVPs and
+comments first, then every new command.</li>
+<li><strong>The session forms move in this run</strong>, after meetings. Then the Next schedule goes.</li>
+<li><strong>The sign-in screens stay legacy</strong> (guest password login, reset, <code>/login</code>, admin login) until
+<a href="../../target-architecture/10-path-from-here/">path step 6</a> replaces them. No API for passwords:
+step 6 replaces identity, so it would be thrown away.</li>
+<li><strong>Admin uses <code>queries/</code> and awaited mutations</strong>, not the replica: admin data spans events and is
+in no snapshot. A mutation waits for the response, maps problem details onto fields, shows <code>409</code>
+as “changed by someone else”, then refetches.</li>
+<li><strong>Forms</strong> (proposal, profile, session, settings, admin) use the same awaited mutation helper and
+the zod contracts per field (ADR 0003, #639). Forms need server validation per field before they
+close; votes, RSVPs, comments, likes and 1-on-1 answers are optimistic commands, because a toggle
 needs an instant response.</li>
-<li><strong>Addresses do not change.</strong> The SPA keeps the legacy paths and query
-params (<code>viewProposal</code>, <code>viewMeeting</code>, <code>bookMeeting</code>, …), so emails, push,
-QR codes and bookmarks keep working.</li>
+<li><strong>Addresses do not change.</strong> The SPA keeps the legacy paths and query params (<code>viewProposal</code>,
+<code>viewMeeting</code>, <code>bookMeeting</code>, …), so emails, push, QR codes and bookmarks keep working.</li>
 </ol>
 <h3 id="adr-0016-the-remaining-screen-families-decision-amendment-to-adr-0014" class="docmd-heading"><a href="#adr-0016-the-remaining-screen-families-decision-amendment-to-adr-0014" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Amendment to ADR 0014</h3>
-<p>The snapshot gains the event’s proposals and <code>me.votes</code>; the feed gains
-proposal and vote changes. A proposal is its public fields and hosts (with
-names): not <code>sessionIds</code>, which the sessions’ <code>proposalId</code> give, and not the
-tally or breakdown, which depend on votes and phase. <code>proposal.changed</code> is also
-recorded when a host joins, and when deleting or renaming a guest changes the
-hosts of their proposals (a host’s name is not in the event’s guests unless
-they are a member). The logged proposal carries no vote counts. Votes are <code>vote.cast</code> (a new or changed
-choice) and <code>vote.withdrawn</code>; both reach only the voter’s connection. A vote lost
-by becoming a host or with its proposal is recorded as <code>vote.withdrawn</code>. Other
-viewers get no vote counts from the feed.</p>
+<p>The snapshot gains the event’s proposals and <code>me.votes</code>; the feed gains proposal and vote changes. A
+proposal is its public fields and hosts (with names): not <code>sessionIds</code>, which the sessions’
+<code>proposalId</code> give, and not the tally or breakdown, which depend on votes and phase.
+<code>proposal.changed</code> is also recorded when a host joins, and when deleting or renaming a guest changes
+the hosts of their proposals (a host’s name is not in the event’s guests unless they are a member).
+The logged proposal carries no vote counts. Votes are <code>vote.cast</code> (a new or changed choice) and
+<code>vote.withdrawn</code>; both reach only the voter’s connection. A vote lost by becoming a host or with its
+proposal is recorded as <code>vote.withdrawn</code>. Other viewers get no vote counts from the feed.</p>
 <h2 id="adr-0016-the-remaining-screen-families-consequences" class="docmd-heading"><a href="#adr-0016-the-remaining-screen-families-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
 <ul>
 <li>Proposal lists and voting work from the replica, and update live.</li>
@@ -1827,8 +1817,8 @@ viewers get no vote counts from the feed.</p>
 </ul>
 <h2 id="adr-0016-the-remaining-screen-families-alternatives" class="docmd-heading"><a href="#adr-0016-the-remaining-screen-families-alternatives" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Alternatives</h2>
 <ul>
-<li><strong>Proposals as on-demand queries.</strong> Smaller snapshot, but voting would lose
-optimistic updates and live changes.</li>
+<li><strong>Proposals as on-demand queries.</strong> Smaller snapshot, but voting would lose optimistic updates and
+live changes.</li>
 <li><strong>Admin in the replica.</strong> Admin data spans events; a snapshot cannot hold it.</li>
 </ul>
 
@@ -1948,17 +1938,32 @@ optimistic updates and live changes.</li>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1792948494000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1792948494000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -2031,13 +2036,13 @@ optimistic updates and live changes.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2115,7 +2120,7 @@ optimistic updates and live changes.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

@@ -3,10 +3,10 @@ type: concept
 title: "7 · Repository, enforced rules, testing, agents"
 source: "https://developers.schellingboard.org/target-architecture/07-repo-and-rules/"
 path: /target-architecture/07-repo-and-rules/
-updated: 2026-10-29
+updated: 2026-10-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T11:22:39.421Z"
+  generated_at: "2026-10-30T20:48:13.677Z"
 ---
 # 7 · Repository, enforced rules, testing, agents
 
@@ -15,8 +15,8 @@ okf:
 ```
 schellingboard/
   packages/
-    domain/          src/<module>/{entities,policies,changes,views}.ts, src/time/, src/apply.ts
-    contracts/       src/<module>/*.ts (zod), src/feed.ts, src/snapshot.ts, openapi.json (generated, committed)
+    domain/          src/<module>/{entities,policies,changes,views}.ts, src/time/
+    contracts/       src/<module>/*.ts (zod), src/feed.ts, src/snapshot.ts, src/feed-apply.ts (the replica reducer, shared by the client and the server's sufficiency test), openapi.json (generated, committed)
     api-client/      generated; do not edit
   apps/
     server/          see 03-server.md
@@ -32,20 +32,19 @@ schellingboard/
 ```
 
 > **Today** the Next app and `server/` sit at the repository root; `apps/web` and
-> `packages/{domain,contracts,api-client}` exist as drawn. There is no `apps/server`,
-> `tools/` or `make new-use-case` yet. Of the rules below, these are enforced:
-> the dependency-cruiser ones (modules through `module.ts`, use cases on ports, `web`
-> imports only the shared packages), `make openapi-check` (the committed `openapi.json`
-> matches the contracts) and the ESLint ban on `new Date()` outside the request
-> boundary. See [Architecture rules](../architecture-rules.md).
+> `packages/{domain,contracts,api-client}` exist as drawn. There is no `apps/server`, `tools/` or
+> `make new-use-case` yet. Of the rules below, these are enforced: the dependency-cruiser ones
+> (modules through `module.ts`, use cases on ports, `web` imports only the shared packages),
+> `make openapi-check` (the committed `openapi.json` matches the contracts) and the ESLint ban on
+> `new Date()` outside the request boundary. See [Architecture rules](../architecture-rules.md).
 
-Bun workspaces. One `tsconfig` per package with project references so `tsc -b`
-checks the graph in dependency order and a package cannot see another's internals.
+Bun workspaces. One `tsconfig` per package with project references so `tsc -b` checks the graph in
+dependency order and a package cannot see another's internals.
 
 ## Enforced rules
 
-Conventions that only live in a document decay. Each rule below names its tool and
-the message the author reads.
+Conventions that only live in a document decay. Each rule below names its tool and the message the
+author reads.
 
 | Rule                                                                       | Tool                       | Message (abridged)                                                                          |
 | -------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------- |
@@ -80,9 +79,8 @@ Exemptions are per line with a reason, as today.
 | e2e                  | The important attendee and organizer journeys by clicking through the UI with semantic locators                                                            | Playwright against the built app; the same suite against the Docker image before a release |
 | release-upgrade      | Migrate a released database forward and exercise CRUD                                                                                                      | Vitest, fixtures dumped at release time                                                    |
 
-TDD stays mandatory. Integration tests are cheap because a use case is a function
-with injected ports and an in-memory database; there is no HTTP to spin up for
-most of them.
+TDD stays mandatory. Integration tests are cheap because a use case is a function with injected
+ports and an in-memory database; there is no HTTP to spin up for most of them.
 
 ## What makes this navigable for agents (and people)
 
@@ -98,22 +96,21 @@ most of them.
   | add a screen                        | `apps/web/src/features/<name>/`, selectors from the replica                                                                  |
   | know what a word means              | `docs/dev/CONTEXT.md` (the glossary) and the module README                                                                   |
 
-- **Module READMEs** with a fixed template: purpose, aggregates and invariants,
-  use cases, changes recorded, changes reacted to, open questions. Short, and
-  checked in the same commit as a change to the module.
-- **Scaffolds** (`make new-use-case`, `make new-reaction`, `make new-feature`)
-  generate the files and the failing test, so the shape is always the same.
-- **Reason codes, not sentences**, from policies; **contracts, not prose**, for
-  the API; **golden files, not judgement**, for visibility. An agent can verify
-  each of these without understanding the whole system.
-- Small files, one export each in `application/`, names from the glossary. The
-  comment rules from `coding-guidelines.md` apply unchanged.
-- The **ADR directory** stays the place a decision is made; this design becomes
-  ADRs as parts of it are adopted.
+- **Module READMEs** with a fixed template: purpose, aggregates and invariants, use cases, changes
+  recorded, changes reacted to, open questions. Short, and checked in the same commit as a change to
+  the module.
+- **Scaffolds** (`make new-use-case`, `make new-reaction`, `make new-feature`) generate the files
+  and the failing test, so the shape is always the same.
+- **Reason codes, not sentences**, from policies; **contracts, not prose**, for the API; **golden
+  files, not judgement**, for visibility. An agent can verify each of these without understanding
+  the whole system.
+- Small files, one export each in `application/`, names from the glossary. The comment rules from
+  `coding-guidelines.md` apply unchanged.
+- The **ADR directory** stays the place a decision is made; this design becomes ADRs as parts of it
+  are adopted.
 
 ## Documentation
 
-Unchanged in principle: `docs/public/` for attendees, organizers and self-hosters,
-edited in the same commit as the change; `docs/dev/` for developers, with ADRs and
-this design; `docs/dev/CONTEXT.md` as the agent entry point (glossary, module
-map, the table above).
+Unchanged in principle: `docs/public/` for attendees, organizers and self-hosters, edited in the
+same commit as the change; `docs/dev/` for developers, with ADRs and this design;
+`docs/dev/CONTEXT.md` as the agent entry point (glossary, module map, the table above).

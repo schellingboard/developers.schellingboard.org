@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200005%3A%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-08-17%0A%0A%23%23%20Context%0A%0AThe%20app%20had%20no%20dark%20mode%3A%20no%20%60dark%3A%60%20utility%20anywhere%2C%20no%20%60color-scheme%60%0Adeclaration%2C%20and%20roughly%20a%20thousand%20hard-coded%20palette%20utilities%0A(%60text-gray-500%60%20alone%20appeared%2095%20times)%20spread%20over%20some%2078%20components.%0A%0AAttendees%20were%20reaching%20for%20browser%20extensions%20instead.%20%5B%23802%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F802)%0Areported%20that%20under%20%5BDark%20Reader%5D(https%3A%2F%2Fdarkreader.org%2F)%20a%20voted-on%20proposal%0Abecame%20indistinguishable%20from%20an%20unvoted%20one%2C%20because%20the%20only%20cue%20was%20a%20pale%0Ablue%20fill%20against%20white%20and%20the%20extension%20collapsed%20both%20to%20near-identical%0Adarks.%20That%20specific%20bug%20is%20fixed%20separately%20%E2%80%94%20the%20state%20is%20now%20also%20carried%20by%0A%60aria-pressed%60%20and%20a%20check%20mark%20%E2%80%94%20but%20it%20is%20the%20symptom%20of%20not%20owning%20the%0Aquestion.%0A%0AConstraints%20that%20shape%20the%20decision%3A%0A%0A-%20The%20site%20has%20surfaces%20that%20anonymous%20visitors%20see%3A%20the%20password%20gate%2C%20the%0A%20%20login%20screen%2C%20the%20guest%20picker%2C%20the%20kiosk%20display.%20Anything%20that%20lives%20behind%0A%20%20%22select%20your%20name%20first%22%20cannot%20be%20the%20only%20way%20to%20change%20the%20theme.%0A-%20A%20wrong%20first%20paint%20is%20worse%20than%20no%20dark%20mode.%20Whatever%20resolves%20the%20theme%0A%20%20has%20to%20run%20before%20the%20page%20is%20painted.%0A-%20The%20schedule%20renders%20location%20colours%20as%20dynamic%20Tailwind%20classes%0A%20%20(%60bg-%24%7Bcolor%7D-500%60)%2C%20kept%20alive%20by%20a%20%60%40source%20inline(...)%60%20safelist.%20Doubling%0A%20%20that%20safelist%20for%20a%20second%20theme%20is%20a%20cost%20worth%20avoiding.%0A%0A%23%23%20Decision%0A%0A%23%23%23%20The%20preference%20is%20per%20device%2C%20in%20a%20cookie%0A%0A%60sb-theme%60%20holds%20%60system%60%2C%20%60light%60%20or%20%60dark%60%2C%20and%20the%20root%20layout%20turns%20it%20into%0A%60class%3D%22light%22%60%20%2F%20%60class%3D%22dark%22%60%20on%20%60%3Chtml%3E%60%20%E2%80%94%20%60system%60%20sets%20no%20class%20at%20all.%0A%0APer%20device%2C%20rather%20than%20on%20the%20guest%20record%2C%20because%3A%0A%0A-%20%60app%2Flegacy%2F(site)%2Fsettings%2Fpage.tsx%60%20requires%20a%20selected%20guest%2C%20and%20the%20header%20menu%0A%20%20that%20reaches%20it%20only%20renders%20once%20a%20name%20is%20chosen%0A%20%20(%60header-user-select.tsx%3A62%60).%20A%20guest-record%20setting%20would%20be%20unreachable%0A%20%20from%20exactly%20the%20screens%20a%20first-time%20visitor%20sees.%0A-%20Ambient%20light%20genuinely%20differs%20per%20device.%20One%20attendee%20on%20a%20phone%20at%20night%0A%20%20and%20on%20a%20laptop%20in%20a%20bright%20room%20wants%20two%20different%20answers%3B%20a%20single%20stored%0A%20%20preference%20can%20only%20give%20one.%0A-%20Switching%20the%20current%20user%20is%20unauthenticated%2C%20so%20a%20guest-record%20preference%0A%20%20would%20be%20writable%20by%20anyone%20claiming%20that%20name.%0A%0AThe%20control%20sits%20in%20the%20footer%2C%20which%20is%20on%20every%20page%20including%20anonymous%20ones%0Aand%20already%20carries%20the%20low-salience%20global%20strip%20(version%2C%20help%2C%20report%20a%20bug).%0AIt%20is%20mirrored%20on%20the%20settings%20page%2C%20labelled%20as%20applying%20to%20this%20device%2C%20for%0Adiscoverability%20%E2%80%94%20both%20write%20the%20same%20cookie.%0A%0A%23%23%23%20%22System%22%20is%20resolved%20in%20CSS%2C%20not%20in%20an%20inline%20script%0A%0AThe%20server%20cannot%20know%20the%20OS%20preference%2C%20so%20the%20usual%20fix%20is%20a%20blocking%20inline%0Ascript%20that%20reads%20it%20and%20sets%20a%20class%20before%20paint.%20We%20avoid%20the%20script%0Aentirely%3A%20an%20explicit%20choice%20is%20a%20class%20on%20%60%3Chtml%3E%60%2C%20and%20%60system%60%20is%20the%20absence%0Aof%20one%2C%20handled%20by%20a%20media%20query%20inside%20the%20%60dark%60%20variant.%0A%0A%60%60%60css%0A%40custom-variant%20dark%20%7B%0A%20%20%26%3Awhere(.dark%2C%20.dark%20*)%20%7B%0A%20%20%20%20%40slot%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%26%3Awhere(html%3Anot(.light)%2C%20html%3Anot(.light)%20*)%20%7B%0A%20%20%20%20%20%20%40slot%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%60.dark%60%20wins%20outright%3B%20otherwise%20the%20OS%20decides%20unless%20%60light%60%20pinned%20it.%20No%0Ascript%2C%20no%20flash%2C%20and%20it%20still%20works%20with%20JavaScript%20off.%20The%20cost%20is%20that%0A%22which%20theme%20am%20I%20actually%20in%22%20is%20not%20readable%20from%20JS%20%E2%80%94%20nothing%20needs%20it.%0A%0AA%20variant%20on%20its%20own%20would%20only%20reach%20utilities%20that%20are%20written%20%60dark%3A%E2%80%A6%60%2C%20and%0Athe%20whole%20point%20of%20the%20tokens%20below%20is%20that%20components%20never%20write%20one.%20So%20the%0Atoken%20rule%20applies%20the%20variant%20to%20_itself_%3A%0A%0A%60%60%60css%0A%3Aroot%20%7B%0A%20%20color-scheme%3A%20light%3B%0A%20%20--surface%3A%20%23ffffff%3B%0A%0A%20%20%40variant%20dark%20%7B%0A%20%20%20%20color-scheme%3A%20dark%3B%0A%20%20%20%20--surface%3A%20%2316181d%3B%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0ATailwind%20expands%20that%20into%20the%20two%20branches%20above%20and%20flattens%20the%20nesting%20in%0Athe%20production%20build%2C%20so%20the%20browser%20sees%20plain%20%60%3Aroot%3Awhere(.dark%2C%20.dark%20*)%60%0Aand%20%60%40media%20(prefers-color-scheme%3A%20dark)%60%20rules.%20Writing%20the%20dark%20values%20once%2C%0Aunder%20the%20one%20definition%20of%20%22am%20I%20dark%22%2C%20is%20what%20keeps%20the%20class%20and%20the%20media%0Aquery%20from%20drifting%20apart.%20%60color-scheme%60%20rides%20along%20in%20the%20same%20block%2C%20which%0Ais%20what%20gives%20native%20controls%2C%20scrollbars%20and%20form%20autofill%20the%20right%20theme%20%E2%80%94%0Athe%20layout%20only%20has%20to%20set%20the%20class.%0A%0AReading%20the%20cookie%20makes%20the%20root%20layout%20dynamic.%20The%20site%20is%20already%0Aeffectively%20dynamic%20(a%20settings%20read%20in%20%60generateMetadata%60%2C%20%60cookies()%60%20in%0A%60(site)%2Flayout.tsx%60)%2C%20so%20this%20costs%20nothing%20in%20practice.%0A%0A%23%23%23%20Semantic%20tokens%2C%20not%20%60dark%3A%60%20on%20every%20utility%0A%0AComponents%20name%20the%20role%20a%20colour%20plays%20%E2%80%94%20%60bg-surface%60%2C%20%60text-fg-muted%60%2C%0A%60border-line%60%2C%20%60bg-brand%60%20%E2%80%94%20and%20the%20token%20rule%20in%20%60styles%2Ftokens.css%60%20is%20the%20only%0Aplace%20a%20colour%20is%20picked.%20Its%20%60%40variant%20dark%60%20block%20lists%20only%20the%20tokens%20that%0Achange%2C%20so%20what%20the%20two%20themes%20disagree%20about%20is%20readable%20at%20a%20glance%20and%20a%0Acolour%20that%20is%20meant%20to%20be%20the%20same%20in%20both%20cannot%20drift.%0A%0AAnnotating%20each%20existing%20utility%20with%20a%20%60dark%3A%60%20counterpart%20would%20have%20been%20a%0Adiff%20of%20the%20same%20size%20that%20left%20the%20problem%20permanently%20open%3A%20every%20new%0Acomponent%20would%20be%20free%20to%20forget%2C%20and%20nothing%20would%20notice.%20With%20tokens%2C%20dark%0Amode%20is%20correct%20by%20default%20for%20code%20that%20hasn&#039;t%20been%20written%20yet.%0A%0A%60%40theme%20inline%60%20is%20required%20for%20the%20swap%20to%20work%20%E2%80%94%20a%20plain%20%60%40theme%60%20bakes%20the%0Avalue%20into%20the%20generated%20utility%20at%20build%20time%2C%20so%20%60.dark%60%20could%20never%20override%0Ait.%0A%0A%23%23%23%20The%20dark%20theme%20is%20not%20an%20inversion%0A%0ATwo%20things%20change%20shape%20rather%20than%20value%3A%0A%0A-%20**Elevation.**%20Light%20mode%20raises%20a%20card%20with%20a%20shadow%3B%20on%20a%20dark%20ground%20a%0A%20%20shadow%20is%20nearly%20invisible%2C%20so%20%60--surface-raised%60%20is%20_lighter_%20than%20the%20page%0A%20%20and%20%60--surface-sunken%60%20is%20darker.%20The%20contrast%20test%20asserts%20this%20ordering.%0A-%20**Tints.**%20%60bg-rose-50%60%20and%20friends%20become%20deep%20desaturated%20grounds%0A%20%20(%60--brand-tint%3A%20%233b1220%60)%20with%20a%20light%20accent%20on%20top%2C%20not%20darkened%20pastels.%0A%0ANeither%20theme%20uses%20the%20extremes%3A%20the%20dark%20page%20is%20%60%2316181d%60%20rather%20than%20black%0Aand%20its%20text%20%60%23e8eaee%60%20rather%20than%20white%2C%20because%20pure%20white%20on%20pure%20black%0Ablooms%20at%20reading%20sizes.%0A%0A%23%23%23%20The%20contrast%20contract%20is%20a%20test%0A%0A%60tests%2Funit%2Ftheme-contrast.test.ts%60%20parses%20the%20tokens%20out%20of%20%60styles%2Ftokens.css%60%20and%0Aasserts%20a%20WCAG%20ratio%20for%20every%20(foreground%2C%20background)%20pair%20that%20occurs%20in%20the%0AUI%2C%20in%20both%20themes%20%E2%80%94%207%3A1%20for%20body%20copy%2C%204.5%3A1%20for%20secondary%20and%20semantic%20text%2C%0A3%3A1%20for%20control%20borders%20and%20state%20indicators%20per%20WCAG%202.2%201.4.11.%20It%20reads%20the%0Adark%20block%20the%20way%20the%20cascade%20does%2C%20light%20values%20with%20the%20overrides%20on%20top%2C%20so%0Aa%20token%20that%20is%20only%20wrong%20once%20it%20inherits%20is%20still%20caught.%0A%0AThis%20is%20what%20stops%20dark%20mode%20from%20quietly%20rotting%3A%20%22looks%20a%20bit%20washed%20out%22%20is%0Aotherwise%20nobody&#039;s%20bug.%20Row%20dividers%20and%20hover%20fills%20are%20deliberately%20exempt%20%E2%80%94%0Athey%20are%20neither%20text%20nor%20controls%2C%20and%20holding%20them%20to%203%3A1%20would%20mean%20drawing%0Aboxes%20everywhere.%0A%0AThe%20list%20of%20pairs%20doubles%20as%20the%20rule%20for%20which%20token%20belongs%20on%20which%20ground%3A%0A%60--fg-subtle%60%20and%20%60--line%60%20clear%20the%20three%20page%20grounds%20but%20not%20the%20filled%20ones%0A(%60--surface-muted%60%2C%20%60--surface-hover%60)%2C%20where%20%60--fg-muted%60%20and%20%60--line-strong%60%0Atake%20over.%0A%0AEnforcing%20the%20contract%20moved%20a%20few%20light-mode%20colours%2C%20which%20is%20a%20deliberate%0Aconsequence%20rather%20than%20a%20side%20effect%20(see%20below).%0A%0A%23%23%23%20Location%20colours%20are%20derived%2C%20not%20safelisted%20twice%0A%0AA%20location&#039;s%20colour%20stays%20a%20palette%20name.%20%60loc-%3Cname%3E%60%20puts%20that%20hue%20into%20a%0A%60--loc%60%20custom%20property%20and%20each%20role%20%E2%80%94%20block%20fill%2C%20dimmed%20fill%2C%20border%2C%20RSVP%0Abadge%2C%20tag%2C%20admin%20swatch%20%E2%80%94%20is%20a%20%60color-mix()%60%20of%20it%20with%20the%20current%20%60--surface%60%0Aor%20%60--fg%60%2C%20so%20one%20class%20works%20in%20both%20themes.%20The%20alternative%2C%20a%20second%20set%20of%0Asafelisted%20%60dark%3Abg-*-900%60%20classes%2C%20would%20have%20doubled%20the%20%60%40source%20inline(...)%60%0Alist%3B%20as%20it%20turns%20out%20the%2022%20%60loc-*%60%20rules%20are%20plain%20CSS%2C%20so%20the%20safelist%20is%0Agone%20entirely.%0A%0ADeriving%20also%20fixes%20a%20light-mode%20bug%20we%20would%20otherwise%20have%20carried%20over%3A%20the%0Aold%20block%20was%20%60bg-%24%7Bcolor%7D-500%60%20with%20%60text-white%60%2C%20which%20is%201.8%3A1%20on%0A%60yellow-500%60.%20Because%20the%20fill%20is%20now%20mixed%20with%20the%20page%2C%20the%20title%20is%20%60--fg%60%0Aon%20a%20tint%20of%20the%20hue%20and%20stays%20legible%20whichever%20of%20the%2022%20colours%20a%20location%0Ahas.%20%60tests%2Funit%2Flocation-colors.test.ts%60%20recomputes%20every%20hue%20in%20both%20themes%20%E2%80%94%0Amixing%20in%20oklab%20as%20the%20browser%20does%20%E2%80%94%20rather%20than%20trusting%20that.%0A%0AThe%20visible%20cost%20is%20that%20a%20scheduled%20session%20is%20a%20tinted%20card%20with%20a%20saturated%0Aborder%20instead%20of%20a%20solid%20block%20of%20colour.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Dark%20mode%20works%20before%20a%20name%20is%20selected%20and%20on%20the%20kiosk.%0A-%20Correct%20on%20first%20paint%2C%20with%20no%20inline%20script%20and%20no%20flash.%0A-%20Native%20controls%2C%20scrollbars%20and%20autofill%20follow%20the%20theme%2C%20because%0A%20%20%60color-scheme%60%20is%20set%20by%20the%20same%20rule%20as%20the%20tokens.%0A-%20New%20components%20get%20dark%20mode%20for%20free%20by%20naming%20roles.%0A-%20The%20contrast%20test%20makes%20readability%20regressions%20fail%20the%20build.%0A-%20%5B%23802%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F802)&#039;s%20class%20of%20bug%20is%20harder%20to%20reintroduce%3A%20state%20is%20no%20longer%20encoded%20as%20a%0A%20%20bare%20palette%20shade.%0A%0A%23%23%23%20Negative%0A%0A-%20A%20large%20mechanical%20migration%20touching%20most%20components%2C%20and%20one%20that%20reviewers%0A%20%20have%20to%20read%20as%20%22renames%22%20rather%20than%20logic.%0A-%20%60text-white%60%20needed%20judgment%20per%20call%20site%20%E2%80%94%20it%20splits%20into%20%60--on-brand%60%2C%0A%20%20%60--on-danger%60%2C%20%60--on-info%60%20and%20%60--fg-inverse%60%20depending%20on%20what%20it%20sits%20on.%0A-%20The%20token%20vocabulary%20is%20one%20more%20thing%20to%20learn%20before%20writing%20a%20component.%0A%0A%23%23%23%20Neutral%0A%0A-%20The%20schedule%20grid%20looks%20different%20in%20light%20mode%3A%20session%20blocks%20are%20tinted%0A%20%20rather%20than%20solid%20(see%20above).%20Locations%20are%20still%20told%20apart%20by%20hue%2C%20now%0A%20%20carried%20by%20the%20border%20as%20much%20as%20the%20fill.%0A-%20Light%20mode%20shifts%20slightly%20where%20the%20contrast%20contract%20required%20it%2C%20most%0A%20%20visibly%3A%20the%20several%20grays%20doing%20%22muted%20text%22%20collapse%20to%20three%20levels%2C%20so%0A%20%20%60text-gray-400%60%20text%20darkens%20to%20a%20readable%20%60--fg-subtle%60%20(it%20was%202.9%3A1%20on%0A%20%20white)%3B%20primary%20rose%20buttons%20deepen%20from%20rose-400%2F500%20to%20rose-600%2C%20because%0A%20%20white%20on%20rose-400%20was%202.7%3A1%3B%20and%20form-control%20borders%20darken%20to%20meet%20the%203%3A1%0A%20%20of%201.4.11.%0A-%20Emails%2C%20the%20hand-written%20landing%20page%20in%20%60www%2F%60%2C%20and%20the%20docs%20site%20are%20out%20of%0A%20%20scope.%20Mail-client%20support%20for%20%60prefers-color-scheme%60%20is%20too%20patchy%20to%20be%0A%20%20worth%20the%20divergence.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200005%3A%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-08-17%0A%0A%23%23%20Context%0A%0AThe%20app%20had%20no%20dark%20mode%3A%20no%20%60dark%3A%60%20utility%20anywhere%2C%20no%20%60color-scheme%60%20declaration%2C%20and%20roughly%20a%0Athousand%20hard-coded%20palette%20utilities%20(%60text-gray-500%60%20alone%20appeared%2095%20times)%20spread%20over%20some%2078%0Acomponents.%0A%0AAttendees%20were%20reaching%20for%20browser%20extensions%20instead.%0A%5B%23802%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F802)%20reported%20that%20under%0A%5BDark%20Reader%5D(https%3A%2F%2Fdarkreader.org%2F)%20a%20voted-on%20proposal%20became%20indistinguishable%20from%20an%20unvoted%0Aone%2C%20because%20the%20only%20cue%20was%20a%20pale%20blue%20fill%20against%20white%20and%20the%20extension%20collapsed%20both%20to%0Anear-identical%20darks.%20That%20specific%20bug%20is%20fixed%20separately%20%E2%80%94%20the%20state%20is%20now%20also%20carried%20by%0A%60aria-pressed%60%20and%20a%20check%20mark%20%E2%80%94%20but%20it%20is%20the%20symptom%20of%20not%20owning%20the%20question.%0A%0AConstraints%20that%20shape%20the%20decision%3A%0A%0A-%20The%20site%20has%20surfaces%20that%20anonymous%20visitors%20see%3A%20the%20password%20gate%2C%20the%20login%20screen%2C%20the%20guest%0A%20%20picker%2C%20the%20kiosk%20display.%20Anything%20that%20lives%20behind%20%22select%20your%20name%20first%22%20cannot%20be%20the%20only%0A%20%20way%20to%20change%20the%20theme.%0A-%20A%20wrong%20first%20paint%20is%20worse%20than%20no%20dark%20mode.%20Whatever%20resolves%20the%20theme%20has%20to%20run%20before%20the%0A%20%20page%20is%20painted.%0A-%20The%20schedule%20renders%20location%20colours%20as%20dynamic%20Tailwind%20classes%20(%60bg-%24%7Bcolor%7D-500%60)%2C%20kept%20alive%0A%20%20by%20a%20%60%40source%20inline(...)%60%20safelist.%20Doubling%20that%20safelist%20for%20a%20second%20theme%20is%20a%20cost%20worth%0A%20%20avoiding.%0A%0A%23%23%20Decision%0A%0A%23%23%23%20The%20preference%20is%20per%20device%2C%20in%20a%20cookie%0A%0A%60sb-theme%60%20holds%20%60system%60%2C%20%60light%60%20or%20%60dark%60%2C%20and%20the%20root%20layout%20turns%20it%20into%20%60class%3D%22light%22%60%20%2F%0A%60class%3D%22dark%22%60%20on%20%60%3Chtml%3E%60%20%E2%80%94%20%60system%60%20sets%20no%20class%20at%20all.%0A%0APer%20device%2C%20rather%20than%20on%20the%20guest%20record%2C%20because%3A%0A%0A-%20%60app%2Flegacy%2F(site)%2Fsettings%2Fpage.tsx%60%20requires%20a%20selected%20guest%2C%20and%20the%20header%20menu%20that%20reaches%0A%20%20it%20only%20renders%20once%20a%20name%20is%20chosen%20(%60header-user-select.tsx%3A62%60).%20A%20guest-record%20setting%20would%0A%20%20be%20unreachable%20from%20exactly%20the%20screens%20a%20first-time%20visitor%20sees.%0A-%20Ambient%20light%20genuinely%20differs%20per%20device.%20One%20attendee%20on%20a%20phone%20at%20night%20and%20on%20a%20laptop%20in%20a%0A%20%20bright%20room%20wants%20two%20different%20answers%3B%20a%20single%20stored%20preference%20can%20only%20give%20one.%0A-%20Switching%20the%20current%20user%20is%20unauthenticated%2C%20so%20a%20guest-record%20preference%20would%20be%20writable%20by%0A%20%20anyone%20claiming%20that%20name.%0A%0AThe%20control%20sits%20in%20the%20footer%2C%20which%20is%20on%20every%20page%20including%20anonymous%20ones%20and%20already%20carries%0Athe%20low-salience%20global%20strip%20(version%2C%20help%2C%20report%20a%20bug).%20It%20is%20mirrored%20on%20the%20settings%20page%2C%0Alabelled%20as%20applying%20to%20this%20device%2C%20for%20discoverability%20%E2%80%94%20both%20write%20the%20same%20cookie.%0A%0A%23%23%23%20%22System%22%20is%20resolved%20in%20CSS%2C%20not%20in%20an%20inline%20script%0A%0AThe%20server%20cannot%20know%20the%20OS%20preference%2C%20so%20the%20usual%20fix%20is%20a%20blocking%20inline%20script%20that%20reads%20it%0Aand%20sets%20a%20class%20before%20paint.%20We%20avoid%20the%20script%20entirely%3A%20an%20explicit%20choice%20is%20a%20class%20on%0A%60%3Chtml%3E%60%2C%20and%20%60system%60%20is%20the%20absence%20of%20one%2C%20handled%20by%20a%20media%20query%20inside%20the%20%60dark%60%20variant.%0A%0A%60%60%60css%0A%40custom-variant%20dark%20%7B%0A%20%20%26%3Awhere(.dark%2C%20.dark%20*)%20%7B%0A%20%20%20%20%40slot%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%26%3Awhere(html%3Anot(.light)%2C%20html%3Anot(.light)%20*)%20%7B%0A%20%20%20%20%20%20%40slot%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0A%60.dark%60%20wins%20outright%3B%20otherwise%20the%20OS%20decides%20unless%20%60light%60%20pinned%20it.%20No%20script%2C%20no%20flash%2C%20and%0Ait%20still%20works%20with%20JavaScript%20off.%20The%20cost%20is%20that%20%22which%20theme%20am%20I%20actually%20in%22%20is%20not%20readable%0Afrom%20JS%20%E2%80%94%20nothing%20needs%20it.%0A%0AA%20variant%20on%20its%20own%20would%20only%20reach%20utilities%20that%20are%20written%20%60dark%3A%E2%80%A6%60%2C%20and%20the%20whole%20point%20of%0Athe%20tokens%20below%20is%20that%20components%20never%20write%20one.%20So%20the%20token%20rule%20applies%20the%20variant%20to%0A_itself_%3A%0A%0A%60%60%60css%0A%3Aroot%20%7B%0A%20%20color-scheme%3A%20light%3B%0A%20%20--surface%3A%20%23ffffff%3B%0A%0A%20%20%40variant%20dark%20%7B%0A%20%20%20%20color-scheme%3A%20dark%3B%0A%20%20%20%20--surface%3A%20%2316181d%3B%0A%20%20%7D%0A%7D%0A%60%60%60%0A%0ATailwind%20expands%20that%20into%20the%20two%20branches%20above%20and%20flattens%20the%20nesting%20in%20the%20production%20build%2C%0Aso%20the%20browser%20sees%20plain%20%60%3Aroot%3Awhere(.dark%2C%20.dark%20*)%60%20and%20%60%40media%20(prefers-color-scheme%3A%20dark)%60%0Arules.%20Writing%20the%20dark%20values%20once%2C%20under%20the%20one%20definition%20of%20%22am%20I%20dark%22%2C%20is%20what%20keeps%20the%0Aclass%20and%20the%20media%20query%20from%20drifting%20apart.%20%60color-scheme%60%20rides%20along%20in%20the%20same%20block%2C%20which%0Ais%20what%20gives%20native%20controls%2C%20scrollbars%20and%20form%20autofill%20the%20right%20theme%20%E2%80%94%20the%20layout%20only%20has%20to%0Aset%20the%20class.%0A%0AReading%20the%20cookie%20makes%20the%20root%20layout%20dynamic.%20The%20site%20is%20already%20effectively%20dynamic%20(a%0Asettings%20read%20in%20%60generateMetadata%60%2C%20%60cookies()%60%20in%20%60(site)%2Flayout.tsx%60)%2C%20so%20this%20costs%20nothing%20in%0Apractice.%0A%0A%23%23%23%20Semantic%20tokens%2C%20not%20%60dark%3A%60%20on%20every%20utility%0A%0AComponents%20name%20the%20role%20a%20colour%20plays%20%E2%80%94%20%60bg-surface%60%2C%20%60text-fg-muted%60%2C%20%60border-line%60%2C%20%60bg-brand%60%20%E2%80%94%0Aand%20the%20token%20rule%20in%20%60styles%2Ftokens.css%60%20is%20the%20only%20place%20a%20colour%20is%20picked.%20Its%20%60%40variant%20dark%60%0Ablock%20lists%20only%20the%20tokens%20that%20change%2C%20so%20what%20the%20two%20themes%20disagree%20about%20is%20readable%20at%20a%0Aglance%20and%20a%20colour%20that%20is%20meant%20to%20be%20the%20same%20in%20both%20cannot%20drift.%0A%0AAnnotating%20each%20existing%20utility%20with%20a%20%60dark%3A%60%20counterpart%20would%20have%20been%20a%20diff%20of%20the%20same%20size%0Athat%20left%20the%20problem%20permanently%20open%3A%20every%20new%20component%20would%20be%20free%20to%20forget%2C%20and%20nothing%0Awould%20notice.%20With%20tokens%2C%20dark%20mode%20is%20correct%20by%20default%20for%20code%20that%20hasn&#039;t%20been%20written%20yet.%0A%0A%60%40theme%20inline%60%20is%20required%20for%20the%20swap%20to%20work%20%E2%80%94%20a%20plain%20%60%40theme%60%20bakes%20the%20value%20into%20the%0Agenerated%20utility%20at%20build%20time%2C%20so%20%60.dark%60%20could%20never%20override%20it.%0A%0A%23%23%23%20The%20dark%20theme%20is%20not%20an%20inversion%0A%0ATwo%20things%20change%20shape%20rather%20than%20value%3A%0A%0A-%20**Elevation.**%20Light%20mode%20raises%20a%20card%20with%20a%20shadow%3B%20on%20a%20dark%20ground%20a%20shadow%20is%20nearly%0A%20%20invisible%2C%20so%20%60--surface-raised%60%20is%20_lighter_%20than%20the%20page%20and%20%60--surface-sunken%60%20is%20darker.%20The%0A%20%20contrast%20test%20asserts%20this%20ordering.%0A-%20**Tints.**%20%60bg-rose-50%60%20and%20friends%20become%20deep%20desaturated%20grounds%20(%60--brand-tint%3A%20%233b1220%60)%20with%0A%20%20a%20light%20accent%20on%20top%2C%20not%20darkened%20pastels.%0A%0ANeither%20theme%20uses%20the%20extremes%3A%20the%20dark%20page%20is%20%60%2316181d%60%20rather%20than%20black%20and%20its%20text%20%60%23e8eaee%60%0Arather%20than%20white%2C%20because%20pure%20white%20on%20pure%20black%20blooms%20at%20reading%20sizes.%0A%0A%23%23%23%20The%20contrast%20contract%20is%20a%20test%0A%0A%60tests%2Funit%2Ftheme-contrast.test.ts%60%20parses%20the%20tokens%20out%20of%20%60styles%2Ftokens.css%60%20and%20asserts%20a%20WCAG%0Aratio%20for%20every%20(foreground%2C%20background)%20pair%20that%20occurs%20in%20the%20UI%2C%20in%20both%20themes%20%E2%80%94%207%3A1%20for%20body%0Acopy%2C%204.5%3A1%20for%20secondary%20and%20semantic%20text%2C%203%3A1%20for%20control%20borders%20and%20state%20indicators%20per%20WCAG%0A2.2%201.4.11.%20It%20reads%20the%20dark%20block%20the%20way%20the%20cascade%20does%2C%20light%20values%20with%20the%20overrides%20on%0Atop%2C%20so%20a%20token%20that%20is%20only%20wrong%20once%20it%20inherits%20is%20still%20caught.%0A%0AThis%20is%20what%20stops%20dark%20mode%20from%20quietly%20rotting%3A%20%22looks%20a%20bit%20washed%20out%22%20is%20otherwise%20nobody&#039;s%0Abug.%20Row%20dividers%20and%20hover%20fills%20are%20deliberately%20exempt%20%E2%80%94%20they%20are%20neither%20text%20nor%20controls%2C%20and%0Aholding%20them%20to%203%3A1%20would%20mean%20drawing%20boxes%20everywhere.%0A%0AThe%20list%20of%20pairs%20doubles%20as%20the%20rule%20for%20which%20token%20belongs%20on%20which%20ground%3A%20%60--fg-subtle%60%20and%0A%60--line%60%20clear%20the%20three%20page%20grounds%20but%20not%20the%20filled%20ones%20(%60--surface-muted%60%2C%0A%60--surface-hover%60)%2C%20where%20%60--fg-muted%60%20and%20%60--line-strong%60%20take%20over.%0A%0AEnforcing%20the%20contract%20moved%20a%20few%20light-mode%20colours%2C%20which%20is%20a%20deliberate%20consequence%20rather%20than%0Aa%20side%20effect%20(see%20below).%0A%0A%23%23%23%20Location%20colours%20are%20derived%2C%20not%20safelisted%20twice%0A%0AA%20location&#039;s%20colour%20stays%20a%20palette%20name.%20%60loc-%3Cname%3E%60%20puts%20that%20hue%20into%20a%20%60--loc%60%20custom%20property%0Aand%20each%20role%20%E2%80%94%20block%20fill%2C%20dimmed%20fill%2C%20border%2C%20RSVP%20badge%2C%20tag%2C%20admin%20swatch%20%E2%80%94%20is%20a%20%60color-mix()%60%0Aof%20it%20with%20the%20current%20%60--surface%60%20or%20%60--fg%60%2C%20so%20one%20class%20works%20in%20both%20themes.%20The%20alternative%2C%20a%0Asecond%20set%20of%20safelisted%20%60dark%3Abg-*-900%60%20classes%2C%20would%20have%20doubled%20the%20%60%40source%20inline(...)%60%20list%3B%0Aas%20it%20turns%20out%20the%2022%20%60loc-*%60%20rules%20are%20plain%20CSS%2C%20so%20the%20safelist%20is%20gone%20entirely.%0A%0ADeriving%20also%20fixes%20a%20light-mode%20bug%20we%20would%20otherwise%20have%20carried%20over%3A%20the%20old%20block%20was%0A%60bg-%24%7Bcolor%7D-500%60%20with%20%60text-white%60%2C%20which%20is%201.8%3A1%20on%20%60yellow-500%60.%20Because%20the%20fill%20is%20now%20mixed%0Awith%20the%20page%2C%20the%20title%20is%20%60--fg%60%20on%20a%20tint%20of%20the%20hue%20and%20stays%20legible%20whichever%20of%20the%2022%0Acolours%20a%20location%20has.%20%60tests%2Funit%2Flocation-colors.test.ts%60%20recomputes%20every%20hue%20in%20both%20themes%20%E2%80%94%0Amixing%20in%20oklab%20as%20the%20browser%20does%20%E2%80%94%20rather%20than%20trusting%20that.%0A%0AThe%20visible%20cost%20is%20that%20a%20scheduled%20session%20is%20a%20tinted%20card%20with%20a%20saturated%20border%20instead%20of%20a%0Asolid%20block%20of%20colour.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Dark%20mode%20works%20before%20a%20name%20is%20selected%20and%20on%20the%20kiosk.%0A-%20Correct%20on%20first%20paint%2C%20with%20no%20inline%20script%20and%20no%20flash.%0A-%20Native%20controls%2C%20scrollbars%20and%20autofill%20follow%20the%20theme%2C%20because%20%60color-scheme%60%20is%20set%20by%20the%0A%20%20same%20rule%20as%20the%20tokens.%0A-%20New%20components%20get%20dark%20mode%20for%20free%20by%20naming%20roles.%0A-%20The%20contrast%20test%20makes%20readability%20regressions%20fail%20the%20build.%0A-%20%5B%23802%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F802)&#039;s%20class%20of%20bug%20is%20harder%20to%0A%20%20reintroduce%3A%20state%20is%20no%20longer%20encoded%20as%20a%20bare%20palette%20shade.%0A%0A%23%23%23%20Negative%0A%0A-%20A%20large%20mechanical%20migration%20touching%20most%20components%2C%20and%20one%20that%20reviewers%20have%20to%20read%20as%0A%20%20%22renames%22%20rather%20than%20logic.%0A-%20%60text-white%60%20needed%20judgment%20per%20call%20site%20%E2%80%94%20it%20splits%20into%20%60--on-brand%60%2C%20%60--on-danger%60%2C%0A%20%20%60--on-info%60%20and%20%60--fg-inverse%60%20depending%20on%20what%20it%20sits%20on.%0A-%20The%20token%20vocabulary%20is%20one%20more%20thing%20to%20learn%20before%20writing%20a%20component.%0A%0A%23%23%23%20Neutral%0A%0A-%20The%20schedule%20grid%20looks%20different%20in%20light%20mode%3A%20session%20blocks%20are%20tinted%20rather%20than%20solid%20(see%0A%20%20above).%20Locations%20are%20still%20told%20apart%20by%20hue%2C%20now%20carried%20by%20the%20border%20as%20much%20as%20the%20fill.%0A-%20Light%20mode%20shifts%20slightly%20where%20the%20contrast%20contract%20required%20it%2C%20most%20visibly%3A%20the%20several%0A%20%20grays%20doing%20%22muted%20text%22%20collapse%20to%20three%20levels%2C%20so%20%60text-gray-400%60%20text%20darkens%20to%20a%20readable%0A%20%20%60--fg-subtle%60%20(it%20was%202.9%3A1%20on%20white)%3B%20primary%20rose%20buttons%20deepen%20from%20rose-400%2F500%20to%20rose-600%2C%0A%20%20because%20white%20on%20rose-400%20was%202.7%3A1%3B%20and%20form-control%20borders%20darken%20to%20meet%20the%203%3A1%20of%201.4.11.%0A-%20Emails%2C%20the%20hand-written%20landing%20page%20in%20%60www%2F%60%2C%20and%20the%20docs%20site%20are%20out%20of%20scope.%20Mail-client%0A%20%20support%20for%20%60prefers-color-scheme%60%20is%20too%20patchy%20to%20be%20worth%20the%20divergence.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1771,52 +1771,47 @@
 <li><strong>Date:</strong> 2026-08-17</li>
 </ul>
 <h2 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-context" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
-<p>The app had no dark mode: no <code>dark:</code> utility anywhere, no <code>color-scheme</code>
-declaration, and roughly a thousand hard-coded palette utilities
-(<code>text-gray-500</code> alone appeared 95 times) spread over some 78 components.</p>
-<p>Attendees were reaching for browser extensions instead. <a href="https://github.com/schellingboard/schellingboard/issues/802">#802</a>
-reported that under <a href="https://darkreader.org/">Dark Reader</a> a voted-on proposal
-became indistinguishable from an unvoted one, because the only cue was a pale
-blue fill against white and the extension collapsed both to near-identical
-darks. That specific bug is fixed separately — the state is now also carried by
-<code>aria-pressed</code> and a check mark — but it is the symptom of not owning the
-question.</p>
+<p>The app had no dark mode: no <code>dark:</code> utility anywhere, no <code>color-scheme</code> declaration, and roughly a
+thousand hard-coded palette utilities (<code>text-gray-500</code> alone appeared 95 times) spread over some 78
+components.</p>
+<p>Attendees were reaching for browser extensions instead.
+<a href="https://github.com/schellingboard/schellingboard/issues/802">#802</a> reported that under
+<a href="https://darkreader.org/">Dark Reader</a> a voted-on proposal became indistinguishable from an unvoted
+one, because the only cue was a pale blue fill against white and the extension collapsed both to
+near-identical darks. That specific bug is fixed separately — the state is now also carried by
+<code>aria-pressed</code> and a check mark — but it is the symptom of not owning the question.</p>
 <p>Constraints that shape the decision:</p>
 <ul>
-<li>The site has surfaces that anonymous visitors see: the password gate, the
-login screen, the guest picker, the kiosk display. Anything that lives behind
-“select your name first” cannot be the only way to change the theme.</li>
-<li>A wrong first paint is worse than no dark mode. Whatever resolves the theme
-has to run before the page is painted.</li>
-<li>The schedule renders location colours as dynamic Tailwind classes
-(<code>bg-${color}-500</code>), kept alive by a <code>@source inline(...)</code> safelist. Doubling
-that safelist for a second theme is a cost worth avoiding.</li>
+<li>The site has surfaces that anonymous visitors see: the password gate, the login screen, the guest
+picker, the kiosk display. Anything that lives behind “select your name first” cannot be the only
+way to change the theme.</li>
+<li>A wrong first paint is worse than no dark mode. Whatever resolves the theme has to run before the
+page is painted.</li>
+<li>The schedule renders location colours as dynamic Tailwind classes (<code>bg-${color}-500</code>), kept alive
+by a <code>@source inline(...)</code> safelist. Doubling that safelist for a second theme is a cost worth
+avoiding.</li>
 </ul>
 <h2 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-preference-is-per-device-in-a-cookie" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-preference-is-per-device-in-a-cookie" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The preference is per device, in a cookie</h3>
-<p><code>sb-theme</code> holds <code>system</code>, <code>light</code> or <code>dark</code>, and the root layout turns it into
-<code>class=&quot;light&quot;</code> / <code>class=&quot;dark&quot;</code> on <code>&lt;html&gt;</code> — <code>system</code> sets no class at all.</p>
+<p><code>sb-theme</code> holds <code>system</code>, <code>light</code> or <code>dark</code>, and the root layout turns it into <code>class=&quot;light&quot;</code> /
+<code>class=&quot;dark&quot;</code> on <code>&lt;html&gt;</code> — <code>system</code> sets no class at all.</p>
 <p>Per device, rather than on the guest record, because:</p>
 <ul>
-<li><code>app/legacy/(site)/settings/page.tsx</code> requires a selected guest, and the header menu
-that reaches it only renders once a name is chosen
-(<code>header-user-select.tsx:62</code>). A guest-record setting would be unreachable
-from exactly the screens a first-time visitor sees.</li>
-<li>Ambient light genuinely differs per device. One attendee on a phone at night
-and on a laptop in a bright room wants two different answers; a single stored
-preference can only give one.</li>
-<li>Switching the current user is unauthenticated, so a guest-record preference
-would be writable by anyone claiming that name.</li>
+<li><code>app/legacy/(site)/settings/page.tsx</code> requires a selected guest, and the header menu that reaches
+it only renders once a name is chosen (<code>header-user-select.tsx:62</code>). A guest-record setting would
+be unreachable from exactly the screens a first-time visitor sees.</li>
+<li>Ambient light genuinely differs per device. One attendee on a phone at night and on a laptop in a
+bright room wants two different answers; a single stored preference can only give one.</li>
+<li>Switching the current user is unauthenticated, so a guest-record preference would be writable by
+anyone claiming that name.</li>
 </ul>
-<p>The control sits in the footer, which is on every page including anonymous ones
-and already carries the low-salience global strip (version, help, report a bug).
-It is mirrored on the settings page, labelled as applying to this device, for
-discoverability — both write the same cookie.</p>
+<p>The control sits in the footer, which is on every page including anonymous ones and already carries
+the low-salience global strip (version, help, report a bug). It is mirrored on the settings page,
+labelled as applying to this device, for discoverability — both write the same cookie.</p>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-system-is-resolved-in-css-not-in-an-inline-script" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-system-is-resolved-in-css-not-in-an-inline-script" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>“System” is resolved in CSS, not in an inline script</h3>
-<p>The server cannot know the OS preference, so the usual fix is a blocking inline
-script that reads it and sets a class before paint. We avoid the script
-entirely: an explicit choice is a class on <code>&lt;html&gt;</code>, and <code>system</code> is the absence
-of one, handled by a media query inside the <code>dark</code> variant.</p>
+<p>The server cannot know the OS preference, so the usual fix is a blocking inline script that reads it
+and sets a class before paint. We avoid the script entirely: an explicit choice is a class on
+<code>&lt;html&gt;</code>, and <code>system</code> is the absence of one, handled by a media query inside the <code>dark</code> variant.</p>
 <pre class="hljs"><code class="language-css">@custom<span class="hljs-operator">-</span>variant dark {
   <span class="hljs-operator">&amp;:</span><span class="hljs-keyword">where</span>(.<span class="hljs-attr">dark</span>, .<span class="hljs-attr">dark</span> <span class="hljs-operator">*</span>) {
     @slot;
@@ -1828,12 +1823,12 @@ of one, handled by a media query inside the <code>dark</code> variant.</p>
   }
 }
 </code></pre>
-<p><code>.dark</code> wins outright; otherwise the OS decides unless <code>light</code> pinned it. No
-script, no flash, and it still works with JavaScript off. The cost is that
-“which theme am I actually in” is not readable from JS — nothing needs it.</p>
-<p>A variant on its own would only reach utilities that are written <code>dark:…</code>, and
-the whole point of the tokens below is that components never write one. So the
-token rule applies the variant to <em>itself</em>:</p>
+<p><code>.dark</code> wins outright; otherwise the OS decides unless <code>light</code> pinned it. No script, no flash, and
+it still works with JavaScript off. The cost is that “which theme am I actually in” is not readable
+from JS — nothing needs it.</p>
+<p>A variant on its own would only reach utilities that are written <code>dark:…</code>, and the whole point of
+the tokens below is that components never write one. So the token rule applies the variant to
+<em>itself</em>:</p>
 <pre class="hljs"><code class="language-css"><span class="hljs-operator">:</span>root {
   color<span class="hljs-operator">-</span>scheme<span class="hljs-operator">:</span> light;
   <span class="hljs-operator">--</span>surface<span class="hljs-operator">:</span> <span class="hljs-comment">#ffffff;</span>
@@ -1844,108 +1839,93 @@ token rule applies the variant to <em>itself</em>:</p>
   }
 }
 </code></pre>
-<p>Tailwind expands that into the two branches above and flattens the nesting in
-the production build, so the browser sees plain <code>:root:where(.dark, .dark *)</code>
-and <code>@media (prefers-color-scheme: dark)</code> rules. Writing the dark values once,
-under the one definition of “am I dark”, is what keeps the class and the media
-query from drifting apart. <code>color-scheme</code> rides along in the same block, which
-is what gives native controls, scrollbars and form autofill the right theme —
-the layout only has to set the class.</p>
-<p>Reading the cookie makes the root layout dynamic. The site is already
-effectively dynamic (a settings read in <code>generateMetadata</code>, <code>cookies()</code> in
-<code>(site)/layout.tsx</code>), so this costs nothing in practice.</p>
+<p>Tailwind expands that into the two branches above and flattens the nesting in the production build,
+so the browser sees plain <code>:root:where(.dark, .dark *)</code> and <code>@media (prefers-color-scheme: dark)</code>
+rules. Writing the dark values once, under the one definition of “am I dark”, is what keeps the
+class and the media query from drifting apart. <code>color-scheme</code> rides along in the same block, which
+is what gives native controls, scrollbars and form autofill the right theme — the layout only has to
+set the class.</p>
+<p>Reading the cookie makes the root layout dynamic. The site is already effectively dynamic (a
+settings read in <code>generateMetadata</code>, <code>cookies()</code> in <code>(site)/layout.tsx</code>), so this costs nothing in
+practice.</p>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-semantic-tokens-not-dark-on-every-utility" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-semantic-tokens-not-dark-on-every-utility" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Semantic tokens, not <code>dark:</code> on every utility</h3>
-<p>Components name the role a colour plays — <code>bg-surface</code>, <code>text-fg-muted</code>,
-<code>border-line</code>, <code>bg-brand</code> — and the token rule in <code>styles/tokens.css</code> is the only
-place a colour is picked. Its <code>@variant dark</code> block lists only the tokens that
-change, so what the two themes disagree about is readable at a glance and a
-colour that is meant to be the same in both cannot drift.</p>
-<p>Annotating each existing utility with a <code>dark:</code> counterpart would have been a
-diff of the same size that left the problem permanently open: every new
-component would be free to forget, and nothing would notice. With tokens, dark
-mode is correct by default for code that hasn’t been written yet.</p>
-<p><code>@theme inline</code> is required for the swap to work — a plain <code>@theme</code> bakes the
-value into the generated utility at build time, so <code>.dark</code> could never override
-it.</p>
+<p>Components name the role a colour plays — <code>bg-surface</code>, <code>text-fg-muted</code>, <code>border-line</code>, <code>bg-brand</code> —
+and the token rule in <code>styles/tokens.css</code> is the only place a colour is picked. Its <code>@variant dark</code>
+block lists only the tokens that change, so what the two themes disagree about is readable at a
+glance and a colour that is meant to be the same in both cannot drift.</p>
+<p>Annotating each existing utility with a <code>dark:</code> counterpart would have been a diff of the same size
+that left the problem permanently open: every new component would be free to forget, and nothing
+would notice. With tokens, dark mode is correct by default for code that hasn’t been written yet.</p>
+<p><code>@theme inline</code> is required for the swap to work — a plain <code>@theme</code> bakes the value into the
+generated utility at build time, so <code>.dark</code> could never override it.</p>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-dark-theme-is-not-an-inversion" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-dark-theme-is-not-an-inversion" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The dark theme is not an inversion</h3>
 <p>Two things change shape rather than value:</p>
 <ul>
-<li><strong>Elevation.</strong> Light mode raises a card with a shadow; on a dark ground a
-shadow is nearly invisible, so <code>--surface-raised</code> is <em>lighter</em> than the page
-and <code>--surface-sunken</code> is darker. The contrast test asserts this ordering.</li>
-<li><strong>Tints.</strong> <code>bg-rose-50</code> and friends become deep desaturated grounds
-(<code>--brand-tint: #3b1220</code>) with a light accent on top, not darkened pastels.</li>
+<li><strong>Elevation.</strong> Light mode raises a card with a shadow; on a dark ground a shadow is nearly
+invisible, so <code>--surface-raised</code> is <em>lighter</em> than the page and <code>--surface-sunken</code> is darker. The
+contrast test asserts this ordering.</li>
+<li><strong>Tints.</strong> <code>bg-rose-50</code> and friends become deep desaturated grounds (<code>--brand-tint: #3b1220</code>) with
+a light accent on top, not darkened pastels.</li>
 </ul>
-<p>Neither theme uses the extremes: the dark page is <code>#16181d</code> rather than black
-and its text <code>#e8eaee</code> rather than white, because pure white on pure black
-blooms at reading sizes.</p>
+<p>Neither theme uses the extremes: the dark page is <code>#16181d</code> rather than black and its text <code>#e8eaee</code>
+rather than white, because pure white on pure black blooms at reading sizes.</p>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-contrast-contract-is-a-test" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-the-contrast-contract-is-a-test" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>The contrast contract is a test</h3>
-<p><code>tests/unit/theme-contrast.test.ts</code> parses the tokens out of <code>styles/tokens.css</code> and
-asserts a WCAG ratio for every (foreground, background) pair that occurs in the
-UI, in both themes — 7:1 for body copy, 4.5:1 for secondary and semantic text,
-3:1 for control borders and state indicators per WCAG 2.2 1.4.11. It reads the
-dark block the way the cascade does, light values with the overrides on top, so
-a token that is only wrong once it inherits is still caught.</p>
-<p>This is what stops dark mode from quietly rotting: “looks a bit washed out” is
-otherwise nobody’s bug. Row dividers and hover fills are deliberately exempt —
-they are neither text nor controls, and holding them to 3:1 would mean drawing
-boxes everywhere.</p>
-<p>The list of pairs doubles as the rule for which token belongs on which ground:
-<code>--fg-subtle</code> and <code>--line</code> clear the three page grounds but not the filled ones
-(<code>--surface-muted</code>, <code>--surface-hover</code>), where <code>--fg-muted</code> and <code>--line-strong</code>
-take over.</p>
-<p>Enforcing the contract moved a few light-mode colours, which is a deliberate
-consequence rather than a side effect (see below).</p>
+<p><code>tests/unit/theme-contrast.test.ts</code> parses the tokens out of <code>styles/tokens.css</code> and asserts a WCAG
+ratio for every (foreground, background) pair that occurs in the UI, in both themes — 7:1 for body
+copy, 4.5:1 for secondary and semantic text, 3:1 for control borders and state indicators per WCAG
+2.2 1.4.11. It reads the dark block the way the cascade does, light values with the overrides on
+top, so a token that is only wrong once it inherits is still caught.</p>
+<p>This is what stops dark mode from quietly rotting: “looks a bit washed out” is otherwise nobody’s
+bug. Row dividers and hover fills are deliberately exempt — they are neither text nor controls, and
+holding them to 3:1 would mean drawing boxes everywhere.</p>
+<p>The list of pairs doubles as the rule for which token belongs on which ground: <code>--fg-subtle</code> and
+<code>--line</code> clear the three page grounds but not the filled ones (<code>--surface-muted</code>,
+<code>--surface-hover</code>), where <code>--fg-muted</code> and <code>--line-strong</code> take over.</p>
+<p>Enforcing the contract moved a few light-mode colours, which is a deliberate consequence rather than
+a side effect (see below).</p>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-location-colours-are-derived-not-safelisted-twice" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-decision-location-colours-are-derived-not-safelisted-twice" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Location colours are derived, not safelisted twice</h3>
-<p>A location’s colour stays a palette name. <code>loc-&lt;name&gt;</code> puts that hue into a
-<code>--loc</code> custom property and each role — block fill, dimmed fill, border, RSVP
-badge, tag, admin swatch — is a <code>color-mix()</code> of it with the current <code>--surface</code>
-or <code>--fg</code>, so one class works in both themes. The alternative, a second set of
-safelisted <code>dark:bg-*-900</code> classes, would have doubled the <code>@source inline(...)</code>
-list; as it turns out the 22 <code>loc-*</code> rules are plain CSS, so the safelist is
-gone entirely.</p>
-<p>Deriving also fixes a light-mode bug we would otherwise have carried over: the
-old block was <code>bg-${color}-500</code> with <code>text-white</code>, which is 1.8:1 on
-<code>yellow-500</code>. Because the fill is now mixed with the page, the title is <code>--fg</code>
-on a tint of the hue and stays legible whichever of the 22 colours a location
-has. <code>tests/unit/location-colors.test.ts</code> recomputes every hue in both themes —
+<p>A location’s colour stays a palette name. <code>loc-&lt;name&gt;</code> puts that hue into a <code>--loc</code> custom property
+and each role — block fill, dimmed fill, border, RSVP badge, tag, admin swatch — is a <code>color-mix()</code>
+of it with the current <code>--surface</code> or <code>--fg</code>, so one class works in both themes. The alternative, a
+second set of safelisted <code>dark:bg-*-900</code> classes, would have doubled the <code>@source inline(...)</code> list;
+as it turns out the 22 <code>loc-*</code> rules are plain CSS, so the safelist is gone entirely.</p>
+<p>Deriving also fixes a light-mode bug we would otherwise have carried over: the old block was
+<code>bg-${color}-500</code> with <code>text-white</code>, which is 1.8:1 on <code>yellow-500</code>. Because the fill is now mixed
+with the page, the title is <code>--fg</code> on a tint of the hue and stays legible whichever of the 22
+colours a location has. <code>tests/unit/location-colors.test.ts</code> recomputes every hue in both themes —
 mixing in oklab as the browser does — rather than trusting that.</p>
-<p>The visible cost is that a scheduled session is a tinted card with a saturated
-border instead of a solid block of colour.</p>
+<p>The visible cost is that a scheduled session is a tinted card with a saturated border instead of a
+solid block of colour.</p>
 <h2 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-positive" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-positive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Positive</h3>
 <ul>
 <li>Dark mode works before a name is selected and on the kiosk.</li>
 <li>Correct on first paint, with no inline script and no flash.</li>
-<li>Native controls, scrollbars and autofill follow the theme, because
-<code>color-scheme</code> is set by the same rule as the tokens.</li>
+<li>Native controls, scrollbars and autofill follow the theme, because <code>color-scheme</code> is set by the
+same rule as the tokens.</li>
 <li>New components get dark mode for free by naming roles.</li>
 <li>The contrast test makes readability regressions fail the build.</li>
-<li><a href="https://github.com/schellingboard/schellingboard/issues/802">#802</a>’s class of bug is harder to reintroduce: state is no longer encoded as a
-bare palette shade.</li>
+<li><a href="https://github.com/schellingboard/schellingboard/issues/802">#802</a>’s class of bug is harder to
+reintroduce: state is no longer encoded as a bare palette shade.</li>
 </ul>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-negative" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-negative" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Negative</h3>
 <ul>
-<li>A large mechanical migration touching most components, and one that reviewers
-have to read as “renames” rather than logic.</li>
-<li><code>text-white</code> needed judgment per call site — it splits into <code>--on-brand</code>,
-<code>--on-danger</code>, <code>--on-info</code> and <code>--fg-inverse</code> depending on what it sits on.</li>
+<li>A large mechanical migration touching most components, and one that reviewers have to read as
+“renames” rather than logic.</li>
+<li><code>text-white</code> needed judgment per call site — it splits into <code>--on-brand</code>, <code>--on-danger</code>,
+<code>--on-info</code> and <code>--fg-inverse</code> depending on what it sits on.</li>
 <li>The token vocabulary is one more thing to learn before writing a component.</li>
 </ul>
 <h3 id="adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-neutral" class="docmd-heading"><a href="#adr-0005-dark-mode-via-semantic-tokens-and-a-per-device-cookie-consequences-neutral" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Neutral</h3>
 <ul>
-<li>The schedule grid looks different in light mode: session blocks are tinted
-rather than solid (see above). Locations are still told apart by hue, now
-carried by the border as much as the fill.</li>
-<li>Light mode shifts slightly where the contrast contract required it, most
-visibly: the several grays doing “muted text” collapse to three levels, so
-<code>text-gray-400</code> text darkens to a readable <code>--fg-subtle</code> (it was 2.9:1 on
-white); primary rose buttons deepen from rose-400/500 to rose-600, because
-white on rose-400 was 2.7:1; and form-control borders darken to meet the 3:1
-of 1.4.11.</li>
-<li>Emails, the hand-written landing page in <code>www/</code>, and the docs site are out of
-scope. Mail-client support for <code>prefers-color-scheme</code> is too patchy to be
-worth the divergence.</li>
+<li>The schedule grid looks different in light mode: session blocks are tinted rather than solid (see
+above). Locations are still told apart by hue, now carried by the border as much as the fill.</li>
+<li>Light mode shifts slightly where the contrast contract required it, most visibly: the several
+grays doing “muted text” collapse to three levels, so <code>text-gray-400</code> text darkens to a readable
+<code>--fg-subtle</code> (it was 2.9:1 on white); primary rose buttons deepen from rose-400/500 to rose-600,
+because white on rose-400 was 2.7:1; and form-control borders darken to meet the 3:1 of 1.4.11.</li>
+<li>Emails, the hand-written landing page in <code>www/</code>, and the docs site are out of scope. Mail-client
+support for <code>prefers-color-scheme</code> is too patchy to be worth the divergence.</li>
 </ul>
 
                 
@@ -2092,17 +2072,32 @@ worth the divergence.</li>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1791810604000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1791810604000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -2164,21 +2159,6 @@ worth the divergence.</li>
                           </div>
                         </li>
                       
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="chore: point every link at schellingboard/schellingboard">chore: point every link at schellingb...</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1789885892000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
                     </ul>
                   </div>
                   
@@ -2205,13 +2185,13 @@ worth the divergence.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2289,7 +2269,7 @@ worth the divergence.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

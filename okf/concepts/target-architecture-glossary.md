@@ -3,16 +3,15 @@ type: concept
 title: Glossary
 source: "https://developers.schellingboard.org/target-architecture/glossary/"
 path: /target-architecture/glossary/
-updated: 2026-10-29
+updated: 2026-10-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T11:22:39.424Z"
+  generated_at: "2026-10-30T20:48:13.680Z"
 ---
 # Glossary
 
-The words used across this design. Where a word already means something to attendees,
-the design keeps that meaning; where the code needs a word attendees never see, it is
-marked _(internal)_.
+The words used across this design. Where a word already means something to attendees, the design
+keeps that meaning; where the code needs a word attendees never see, it is marked _(internal)_.
 
 | Term                      | Meaning                                                                                                                                                                                                                            |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200003%3A%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-07-02%0A%0A%23%23%20Context%0A%0ACurrently%2C%20the%20app%20handles%20form%20errors%20and%20validation%20in%20a%20really%20simple%20way%3A%20the%20form%20is%20sent%20to%20the%20server%2C%20the%20server%0Avalidates%20it%2C%20and%20then%20sends%20back%20a%20response%20that%20looks%20like%20%60%7B%20error%3A%20%22...%22%20%7D%60.%20This%20implementation%20is%20simple%2C%20but%0Arather%20bare-bones%2C%20since%20all%20errors%20end%20up%20showing%20above%20the%20form%20itself.%20Specifically%3A%0A%0A-%20There%20is%20no%20clear%20relationship%20between%20the%20erroneous%20field%2Fvalue%20and%20the%20error%2C%20the%20error%20is%20supposed%20to%20be%20understood%0A%20%20by%20the%20user%20through%20the%20message%20content%20itself.%20This%20can%20cause%20usability%0A%20%20issues%20%5BSeckler%2C%20Tuch%2C%20Opwis%2C%20%26%20Bargas-Avila%202012%5D%0A-%20When%20multiple%20validation%20errors%20exist%2C%20users%20are%20often%20exposed%20to%20only%20the%20first%20one%20returned%20by%20the%20server.%20This%0A%20%20results%20in%20repeated%20submit%2Ffix%20cycles%20before%20a%20form%20can%20be%20successfully%20saved.%0A-%20Validation%20rules%20are%20challenging%20to%20reuse%20between%20client%20and%20server%2C%20increasing%20the%20likelihood%20of%20duplicated%20logic%20or%0A%20%20inconsistent%20behaviour.%0A%0AThe%20solution%20should%20satisfy%20the%20following%20constraints%3A%0A%0A-%20Preserve%20strong%20type%20safety%20throughout%20the%20application.%0A-%20Maintain%20a%20clear%2C%20consistent%2C%20and%20easily%20understandable%20codebase%20for%20contributors%2C%20human%20or%20otherwise.%0A-%20Allow%20validation%20logic%20to%20be%20defined%20once%20and%20reused%20where%20appropriate.%0A-%20Support%20associating%20validation%20errors%20with%20individual%20form%20fields.%0A%0A%23%23%20Decision%0A%0AAdopt%20**React%20Hook%20Form**%20for%20form%20state%20management%20and%20**Zod**%20for%20schema%20definition%20and%20validation.%0A%0AReact%20Hook%20Form%20will%20manage%20form%20state%2C%20input%20registration%2C%20and%20error%20handling%20on%20the%20client.%20Zod%20schemas%20will%20define%0Avalidation%20rules%20and%20serve%20as%20the%20source%20of%20truth%20for%20data%20validation.%20React%20Hook%20Form%20will%20integrate%20with%20Zod%20through%0Athe%20%60%40hookform%2Fresolvers%2Fzod%60%20package.%0A%0AWhere%20practical%2C%20Zod%20schemas%20should%20be%20shared%20between%20client-side%20validation%20and%20server-side%20request%20validation.%20The%0Aserver%20remains%20the%20authoritative%20source%20of%20validation%3B%20client-side%20validation%20exists%20to%20provide%20immediate%20feedback%20and%0Aimprove%20the%20user%20experience.%0A%0AServer%20actions%20return%20validation%20failures%20keyed%20by%20field%20name%20(the%20Zod%20error&#039;s%20flattened%0A%60fieldErrors%60)%20instead%20of%20a%20single%20error%20string.%20The%20client%20maps%20these%20into%20React%20Hook%20Form%0Avia%20%60setError%60%2C%20so%20errors%20detected%20only%20on%20the%20server%20appear%20on%20the%20same%20fields%20as%0Aclient-detected%20ones.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Validation%20errors%20can%20be%20displayed%20next%20to%20the%20corresponding%20fields.%0A-%20Multiple%20validation%20errors%20can%20be%20presented%20simultaneously.%0A-%20Validation%20rules%20are%20expressed%20declaratively%20in%20a%20single%20schema.%0A-%20TypeScript%20types%20can%20be%20inferred%20directly%20from%20validation%20schemas%2C%20reducing%20duplication.%0A-%20Shared%20schemas%20reduce%20the%20risk%20of%20client%20and%20server%20validation%20diverging.%0A-%20React%20Hook%20Form%20minimises%20unnecessary%20re-renders%20and%20provides%20a%20mature%2C%20well-supported%20API%20for%20form%20handling.%0A%0A%23%23%23%20Negative%0A%0A-%20Introduces%20additional%20dependencies%20and%20a%20modest%20learning%20curve.%0A-%20Form%20implementations%20become%20more%20structured%2C%20which%20may%20increase%20the%20initial%20complexity%20for%20simple%20forms.%0A-%20Care%20must%20be%20taken%20to%20ensure%20that%20client%20and%20server%20continue%20to%20use%20the%20same%20validation%20schemas%20where%20possible.%0A-%20In%20the%20case%20of%20custom%20or%20exotic%20form%20field%20implementations%20(where%20the%20input%20is%20hidden%2C%20for%20example%3B%20common%20such%20cases%20are%0A%20%20image%20uploads)%2C%20there%20should%20be%20extra%20care%20on%20how%20and%20where%20the%20relevant%20field&#039;s%20errors%20will%20be%20shown.%0A%0A%23%23%23%20Neutral%0A%0A-%20Zod%20becomes%20available%20for%20further%20validation%20in%20other%20parts%20of%20the%20application.%0A%0A%23%23%20Alternatives%20considered%0A%0A%23%23%23%20Leave%20as%20is%0A%0A-%20**Pros%3A**%20Simple%2C%20straightforward%20implementation.%0A-%20**Cons%3A**%0A%20%20-%20No%20clear%20relationship%20between%20the%20erroneous%20field%2Fvalue%20and%20the%20error%0A%20%20-%20Annoying%20workflow%20for%20users%20to%20fix%20errors%0A%20%20-%20Validation%20logic%20is%20duplicated%20between%20client%20and%20server%0A%0A%23%23%23%20Tanstack%20Form%0A%0A-%20**Pros%3A**%20More%20powerful%20and%20flexible%20than%20React%20Hook%20Form.%0A-%20**Cons%3A**%0A%20%20-%20More%20complex%20to%20use%20and%20maintain%2C%20steeper%20learning%20curve%0A%20%20-%20Younger%20ecosystem%2C%20less%20mature%0A%20%20-%20Requires%20big%20refactoring%20of%20existing%20forms%0A%0A%23%23%23%20Conform%0A%0A-%20**Pros%3A**%0A%20%20-%20Fits%20very%20well%20with%20Next.js&#039;s%20server%20actions.%0A%20%20-%20Out-of-the-box%20functionality%20that%20will%20need%20(some)%20effort%20to%20implement%20in%20RHF.%0A-%20**Cons%3A**%0A%20%20-%20Opinionated%20and%20limited%20to%20server%20validation.%0A%20%20-%20Focuses%20more%20on%20SSR.%0A%20%20-%20Requires%20remix%20dependency.%0A%20%20-%20Doesn&#039;t%20allow%20for%20state%20management%20on%20the%20client.%20Makes%20custom%20fields%20a%20bit%20more%20complex.%0A%0A%23%23%23%20Other%20validation%20libraries%20(TypeBox%2C%20Joi%2C%20Valibot%2C%20etc.)%0A%0AThey%20are%20all%20functionally%20similar%20to%20Zod%2C%20with%20slightly%20different%20APIs.%0ANo%20clear%20benefit%20to%20using%20them%20over%20zod%2C%20since%20zod%20is%20the%20most%20widely%20used.%0A%0A%23%23%20References%0A%0A-%20Seckler%2C%20Tuch%2C%20Opwis%2C%20%26%20Bargas-Avila%202012%3A%20_Interacting%20with%20Computers_%2C%20Volume%2024%2C%20Issue%203%2C%20May%202012%2C%20Pages%0A%20%20107%E2%80%93118%2C%20%5Bhttps%3A%2F%2Fdoi.org%2F10.1016%2Fj.intcom.2012.03.002%5D(https%3A%2F%2Fdoi.org%2F10.1016%2Fj.intcom.2012.03.002)%0A-%20Zod%3A%20https%3A%2F%2Fzod.dev%2F%0A-%20React%20Hook%20Form%3A%20https%3A%2F%2Freact-hook-form.com%2F%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200003%3A%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-07-02%0A%0A%23%23%20Context%0A%0ACurrently%2C%20the%20app%20handles%20form%20errors%20and%20validation%20in%20a%20really%20simple%20way%3A%20the%20form%20is%20sent%20to%0Athe%20server%2C%20the%20server%20validates%20it%2C%20and%20then%20sends%20back%20a%20response%20that%20looks%20like%0A%60%7B%20error%3A%20%22...%22%20%7D%60.%20This%20implementation%20is%20simple%2C%20but%20rather%20bare-bones%2C%20since%20all%20errors%20end%20up%0Ashowing%20above%20the%20form%20itself.%20Specifically%3A%0A%0A-%20There%20is%20no%20clear%20relationship%20between%20the%20erroneous%20field%2Fvalue%20and%20the%20error%2C%20the%20error%20is%0A%20%20supposed%20to%20be%20understood%20by%20the%20user%20through%20the%20message%20content%20itself.%20This%20can%20cause%20usability%0A%20%20issues%20%5BSeckler%2C%20Tuch%2C%20Opwis%2C%20%26%20Bargas-Avila%202012%5D%0A-%20When%20multiple%20validation%20errors%20exist%2C%20users%20are%20often%20exposed%20to%20only%20the%20first%20one%20returned%20by%0A%20%20the%20server.%20This%20results%20in%20repeated%20submit%2Ffix%20cycles%20before%20a%20form%20can%20be%20successfully%20saved.%0A-%20Validation%20rules%20are%20challenging%20to%20reuse%20between%20client%20and%20server%2C%20increasing%20the%20likelihood%20of%0A%20%20duplicated%20logic%20or%20inconsistent%20behaviour.%0A%0AThe%20solution%20should%20satisfy%20the%20following%20constraints%3A%0A%0A-%20Preserve%20strong%20type%20safety%20throughout%20the%20application.%0A-%20Maintain%20a%20clear%2C%20consistent%2C%20and%20easily%20understandable%20codebase%20for%20contributors%2C%20human%20or%0A%20%20otherwise.%0A-%20Allow%20validation%20logic%20to%20be%20defined%20once%20and%20reused%20where%20appropriate.%0A-%20Support%20associating%20validation%20errors%20with%20individual%20form%20fields.%0A%0A%23%23%20Decision%0A%0AAdopt%20**React%20Hook%20Form**%20for%20form%20state%20management%20and%20**Zod**%20for%20schema%20definition%20and%0Avalidation.%0A%0AReact%20Hook%20Form%20will%20manage%20form%20state%2C%20input%20registration%2C%20and%20error%20handling%20on%20the%20client.%20Zod%0Aschemas%20will%20define%20validation%20rules%20and%20serve%20as%20the%20source%20of%20truth%20for%20data%20validation.%20React%0AHook%20Form%20will%20integrate%20with%20Zod%20through%20the%20%60%40hookform%2Fresolvers%2Fzod%60%20package.%0A%0AWhere%20practical%2C%20Zod%20schemas%20should%20be%20shared%20between%20client-side%20validation%20and%20server-side%20request%0Avalidation.%20The%20server%20remains%20the%20authoritative%20source%20of%20validation%3B%20client-side%20validation%20exists%0Ato%20provide%20immediate%20feedback%20and%20improve%20the%20user%20experience.%0A%0AServer%20actions%20return%20validation%20failures%20keyed%20by%20field%20name%20(the%20Zod%20error&#039;s%20flattened%0A%60fieldErrors%60)%20instead%20of%20a%20single%20error%20string.%20The%20client%20maps%20these%20into%20React%20Hook%20Form%20via%0A%60setError%60%2C%20so%20errors%20detected%20only%20on%20the%20server%20appear%20on%20the%20same%20fields%20as%20client-detected%20ones.%0A%0A%23%23%20Consequences%0A%0A%23%23%23%20Positive%0A%0A-%20Validation%20errors%20can%20be%20displayed%20next%20to%20the%20corresponding%20fields.%0A-%20Multiple%20validation%20errors%20can%20be%20presented%20simultaneously.%0A-%20Validation%20rules%20are%20expressed%20declaratively%20in%20a%20single%20schema.%0A-%20TypeScript%20types%20can%20be%20inferred%20directly%20from%20validation%20schemas%2C%20reducing%20duplication.%0A-%20Shared%20schemas%20reduce%20the%20risk%20of%20client%20and%20server%20validation%20diverging.%0A-%20React%20Hook%20Form%20minimises%20unnecessary%20re-renders%20and%20provides%20a%20mature%2C%20well-supported%20API%20for%0A%20%20form%20handling.%0A%0A%23%23%23%20Negative%0A%0A-%20Introduces%20additional%20dependencies%20and%20a%20modest%20learning%20curve.%0A-%20Form%20implementations%20become%20more%20structured%2C%20which%20may%20increase%20the%20initial%20complexity%20for%20simple%0A%20%20forms.%0A-%20Care%20must%20be%20taken%20to%20ensure%20that%20client%20and%20server%20continue%20to%20use%20the%20same%20validation%20schemas%0A%20%20where%20possible.%0A-%20In%20the%20case%20of%20custom%20or%20exotic%20form%20field%20implementations%20(where%20the%20input%20is%20hidden%2C%20for%0A%20%20example%3B%20common%20such%20cases%20are%20image%20uploads)%2C%20there%20should%20be%20extra%20care%20on%20how%20and%20where%20the%0A%20%20relevant%20field&#039;s%20errors%20will%20be%20shown.%0A%0A%23%23%23%20Neutral%0A%0A-%20Zod%20becomes%20available%20for%20further%20validation%20in%20other%20parts%20of%20the%20application.%0A%0A%23%23%20Alternatives%20considered%0A%0A%23%23%23%20Leave%20as%20is%0A%0A-%20**Pros%3A**%20Simple%2C%20straightforward%20implementation.%0A-%20**Cons%3A**%0A%20%20-%20No%20clear%20relationship%20between%20the%20erroneous%20field%2Fvalue%20and%20the%20error%0A%20%20-%20Annoying%20workflow%20for%20users%20to%20fix%20errors%0A%20%20-%20Validation%20logic%20is%20duplicated%20between%20client%20and%20server%0A%0A%23%23%23%20Tanstack%20Form%0A%0A-%20**Pros%3A**%20More%20powerful%20and%20flexible%20than%20React%20Hook%20Form.%0A-%20**Cons%3A**%0A%20%20-%20More%20complex%20to%20use%20and%20maintain%2C%20steeper%20learning%20curve%0A%20%20-%20Younger%20ecosystem%2C%20less%20mature%0A%20%20-%20Requires%20big%20refactoring%20of%20existing%20forms%0A%0A%23%23%23%20Conform%0A%0A-%20**Pros%3A**%0A%20%20-%20Fits%20very%20well%20with%20Next.js&#039;s%20server%20actions.%0A%20%20-%20Out-of-the-box%20functionality%20that%20will%20need%20(some)%20effort%20to%20implement%20in%20RHF.%0A-%20**Cons%3A**%0A%20%20-%20Opinionated%20and%20limited%20to%20server%20validation.%0A%20%20-%20Focuses%20more%20on%20SSR.%0A%20%20-%20Requires%20remix%20dependency.%0A%20%20-%20Doesn&#039;t%20allow%20for%20state%20management%20on%20the%20client.%20Makes%20custom%20fields%20a%20bit%20more%20complex.%0A%0A%23%23%23%20Other%20validation%20libraries%20(TypeBox%2C%20Joi%2C%20Valibot%2C%20etc.)%0A%0AThey%20are%20all%20functionally%20similar%20to%20Zod%2C%20with%20slightly%20different%20APIs.%20No%20clear%20benefit%20to%20using%0Athem%20over%20zod%2C%20since%20zod%20is%20the%20most%20widely%20used.%0A%0A%23%23%20References%0A%0A-%20Seckler%2C%20Tuch%2C%20Opwis%2C%20%26%20Bargas-Avila%202012%3A%20_Interacting%20with%20Computers_%2C%20Volume%2024%2C%20Issue%203%2C%20May%0A%20%202012%2C%20Pages%20107%E2%80%93118%2C%0A%20%20%5Bhttps%3A%2F%2Fdoi.org%2F10.1016%2Fj.intcom.2012.03.002%5D(https%3A%2F%2Fdoi.org%2F10.1016%2Fj.intcom.2012.03.002)%0A-%20Zod%3A%20https%3A%2F%2Fzod.dev%2F%0A-%20React%20Hook%20Form%3A%20https%3A%2F%2Freact-hook-form.com%2F%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1771,37 +1771,39 @@
 <li><strong>Date:</strong> 2026-07-02</li>
 </ul>
 <h2 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-context" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
-<p>Currently, the app handles form errors and validation in a really simple way: the form is sent to the server, the server
-validates it, and then sends back a response that looks like <code>{ error: &quot;...&quot; }</code>. This implementation is simple, but
-rather bare-bones, since all errors end up showing above the form itself. Specifically:</p>
+<p>Currently, the app handles form errors and validation in a really simple way: the form is sent to
+the server, the server validates it, and then sends back a response that looks like
+<code>{ error: &quot;...&quot; }</code>. This implementation is simple, but rather bare-bones, since all errors end up
+showing above the form itself. Specifically:</p>
 <ul>
-<li>There is no clear relationship between the erroneous field/value and the error, the error is supposed to be understood
-by the user through the message content itself. This can cause usability
+<li>There is no clear relationship between the erroneous field/value and the error, the error is
+supposed to be understood by the user through the message content itself. This can cause usability
 issues [Seckler, Tuch, Opwis, &amp; Bargas-Avila 2012]</li>
-<li>When multiple validation errors exist, users are often exposed to only the first one returned by the server. This
-results in repeated submit/fix cycles before a form can be successfully saved.</li>
-<li>Validation rules are challenging to reuse between client and server, increasing the likelihood of duplicated logic or
-inconsistent behaviour.</li>
+<li>When multiple validation errors exist, users are often exposed to only the first one returned by
+the server. This results in repeated submit/fix cycles before a form can be successfully saved.</li>
+<li>Validation rules are challenging to reuse between client and server, increasing the likelihood of
+duplicated logic or inconsistent behaviour.</li>
 </ul>
 <p>The solution should satisfy the following constraints:</p>
 <ul>
 <li>Preserve strong type safety throughout the application.</li>
-<li>Maintain a clear, consistent, and easily understandable codebase for contributors, human or otherwise.</li>
+<li>Maintain a clear, consistent, and easily understandable codebase for contributors, human or
+otherwise.</li>
 <li>Allow validation logic to be defined once and reused where appropriate.</li>
 <li>Support associating validation errors with individual form fields.</li>
 </ul>
 <h2 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-decision" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
-<p>Adopt <strong>React Hook Form</strong> for form state management and <strong>Zod</strong> for schema definition and validation.</p>
-<p>React Hook Form will manage form state, input registration, and error handling on the client. Zod schemas will define
-validation rules and serve as the source of truth for data validation. React Hook Form will integrate with Zod through
-the <code>@hookform/resolvers/zod</code> package.</p>
-<p>Where practical, Zod schemas should be shared between client-side validation and server-side request validation. The
-server remains the authoritative source of validation; client-side validation exists to provide immediate feedback and
-improve the user experience.</p>
+<p>Adopt <strong>React Hook Form</strong> for form state management and <strong>Zod</strong> for schema definition and
+validation.</p>
+<p>React Hook Form will manage form state, input registration, and error handling on the client. Zod
+schemas will define validation rules and serve as the source of truth for data validation. React
+Hook Form will integrate with Zod through the <code>@hookform/resolvers/zod</code> package.</p>
+<p>Where practical, Zod schemas should be shared between client-side validation and server-side request
+validation. The server remains the authoritative source of validation; client-side validation exists
+to provide immediate feedback and improve the user experience.</p>
 <p>Server actions return validation failures keyed by field name (the Zod error’s flattened
-<code>fieldErrors</code>) instead of a single error string. The client maps these into React Hook Form
-via <code>setError</code>, so errors detected only on the server appear on the same fields as
-client-detected ones.</p>
+<code>fieldErrors</code>) instead of a single error string. The client maps these into React Hook Form via
+<code>setError</code>, so errors detected only on the server appear on the same fields as client-detected ones.</p>
 <h2 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
 <h3 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences-positive" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences-positive" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Positive</h3>
 <ul>
@@ -1810,15 +1812,19 @@ client-detected ones.</p>
 <li>Validation rules are expressed declaratively in a single schema.</li>
 <li>TypeScript types can be inferred directly from validation schemas, reducing duplication.</li>
 <li>Shared schemas reduce the risk of client and server validation diverging.</li>
-<li>React Hook Form minimises unnecessary re-renders and provides a mature, well-supported API for form handling.</li>
+<li>React Hook Form minimises unnecessary re-renders and provides a mature, well-supported API for
+form handling.</li>
 </ul>
 <h3 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences-negative" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences-negative" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Negative</h3>
 <ul>
 <li>Introduces additional dependencies and a modest learning curve.</li>
-<li>Form implementations become more structured, which may increase the initial complexity for simple forms.</li>
-<li>Care must be taken to ensure that client and server continue to use the same validation schemas where possible.</li>
-<li>In the case of custom or exotic form field implementations (where the input is hidden, for example; common such cases are
-image uploads), there should be extra care on how and where the relevant field’s errors will be shown.</li>
+<li>Form implementations become more structured, which may increase the initial complexity for simple
+forms.</li>
+<li>Care must be taken to ensure that client and server continue to use the same validation schemas
+where possible.</li>
+<li>In the case of custom or exotic form field implementations (where the input is hidden, for
+example; common such cases are image uploads), there should be extra care on how and where the
+relevant field’s errors will be shown.</li>
 </ul>
 <h3 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences-neutral" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-consequences-neutral" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Neutral</h3>
 <ul>
@@ -1865,12 +1871,13 @@ image uploads), there should be extra care on how and where the relevant field�
 </li>
 </ul>
 <h3 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-alternatives-considered-other-validation-libraries-typebox-joi-valibot-etc" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-alternatives-considered-other-validation-libraries-typebox-joi-valibot-etc" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Other validation libraries (TypeBox, Joi, Valibot, etc.)</h3>
-<p>They are all functionally similar to Zod, with slightly different APIs.
-No clear benefit to using them over zod, since zod is the most widely used.</p>
+<p>They are all functionally similar to Zod, with slightly different APIs. No clear benefit to using
+them over zod, since zod is the most widely used.</p>
 <h2 id="adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-references" class="docmd-heading"><a href="#adr-0003-form-handling-and-validation-with-react-hook-form-and-zod-references" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>References</h2>
 <ul>
-<li>Seckler, Tuch, Opwis, &amp; Bargas-Avila 2012: <em>Interacting with Computers</em>, Volume 24, Issue 3, May 2012, Pages
-107–118, <a href="https://doi.org/10.1016/j.intcom.2012.03.002">https://doi.org/10.1016/j.intcom.2012.03.002</a></li>
+<li>Seckler, Tuch, Opwis, &amp; Bargas-Avila 2012: <em>Interacting with Computers</em>, Volume 24, Issue 3, May
+2012, Pages 107–118,
+<a href="https://doi.org/10.1016/j.intcom.2012.03.002">https://doi.org/10.1016/j.intcom.2012.03.002</a></li>
 <li>Zod: <a href="https://zod.dev/">https://zod.dev/</a></li>
 <li>React Hook Form: <a href="https://react-hook-form.com/">https://react-hook-form.com/</a></li>
 </ul>
@@ -2019,17 +2026,32 @@ No clear benefit to using them over zod, since zod is the most widely used.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1785058311000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1785058311000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -2087,13 +2109,13 @@ No clear benefit to using them over zod, since zod is the most widely used.</p>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2171,7 +2193,7 @@ No clear benefit to using them over zod, since zod is the most widely used.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

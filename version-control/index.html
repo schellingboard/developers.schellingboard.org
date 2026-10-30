@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Version%20control%20and%20pull%20requests%0A%0A%23%23%20Commits%0A%0A-%20Use%20conventional%20commits%20(%60feat%3A%60%2C%20%60fix%3A%60%2C%20%60docs%3A%60%2C%20%60refactor%3A%60%2C%20etc.)%0A-%20Subject%20line%20%E2%89%A4%2072%20chars%3B%20explain%20WHY%20in%20the%20body%20if%20not%20obvious%0A-%20Wrap%20the%20body%20at%2080%20chars%3B%20a%20line%20with%20a%20URL%2C%20or%20one%20unbreakable%20word%2C%20may%20exceed%20it%0A-%20%60make%20commit-check%60%20verifies%20the%20commits%20since%20%60origin%2Fmain%60%20(%60RANGE%3Da..b%60%20for%20another%0A%20%20range)%3B%20CI%20runs%20it%20on%20pull%20requests.%20Check%20a%20draft%20first%20with%0A%20%20%60echo%20%22%3Cmessage%3E%22%20%7C%20bun%20scripts%2Fcheck-commit-messages.ts%20--stdin%60%0A-%20Before%20committing%2C%20run%20%60make%20precommit%60%0A-%20When%20working%20on%20a%20GitHub%20issue%2C%20add%20a%20footer%3A%20%60issue%20%23123%60%20(partial%20work)%20or%0A%20%20%60fixes%20%23123%60%20(fully%20resolves%20it)%0A%0AEither%20%60jj%60%20or%20%60git%60%20works%3B%20the%20repository%20is%20git-colocated.%20The%20%60jj%60-specific%0Agotchas%20an%20agent%20keeps%20hitting%20%E2%80%94%20bracketed%20route%20paths%20as%20path%20arguments%2C%0Anon-interactive%20%60squash%60%20and%20%60split%60%20%E2%80%94%20are%20in%0A%5B%60AGENTS.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md).%0A%0AMigration%20meta%20files%20conflict%20whenever%20two%20branches%20add%20a%20migration%3B%20see%0A%5BDatabase%20migrations%5D(migrations.md%23resolving-migration-conflicts)%20rather%20than%0Aresolving%20them%20by%20hand.%0A%0A%23%23%20Pull%20requests%0A%0ASelf-review%20before%20submitting%20is%20mandatory%20%E2%80%94%20read%20your%20own%20diff%2C%20check%20for%0Aobvious%20mistakes%2C%20and%20make%20sure%20the%20PR%20description%20is%20accurate.%20Do%20not%20offload%0Athat%20work%20onto%20the%20reviewer.%20This%20is%20especially%20important%20when%20using%20AI%20agents%2C%0Awhich%20can%20produce%20plausible-looking%20but%20incorrect%20code.%20Draft%20PRs%20are%20fine%20for%0Asharing%20work-in-progress%20without%20that%20expectation.%0A%0A%23%23%20Issues%0A%0AIssue%20Type%20and%20Priority%20are%20GitHub%20project%20fields%20that%20%60gh%20issue%20create%60%20cannot%0Aset%3B%20%5BGitHub%20issues%5D(github-issues.md)%20has%20the%20%60gh%20api%20graphql%60%20calls%20that%20can.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Version%20control%20and%20pull%20requests%0A%0A%23%23%20Commits%0A%0A-%20Use%20conventional%20commits%20(%60feat%3A%60%2C%20%60fix%3A%60%2C%20%60docs%3A%60%2C%20%60refactor%3A%60%2C%20etc.)%0A-%20Subject%20line%20%E2%89%A4%2072%20chars%3B%20explain%20WHY%20in%20the%20body%20if%20not%20obvious%0A-%20Wrap%20the%20body%20at%2080%20chars%3B%20a%20line%20with%20a%20URL%2C%20or%20one%20unbreakable%20word%2C%20may%20exceed%20it%0A-%20%60make%20commit-check%60%20verifies%20the%20commits%20since%20%60origin%2Fmain%60%20(%60RANGE%3Da..b%60%20for%20another%20range)%3B%20CI%0A%20%20runs%20it%20on%20pull%20requests.%20Check%20a%20draft%20first%20with%0A%20%20%60echo%20%22%3Cmessage%3E%22%20%7C%20bun%20scripts%2Fcheck-commit-messages.ts%20--stdin%60%0A-%20Before%20committing%2C%20run%20%60make%20precommit%60%0A-%20When%20working%20on%20a%20GitHub%20issue%2C%20add%20a%20footer%3A%20%60issue%20%23123%60%20(partial%20work)%20or%20%60fixes%20%23123%60%20(fully%0A%20%20resolves%20it)%0A%0AEither%20%60jj%60%20or%20%60git%60%20works%3B%20the%20repository%20is%20git-colocated.%20The%20%60jj%60-specific%20gotchas%20an%20agent%0Akeeps%20hitting%20%E2%80%94%20bracketed%20route%20paths%20as%20path%20arguments%2C%20non-interactive%20%60squash%60%20and%20%60split%60%20%E2%80%94%20are%0Ain%20%5B%60AGENTS.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md).%0A%0AMigration%20meta%20files%20conflict%20whenever%20two%20branches%20add%20a%20migration%3B%20see%0A%5BDatabase%20migrations%5D(migrations.md%23resolving-migration-conflicts)%20rather%20than%20resolving%20them%20by%0Ahand.%0A%0A%23%23%20Pull%20requests%0A%0ASelf-review%20before%20submitting%20is%20mandatory%20%E2%80%94%20read%20your%20own%20diff%2C%20check%20for%20obvious%20mistakes%2C%20and%0Amake%20sure%20the%20PR%20description%20is%20accurate.%20Do%20not%20offload%20that%20work%20onto%20the%20reviewer.%20This%20is%0Aespecially%20important%20when%20using%20AI%20agents%2C%20which%20can%20produce%20plausible-looking%20but%20incorrect%20code.%0ADraft%20PRs%20are%20fine%20for%20sharing%20work-in-progress%20without%20that%20expectation.%0A%0A%23%23%20Issues%0A%0AIssue%20Type%20and%20Priority%20are%20GitHub%20project%20fields%20that%20%60gh%20issue%20create%60%20cannot%20set%3B%0A%5BGitHub%20issues%5D(github-issues.md)%20has%20the%20%60gh%20api%20graphql%60%20calls%20that%20can.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1723,29 +1723,27 @@
 <li>Use conventional commits (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>, <code>refactor:</code>, etc.)</li>
 <li>Subject line ≤ 72 chars; explain WHY in the body if not obvious</li>
 <li>Wrap the body at 80 chars; a line with a URL, or one unbreakable word, may exceed it</li>
-<li><code>make commit-check</code> verifies the commits since <code>origin/main</code> (<code>RANGE=a..b</code> for another
-range); CI runs it on pull requests. Check a draft first with
+<li><code>make commit-check</code> verifies the commits since <code>origin/main</code> (<code>RANGE=a..b</code> for another range); CI
+runs it on pull requests. Check a draft first with
 <code>echo &quot;&lt;message&gt;&quot; | bun scripts/check-commit-messages.ts --stdin</code></li>
 <li>Before committing, run <code>make precommit</code></li>
-<li>When working on a GitHub issue, add a footer: <code>issue #123</code> (partial work) or
-<code>fixes #123</code> (fully resolves it)</li>
+<li>When working on a GitHub issue, add a footer: <code>issue #123</code> (partial work) or <code>fixes #123</code> (fully
+resolves it)</li>
 </ul>
-<p>Either <code>jj</code> or <code>git</code> works; the repository is git-colocated. The <code>jj</code>-specific
-gotchas an agent keeps hitting — bracketed route paths as path arguments,
-non-interactive <code>squash</code> and <code>split</code> — are in
-<a href="https://github.com/schellingboard/schellingboard/blob/main/AGENTS.md"><code>AGENTS.md</code></a>.</p>
+<p>Either <code>jj</code> or <code>git</code> works; the repository is git-colocated. The <code>jj</code>-specific gotchas an agent
+keeps hitting — bracketed route paths as path arguments, non-interactive <code>squash</code> and <code>split</code> — are
+in <a href="https://github.com/schellingboard/schellingboard/blob/main/AGENTS.md"><code>AGENTS.md</code></a>.</p>
 <p>Migration meta files conflict whenever two branches add a migration; see
-<a href="../migrations/#resolving-migration-conflicts">Database migrations</a> rather than
-resolving them by hand.</p>
+<a href="../migrations/#resolving-migration-conflicts">Database migrations</a> rather than resolving them by
+hand.</p>
 <h2 id="version-control-and-pull-requests-pull-requests" class="docmd-heading"><a href="#version-control-and-pull-requests-pull-requests" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Pull requests</h2>
-<p>Self-review before submitting is mandatory — read your own diff, check for
-obvious mistakes, and make sure the PR description is accurate. Do not offload
-that work onto the reviewer. This is especially important when using AI agents,
-which can produce plausible-looking but incorrect code. Draft PRs are fine for
-sharing work-in-progress without that expectation.</p>
+<p>Self-review before submitting is mandatory — read your own diff, check for obvious mistakes, and
+make sure the PR description is accurate. Do not offload that work onto the reviewer. This is
+especially important when using AI agents, which can produce plausible-looking but incorrect code.
+Draft PRs are fine for sharing work-in-progress without that expectation.</p>
 <h2 id="version-control-and-pull-requests-issues" class="docmd-heading"><a href="#version-control-and-pull-requests-issues" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Issues</h2>
-<p>Issue Type and Priority are GitHub project fields that <code>gh issue create</code> cannot
-set; <a href="../github-issues/">GitHub issues</a> has the <code>gh api graphql</code> calls that can.</p>
+<p>Issue Type and Priority are GitHub project fields that <code>gh issue create</code> cannot set;
+<a href="../github-issues/">GitHub issues</a> has the <code>gh api graphql</code> calls that can.</p>
 
                 
                   <div class="page-navigation">
@@ -1855,17 +1853,32 @@ set; <a href="../github-issues/">GitHub issues</a> has the <code>gh api graphql<
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1793216665000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1793216665000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1923,13 +1936,13 @@ set; <a href="../github-issues/">GitHub issues</a> has the <code>gh api graphql<
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2007,7 +2020,7 @@ set; <a href="../github-issues/">GitHub issues</a> has the <code>gh api graphql<
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

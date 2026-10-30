@@ -3,22 +3,21 @@ type: concept
 title: "SchellingBoard developer documentation"
 source: "https://developers.schellingboard.org/"
 path: /
-updated: 2026-10-29
+updated: 2026-10-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T11:22:39.400Z"
+  generated_at: "2026-10-30T20:48:13.660Z"
 ---
 # SchellingBoard developer documentation
 
-SchellingBoard is a Next.js scheduling app for participant-driven events —
-attendees propose sessions, vote on them, and the accepted ones are scheduled
-onto a grid of rooms and time slots. It is self-hosted, backed by a single
-SQLite file, and documented for its users at
+SchellingBoard is a Next.js scheduling app for participant-driven events — attendees propose
+sessions, vote on them, and the accepted ones are scheduled onto a grid of rooms and time slots. It
+is self-hosted, backed by a single SQLite file, and documented for its users at
 [docs.schellingboard.org](https://docs.schellingboard.org).
 
-This site is for people working _on_ it. It tracks `main`, so it describes the
-code as it is now rather than the last release; a contributor on a release
-branch reads that branch's `docs/dev/` in the repository.
+This site is for people working _on_ it. It tracks `main`, so it describes the code as it is now
+rather than the last release; a contributor on a release branch reads that branch's `docs/dev/` in
+the repository.
 
 ## Start here
 
@@ -58,8 +57,8 @@ branch reads that branch's `docs/dev/` in the repository.
 - [The repository](https://github.com/schellingboard/schellingboard) —
   [`CONTRIBUTING.md`](https://github.com/schellingboard/schellingboard/blob/main/CONTRIBUTING.md)
   points back here, and
-  [`AGENTS.md`](https://github.com/schellingboard/schellingboard/blob/main/AGENTS.md)
-  holds the instructions coding agents are given.
-- [docs.schellingboard.org](https://docs.schellingboard.org) — the attendee,
-  organizer and self-hosting documentation, published from release tags.
+  [`AGENTS.md`](https://github.com/schellingboard/schellingboard/blob/main/AGENTS.md) holds the
+  instructions coding agents are given.
+- [docs.schellingboard.org](https://docs.schellingboard.org) — the attendee, organizer and
+  self-hosting documentation, published from release tags.
 - [schellingboard.org](https://schellingboard.org) — the project's landing page.

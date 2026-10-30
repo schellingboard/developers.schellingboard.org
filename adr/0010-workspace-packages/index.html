@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200010%3A%20Domain%20and%20contracts%20as%20workspace%20packages%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-03%0A-%20**Issue%3A**%20%23965%0A%0A%23%23%20Context%0A%0A%60model%2F%60%20was%20meant%20to%20be%20the%20centre%20of%20the%20app%3A%20types%2C%20constants%20and%20validation%0Athat%20both%20the%20pages%20and%20the%20database%20layer%20depend%20on%2C%20and%20that%20depend%20on%20neither.%0AOnly%20a%20%60dependency-cruiser%60%20rule%20kept%20it%20that%20way%2C%20and%20it%20held%20half%20the%20picture.%0AThe%20entity%20types%20still%20lived%20in%20%60db%2Frepositories%2Finterfaces.ts%60%20(%23965)%2C%20and%0A%60model%2F%60%20itself%20mixed%20two%20things%3A%20domain%20vocabulary%20(contact%20types%2C%20length%20caps%2C%0Athe%20prompt%20pool)%20and%20the%20zod%20schemas%20for%20what%20forms%20and%20routes%20accept.%0A%0AThe%20%5Btarget%20architecture%5D(..%2Ftarget-architecture%2FREADME.md)%20splits%20these%20into%0A%60packages%2Fdomain%60%20and%20%60packages%2Fcontracts%60%2C%20with%20workspace%20package%20manifests%20as%20the%0Aboundary%20(%5BD5%5D(..%2Ftarget-architecture%2F08-decisions.md%23d5)).%20Its%0A%5Bpath%20from%20here%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20makes%20that%20split%20the%0Afirst%20step%2C%20because%20it%20pays%20off%20even%20if%20nothing%20after%20it%20happens.%0A%0A%23%23%20Decision%0A%0AThe%20repository%20becomes%20a%20Bun%20workspace%20with%20two%20packages%20next%20to%20the%20Next%20app%2C%0Awhich%20stays%20at%20the%20root%3A%0A%0A-%20**%60%40schellingboard%2Fdomain%60**%20(%60packages%2Fdomain%60)%3A%20entity%20types%2C%20domain%20constants%0A%20%20and%20pure%20functions.%20It%20imports%20nothing%20but%20itself%20and%20%60luxon%60.%0A-%20**%60%40schellingboard%2Fcontracts%60**%20(%60packages%2Fcontracts%60)%3A%20zod%20schemas%20for%20what%0A%20%20crosses%20the%20wire.%20It%20imports%20%60domain%60%20and%20%60zod%60%2C%20nothing%20else.%0A%0APackages%20export%20their%20TypeScript%20source%20by%20subpath%0A(%60%40schellingboard%2Fdomain%2Fguest%60)%2C%20with%20no%20build%20step%3A%20Turbopack%2C%20Vitest%20and%20%60tsc%60%0Acompile%20workspace%20sources%20directly.%20There%20is%20no%20barrel%20file%2C%20so%20a%20client%20bundle%0Apulls%20in%20only%20the%20modules%20it%20names.%0A%0AThe%20boundary%20is%20checked%20three%20ways%2C%20because%20Bun%20hoists%20%60node_modules%60%20and%20an%0Aundeclared%20import%20would%20otherwise%20still%20resolve%3A%0A%0A-%20%60make%20arch%60%20(dependency-cruiser)%3A%20%60domain%60%20reaches%20only%20itself%20and%20%60luxon%60%2C%0A%20%20%60contracts%60%20only%20itself%2C%20%60domain%60%20and%20%60zod%60%3B%20a%20package%20is%20imported%20by%20name%2C%0A%20%20never%20by%20a%20path%20into%20its%20%60src%2F%60%3B%20and%20every%20npm%20package%20a%20workspace%20package%0A%20%20imports%20is%20declared%20in%20its%20own%20%60package.json%60.%0A-%20%60make%20typecheck%60%20compiles%20each%20package%20with%20its%20own%20%60tsconfig.json%60%2C%20which%20has%0A%20%20no%20%60%40%2F%60%20path%20alias%20and%2C%20for%20%60domain%60%2C%20no%20DOM%20or%20Node%20types.%0A-%20The%20ambient-clock%20lint%20rule%20(ADR%200004)%20covers%20%60packages%2F*%2Fsrc%60.%0A%0ABun&#039;s%20isolated%20linker%20would%20make%20an%20undeclared%20import%20fail%20to%20resolve%2C%20which%20is%0Athe%20enforcement%20the%20target%20design%20describes.%20It%20is%20not%20used%3A%20the%20Docker%20image%0Acopies%20hoisted%20%60node_modules%2Fsharp%60%20and%20%60%40img%60%20by%20path%2C%20and%20Next&#039;s%20standalone%0Atracing%20has%20only%20ever%20been%20run%20against%20a%20hoisted%20tree.%20The%20rules%20above%20give%20the%0Asame%20guarantee%20without%20changing%20how%20dependencies%20are%20laid%20out.%0A%0ATests%20stay%20in%20%60tests%2F%60%20for%20now.%20The%20repository%20ports%20stay%20in%20%60db%2F%60%20until%20the%0Atarget%20architecture&#039;s%20server%20modules%20exist%20to%20own%20them.%20That%20departs%20from%20%23965%2C%0Awhich%20put%20the%20ports%20in%20%60model%2F%60%3B%20the%20boundary%20%23965%20was%20after%20is%20enforced%20instead%0Aby%20a%20rule%20that%20nothing%20outside%20%60db%2F%60%20imports%20%60db%2Frepositories%2F%60.%0A%0A%23%23%20Consequences%0A%0A-%20%60model%2F%60%20is%20gone.%20A%20new%20rule%20goes%20in%20%60domain%60%3B%20a%20new%20form%20or%20route%20schema%20goes%0A%20%20in%20%60contracts%60%3B%20if%20it%20needs%20a%20database%20type%2C%20it%20does%20not%20belong%20in%20either.%0A-%20%60luxon%60%20is%20%60domain%60&#039;s%20one%20npm%20dependency%3A%20the%20time%20rules%20need%20time%20zones%2C%20and%0A%20%20the%20app%20already%20formats%20every%20instant%20with%20it.%20Another%20dependency%20is%20the%20same%0A%20%20kind%20of%20decision%3A%20declare%20it%20in%20the%20package&#039;s%20%60package.json%60%20and%20widen%20the%0A%20%20%60domain-stays-pure%60%20rule.%0A-%20The%20Docker%20build%20copies%20every%20package&#039;s%20%60package.json%60%20before%0A%20%20%60bun%20install%20--frozen-lockfile%60.%20A%20new%20package%20needs%20a%20line%20there%20too.%0A-%20The%20root%20%60tsconfig.json%60%20still%20includes%20the%20packages%2C%20so%20the%20root%20%60tsc%60%20run%0A%20%20checks%20them%20together%20with%20the%20app%3B%20editors%20and%20ESLint%20use%20each%20package&#039;s%20own%0A%20%20%60tsconfig.json%60.%20These%20are%20not%20project%20references%3B%20those%20wait%20until%20the%20server%0A%20%20and%20web%20app%20are%20packages%20too.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200010%3A%20Domain%20and%20contracts%20as%20workspace%20packages%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-10-03%0A-%20**Issue%3A**%20%23965%0A%0A%23%23%20Context%0A%0A%60model%2F%60%20was%20meant%20to%20be%20the%20centre%20of%20the%20app%3A%20types%2C%20constants%20and%20validation%20that%20both%20the%20pages%0Aand%20the%20database%20layer%20depend%20on%2C%20and%20that%20depend%20on%20neither.%20Only%20a%20%60dependency-cruiser%60%20rule%20kept%0Ait%20that%20way%2C%20and%20it%20held%20half%20the%20picture.%20The%20entity%20types%20still%20lived%20in%0A%60db%2Frepositories%2Finterfaces.ts%60%20(%23965)%2C%20and%20%60model%2F%60%20itself%20mixed%20two%20things%3A%20domain%20vocabulary%0A(contact%20types%2C%20length%20caps%2C%20the%20prompt%20pool)%20and%20the%20zod%20schemas%20for%20what%20forms%20and%20routes%20accept.%0A%0AThe%20%5Btarget%20architecture%5D(..%2Ftarget-architecture%2FREADME.md)%20splits%20these%20into%20%60packages%2Fdomain%60%20and%0A%60packages%2Fcontracts%60%2C%20with%20workspace%20package%20manifests%20as%20the%20boundary%0A(%5BD5%5D(..%2Ftarget-architecture%2F08-decisions.md%23d5)).%20Its%0A%5Bpath%20from%20here%5D(..%2Ftarget-architecture%2F10-path-from-here.md)%20makes%20that%20split%20the%20first%20step%2C%0Abecause%20it%20pays%20off%20even%20if%20nothing%20after%20it%20happens.%0A%0A%23%23%20Decision%0A%0AThe%20repository%20becomes%20a%20Bun%20workspace%20with%20two%20packages%20next%20to%20the%20Next%20app%2C%20which%20stays%20at%20the%0Aroot%3A%0A%0A-%20**%60%40schellingboard%2Fdomain%60**%20(%60packages%2Fdomain%60)%3A%20entity%20types%2C%20domain%20constants%20and%20pure%0A%20%20functions.%20It%20imports%20nothing%20but%20itself%20and%20%60luxon%60.%0A-%20**%60%40schellingboard%2Fcontracts%60**%20(%60packages%2Fcontracts%60)%3A%20zod%20schemas%20for%20what%20crosses%20the%20wire.%20It%0A%20%20imports%20%60domain%60%20and%20%60zod%60%2C%20nothing%20else.%0A%0APackages%20export%20their%20TypeScript%20source%20by%20subpath%20(%60%40schellingboard%2Fdomain%2Fguest%60)%2C%20with%20no%20build%0Astep%3A%20Turbopack%2C%20Vitest%20and%20%60tsc%60%20compile%20workspace%20sources%20directly.%20There%20is%20no%20barrel%20file%2C%20so%20a%0Aclient%20bundle%20pulls%20in%20only%20the%20modules%20it%20names.%0A%0AThe%20boundary%20is%20checked%20three%20ways%2C%20because%20Bun%20hoists%20%60node_modules%60%20and%20an%20undeclared%20import%20would%0Aotherwise%20still%20resolve%3A%0A%0A-%20%60make%20arch%60%20(dependency-cruiser)%3A%20%60domain%60%20reaches%20only%20itself%20and%20%60luxon%60%2C%20%60contracts%60%20only%0A%20%20itself%2C%20%60domain%60%20and%20%60zod%60%3B%20a%20package%20is%20imported%20by%20name%2C%20never%20by%20a%20path%20into%20its%20%60src%2F%60%3B%20and%0A%20%20every%20npm%20package%20a%20workspace%20package%20imports%20is%20declared%20in%20its%20own%20%60package.json%60.%0A-%20%60make%20typecheck%60%20compiles%20each%20package%20with%20its%20own%20%60tsconfig.json%60%2C%20which%20has%20no%20%60%40%2F%60%20path%20alias%0A%20%20and%2C%20for%20%60domain%60%2C%20no%20DOM%20or%20Node%20types.%0A-%20The%20ambient-clock%20lint%20rule%20(ADR%200004)%20covers%20%60packages%2F*%2Fsrc%60.%0A%0ABun&#039;s%20isolated%20linker%20would%20make%20an%20undeclared%20import%20fail%20to%20resolve%2C%20which%20is%20the%20enforcement%20the%0Atarget%20design%20describes.%20It%20is%20not%20used%3A%20the%20Docker%20image%20copies%20hoisted%20%60node_modules%2Fsharp%60%20and%0A%60%40img%60%20by%20path%2C%20and%20Next&#039;s%20standalone%20tracing%20has%20only%20ever%20been%20run%20against%20a%20hoisted%20tree.%20The%0Arules%20above%20give%20the%20same%20guarantee%20without%20changing%20how%20dependencies%20are%20laid%20out.%0A%0ATests%20stay%20in%20%60tests%2F%60%20for%20now.%20The%20repository%20ports%20stay%20in%20%60db%2F%60%20until%20the%20target%20architecture&#039;s%0Aserver%20modules%20exist%20to%20own%20them.%20That%20departs%20from%20%23965%2C%20which%20put%20the%20ports%20in%20%60model%2F%60%3B%20the%0Aboundary%20%23965%20was%20after%20is%20enforced%20instead%20by%20a%20rule%20that%20nothing%20outside%20%60db%2F%60%20imports%0A%60db%2Frepositories%2F%60.%0A%0A%23%23%20Consequences%0A%0A-%20%60model%2F%60%20is%20gone.%20A%20new%20rule%20goes%20in%20%60domain%60%3B%20a%20new%20form%20or%20route%20schema%20goes%20in%20%60contracts%60%3B%20if%0A%20%20it%20needs%20a%20database%20type%2C%20it%20does%20not%20belong%20in%20either.%0A-%20%60luxon%60%20is%20%60domain%60&#039;s%20one%20npm%20dependency%3A%20the%20time%20rules%20need%20time%20zones%2C%20and%20the%20app%20already%0A%20%20formats%20every%20instant%20with%20it.%20Another%20dependency%20is%20the%20same%20kind%20of%20decision%3A%20declare%20it%20in%20the%0A%20%20package&#039;s%20%60package.json%60%20and%20widen%20the%20%60domain-stays-pure%60%20rule.%0A-%20The%20Docker%20build%20copies%20every%20package&#039;s%20%60package.json%60%20before%20%60bun%20install%20--frozen-lockfile%60.%20A%0A%20%20new%20package%20needs%20a%20line%20there%20too.%0A-%20The%20root%20%60tsconfig.json%60%20still%20includes%20the%20packages%2C%20so%20the%20root%20%60tsc%60%20run%20checks%20them%20together%0A%20%20with%20the%20app%3B%20editors%20and%20ESLint%20use%20each%20package&#039;s%20own%20%60tsconfig.json%60.%20These%20are%20not%20project%0A%20%20references%3B%20those%20wait%20until%20the%20server%20and%20web%20app%20are%20packages%20too.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1772,64 +1772,58 @@
 <li><strong>Issue:</strong> #965</li>
 </ul>
 <h2 id="adr-0010-domain-and-contracts-as-workspace-packages-context" class="docmd-heading"><a href="#adr-0010-domain-and-contracts-as-workspace-packages-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
-<p><code>model/</code> was meant to be the centre of the app: types, constants and validation
-that both the pages and the database layer depend on, and that depend on neither.
-Only a <code>dependency-cruiser</code> rule kept it that way, and it held half the picture.
-The entity types still lived in <code>db/repositories/interfaces.ts</code> (#965), and
-<code>model/</code> itself mixed two things: domain vocabulary (contact types, length caps,
-the prompt pool) and the zod schemas for what forms and routes accept.</p>
-<p>The <a href="../../target-architecture/">target architecture</a> splits these into
-<code>packages/domain</code> and <code>packages/contracts</code>, with workspace package manifests as the
-boundary (<a href="../../target-architecture/08-decisions/#d5">D5</a>). Its
-<a href="../../target-architecture/10-path-from-here/">path from here</a> makes that split the
-first step, because it pays off even if nothing after it happens.</p>
+<p><code>model/</code> was meant to be the centre of the app: types, constants and validation that both the pages
+and the database layer depend on, and that depend on neither. Only a <code>dependency-cruiser</code> rule kept
+it that way, and it held half the picture. The entity types still lived in
+<code>db/repositories/interfaces.ts</code> (#965), and <code>model/</code> itself mixed two things: domain vocabulary
+(contact types, length caps, the prompt pool) and the zod schemas for what forms and routes accept.</p>
+<p>The <a href="../../target-architecture/">target architecture</a> splits these into <code>packages/domain</code> and
+<code>packages/contracts</code>, with workspace package manifests as the boundary
+(<a href="../../target-architecture/08-decisions/#d5">D5</a>). Its
+<a href="../../target-architecture/10-path-from-here/">path from here</a> makes that split the first step,
+because it pays off even if nothing after it happens.</p>
 <h2 id="adr-0010-domain-and-contracts-as-workspace-packages-decision" class="docmd-heading"><a href="#adr-0010-domain-and-contracts-as-workspace-packages-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
-<p>The repository becomes a Bun workspace with two packages next to the Next app,
-which stays at the root:</p>
+<p>The repository becomes a Bun workspace with two packages next to the Next app, which stays at the
+root:</p>
 <ul>
-<li><strong><code>@schellingboard/domain</code></strong> (<code>packages/domain</code>): entity types, domain constants
-and pure functions. It imports nothing but itself and <code>luxon</code>.</li>
-<li><strong><code>@schellingboard/contracts</code></strong> (<code>packages/contracts</code>): zod schemas for what
-crosses the wire. It imports <code>domain</code> and <code>zod</code>, nothing else.</li>
+<li><strong><code>@schellingboard/domain</code></strong> (<code>packages/domain</code>): entity types, domain constants and pure
+functions. It imports nothing but itself and <code>luxon</code>.</li>
+<li><strong><code>@schellingboard/contracts</code></strong> (<code>packages/contracts</code>): zod schemas for what crosses the wire. It
+imports <code>domain</code> and <code>zod</code>, nothing else.</li>
 </ul>
-<p>Packages export their TypeScript source by subpath
-(<code>@schellingboard/domain/guest</code>), with no build step: Turbopack, Vitest and <code>tsc</code>
-compile workspace sources directly. There is no barrel file, so a client bundle
-pulls in only the modules it names.</p>
-<p>The boundary is checked three ways, because Bun hoists <code>node_modules</code> and an
-undeclared import would otherwise still resolve:</p>
+<p>Packages export their TypeScript source by subpath (<code>@schellingboard/domain/guest</code>), with no build
+step: Turbopack, Vitest and <code>tsc</code> compile workspace sources directly. There is no barrel file, so a
+client bundle pulls in only the modules it names.</p>
+<p>The boundary is checked three ways, because Bun hoists <code>node_modules</code> and an undeclared import would
+otherwise still resolve:</p>
 <ul>
-<li><code>make arch</code> (dependency-cruiser): <code>domain</code> reaches only itself and <code>luxon</code>,
-<code>contracts</code> only itself, <code>domain</code> and <code>zod</code>; a package is imported by name,
-never by a path into its <code>src/</code>; and every npm package a workspace package
-imports is declared in its own <code>package.json</code>.</li>
-<li><code>make typecheck</code> compiles each package with its own <code>tsconfig.json</code>, which has
-no <code>@/</code> path alias and, for <code>domain</code>, no DOM or Node types.</li>
+<li><code>make arch</code> (dependency-cruiser): <code>domain</code> reaches only itself and <code>luxon</code>, <code>contracts</code> only
+itself, <code>domain</code> and <code>zod</code>; a package is imported by name, never by a path into its <code>src/</code>; and
+every npm package a workspace package imports is declared in its own <code>package.json</code>.</li>
+<li><code>make typecheck</code> compiles each package with its own <code>tsconfig.json</code>, which has no <code>@/</code> path alias
+and, for <code>domain</code>, no DOM or Node types.</li>
 <li>The ambient-clock lint rule (ADR 0004) covers <code>packages/*/src</code>.</li>
 </ul>
-<p>Bun’s isolated linker would make an undeclared import fail to resolve, which is
-the enforcement the target design describes. It is not used: the Docker image
-copies hoisted <code>node_modules/sharp</code> and <code>@img</code> by path, and Next’s standalone
-tracing has only ever been run against a hoisted tree. The rules above give the
-same guarantee without changing how dependencies are laid out.</p>
-<p>Tests stay in <code>tests/</code> for now. The repository ports stay in <code>db/</code> until the
-target architecture’s server modules exist to own them. That departs from #965,
-which put the ports in <code>model/</code>; the boundary #965 was after is enforced instead
-by a rule that nothing outside <code>db/</code> imports <code>db/repositories/</code>.</p>
+<p>Bun’s isolated linker would make an undeclared import fail to resolve, which is the enforcement the
+target design describes. It is not used: the Docker image copies hoisted <code>node_modules/sharp</code> and
+<code>@img</code> by path, and Next’s standalone tracing has only ever been run against a hoisted tree. The
+rules above give the same guarantee without changing how dependencies are laid out.</p>
+<p>Tests stay in <code>tests/</code> for now. The repository ports stay in <code>db/</code> until the target architecture’s
+server modules exist to own them. That departs from #965, which put the ports in <code>model/</code>; the
+boundary #965 was after is enforced instead by a rule that nothing outside <code>db/</code> imports
+<code>db/repositories/</code>.</p>
 <h2 id="adr-0010-domain-and-contracts-as-workspace-packages-consequences" class="docmd-heading"><a href="#adr-0010-domain-and-contracts-as-workspace-packages-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
 <ul>
-<li><code>model/</code> is gone. A new rule goes in <code>domain</code>; a new form or route schema goes
-in <code>contracts</code>; if it needs a database type, it does not belong in either.</li>
-<li><code>luxon</code> is <code>domain</code>’s one npm dependency: the time rules need time zones, and
-the app already formats every instant with it. Another dependency is the same
-kind of decision: declare it in the package’s <code>package.json</code> and widen the
-<code>domain-stays-pure</code> rule.</li>
-<li>The Docker build copies every package’s <code>package.json</code> before
-<code>bun install --frozen-lockfile</code>. A new package needs a line there too.</li>
-<li>The root <code>tsconfig.json</code> still includes the packages, so the root <code>tsc</code> run
-checks them together with the app; editors and ESLint use each package’s own
-<code>tsconfig.json</code>. These are not project references; those wait until the server
-and web app are packages too.</li>
+<li><code>model/</code> is gone. A new rule goes in <code>domain</code>; a new form or route schema goes in <code>contracts</code>; if
+it needs a database type, it does not belong in either.</li>
+<li><code>luxon</code> is <code>domain</code>’s one npm dependency: the time rules need time zones, and the app already
+formats every instant with it. Another dependency is the same kind of decision: declare it in the
+package’s <code>package.json</code> and widen the <code>domain-stays-pure</code> rule.</li>
+<li>The Docker build copies every package’s <code>package.json</code> before <code>bun install --frozen-lockfile</code>. A
+new package needs a line there too.</li>
+<li>The root <code>tsconfig.json</code> still includes the packages, so the root <code>tsc</code> run checks them together
+with the app; editors and ESLint use each package’s own <code>tsconfig.json</code>. These are not project
+references; those wait until the server and web app are packages too.</li>
 </ul>
 
                 
@@ -1940,17 +1934,32 @@ and web app are packages too.</li>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1791069714000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1791069714000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Claude">
@@ -2023,13 +2032,13 @@ and web app are packages too.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2107,7 +2116,7 @@ and web app are packages too.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

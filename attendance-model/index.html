@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Attendance%20prediction%20from%20voting%20results%0A%0AFits%20a%20formula%20predicting%20session%20attendance%20from%20Schelling%20Board%20votes%2C%20using%0Athe%202025%20event%20(259%20attendees%2C%209%20parallel%20sessions%2C%2013%20sessions%20with%20reported%0Aattendance).%0A%0A%7C%20File%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20is%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20----------------------------------------------------------------%20%7C%0A%7C%20%60data-2025.csv%60%20%20%20%20%20%20%7C%20The%20data%2C%20machine-readable%20and%20anonymised.%20Source%20of%20truth%20%20%20%20%20%20%20%7C%0A%7C%20%60model.py%60%20%20%20%20%20%20%20%20%20%20%20%7C%20Constants%2C%20data%20loading%2C%20the%20fitted%20formula.%20Import%20this%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60attendance-2025.md%60%20%7C%20**The%20write-up%20%E2%80%94%20publishable%20as-is.**%20Generated%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60explore.py%60%20%20%20%20%20%20%20%20%20%7C%20Why%20this%20model%20form%3A%20candidate%20comparison%20by%20leave-one-out%20error%20%7C%0A%7C%20%60validate.py%60%20%20%20%20%20%20%20%20%7C%20Significance%2C%20bootstrap%20CIs%2C%20variance%20decomposition%2C%20calibration%20%7C%0A%7C%20%60make_report.py%60%20%20%20%20%20%7C%20Regenerates%20%60attendance-2025.md%60%20from%20the%20CSV%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%60%60%60sh%0Auv%20run%20explore.py%0Auv%20run%20validate.py%0Auv%20run%20make_report.py%20%20%20%23%20after%20editing%20the%20CSV%0A%60%60%60%0A%0ASessions%20are%20numbered%20by%20interest%20share%2C%20highest%20first.%20The%20report%20is%20written%20to%0Abe%20publishable%3A%20no%20titles%2C%20and%20the%20commentary%20is%20kept%20quantitative%20so%20a%20session%0Acannot%20be%20recognised%20from%20its%20description.%0A%0A%23%23%20Result%0A%0AMidpoint%2C%20then%20a%20range%20around%20it%3A%0A%0A%20%20%20%20M%20%20%20%20%20%20%3D%200.66%20%C3%97%20(N%20%2F%20P)%20%C3%97%20(s%20%2F%20s%CC%84)%0A%20%20%20%20range%20%20%3D%20M%20%2F%20g%20%20%E2%80%A6%20%20M%20%C3%97%20g%20%20%20%20%20%20%20%20%20%20g%20%3D%20exp(z%20%C2%B7%20%CF%83)%0A%20%20%20%20%CF%83%20%20%20%20%20%20%3D%20sqrt(%200.31%20%2B%20(1%20%E2%88%92%20s)%20%2F%20(s%20%C2%B7%20V)%20)%0A%0A%60s%60%20%3D%20Interested%20%C3%B7%20total%20votes%20on%20the%20session%2C%20%60s%CC%84%60%20%3D%20event-wide%20mean%20of%20%60s%60%2C%0A%60N%60%20%3D%20attendees%2C%20%60P%60%20%3D%20parallel%20sessions%2C%20%60V%60%20%3D%20people%20who%20voted%20on%20that%20session.%0A%60z%60%20%3D%200.674%20for%20a%2050%25%20range%2C%201.282%20for%2080%25.%0A%0AMaybe%20votes%20are%20deliberately%20excluded%20%E2%80%94%20every%20non-zero%20weight%20on%20them%20made%0Apredictions%20worse.%0A%0A%23%23%23%20Where%20the%20number%20of%20voters%20enters%0A%0AOnly%20in%20the%20width%2C%20never%20in%20the%20midpoint.%20%60s%60%20is%20a%20share%2C%20so%20doubling%20turnout%20at%0Athe%20same%20proportions%20leaves%20the%20prediction%20unchanged%3B%20what%20changes%20is%20confidence%0Ain%20it%2C%20via%20the%20binomial%20term%20%60(1%20%E2%88%92%20s)%2F(s%20%C2%B7%20V)%60.%20At%202025%20turnout%20that%20term%20is%20only%0A~10%25%20of%20total%20error%20%E2%80%94%20the%20%600.31%60%20intrinsic%20variance%20is%20the%20floor%2C%20and%20no%20amount%0Aof%20voting%20reduces%20it.%0A%0ACalibration%20on%202025%3A%2050%25%20range%20caught%2062%25%20of%20sessions%2C%2080%25%20range%20caught%2077%25%0A(a%20session%20counts%20as%20caught%20if%20the%20host&#039;s%20recalled%20range%20overlaps%20the%20predicted%0Aone%20at%20all).%0A%0A%23%23%20Caveats%0A%0AWith%20n%3D13%20the%20vote%E2%80%93attendance%20correlation%20is%20not%20statistically%20significant%0A(p%20%E2%89%88%200.07%20on%20log%20attendance%2C%200.19%20on%20ranks).%20The%20exponent%20on%20%60s%2Fs%CC%84%60%20is%20pinned%20to%0A1%20rather%20than%20fitted%3A%20the%20in-sample%20best%20is%200.66%2C%20but%20that%20is%20overfitting%20%E2%80%94%20the%0Abootstrap%20CI%20spans%20%5B-0.17%2C%201.28%5D%20and%201%20cross-validates%20best.%0A%0AThe%20turnout%20term%20is%20derived%20from%20binomial%20theory%2C%20not%20measured%3A%20every%20session%20in%0A2025%20got%2099%E2%80%93107%20votes%2C%20so%20there%20is%20no%20variation%20to%20fit%20against.%20It%20also%20assumes%0Avoters%20are%20representative%20of%20attendees%2C%20which%20at%2040%25%20turnout%20is%20a%20real%0Aassumption%20%E2%80%94%20%60k%60%20is%20silently%20absorbing%20any%20bias%20there.%0A%0ARSVPs%20predict%20far%20better%20(log%20R%C2%B2%200.63%20vs%200.20)%20but%20arrive%20after%20hosts%20have%20already%0Apicked%20a%20room%2C%20and%20once%20you%20know%20them%20the%20vote%20adds%20nothing%20on%20top.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Attendance%20prediction%20from%20voting%20results%0A%0AFits%20a%20formula%20predicting%20session%20attendance%20from%20Schelling%20Board%20votes%2C%20using%20the%202025%20event%20(259%0Aattendees%2C%209%20parallel%20sessions%2C%2013%20sessions%20with%20reported%20attendance).%0A%0A%7C%20File%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20What%20it%20is%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20----------------------------------------------------------------%20%7C%0A%7C%20%60data-2025.csv%60%20%20%20%20%20%20%7C%20The%20data%2C%20machine-readable%20and%20anonymised.%20Source%20of%20truth%20%20%20%20%20%20%20%7C%0A%7C%20%60model.py%60%20%20%20%20%20%20%20%20%20%20%20%7C%20Constants%2C%20data%20loading%2C%20the%20fitted%20formula.%20Import%20this%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60attendance-2025.md%60%20%7C%20**The%20write-up%20%E2%80%94%20publishable%20as-is.**%20Generated%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%60explore.py%60%20%20%20%20%20%20%20%20%20%7C%20Why%20this%20model%20form%3A%20candidate%20comparison%20by%20leave-one-out%20error%20%7C%0A%7C%20%60validate.py%60%20%20%20%20%20%20%20%20%7C%20Significance%2C%20bootstrap%20CIs%2C%20variance%20decomposition%2C%20calibration%20%7C%0A%7C%20%60make_report.py%60%20%20%20%20%20%7C%20Regenerates%20%60attendance-2025.md%60%20from%20the%20CSV%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%60%60%60sh%0Auv%20run%20explore.py%0Auv%20run%20validate.py%0Auv%20run%20make_report.py%20%20%20%23%20after%20editing%20the%20CSV%0A%60%60%60%0A%0ASessions%20are%20numbered%20by%20interest%20share%2C%20highest%20first.%20The%20report%20is%20written%20to%20be%20publishable%3A%20no%0Atitles%2C%20and%20the%20commentary%20is%20kept%20quantitative%20so%20a%20session%20cannot%20be%20recognised%20from%20its%0Adescription.%0A%0A%23%23%20Result%0A%0AMidpoint%2C%20then%20a%20range%20around%20it%3A%0A%0A%20%20%20%20M%20%20%20%20%20%20%3D%200.66%20%C3%97%20(N%20%2F%20P)%20%C3%97%20(s%20%2F%20s%CC%84)%0A%20%20%20%20range%20%20%3D%20M%20%2F%20g%20%20%E2%80%A6%20%20M%20%C3%97%20g%20%20%20%20%20%20%20%20%20%20g%20%3D%20exp(z%20%C2%B7%20%CF%83)%0A%20%20%20%20%CF%83%20%20%20%20%20%20%3D%20sqrt(%200.31%20%2B%20(1%20%E2%88%92%20s)%20%2F%20(s%20%C2%B7%20V)%20)%0A%0A%60s%60%20%3D%20Interested%20%C3%B7%20total%20votes%20on%20the%20session%2C%20%60s%CC%84%60%20%3D%20event-wide%20mean%20of%20%60s%60%2C%20%60N%60%20%3D%20attendees%2C%20%60P%60%20%3D%0Aparallel%20sessions%2C%20%60V%60%20%3D%20people%20who%20voted%20on%20that%20session.%20%60z%60%20%3D%200.674%20for%20a%2050%25%20range%2C%201.282%20for%0A80%25.%0A%0AMaybe%20votes%20are%20deliberately%20excluded%20%E2%80%94%20every%20non-zero%20weight%20on%20them%20made%20predictions%20worse.%0A%0A%23%23%23%20Where%20the%20number%20of%20voters%20enters%0A%0AOnly%20in%20the%20width%2C%20never%20in%20the%20midpoint.%20%60s%60%20is%20a%20share%2C%20so%20doubling%20turnout%20at%20the%20same%0Aproportions%20leaves%20the%20prediction%20unchanged%3B%20what%20changes%20is%20confidence%20in%20it%2C%20via%20the%20binomial%20term%0A%60(1%20%E2%88%92%20s)%2F(s%20%C2%B7%20V)%60.%20At%202025%20turnout%20that%20term%20is%20only%20~10%25%20of%20total%20error%20%E2%80%94%20the%20%600.31%60%20intrinsic%0Avariance%20is%20the%20floor%2C%20and%20no%20amount%20of%20voting%20reduces%20it.%0A%0ACalibration%20on%202025%3A%2050%25%20range%20caught%2062%25%20of%20sessions%2C%2080%25%20range%20caught%2077%25%20(a%20session%20counts%20as%0Acaught%20if%20the%20host&#039;s%20recalled%20range%20overlaps%20the%20predicted%20one%20at%20all).%0A%0A%23%23%20Caveats%0A%0AWith%20n%3D13%20the%20vote%E2%80%93attendance%20correlation%20is%20not%20statistically%20significant%20(p%20%E2%89%88%200.07%20on%20log%0Aattendance%2C%200.19%20on%20ranks).%20The%20exponent%20on%20%60s%2Fs%CC%84%60%20is%20pinned%20to%201%20rather%20than%20fitted%3A%20the%20in-sample%0Abest%20is%200.66%2C%20but%20that%20is%20overfitting%20%E2%80%94%20the%20bootstrap%20CI%20spans%20%5B-0.17%2C%201.28%5D%20and%201%20cross-validates%0Abest.%0A%0AThe%20turnout%20term%20is%20derived%20from%20binomial%20theory%2C%20not%20measured%3A%20every%20session%20in%202025%20got%2099%E2%80%93107%0Avotes%2C%20so%20there%20is%20no%20variation%20to%20fit%20against.%20It%20also%20assumes%20voters%20are%20representative%20of%0Aattendees%2C%20which%20at%2040%25%20turnout%20is%20a%20real%20assumption%20%E2%80%94%20%60k%60%20is%20silently%20absorbing%20any%20bias%20there.%0A%0ARSVPs%20predict%20far%20better%20(log%20R%C2%B2%200.63%20vs%200.20)%20but%20arrive%20after%20hosts%20have%20already%20picked%20a%20room%2C%0Aand%20once%20you%20know%20them%20the%20vote%20adds%20nothing%20on%20top.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1742,9 +1742,8 @@
                   </h1>
                 
                 <h1 id="attendance-prediction-from-voting-results" class="docmd-heading"><a href="#attendance-prediction-from-voting-results" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Attendance prediction from voting results</h1>
-<p>Fits a formula predicting session attendance from Schelling Board votes, using
-the 2025 event (259 attendees, 9 parallel sessions, 13 sessions with reported
-attendance).</p>
+<p>Fits a formula predicting session attendance from Schelling Board votes, using the 2025 event (259
+attendees, 9 parallel sessions, 13 sessions with reported attendance).</p>
 <div class="table-wrapper"><table>
 <thead>
 <tr>
@@ -1783,40 +1782,36 @@ attendance).</p>
 uv run validate.<span class="hljs-attr">py</span>
 uv run make_report.<span class="hljs-attr">py</span>   <span class="hljs-comment"># after editing the CSV</span>
 </code></pre>
-<p>Sessions are numbered by interest share, highest first. The report is written to
-be publishable: no titles, and the commentary is kept quantitative so a session
-cannot be recognised from its description.</p>
+<p>Sessions are numbered by interest share, highest first. The report is written to be publishable: no
+titles, and the commentary is kept quantitative so a session cannot be recognised from its
+description.</p>
 <h2 id="attendance-prediction-from-voting-results-result" class="docmd-heading"><a href="#attendance-prediction-from-voting-results-result" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Result</h2>
 <p>Midpoint, then a range around it:</p>
 <pre><code>M      = 0.66 × (N / P) × (s / s̄)
 range  = M / g  …  M × g          g = exp(z · σ)
 σ      = sqrt( 0.31 + (1 − s) / (s · V) )
 </code></pre>
-<p><code>s</code> = Interested ÷ total votes on the session, <code>s̄</code> = event-wide mean of <code>s</code>,
-<code>N</code> = attendees, <code>P</code> = parallel sessions, <code>V</code> = people who voted on that session.
-<code>z</code> = 0.674 for a 50% range, 1.282 for 80%.</p>
-<p>Maybe votes are deliberately excluded — every non-zero weight on them made
-predictions worse.</p>
+<p><code>s</code> = Interested ÷ total votes on the session, <code>s̄</code> = event-wide mean of <code>s</code>, <code>N</code> = attendees, <code>P</code> =
+parallel sessions, <code>V</code> = people who voted on that session. <code>z</code> = 0.674 for a 50% range, 1.282 for
+80%.</p>
+<p>Maybe votes are deliberately excluded — every non-zero weight on them made predictions worse.</p>
 <h3 id="attendance-prediction-from-voting-results-result-where-the-number-of-voters-enters" class="docmd-heading"><a href="#attendance-prediction-from-voting-results-result-where-the-number-of-voters-enters" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Where the number of voters enters</h3>
-<p>Only in the width, never in the midpoint. <code>s</code> is a share, so doubling turnout at
-the same proportions leaves the prediction unchanged; what changes is confidence
-in it, via the binomial term <code>(1 − s)/(s · V)</code>. At 2025 turnout that term is only
-~10% of total error — the <code>0.31</code> intrinsic variance is the floor, and no amount
-of voting reduces it.</p>
-<p>Calibration on 2025: 50% range caught 62% of sessions, 80% range caught 77%
-(a session counts as caught if the host’s recalled range overlaps the predicted
-one at all).</p>
+<p>Only in the width, never in the midpoint. <code>s</code> is a share, so doubling turnout at the same
+proportions leaves the prediction unchanged; what changes is confidence in it, via the binomial term
+<code>(1 − s)/(s · V)</code>. At 2025 turnout that term is only ~10% of total error — the <code>0.31</code> intrinsic
+variance is the floor, and no amount of voting reduces it.</p>
+<p>Calibration on 2025: 50% range caught 62% of sessions, 80% range caught 77% (a session counts as
+caught if the host’s recalled range overlaps the predicted one at all).</p>
 <h2 id="attendance-prediction-from-voting-results-caveats" class="docmd-heading"><a href="#attendance-prediction-from-voting-results-caveats" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Caveats</h2>
-<p>With n=13 the vote–attendance correlation is not statistically significant
-(p ≈ 0.07 on log attendance, 0.19 on ranks). The exponent on <code>s/s̄</code> is pinned to
-1 rather than fitted: the in-sample best is 0.66, but that is overfitting — the
-bootstrap CI spans [-0.17, 1.28] and 1 cross-validates best.</p>
-<p>The turnout term is derived from binomial theory, not measured: every session in
-2025 got 99–107 votes, so there is no variation to fit against. It also assumes
-voters are representative of attendees, which at 40% turnout is a real
-assumption — <code>k</code> is silently absorbing any bias there.</p>
-<p>RSVPs predict far better (log R² 0.63 vs 0.20) but arrive after hosts have already
-picked a room, and once you know them the vote adds nothing on top.</p>
+<p>With n=13 the vote–attendance correlation is not statistically significant (p ≈ 0.07 on log
+attendance, 0.19 on ranks). The exponent on <code>s/s̄</code> is pinned to 1 rather than fitted: the in-sample
+best is 0.66, but that is overfitting — the bootstrap CI spans [-0.17, 1.28] and 1 cross-validates
+best.</p>
+<p>The turnout term is derived from binomial theory, not measured: every session in 2025 got 99–107
+votes, so there is no variation to fit against. It also assumes voters are representative of
+attendees, which at 40% turnout is a real assumption — <code>k</code> is silently absorbing any bias there.</p>
+<p>RSVPs predict far better (log R² 0.63 vs 0.20) but arrive after hosts have already picked a room,
+and once you know them the vote adds nothing on top.</p>
 
                 
                   <div class="page-navigation">
@@ -1926,17 +1921,32 @@ picked a room, and once you know them the vote adds nothing on top.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1787118004000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1787118004000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1979,13 +1989,13 @@ picked a room, and once you know them the vote adds nothing on top.</p>
         </div>
       </div>
       
-      <script src="../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2063,7 +2073,7 @@ picked a room, and once you know them the vote adds nothing on top.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       

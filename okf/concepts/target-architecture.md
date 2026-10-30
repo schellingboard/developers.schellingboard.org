@@ -3,18 +3,17 @@ type: concept
 title: "Target architecture"
 source: "https://developers.schellingboard.org/target-architecture/"
 path: /target-architecture/
-updated: 2026-10-29
+updated: 2026-10-30
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-29T11:22:39.423Z"
+  generated_at: "2026-10-30T20:48:13.679Z"
 ---
 # Target architecture
 
-A from-scratch design for SchellingBoard, written knowing the features that exist,
-the ones in the issue tracker, and what attendees asked for after the 2026 event.
-It deliberately ignores how the current code is laid out. It is a target, not a plan:
-[10-path-from-here.md](10-path-from-here.md) sketches how to get there, but nothing
-here is committed to until an ADR under `../adr/` adopts it.
+A from-scratch design for SchellingBoard, written knowing the features that exist, the ones in the
+issue tracker, and what attendees asked for after the 2026 event. It deliberately ignores how the
+current code is laid out. It is a target, not a plan: [10-path-from-here.md](10-path-from-here.md)
+sketches how to get there, but nothing here is committed to until an ADR under `../adr/` adopts it.
 
 **Status:** proposal, September 2026.
 
@@ -54,6 +53,6 @@ Each level links down to the next. Stop when you have what you need.
 | —     | [open-questions.md](open-questions.md)       | What still needs a decision                                                                 |
 | —     | [diagrams/](diagrams/README.md)              | The LikeC4 model behind the C4 diagrams and flows                                           |
 
-Diagrams: the C4 model and the flows live in [diagrams/](diagrams/) as LikeC4
-sources. Run `make arch-diagrams` for an interactive view; `make arch` checks that
-the sources parse. State machines are inline Mermaid in the documents.
+Diagrams: the C4 model and the flows live in [diagrams/](diagrams/) as LikeC4 sources. Run
+`make arch-diagrams` for an interactive view; `make arch` checks that the sources parse. State
+machines are inline Mermaid in the documents.

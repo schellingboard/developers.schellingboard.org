@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvtgezoa">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvtgezoa">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mvvg26lt">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mvvg26lt">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvtgezoa" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvtgezoa" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mvvg26lt" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mvvg26lt" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvtgezoa" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvtgezoa" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mvvg26lt" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mvvg26lt" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvtgezoa">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mvvg26lt">
     
     
   </head>
@@ -1646,7 +1646,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200009%3A%20Move%20to%20a%20standalone%20repo%20in%20new%20schellingboard%20GitHub%20org%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-09-19%0A%0A%23%23%20Context%0A%0AThe%20repository%20was%20%60LWCW-Europe%2Fschellingboard%60%2C%20a%20fork%20of%0A%60rachelweinberg12%2Fscheduling-app%60.%20That%20cost%20us%20in%20two%20ways%3A%0A%0A-%20**Org%20name.**%20%22LWCW-Europe%22%20means%20little%20outside%20the%20rationality%20scene%20and%20made%0A%20%20SchellingBoard%20look%20like%20software%20for%20one%20event%20rather%20than%20any%20conference.%0A-%20**Fork%20status.**%20Commits%20to%20a%20fork%20don&#039;t%20count%20on%20contributors&#039;%20GitHub%20profiles%2C%0A%20%20so%20our%20~20%20contributors%20got%20no%20visible%20credit.%20Forks%20are%20hidden%20from%20search%20by%0A%20%20default%2C%20and%20%22forked%20from%E2%80%A6%22%20makes%20the%20project%20look%20like%20a%20side%20copy.%20Upstream%0A%20%20is%20less%20active%20and%20behind%20on%20features%20and%20bug%20fixes%20e.g.%203%E2%98%85%20against%2017%E2%98%85.%0A%0A%23%23%20Decision%0A%0AMove%20to%20%60schellingboard%2Fschellingboard%60%2C%20a%20standalone%20repository%20in%20a%20new%0Aorganization.%20The%20name%20was%20free%20and%20matches%20our%20Docker%20Hub%20repository.%0A%0AGitHub%20can&#039;t%20detach%20a%20fork%20and%20keep%20its%20history%2C%20so%20the%20old%20repository%20is%0Aarchived%20as%20%60schellingboard%2Fschellingboard-legacy%60%20and%20the%20new%20one%20starts%20fresh%0Afrom%20the%20code%20and%20tags.%20To%20keep%20%60%23123%60%20references%20in%20commits%20and%20the%20changelog%0Aworking%2C%20every%20issue%20and%20PR%20number%20was%20reproduced%20in%20the%20new%20repository.%20Issues%0Awere%20transferred%20with%20their%20discussion%2C%20and%20anything%20else%20became%20a%20closed%20stub%0Alinking%20to%20the%20original.%20The%20website%20repository%20and%20DNS%20moved%20with%20it.%0A%0AWe%20did%20it%20early%2C%20because%20stars%20and%20history%20only%20grow.%0A%0A%23%23%20Consequences%0A%0A-%20Stars%20(17)%2C%20PR%20review%20discussions%20and%20forks%20are%20lost.%20The%20legacy%20README%20asks%0A%20%20people%20to%20re-star%20and%20fork%20the%20new%20repository.%0A-%20Contributors%20point%20their%20remote%20at%20the%20new%20repository.%20Open%20PRs%20had%20to%20be%0A%20%20reopened%20there.%0A-%20Links%20to%20%60LWCW-Europe%2Fschellingboard%60%20in%20the%20docs%2C%20website%20and%20code%20were%0A%20%20updated.%20Old%20issue%20URLs%20redirect.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20ADR%200009%3A%20Move%20to%20a%20standalone%20repo%20in%20new%20schellingboard%20GitHub%20org%0A%0A-%20**Status%3A**%20Accepted%0A-%20**Date%3A**%202026-09-19%0A%0A%23%23%20Context%0A%0AThe%20repository%20was%20%60LWCW-Europe%2Fschellingboard%60%2C%20a%20fork%20of%20%60rachelweinberg12%2Fscheduling-app%60.%20That%0Acost%20us%20in%20two%20ways%3A%0A%0A-%20**Org%20name.**%20%22LWCW-Europe%22%20means%20little%20outside%20the%20rationality%20scene%20and%20made%20SchellingBoard%0A%20%20look%20like%20software%20for%20one%20event%20rather%20than%20any%20conference.%0A-%20**Fork%20status.**%20Commits%20to%20a%20fork%20don&#039;t%20count%20on%20contributors&#039;%20GitHub%20profiles%2C%20so%20our%20~20%0A%20%20contributors%20got%20no%20visible%20credit.%20Forks%20are%20hidden%20from%20search%20by%20default%2C%20and%20%22forked%20from%E2%80%A6%22%0A%20%20makes%20the%20project%20look%20like%20a%20side%20copy.%20Upstream%20is%20less%20active%20and%20behind%20on%20features%20and%20bug%0A%20%20fixes%20e.g.%203%E2%98%85%20against%2017%E2%98%85.%0A%0A%23%23%20Decision%0A%0AMove%20to%20%60schellingboard%2Fschellingboard%60%2C%20a%20standalone%20repository%20in%20a%20new%20organization.%20The%20name%20was%0Afree%20and%20matches%20our%20Docker%20Hub%20repository.%0A%0AGitHub%20can&#039;t%20detach%20a%20fork%20and%20keep%20its%20history%2C%20so%20the%20old%20repository%20is%20archived%20as%0A%60schellingboard%2Fschellingboard-legacy%60%20and%20the%20new%20one%20starts%20fresh%20from%20the%20code%20and%20tags.%20To%20keep%0A%60%23123%60%20references%20in%20commits%20and%20the%20changelog%20working%2C%20every%20issue%20and%20PR%20number%20was%20reproduced%20in%0Athe%20new%20repository.%20Issues%20were%20transferred%20with%20their%20discussion%2C%20and%20anything%20else%20became%20a%20closed%0Astub%20linking%20to%20the%20original.%20The%20website%20repository%20and%20DNS%20moved%20with%20it.%0A%0AWe%20did%20it%20early%2C%20because%20stars%20and%20history%20only%20grow.%0A%0A%23%23%20Consequences%0A%0A-%20Stars%20(17)%2C%20PR%20review%20discussions%20and%20forks%20are%20lost.%20The%20legacy%20README%20asks%20people%20to%20re-star%20and%0A%20%20fork%20the%20new%20repository.%0A-%20Contributors%20point%20their%20remote%20at%20the%20new%20repository.%20Open%20PRs%20had%20to%20be%20reopened%20there.%0A-%20Links%20to%20%60LWCW-Europe%2Fschellingboard%60%20in%20the%20docs%2C%20website%20and%20code%20were%20updated.%20Old%20issue%20URLs%0A%20%20redirect.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1771,34 +1771,32 @@
 <li><strong>Date:</strong> 2026-09-19</li>
 </ul>
 <h2 id="adr-0009-move-to-a-standalone-repo-in-new-schellingboard-github-org-context" class="docmd-heading"><a href="#adr-0009-move-to-a-standalone-repo-in-new-schellingboard-github-org-context" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Context</h2>
-<p>The repository was <code>LWCW-Europe/schellingboard</code>, a fork of
-<code>rachelweinberg12/scheduling-app</code>. That cost us in two ways:</p>
+<p>The repository was <code>LWCW-Europe/schellingboard</code>, a fork of <code>rachelweinberg12/scheduling-app</code>. That
+cost us in two ways:</p>
 <ul>
-<li><strong>Org name.</strong> “LWCW-Europe” means little outside the rationality scene and made
-SchellingBoard look like software for one event rather than any conference.</li>
-<li><strong>Fork status.</strong> Commits to a fork don’t count on contributors’ GitHub profiles,
-so our ~20 contributors got no visible credit. Forks are hidden from search by
-default, and “forked from…” makes the project look like a side copy. Upstream
-is less active and behind on features and bug fixes e.g. 3★ against 17★.</li>
+<li><strong>Org name.</strong> “LWCW-Europe” means little outside the rationality scene and made SchellingBoard
+look like software for one event rather than any conference.</li>
+<li><strong>Fork status.</strong> Commits to a fork don’t count on contributors’ GitHub profiles, so our ~20
+contributors got no visible credit. Forks are hidden from search by default, and “forked from…”
+makes the project look like a side copy. Upstream is less active and behind on features and bug
+fixes e.g. 3★ against 17★.</li>
 </ul>
 <h2 id="adr-0009-move-to-a-standalone-repo-in-new-schellingboard-github-org-decision" class="docmd-heading"><a href="#adr-0009-move-to-a-standalone-repo-in-new-schellingboard-github-org-decision" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Decision</h2>
-<p>Move to <code>schellingboard/schellingboard</code>, a standalone repository in a new
-organization. The name was free and matches our Docker Hub repository.</p>
-<p>GitHub can’t detach a fork and keep its history, so the old repository is
-archived as <code>schellingboard/schellingboard-legacy</code> and the new one starts fresh
-from the code and tags. To keep <code>#123</code> references in commits and the changelog
-working, every issue and PR number was reproduced in the new repository. Issues
-were transferred with their discussion, and anything else became a closed stub
-linking to the original. The website repository and DNS moved with it.</p>
+<p>Move to <code>schellingboard/schellingboard</code>, a standalone repository in a new organization. The name was
+free and matches our Docker Hub repository.</p>
+<p>GitHub can’t detach a fork and keep its history, so the old repository is archived as
+<code>schellingboard/schellingboard-legacy</code> and the new one starts fresh from the code and tags. To keep
+<code>#123</code> references in commits and the changelog working, every issue and PR number was reproduced in
+the new repository. Issues were transferred with their discussion, and anything else became a closed
+stub linking to the original. The website repository and DNS moved with it.</p>
 <p>We did it early, because stars and history only grow.</p>
 <h2 id="adr-0009-move-to-a-standalone-repo-in-new-schellingboard-github-org-consequences" class="docmd-heading"><a href="#adr-0009-move-to-a-standalone-repo-in-new-schellingboard-github-org-consequences" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Consequences</h2>
 <ul>
-<li>Stars (17), PR review discussions and forks are lost. The legacy README asks
-people to re-star and fork the new repository.</li>
-<li>Contributors point their remote at the new repository. Open PRs had to be
-reopened there.</li>
-<li>Links to <code>LWCW-Europe/schellingboard</code> in the docs, website and code were
-updated. Old issue URLs redirect.</li>
+<li>Stars (17), PR review discussions and forks are lost. The legacy README asks people to re-star and
+fork the new repository.</li>
+<li>Contributors point their remote at the new repository. Open PRs had to be reopened there.</li>
+<li>Links to <code>LWCW-Europe/schellingboard</code> in the docs, website and code were updated. Old issue URLs
+redirect.</li>
 </ul>
 
                 
@@ -1909,17 +1907,32 @@ updated. Old issue URLs redirect.</li>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1789900853000">
+                <span class="git-last-updated" data-timestamp="1793221960000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1789900853000"></span>
+                  <span class="git-time" data-timestamp="1793221960000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="style: wrap markdown at 100 columns with prettier">style: wrap markdown at 100 columns w...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1793221960000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1962,13 +1975,13 @@ updated. Old issue URLs redirect.</li>
         </div>
       </div>
       
-      <script src="../../assets/js/docmd-main.js?v=mvtgezoa"></script>
+      <script src="../../assets/js/docmd-main.js?v=mvvg26lt"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mvtgezoa"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-search.js?v=mvtgezoa" ></script>
-<script src="../../assets/js/docmd-git.js?v=mvtgezoa" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mvvg26lt"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-search.js?v=mvvg26lt" ></script>
+<script src="../../assets/js/docmd-git.js?v=mvvg26lt" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2046,7 +2059,7 @@ updated. Old issue URLs redirect.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mvtgezoa"></script>
+          src="../../assets/js/likec4-embed.js?v=mvvg26lt"></script>
         
       
       
