@@ -3,10 +3,10 @@ type: concept
 title: "Architecture decision records"
 source: "https://developers.schellingboard.org/adr/"
 path: /adr/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.669Z"
+  generated_at: "2026-10-31T18:14:09.656Z"
 ---
 # Architecture decision records
 
@@ -37,6 +37,7 @@ same header block: status, date, and the tracking issue where there is one.
 | [0014](0014-change-feed-and-snapshot.md)             | The change feed and the snapshot                            | 2026-10-07 |
 | [0015](0015-spa-alongside-next.md)                   | The SPA alongside Next                                      | 2026-10-08 |
 | [0016](0016-remaining-screen-families.md)            | The remaining screen families                               | 2026-10-25 |
+| [0017](0017-identity-and-roles.md)                   | Identity and roles                                          | 2026-10-28 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and

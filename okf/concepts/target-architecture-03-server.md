@@ -3,10 +3,10 @@ type: concept
 title: "3 · Server"
 source: "https://developers.schellingboard.org/target-architecture/03-server/"
 path: /target-architecture/03-server/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.676Z"
+  generated_at: "2026-10-31T18:14:09.665Z"
 ---
 # 3 · Server
 

@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.675Z"
+  generated_at: "2026-10-31T18:14:09.663Z"
 ---
 # The server and the API
 
@@ -59,9 +59,9 @@ several reads on one consistent view.
 ## Reading for pages
 
 Site pages do not call the repositories. `pageReads()` in `composition.ts` gives plain reads (no
-actor: the pages sit behind the site password only), and `adminReads()` in `server/admin-reads.ts`
-the admin pages' reads. Each is a function in a module's `application/page-reads.ts` taking a `Pick`
-of the repositories. `make arch` enforces it, with the auth flows allow-listed.
+actor: the pages sit behind the site password only). Each is a function in a module's
+`application/page-reads.ts` taking a `Pick` of the repositories. `make arch` enforces it, with the
+auth flows allow-listed.
 
 ## Choosing a name
 
@@ -113,8 +113,9 @@ SPA import the same data.
 
 The Next pages live in `app/legacy/` ([ADR 0015](adr/0015-spa-alongside-next.md)), so a page path in
 code is written `/legacy/…` (`<a href>`, `router.push`, `redirect()`, `revalidatePath()`). `/api`
-and `/media` stay at the root. `proxy.ts` redirects every other root path to `/legacy` + path, so
-emails and push links keep their root URLs, and applies its gates to the path without the `/legacy`
+and `/media` stay at the root. `proxy.ts` rewrites every other root path to the SPA shell, whose
+router owns most of them and forwards the rest to `/legacy` + path, so emails and push links keep
+their root URLs ([web app](web-app.md)). The proxy applies its gates to a `/legacy` path without the
 prefix.
 
 ## Keys from the UI

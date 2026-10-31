@@ -3,15 +3,15 @@ type: concept
 title: "ADR 0016: The remaining screen families"
 source: "https://developers.schellingboard.org/adr/0016-remaining-screen-families/"
 path: /adr/0016-remaining-screen-families/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.668Z"
+  generated_at: "2026-10-31T18:14:09.655Z"
 ---
 # ADR 0016: The remaining screen families
 
 - **Status:** Accepted
-- **Date:** 2026-10-25
+- **Date:** 2026-10-25, amended 2026-10-28 (point 4, see [ADR 0017](0017-identity-and-roles.md))
 
 ## Context
 

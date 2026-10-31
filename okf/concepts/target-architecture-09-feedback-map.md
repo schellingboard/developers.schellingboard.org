@@ -3,10 +3,10 @@ type: concept
 title: "9 · Feedback and issues, mapped to the design"
 source: "https://developers.schellingboard.org/target-architecture/09-feedback-map/"
 path: /target-architecture/09-feedback-map/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.678Z"
+  generated_at: "2026-10-31T18:14:09.668Z"
 ---
 # 9 · Feedback and issues, mapped to the design
 

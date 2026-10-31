@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-10-30T20:48:13.682Z",
+    "generated_at": "2026-10-31T18:14:09.672Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 48,
+    "concepts": 49,
     "by_type": {
-      "concept": 48
+      "concept": 49
     },
     "locales": [],
     "versions": []
@@ -201,6 +201,17 @@
       "description": "",
       "path": "/adr/0016-remaining-screen-families/",
       "file": "concepts/adr-0016-remaining-screen-families.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0017-identity-and-roles",
+      "type": "concept",
+      "title": "ADR 0017: Identity and roles",
+      "description": "",
+      "path": "/adr/0017-identity-and-roles/",
+      "file": "concepts/adr-0017-identity-and-roles.md",
       "locale": "",
       "version": "",
       "tags": []

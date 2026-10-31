@@ -3,10 +3,10 @@ type: concept
 title: "10 · A path from the current code"
 source: "https://developers.schellingboard.org/target-architecture/10-path-from-here/"
 path: /target-architecture/10-path-from-here/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.679Z"
+  generated_at: "2026-10-31T18:14:09.668Z"
 ---
 # 10 · A path from the current code
 
@@ -51,11 +51,14 @@ get its own issue and ADR.
    filters, agenda, kiosk), then proposals and voting, people and meetings, settings, admin. Each
    moved screen deletes its server actions.
 
-   **Started** ([ADR 0015](../adr/0015-spa-alongside-next.md)): the SPA owns every URL and Next
-   moves under `/legacy` until all screens have moved. The schedule is moved: grid, agenda, filters,
-   kiosk, the session modal with RSVPs, attendee counts and comments, and the schedule opening
-   offline with a reload offer after an upgrade. Proposals and voting, people and meetings, settings
-   and admin are still Next pages.
+   **Done but for the sign-in screens and the root event list**
+   ([ADR 0015](../adr/0015-spa-alongside-next.md)): the SPA owns every URL and Next moves under
+   `/legacy` until all screens have moved. The schedule is moved: grid, agenda, filters, kiosk, the
+   session modal with RSVPs, attendee counts and comments, and the schedule opening offline with a
+   reload offer after an upgrade. Proposals and voting, people and meetings, the session forms,
+   settings, notifications and admin have moved too; the legacy copies and their server actions are
+   deleted. Still Next pages: the sign-in screens (`/login`, guest login and reset,
+   `/account-security`, the admin login), which step 6 replaces, and the root event list (`/`).
 
 6. **Identity and roles.** Persons, participations, login sessions, assurance, join links; migrate
    protected guests to verified credentials; replace the admin password with a site-admin role and

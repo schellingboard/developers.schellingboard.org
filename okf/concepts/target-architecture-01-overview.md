@@ -3,10 +3,10 @@ type: concept
 title: "1 · Overview"
 source: "https://developers.schellingboard.org/target-architecture/01-overview/"
 path: /target-architecture/01-overview/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.675Z"
+  generated_at: "2026-10-31T18:14:09.664Z"
 ---
 # 1 · Overview
 

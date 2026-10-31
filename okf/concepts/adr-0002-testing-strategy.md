@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0002: Testing strategy"
 source: "https://developers.schellingboard.org/adr/0002-testing-strategy/"
 path: /adr/0002-testing-strategy/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.662Z"
+  generated_at: "2026-10-31T18:14:09.648Z"
 ---
 # ADR 0002: Testing strategy
 

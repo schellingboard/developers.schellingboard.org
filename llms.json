@@ -115,6 +115,13 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0017: Identity and roles",
+      "url": "https://developers.schellingboard.org/adr/0017-identity-and-roles/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",

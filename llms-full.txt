@@ -2190,8 +2190,8 @@ first slice contains.
   `<a>` without the base path. Emails, push, QR codes and bookmarks keep root URLs and get to the
   right screen through the SPA.
 - `proxy.ts` keeps the site password on every path, root and `/legacy` alike, except root `/admin*`:
-  that gets the static shell, and the forwarded `/legacy/admin` request meets the admin gate (admin
-  is independent of the site password).
+  that gets the static shell, and the admin API holds the gate (admin is independent of the site
+  password). Only `/legacy/admin/login` is still a Next admin page.
 - The SPA calls only `/api/v1`, never a legacy route or server action.
 
 When Next retires (step 7), `/legacy` goes with it and the server serves the shell and `/_spa/`
@@ -2291,7 +2291,7 @@ the existing E2E suite. No component tests in a browser runner.
 # ADR 0016: The remaining screen families
 
 - **Status:** Accepted
-- **Date:** 2026-10-25
+- **Date:** 2026-10-25, amended 2026-10-28 (point 4, see [ADR 0017](0017-identity-and-roles.md))
 
 ## Context
 
@@ -2351,6 +2351,101 @@ proposal is recorded as `vote.withdrawn`. Other viewers get no vote counts from 
 
 ---
 
+## [ADR 0017: Identity and roles](https://developers.schellingboard.org/adr/0017-identity-and-roles/) (Adr)
+
+# ADR 0017: Identity and roles
+
+- **Status:** Proposed (Q7 and Q8 below wait for the maintainer)
+- **Date:** 2026-10-28
+
+## Context
+
+[Path step 6](../target-architecture/10-path-from-here.md) replaces the cookies that say who a
+browser is, and the shared admin password, with server-side login sessions, a site-admin role and
+join links ([05](../target-architecture/05-security.md), D1, D2, D11 in
+[08](../target-architecture/08-decisions.md)). The sign-in screens are the last Next pages. This ADR
+settles the shapes before the work starts, and amends [ADR 0016](0016-remaining-screen-families.md)
+point 4.
+
+## Decision
+
+1. **No rename.** `guests` stays the person table and `event_guests` the participation; code keeps
+   the word "guest". The glossary's terms (Person, Participation) are used in docs only.
+2. **Login sessions are rows:**
+   `login_sessions(id hash, guest, event?, assurance, created, expires, lastSeen, device)` (05's
+   table, with `device` added). The `guest` cookie holds only the opaque id; revoking is a row
+   delete. Picking a name creates a `claimed` row; an emailed code, a password or a join link a
+   `verified` one. `resolveActor` reads the row, and a protected guest can be acted as only through
+   a `verified` row. Expired rows are pruned by the jobs loop.
+3. **Old cookies are honoured until they expire** (7 days at most): the `open.` and `verified.`
+   values still read. They cannot be revoked in that time (05 deviation). Their reader is deleted in
+   step 16 of this run's plan.
+4. **Credentials:** password, emailed login code, reset link, join link. The password hash stays
+   scrypt (`node:crypto`, no native module); [05](../target-architecture/05-security.md) says
+   argon2id and is updated in step 13. The stored format (`scrypt$salt$key`) holds no cost
+   parameters; it will carry N/r/p so cost can rise later. Passkeys and API tokens wait for a later
+   plan.
+5. **Sign-in API** under `/api/v1/auth/` (request a code, log in with code or password, reset, sign
+   out) and `/api/v1/me/credentials`, `/api/v1/me/login-sessions`. Strict rate limits and Origin
+   checks, as for the admin API. Problem codes name wrong code, expired code and too many attempts.
+   **This amends ADR 0016 point 4** ("no API for passwords"): the API now exists, because the SPA's
+   sign-in screens use it.
+6. **Token rules.** Login-session ids, codes, reset tokens and join tokens are random and stored
+   only as sha256 hashes: 32 random bytes for ids and reset or join tokens; the emailed code is 8
+   characters (~40 bits, per-code salt) and retires after 100 wrong tries. Each expires. "Request a
+   code" and "reset" answer the same for an unknown email (no enumeration). Each sign-in issues a
+   new row id and never upgrades a claimed row in place (session fixation). Setting or resetting a
+   password revokes the person's other rows.
+7. **Roles:** `siteAdmin` on the guest. The `organizer` participation role waits for a later plan;
+   what an organizer may do per event is a product question of its own. The actor is admin only
+   through a verified session of a site admin.
+8. **Join links** are per guest per event, single-use and expiring (05). The organizer gets them as
+   a CSV from the admin guests screen; a QR sheet and bulk email wait. `/join/{token}` in the SPA
+   exchanges the token, replaces the history entry and opens the event.
+9. **Identity mode** is a column on events. Existing events migrate to `open` (behaviour unchanged);
+   new events default to `verified` (product decision, 08). A domain function `assuranceRequired`
+   (mode, raised by protection) is the one copy; every acting use case checks it and the SPA
+   predicts it.
+10. **Retiring Next (not identity) goes through Hono first:** the proxy, media and SPA serving move
+    into the Hono app while Next still runs it from one catch-all route; then a Node entry replaces
+    Next. `/api/health` stays as an alias of `/api/v1/health`, because monitors and the Docker
+    healthcheck call it.
+
+### Pending the maintainer
+
+- **Q7, admin bootstrap.** Recommendation: `ADMIN_PASSWORD` goes. While no site admin exists, the
+  server logs a single-use bootstrap link at start (hashed, 24 h); a script prints a new one for
+  recovery; a new link at each restart invalidates the old one. Upgrade path: installs with
+  `ADMIN_PASSWORD` have no site admin after the migration, so they use the logged link. A set
+  `ADMIN_PASSWORD` only logs a deprecation warning. The admin UI is then always on. The bootstrap
+  page signs the visitor in as a chosen or new guest, asks for a password and grants the role; the
+  admin users screen grants and revokes it, never for the last one.
+- **Q8, site password.** D2 says no shared site password, but nothing replaces it until reads need a
+  participation. Recommendation: keep `SITE_PASSWORD` as an optional gate through the retirement of
+  Next, with its screen in the SPA and the gate in Hono; decide its removal together with
+  participation-gated reads.
+
+Steps that depend on Q7 or Q8 do not start before the answer.
+
+## Consequences
+
+- The admin password and the admin cookie go (after Q7); one identity model serves guests and
+  admins.
+- A stolen cookie value is useless without its row, and a person can sign out other devices.
+- Existing events keep their behaviour; a fresh event asks for verification.
+- Legacy and new cookies coexist for a week.
+
+## Alternatives
+
+- **Rename `guests` to `people`.** Cleaner words, a large migration for no behaviour.
+- **Signed cookies carrying the identity** (today). No revocation, and assurance cannot be raised
+  without a new value.
+- **argon2id now.** Needs a native module or WASM; scrypt from `node:crypto` is adequate.
+- **Per-event organizer role in this plan.** Its rights are undecided; it would freeze guesses.
+
+
+---
+
 ## [Architecture decision records](https://developers.schellingboard.org/adr/) (Adr)
 
 # Architecture decision records
@@ -2382,6 +2477,7 @@ same header block: status, date, and the tracking issue where there is one.
 | [0014](0014-change-feed-and-snapshot.md)             | The change feed and the snapshot                            | 2026-10-07 |
 | [0015](0015-spa-alongside-next.md)                   | The SPA alongside Next                                      | 2026-10-08 |
 | [0016](0016-remaining-screen-families.md)            | The remaining screen families                               | 2026-10-25 |
+| [0017](0017-identity-and-roles.md)                   | Identity and roles                                          | 2026-10-28 |
 
 Longer design work that isn't a single decision lives next door:
 [Target architecture](../target-architecture/README.md) and
@@ -2497,8 +2593,7 @@ kernel and the API mount. See [The server and the API](server.md).
 `utils/` helpers they call read through `pageReads()` or a use case; the rule covers `app/` and
 `utils/`. Exempt: the auth flows (`actions/user-auth.ts`, `auth/login`, `auth/reset`), which run
 before an actor exists, and the job loop, notification and push infrastructure (`utils/jobs/`,
-`utils/notifications.ts`, `utils/push.ts`). `adminReads()` (`server/admin-reads.ts`) is importable
-only from `app/legacy/admin/` and `app/actions/admin-*`.
+`utils/notifications.ts`, `utils/push.ts`).
 
 `apps/web` ([ADR 0015](adr/0015-spa-alongside-next.md)) imports `packages/domain`,
 `packages/contracts` and `packages/api-client` only: never `app/`, `server/`, `utils/`, `db/` or
@@ -4113,9 +4208,9 @@ several reads on one consistent view.
 ## Reading for pages
 
 Site pages do not call the repositories. `pageReads()` in `composition.ts` gives plain reads (no
-actor: the pages sit behind the site password only), and `adminReads()` in `server/admin-reads.ts`
-the admin pages' reads. Each is a function in a module's `application/page-reads.ts` taking a `Pick`
-of the repositories. `make arch` enforces it, with the auth flows allow-listed.
+actor: the pages sit behind the site password only). Each is a function in a module's
+`application/page-reads.ts` taking a `Pick` of the repositories. `make arch` enforces it, with the
+auth flows allow-listed.
 
 ## Choosing a name
 
@@ -4167,8 +4262,9 @@ SPA import the same data.
 
 The Next pages live in `app/legacy/` ([ADR 0015](adr/0015-spa-alongside-next.md)), so a page path in
 code is written `/legacy/…` (`<a href>`, `router.push`, `redirect()`, `revalidatePath()`). `/api`
-and `/media` stay at the root. `proxy.ts` redirects every other root path to `/legacy` + path, so
-emails and push links keep their root URLs, and applies its gates to the path without the `/legacy`
+and `/media` stay at the root. `proxy.ts` rewrites every other root path to the SPA shell, whose
+router owns most of them and forwards the rest to `/legacy` + path, so emails and push links keep
+their root URLs ([web app](web-app.md)). The proxy applies its gates to a `/legacy` path without the
 prefix.
 
 ## Keys from the UI
@@ -4964,7 +5060,11 @@ consequences:
 - **Kiosk** is `?kiosk=1` on the schedule: the same replica, auto-scroll to now, keep-awake, a place
   filter. It never needs a page refresh because the feed keeps it current.
 - **Admin** is a section of the same app, shown when the actor has an organizer or site-admin role.
-  It uses the same commands.
+  It uses the same commands. Today the admin pages are not in the replica: `AdminFrame` reads
+  `GET /api/v1/admin/settings` as its gate (a 401 or 403 sends the browser to the admin login), and
+  each screen in `features/admin/` loads its own `queries/` and sends awaited mutations that map
+  problem details onto fields and show a `409` as "changed by someone else". The admin login is
+  still a Next page.
 
 ## PWA
 
@@ -5230,11 +5330,13 @@ schellingboard/
 ```
 
 > **Today** the Next app and `server/` sit at the repository root; `apps/web` and
-> `packages/{domain,contracts,api-client}` exist as drawn. There is no `apps/server`, `tools/` or
-> `make new-use-case` yet. Of the rules below, these are enforced: the dependency-cruiser ones
-> (modules through `module.ts`, use cases on ports, `web` imports only the shared packages),
-> `make openapi-check` (the committed `openapi.json` matches the contracts) and the ESLint ban on
-> `new Date()` outside the request boundary. See [Architecture rules](../architecture-rules.md).
+> `packages/{domain,contracts,api-client}` exist as drawn, and `apps/web` has every screen but the
+> sign-in ones and the root event list (`app/legacy/` holds only those). There is no `apps/server`,
+> `tools/` or `make new-use-case` yet. Of the rules below, these are enforced: the
+> dependency-cruiser ones (modules through `module.ts`, use cases on ports, `web` imports only the
+> shared packages), `make openapi-check` (the committed `openapi.json` matches the contracts) and
+> the ESLint ban on `new Date()` outside the request boundary. See
+> [Architecture rules](../architecture-rules.md).
 
 Bun workspaces. One `tsconfig` per package with project references so `tsc -b` checks the graph in
 dependency order and a package cannot see another's internals.
@@ -5635,11 +5737,14 @@ get its own issue and ADR.
    filters, agenda, kiosk), then proposals and voting, people and meetings, settings, admin. Each
    moved screen deletes its server actions.
 
-   **Started** ([ADR 0015](../adr/0015-spa-alongside-next.md)): the SPA owns every URL and Next
-   moves under `/legacy` until all screens have moved. The schedule is moved: grid, agenda, filters,
-   kiosk, the session modal with RSVPs, attendee counts and comments, and the schedule opening
-   offline with a reload offer after an upgrade. Proposals and voting, people and meetings, settings
-   and admin are still Next pages.
+   **Done but for the sign-in screens and the root event list**
+   ([ADR 0015](../adr/0015-spa-alongside-next.md)): the SPA owns every URL and Next moves under
+   `/legacy` until all screens have moved. The schedule is moved: grid, agenda, filters, kiosk, the
+   session modal with RSVPs, attendee counts and comments, and the schedule opening offline with a
+   reload offer after an upgrade. Proposals and voting, people and meetings, the session forms,
+   settings, notifications and admin have moved too; the legacy copies and their server actions are
+   deleted. Still Next pages: the sign-in screens (`/login`, guest login and reset,
+   `/account-security`, the admin login), which step 6 replaces, and the root event list (`/`).
 
 6. **Identity and roles.** Persons, participations, login sessions, assurance, join links; migrate
    protected guests to verified credentials; replace the admin password with a site-admin role and
@@ -5815,14 +5920,20 @@ settled answers folded into the chapters they affect.
    Recommendation: reword to "no longer has a location (was Room A)".
 6. **User menu** roles copy the legacy markup without arrow-key support. Recommendation: use the
    ARIA menu pattern with arrow keys when the menu is next changed.
-7. **Flaky E2E.** `settings.spec:67` can abort its first `goto`, and `attendee-count.spec` after an
-   SPA to legacy hop stays red unless the spec starts on `/legacy/...`. The `scheduling.spec` flakes
-   did not recur once the forms moved into the SPA. Recommendation: keep each attempt's trace
-   (`--trace=retain-on-failure`) to find the rest.
+7. **Flaky E2E.** `settings.spec:67` can abort its first `goto`; under full-suite load
+   `user-auth.spec:392`, `rsvp.spec:111` and `admin.spec:442` have each failed once and passed
+   alone. The `scheduling.spec` flakes did not recur once the forms moved into the SPA.
+   Recommendation: keep each attempt's trace (`--trace=retain-on-failure`) to find the rest.
 8. **Picking a name without being a member.** The SPA picker offers only the snapshot's guests
    (members and hosts), because `GET /guests` is closed to anonymous visitors, so a non-member
    cannot pick their name. Recommendation: a public guest-name list for the picker that exposes
    names only.
+9. **"Show map" in the SPA shell.** The uploaded site map has a footer button on the legacy pages
+   only; the schedule and proposals lost it when they moved. Recommendation: a shell item, with the
+   map URL in `/me` or the snapshot.
+10. **An admin session that expires mid-edit.** Only the `AdminFrame` gate read sends the browser to
+    the admin login; a mutation refused with 401 or 403 later shows the refusal in place.
+    Recommendation: treat it as the gate does.
 
 Add new questions here as numbered items with a recommendation; when one is decided, move the
 outcome into the relevant chapter and, if it is a design decision rather than a product detail, into
@@ -6265,17 +6376,23 @@ going.
 
 - The Next pages live under `/legacy`. Every other root path that is not `/api`, `/media`,
   `/locations`, `/sw.js`, an icon or the manifest is a page of the SPA.
-- `proxy.ts` applies the site password to those paths, then rewrites them to `/api/spa/shell`, which
-  reads `apps/web/dist/index.html` from disk on each request and answers `no-store`.
+- `proxy.ts` applies the site password to those paths (not to `/admin/**`, which answers 404 when
+  the admin UI is disabled and otherwise gets the shell: the admin API holds the gate), then
+  rewrites them to `/api/spa/shell`, which reads `apps/web/dist/index.html` from disk on each
+  request and answers `no-store`.
 - Hashed files are requested as `/_spa/assets/…`. The proxy skips them; a rewrite in
   `next.config.js` hands them to `/api/spa/assets/…`, which serves them as immutable and answers 404
   for anything missing, never the shell.
-- The router owns `/{slug}`, an event's schedule, and `/{slug}/proposals/**` (list, quick voting,
-  new, edit; `?viewProposal=` opens the modal). Everything else the SPA does not own is forwarded:
+- The router owns `/` (`app/home-page.tsx`: the event list from `GET /api/v1/events` and
+  `GET /api/v1/site`, or a redirect to the only event), `/{slug}` (an event's schedule),
+  `/{slug}/proposals/**` (list, quick voting, new, edit; `?viewProposal=` opens the modal), the
+  session forms, `/{slug}/meetings`, `/guests/**`, `/settings`, `/notifications` and `/admin/**`
+  (`app/admin-pages.tsx`). Still Next pages: the sign-in screens (`/login`, guest login and reset,
+  `/account-security`, `/legacy/admin/login`). Everything else the SPA does not own is forwarded:
   the catch-all route replaces the location with `/legacy` + path + query (a path already under
   `/legacy` is left alone), and a static route per legacy root page (`app/legacy-pages.ts`, checked
   against `app/legacy/` by `tests/unit/spa-legacy-pages.test.ts`) keeps an event slug from shadowing
-  `/settings`, `/admin`, and so on.
+  `/login`, and so on (`admin` is in the list for its login only; the router leaves it out).
 - Legacy pages link to the SPA with plain anchors, never Next's `Link` (`AppLink`, which does that
   for every root path outside `/legacy`): Next has nothing to fetch there.
 
@@ -6299,9 +6416,9 @@ Docker image, which copies `apps/web/dist` next to `server.js`.
   Next. The shell gate does not apply in dev. A bare `next dev` answers root pages with the shell
   (503 until the SPA is built): use `/legacy/...` URLs with it, as the screenshots script does.
 - E2E specs call `page.goto` with root paths; the fixture sends them to `/legacy/...` so a click
-  never lands before hydration, except an event's own address (`/{slug}`, any query, and
-  `/{slug}/proposals/…`) and `/guests/…`, which the SPA owns and opens as it is. One spec covers the
-  shell's forward.
+  never lands before hydration, except these SPA addresses (an event's `/{slug}` and
+  `/{slug}/proposals/…`, `/guests/…`, `/settings`, `/notifications`, `/admin/…` but not
+  `/admin/login`), which open as they are. One spec covers the shell's forward.
 
 ## Layout and rules
 

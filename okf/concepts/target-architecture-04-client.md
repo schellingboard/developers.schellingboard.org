@@ -3,10 +3,10 @@ type: concept
 title: "4 · Web app"
 source: "https://developers.schellingboard.org/target-architecture/04-client/"
 path: /target-architecture/04-client/
-updated: 2026-10-30
+updated: 2026-10-31
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-30T20:48:13.676Z"
+  generated_at: "2026-10-31T18:14:09.665Z"
 ---
 # 4 · Web app
 
@@ -138,7 +138,11 @@ consequences:
 - **Kiosk** is `?kiosk=1` on the schedule: the same replica, auto-scroll to now, keep-awake, a place
   filter. It never needs a page refresh because the feed keeps it current.
 - **Admin** is a section of the same app, shown when the actor has an organizer or site-admin role.
-  It uses the same commands.
+  It uses the same commands. Today the admin pages are not in the replica: `AdminFrame` reads
+  `GET /api/v1/admin/settings` as its gate (a 401 or 403 sends the browser to the admin login), and
+  each screen in `features/admin/` loads its own `queries/` and sends awaited mutations that map
+  problem details onto fields and show a `409` as "changed by someone else". The admin login is
+  still a Next page.
 
 ## PWA
 
