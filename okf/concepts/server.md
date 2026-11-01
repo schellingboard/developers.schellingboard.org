@@ -6,7 +6,7 @@ path: /server/
 updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-01T07:50:30.506Z"
+  generated_at: "2026-11-01T10:15:58.988Z"
 ---
 # The server and the API
 
@@ -37,8 +37,8 @@ The modules are `sessions` (sessions, RSVPs, room unavailability, attendee count
 `updates` (the daily GitHub look-up of the latest release, shown to the admin).
 
 The Next mount is `app/api/v1/[[...route]]/route.ts`; `proxy.ts` gates it like any other route (site
-password or admin cookie for `/api/v1`, the admin cookie for `/api/v1/admin/`). Repositories stay in
-`db/`.
+password for `/api/v1`, a guest cookie for `/api/v1/admin/`, whose use cases check the site-admin
+role). Repositories stay in `db/`.
 
 `db/container.ts` opens the database in WAL mode with two connections. Repository methods named
 `find…` (but not `findOrCreate…`), `list…`, `search…`, `count…` or `get…` run on a read-only
@@ -94,6 +94,14 @@ signing anyone in, `PUT /me/credentials/password`, `POST /me/credentials/unprote
 answers `auth.credentialWrong`. `GET /me/login-sessions` lists the guest's sessions and
 `DELETE /me/login-sessions/{id}` ends one (`loginSession.notFound`). Also `username.taken`,
 `auth.notProtected`.
+
+Site admins ([ADR 0017](adr/0017-identity-and-roles.md) point 7, 8): `guests.site_admin`;
+`actor.admin` is also true for a verified session of one (`SessionLookup.siteAdmin`), and the role
+makes the guest read as protected (`isProtected` in the guests repository).
+`PUT /admin/guests/{id}/site-admin` never removes the last one (`siteAdmin.last`, also on delete).
+`bootstrap_tokens` holds the hash of one 24 h link, logged at start by `server/bootstrap-link.ts`
+while no site admin exists (`SB_BOOTSTRAP_LINK=1` forces one); `POST /auth/bootstrap` spends it
+(`people/application/bootstrap.ts`).
 
 ## The feed and the snapshot
 

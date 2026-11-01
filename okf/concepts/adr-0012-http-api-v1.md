@@ -6,7 +6,7 @@ path: /adr/0012-http-api-v1/
 updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-01T07:50:30.497Z"
+  generated_at: "2026-11-01T10:15:58.982Z"
 ---
 # ADR 0012: A versioned HTTP API in the Next process
 

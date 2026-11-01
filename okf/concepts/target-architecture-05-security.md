@@ -6,7 +6,7 @@ path: /target-architecture/05-security/
 updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-01T07:50:30.509Z"
+  generated_at: "2026-11-01T10:15:58.990Z"
 ---
 # 5 · Security
 

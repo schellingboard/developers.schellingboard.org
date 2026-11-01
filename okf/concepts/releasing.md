@@ -6,7 +6,7 @@ path: /releasing/
 updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-01T07:50:30.506Z"
+  generated_at: "2026-11-01T10:15:58.988Z"
 ---
 # Releasing a New Version
 
