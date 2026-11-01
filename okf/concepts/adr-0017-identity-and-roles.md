@@ -6,7 +6,7 @@ path: /adr/0017-identity-and-roles/
 updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-01T10:15:58.984Z"
+  generated_at: "2026-11-01T10:57:48.386Z"
 ---
 # ADR 0017: Identity and roles
 

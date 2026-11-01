@@ -6,7 +6,7 @@ path: /migrations/
 updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-01T10:15:58.988Z"
+  generated_at: "2026-11-01T10:57:48.391Z"
 ---
 # Database Migrations
 
