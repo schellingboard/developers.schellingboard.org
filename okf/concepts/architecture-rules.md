@@ -3,10 +3,10 @@ type: concept
 title: "Architecture rules"
 source: "https://developers.schellingboard.org/architecture-rules/"
 path: /architecture-rules/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.657Z"
+  generated_at: "2026-11-01T07:50:30.500Z"
 ---
 # Architecture rules
 
@@ -111,8 +111,7 @@ kernel and the API mount. See [The server and the API](server.md).
 
 `app/` does not import the repository container (`@/db/container`) directly: pages, actions and the
 `utils/` helpers they call read through `pageReads()` or a use case; the rule covers `app/` and
-`utils/`. Exempt: the auth flows (`actions/user-auth.ts`, `auth/login`, `auth/reset`), which run
-before an actor exists, and the job loop, notification and push infrastructure (`utils/jobs/`,
+`utils/`. Exempt: the job loop, notification and push infrastructure (`utils/jobs/`,
 `utils/notifications.ts`, `utils/push.ts`).
 
 `apps/web` ([ADR 0015](adr/0015-spa-alongside-next.md)) imports `packages/domain`,

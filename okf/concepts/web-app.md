@@ -3,10 +3,10 @@ type: concept
 title: "The web app (`apps/web`)"
 source: "https://developers.schellingboard.org/web-app/"
 path: /web-app/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.672Z"
+  generated_at: "2026-11-01T07:50:30.514Z"
 ---
 # The web app (`apps/web`)
 
@@ -30,13 +30,13 @@ going.
 - The router owns `/` (`app/home-page.tsx`: the event list from `GET /api/v1/events` and
   `GET /api/v1/site`, or a redirect to the only event), `/{slug}` (an event's schedule),
   `/{slug}/proposals/**` (list, quick voting, new, edit; `?viewProposal=` opens the modal), the
-  session forms, `/{slug}/meetings`, `/guests/**`, `/settings`, `/notifications` and `/admin/**`
-  (`app/admin-pages.tsx`). Still Next pages: the sign-in screens (`/login`, guest login and reset,
-  `/account-security`, `/legacy/admin/login`). Everything else the SPA does not own is forwarded:
-  the catch-all route replaces the location with `/legacy` + path + query (a path already under
-  `/legacy` is left alone), and a static route per legacy root page (`app/legacy-pages.ts`, checked
-  against `app/legacy/` by `tests/unit/spa-legacy-pages.test.ts`) keeps an event slug from shadowing
-  `/login`, and so on (`admin` is in the list for its login only; the router leaves it out).
+  session forms, `/{slug}/meetings`, `/guests/**`, `/settings`, `/notifications`, `/auth/login`,
+  `/auth/reset`, `/account-security`, `/login` (the site password, open to visitors without the
+  cookie; `POST /api/v1/auth/site`) (`app/account-pages.tsx`) and `/admin/**`
+  (`app/admin-pages.tsx`). The only Next page left is `/legacy/admin/login`. Everything else the SPA
+  does not own is forwarded: the catch-all route replaces the location with `/legacy` + path + query
+  (a path already under `/legacy` is left alone). `app/legacy-pages.ts` lists the legacy root pages
+  (checked against `app/legacy/` by `tests/unit/spa-legacy-pages.test.ts`).
 - Legacy pages link to the SPA with plain anchors, never Next's `Link` (`AppLink`, which does that
   for every root path outside `/legacy`): Next has nothing to fetch there.
 
@@ -82,11 +82,11 @@ Who the browser acts as comes from `GET /api/v1/me/identity` (`ViewerProvider`, 
 `guestId` is `undefined` until the server answers, then a guest id or `null`. The replica and the
 command runner are opened for that guest, never for one read from a persisted copy. `choose` and
 `signOut` call `PUT`/`DELETE` on the same path. A protected name answers `guest.protected` and
-`UserMenu` sends the user to the legacy login, `/legacy/auth/login?guest=<id>`; a successful login
-lands on `/legacy`. The picker lists the guests it is given: the event snapshot's `guests` (members
-and hosts) on an event page, the attendee directory (`GET /attendees`, everyone) on `/guests`.
-Sign-out and a switch between names clear the device's persisted replicas (`persistence.clear()`); a
-change of `guestId` also closes the feed and reopens the replica, the command runner and the queries
+`UserMenu` sends the user to the sign-in, `/auth/login?guest=<id>`; a successful login reloads `/`.
+The picker lists the guests it is given: the event snapshot's `guests` (members and hosts) on an
+event page, the attendee directory (`GET /attendees`, everyone) on `/guests`. Sign-out and a switch
+between names clear the device's persisted replicas (`persistence.clear()`); a change of `guestId`
+also closes the feed and reopens the replica, the command runner and the queries
 (`useScheduleSession` does: the viewer is part of its effect key). The provider asks again every 5 s
 while the first identity fetch fails. `commands/keys.ts` holds the `newKey` the runner needs.
 
@@ -110,6 +110,15 @@ composes theme, viewer, layout, nav, user menu, footer, boundary and dev clock f
 the picker's guests, location). `ShellProviders` (theme and viewer) and `ShellFrame` are also
 exported, for a screen that needs the viewer before it can say what the frame shows. The schedule
 page mounts it.
+
+## The sign-in screens
+
+`src/features/sign-in/` holds `LoginScreen` (an emailed code link, or an email or username),
+`ResetScreen` (the reset link) and `AccountSecurityScreen` (protection, username, signed-in
+browsers). They take `signInCalls(api)` and, for the last, an `AccountSecurityState` from
+`createAccountSecurityQuery`; forms wait for the answer (`useFormMutation` with `explainRefusals`,
+since the server's wording "Wrong password" is the message). `app/account-pages.tsx` routes them:
+the guest named by `?guest=` comes from the attendee directory, and a login reloads the app on `/`.
 
 ## The schedule
 

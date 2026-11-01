@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0006: Push notifications through an installable web app"
 source: "https://developers.schellingboard.org/adr/0006-push-notifications/"
 path: /adr/0006-push-notifications/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.650Z"
+  generated_at: "2026-11-01T07:50:30.494Z"
 ---
 # ADR 0006: Push notifications through an installable web app
 

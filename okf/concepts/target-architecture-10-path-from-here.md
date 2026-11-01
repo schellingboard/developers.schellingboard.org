@@ -3,10 +3,10 @@ type: concept
 title: "10 · A path from the current code"
 source: "https://developers.schellingboard.org/target-architecture/10-path-from-here/"
 path: /target-architecture/10-path-from-here/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.668Z"
+  generated_at: "2026-11-01T07:50:30.511Z"
 ---
 # 10 · A path from the current code
 
@@ -57,8 +57,9 @@ get its own issue and ADR.
    session modal with RSVPs, attendee counts and comments, and the schedule opening offline with a
    reload offer after an upgrade. Proposals and voting, people and meetings, the session forms,
    settings, notifications and admin have moved too; the legacy copies and their server actions are
-   deleted. Still Next pages: the sign-in screens (`/login`, guest login and reset,
-   `/account-security`, the admin login), which step 6 replaces, and the root event list (`/`).
+   deleted. The root event list and the guest sign-in screens (login, reset, account security) have
+   moved too. The site password screen (`/login`) has moved too. The only Next page left is the
+   admin login, which step 6 replaces.
 
 6. **Identity and roles.** Persons, participations, login sessions, assurance, join links; migrate
    protected guests to verified credentials; replace the admin password with a site-admin role and

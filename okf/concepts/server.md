@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.663Z"
+  generated_at: "2026-11-01T07:50:30.506Z"
 ---
 # The server and the API
 
@@ -20,7 +20,7 @@ to add to it. The user-facing description of the API is
 
 ```
 server/
-  kernel/              Result and error kinds, Actor and resolveActor, actingGuest, the unit of work
+  kernel/              Result and error kinds, Actor and resolveActor (`actorOf` binds it to the session rows), actingGuest, the unit of work
   http/                the Hono app (app.ts), middleware, problem details, OpenAPI document and its reference page (docs.ts)
   feed/                the snapshot and the SSE change feed (routes.ts), the hub of open connections, projection of a change to a viewer
   composition.ts       builds each module's use cases from the repositories and adapters
@@ -69,8 +69,31 @@ auth flows allow-listed.
 `GET` answers who the browser acts as now (null for a protected name not yet logged in, the SPA's
 viewer); all three set the `guest` cookie, which the route adapter builds from the use case's
 `Identity` (`people/application/identity.ts`). A protected name answers `403 guest.protected`: the
-SPA sends the user to the legacy login. The `selectUserAction` server action calls the same use
-case.
+SPA sends the user to the sign-in. `POST /auth/site` takes the shared site password (open to
+visitors without the cookie; `site.passwordWrong`, and `auth.tooManyAttempts` per address) and sets
+the site cookie.
+
+## Signing in
+
+`POST /api/v1/auth/login-code` emails a code, `POST /auth/login` takes the password or that code and
+sets a `verified` session cookie, `POST /auth/sign-out` ends it (`people/application/sign-in.ts`).
+`/auth/*` has its own per-address rate limit on top of the per-guest password limit and the daily
+email cap, and a limit answers `429` (kind `limited`). Problem codes: `auth.credentialWrong` (wrong,
+spent or expired password or code, indistinguishable on purpose), `auth.tooManyAttempts`,
+`auth.codeRecentlySent`, `auth.codeSpent`, `auth.tooManyEmails`, `auth.mailUnavailable`,
+`auth.mailFailed`. A `limited` refusal carries `Retry-After`. The proxy refuses a cross-site
+`/api/v1/auth/*` request like the admin API's (403 `request.crossSite`). The per-address limit
+applies only with `SB_TRUSTED_PROXIES` set; its burst is `SB_AUTH_RATE_BURST` (default 30), and
+sign-out is not limited. The SPA's sign-in screens call these routes.
+
+Credentials (`people/application/credentials.ts`): `POST /auth/reset-link` emails a reset link
+(`auth.linkRecentlySent`), `POST /auth/reset` sets the password and protects the name without
+signing anyone in, `PUT /me/credentials/password`, `POST /me/credentials/unprotect` and
+`PUT /me/credentials/username` need the acting session and, where protected, its verified level.
+`/auth/login` also takes an `identifier` (email or lowercase username) for `guestId`; an unknown one
+answers `auth.credentialWrong`. `GET /me/login-sessions` lists the guest's sessions and
+`DELETE /me/login-sessions/{id}` ends one (`loginSession.notFound`). Also `username.taken`,
+`auth.notProtected`.
 
 ## The feed and the snapshot
 
@@ -145,9 +168,9 @@ prediction knows its command has arrived and drops it.
    use case with `c.var.actor` and `c.var.now`, and returns `problem(result.error)` on failure.
    Admin routes go under `/admin/`, or the proxy will not gate them. Register a new route function
    in `server/http/app.ts`.
-4. **Callers.** A server action resolves the actor with `resolveActor(await cookies())` and calls
-   the use case from `server/composition.ts`. A legacy route uses `legacyActor` and `legacyRefusal`
-   from `app/api/legacy.ts` and keeps its old response body.
+4. **Callers.** A server action resolves the actor with `actorOf(await cookies())` and calls the use
+   case from `server/composition.ts`. A legacy route uses `legacyActor` and `legacyRefusal` from
+   `app/api/legacy.ts` and keeps its old response body.
 5. **`make openapi`.** It rewrites `packages/contracts/openapi.json` and the client's types in
    `packages/api-client/src/schema.ts`; commit both. `make openapi-check`, in `make precommit` and
    CI, fails while either is stale.

@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0007: Attendee count storage and in-process reminder dispatch"
 source: "https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/"
 path: /adr/0007-attendee-count-and-reminder-dispatch/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.650Z"
+  generated_at: "2026-11-01T07:50:30.494Z"
 ---
 # ADR 0007: Attendee count storage and in-process reminder dispatch
 
@@ -60,10 +60,10 @@ concurrency-safety requires anyway.
 
 Because the interval is disabled outright in both E2E tiers — a live tick against the
 wall-clock-relative seed data drops stray mail into the mailbox the delivery assertions search — the
-dev toolbar carries a **Send due reminders** button, and `app/actions/dev-reminders.ts` refuses
-unless `SB_ENABLE_DEV_TOOLS` is set. It runs one tick against the dev clock, which is what lets the
-E2E suite reach a real follow-up email and follow the link out of it (SC-001) rather than
-hand-building a `?viewSession=` URL. Nothing about it exists on a real deployment.
+dev toolbar carries a **Send due reminders** button, and `POST /api/v1/dev/reminders` refuses unless
+`SB_ENABLE_DEV_TOOLS` is set. It runs one tick against the dev clock, which is what lets the E2E
+suite reach a real follow-up email and follow the link out of it (SC-001) rather than hand-building
+a `?viewSession=` URL. Nothing about it exists on a real deployment.
 
 ### 2. Reminder state is keyed by the reminder's due time, not a sent flag
 

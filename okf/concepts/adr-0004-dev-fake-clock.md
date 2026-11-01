@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0004: Dev fake clock for time-traveling event phases"
 source: "https://developers.schellingboard.org/adr/0004-dev-fake-clock/"
 path: /adr/0004-dev-fake-clock/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.649Z"
+  generated_at: "2026-11-01T07:50:30.493Z"
 ---
 # ADR 0004: Dev fake clock for time-traveling event phases
 
@@ -95,7 +95,7 @@ place keeps every other line checked. They fall into two groups:
 1. The fake clock itself and the pieces that turn real time into effective time (`dev-clock.ts`,
    `now-ticker.ts`, the toolbar, `EventProvider`'s offset).
 2. Real time by design: the auth cookie's age, auth-code expiry, and the login/email throttles
-   (`utils/auth-cookies.ts`, `server/kernel/rate-limit.ts`, `app/actions/user-auth.ts`), plus
+   (`utils/auth-cookies.ts`, `server/kernel/rate-limit.ts`, `people/application/sign-in.ts`), plus
    cache-busting `?v=` query strings. These must _not_ follow the offset, or anyone who can set the
    `time-override` cookie could jump past a lockout.
 

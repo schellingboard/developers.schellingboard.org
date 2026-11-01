@@ -3,10 +3,10 @@ type: concept
 title: "Creating and Reading GitHub Issues"
 source: "https://developers.schellingboard.org/github-issues/"
 path: /github-issues/
-updated: 2026-10-31
+updated: 2026-11-01
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-10-31T18:14:09.661Z"
+  generated_at: "2026-11-01T07:50:30.504Z"
 ---
 # Creating and Reading GitHub Issues
 
@@ -136,5 +136,6 @@ Match existing issues' style:
   `## Proposed behavior` (or `## Proposed change`/`## Proposed fix`) / `## Why` / `## Impact` /
   `## Notes`
 - Small bugs/tasks can just be a short paragraph — headers aren't mandatory.
-- Reference file:line for code-specific bugs (e.g. `` `app/actions/user-auth.ts:130` ``).
+- Reference file:line for code-specific bugs (e.g.
+  `` `server/modules/people/application/sign-in.ts:130` ``).
 - Keep it succinct; this is a scheduling app issue tracker, not a spec document.
