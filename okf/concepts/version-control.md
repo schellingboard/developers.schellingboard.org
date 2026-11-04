@@ -3,10 +3,10 @@ type: concept
 title: "Version control and pull requests"
 source: "https://developers.schellingboard.org/version-control/"
 path: /version-control/
-updated: 2026-11-01
+updated: 2026-11-04
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-01T10:57:48.397Z"
+  generated_at: "2026-11-04T20:28:11.312Z"
 ---
 # Version control and pull requests
 
