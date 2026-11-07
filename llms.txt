@@ -25,11 +25,20 @@
 - [ADR 0015: The SPA alongside Next](https://developers.schellingboard.org/adr/0015-spa-alongside-next/)
 - [ADR 0016: The remaining screen families](https://developers.schellingboard.org/adr/0016-remaining-screen-families/)
 - [ADR 0017: Identity and roles](https://developers.schellingboard.org/adr/0017-identity-and-roles/)
+- [ADR 0018: The API review for 5.0.0](https://developers.schellingboard.org/adr/0018-api-review-for-5-0/)
 - [Architecture decision records](https://developers.schellingboard.org/adr/)
 
 ## Architecture Rules
 
 - [Architecture rules](https://developers.schellingboard.org/architecture-rules/)
+
+## Architecture
+
+- [Decisions](https://developers.schellingboard.org/architecture/decisions/)
+- [Diagrams](https://developers.schellingboard.org/architecture/diagrams/)
+- [Glossary](https://developers.schellingboard.org/architecture/glossary/)
+- [Architecture](https://developers.schellingboard.org/architecture/)
+- [Not built](https://developers.schellingboard.org/architecture/not-built/)
 
 ## Attendance Model
 
@@ -75,23 +84,6 @@
 ## Server
 
 - [The server and the API](https://developers.schellingboard.org/server/)
-
-## Target Architecture
-
-- [1 · Overview](https://developers.schellingboard.org/target-architecture/01-overview/)
-- [2 · Domain](https://developers.schellingboard.org/target-architecture/02-domain/)
-- [3 · Server](https://developers.schellingboard.org/target-architecture/03-server/)
-- [4 · Web app](https://developers.schellingboard.org/target-architecture/04-client/)
-- [5 · Security](https://developers.schellingboard.org/target-architecture/05-security/)
-- [6 · Data and time](https://developers.schellingboard.org/target-architecture/06-data-and-time/)
-- [7 · Repository, enforced rules, testing, agents](https://developers.schellingboard.org/target-architecture/07-repo-and-rules/)
-- [8 · Decisions](https://developers.schellingboard.org/target-architecture/08-decisions/)
-- [9 · Feedback and issues, mapped to the design](https://developers.schellingboard.org/target-architecture/09-feedback-map/)
-- [10 · A path from the current code](https://developers.schellingboard.org/target-architecture/10-path-from-here/)
-- [Diagrams](https://developers.schellingboard.org/target-architecture/diagrams/)
-- [Glossary](https://developers.schellingboard.org/target-architecture/glossary/)
-- [Target architecture](https://developers.schellingboard.org/target-architecture/)
-- [Open questions](https://developers.schellingboard.org/target-architecture/open-questions/)
 
 ## Testing
 

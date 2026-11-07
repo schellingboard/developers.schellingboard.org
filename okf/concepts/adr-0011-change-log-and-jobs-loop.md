@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0011: A change log and one jobs loop"
 source: "https://developers.schellingboard.org/adr/0011-change-log-and-jobs-loop/"
 path: /adr/0011-change-log-and-jobs-loop/
-updated: 2026-11-04
+updated: 2026-11-07
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-04T20:28:11.298Z"
+  generated_at: "2026-11-07T12:21:37.469Z"
 ---
 # ADR 0011: A change log and one jobs loop
 
@@ -22,12 +22,12 @@ through leaves no record of who was already told. Reminders run on their own `se
 0007). Nothing records what changed, so "who moved this session" has no answer, and each new
 consumer of a change (push, a future live schedule, a chat bot) would add another inline call.
 
-The [target architecture](../target-architecture/03-server.md#change-log) replaces all of this with
-an append-only change log written in the same transaction as the state
-([D8](../target-architecture/08-decisions.md#d8)), and one in-process jobs loop that turns changes
-into notifications and deliveries ([D10](../target-architecture/08-decisions.md#d10)).
-[Step 2 of the path](../target-architecture/10-path-from-here.md) brings both into the current app,
-with no change to what users see beyond the speed.
+The [target architecture](../server.md) replaces all of this with an append-only change log written
+in the same transaction as the state ([D8](../architecture/decisions.md#d8)), and one in-process
+jobs loop that turns changes into notifications and deliveries
+([D10](../architecture/decisions.md#d10)). Step 2 of the
+[path](https://github.com/schellingboard/schellingboard/blob/fb2a2cba1d05ab0421aee2985bc0d75db3c41323/docs/dev/target-architecture/10-path-from-here.md)
+brings both into the current app, with no change to what users see beyond the speed.
 
 ## Decision
 

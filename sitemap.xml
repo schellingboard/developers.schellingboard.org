@@ -91,7 +91,37 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://developers.schellingboard.org/adr/0018-api-review-for-5-0/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://developers.schellingboard.org/adr/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/architecture/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/architecture/decisions/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/architecture/diagrams/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/architecture/glossary/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/architecture/not-built/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -157,76 +187,6 @@
   </url>
   <url>
     <loc>https://developers.schellingboard.org/server/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/01-overview/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/02-domain/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/03-server/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/04-client/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/05-security/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/06-data-and-time/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/07-repo-and-rules/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/08-decisions/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/09-feedback-map/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/10-path-from-here/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/diagrams/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/glossary/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://developers.schellingboard.org/target-architecture/open-questions/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

@@ -122,6 +122,13 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0018: The API review for 5.0.0",
+      "url": "https://developers.schellingboard.org/adr/0018-api-review-for-5-0/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
@@ -133,6 +140,41 @@
       "url": "https://developers.schellingboard.org/architecture-rules/",
       "description": "",
       "section": "Architecture Rules",
+      "priority": "medium"
+    },
+    {
+      "title": "Decisions",
+      "url": "https://developers.schellingboard.org/architecture/decisions/",
+      "description": "",
+      "section": "Architecture",
+      "priority": "medium"
+    },
+    {
+      "title": "Diagrams",
+      "url": "https://developers.schellingboard.org/architecture/diagrams/",
+      "description": "",
+      "section": "Architecture",
+      "priority": "medium"
+    },
+    {
+      "title": "Glossary",
+      "url": "https://developers.schellingboard.org/architecture/glossary/",
+      "description": "",
+      "section": "Architecture",
+      "priority": "medium"
+    },
+    {
+      "title": "Architecture",
+      "url": "https://developers.schellingboard.org/architecture/",
+      "description": "",
+      "section": "Architecture",
+      "priority": "medium"
+    },
+    {
+      "title": "Not built",
+      "url": "https://developers.schellingboard.org/architecture/not-built/",
+      "description": "",
+      "section": "Architecture",
       "priority": "medium"
     },
     {
@@ -224,104 +266,6 @@
       "url": "https://developers.schellingboard.org/server/",
       "description": "",
       "section": "Server",
-      "priority": "medium"
-    },
-    {
-      "title": "1 · Overview",
-      "url": "https://developers.schellingboard.org/target-architecture/01-overview/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "2 · Domain",
-      "url": "https://developers.schellingboard.org/target-architecture/02-domain/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "3 · Server",
-      "url": "https://developers.schellingboard.org/target-architecture/03-server/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "4 · Web app",
-      "url": "https://developers.schellingboard.org/target-architecture/04-client/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "5 · Security",
-      "url": "https://developers.schellingboard.org/target-architecture/05-security/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "6 · Data and time",
-      "url": "https://developers.schellingboard.org/target-architecture/06-data-and-time/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "7 · Repository, enforced rules, testing, agents",
-      "url": "https://developers.schellingboard.org/target-architecture/07-repo-and-rules/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "8 · Decisions",
-      "url": "https://developers.schellingboard.org/target-architecture/08-decisions/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "9 · Feedback and issues, mapped to the design",
-      "url": "https://developers.schellingboard.org/target-architecture/09-feedback-map/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "10 · A path from the current code",
-      "url": "https://developers.schellingboard.org/target-architecture/10-path-from-here/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "Diagrams",
-      "url": "https://developers.schellingboard.org/target-architecture/diagrams/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "Glossary",
-      "url": "https://developers.schellingboard.org/target-architecture/glossary/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "Target architecture",
-      "url": "https://developers.schellingboard.org/target-architecture/",
-      "description": "",
-      "section": "Target Architecture",
-      "priority": "medium"
-    },
-    {
-      "title": "Open questions",
-      "url": "https://developers.schellingboard.org/target-architecture/open-questions/",
-      "description": "",
-      "section": "Target Architecture",
       "priority": "medium"
     },
     {

@@ -3,17 +3,17 @@ type: concept
 title: "Coding Guidelines"
 source: "https://developers.schellingboard.org/coding-guidelines/"
 path: /coding-guidelines/
-updated: 2026-11-04
+updated: 2026-11-07
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-04T20:28:11.302Z"
+  generated_at: "2026-11-07T12:21:37.479Z"
 ---
 # Coding Guidelines
 
 ## Code style
 
 - TypeScript strict mode throughout
-- Prefer server components; use server actions for mutations
+- Mutations go through a use case in `server/modules/` and the `/api/v1` API
 - Tailwind CSS for all styling
 - All UI must be mobile-responsive
 

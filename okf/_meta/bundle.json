@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-11-04T20:28:11.312Z",
+    "generated_at": "2026-11-07T12:21:37.485Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 49,
+    "concepts": 41,
     "by_type": {
-      "concept": 49
+      "concept": 41
     },
     "locales": [],
     "versions": []
@@ -217,12 +217,78 @@
       "tags": []
     },
     {
+      "id": "adr-0018-api-review-for-5-0",
+      "type": "concept",
+      "title": "ADR 0018: The API review for 5.0.0",
+      "description": "",
+      "path": "/adr/0018-api-review-for-5-0/",
+      "file": "concepts/adr-0018-api-review-for-5-0.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
       "id": "adr",
       "type": "concept",
       "title": "Architecture decision records",
       "description": "",
       "path": "/adr/",
       "file": "concepts/adr.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "architecture",
+      "type": "concept",
+      "title": "Architecture",
+      "description": "",
+      "path": "/architecture/",
+      "file": "concepts/architecture.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "architecture-decisions",
+      "type": "concept",
+      "title": "Decisions",
+      "description": "",
+      "path": "/architecture/decisions/",
+      "file": "concepts/architecture-decisions.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "architecture-diagrams",
+      "type": "concept",
+      "title": "Diagrams",
+      "description": "",
+      "path": "/architecture/diagrams/",
+      "file": "concepts/architecture-diagrams.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "architecture-glossary",
+      "type": "concept",
+      "title": "Glossary",
+      "description": "",
+      "path": "/architecture/glossary/",
+      "file": "concepts/architecture-glossary.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "architecture-not-built",
+      "type": "concept",
+      "title": "Not built",
+      "description": "",
+      "path": "/architecture/not-built/",
+      "file": "concepts/architecture-not-built.md",
       "locale": "",
       "version": "",
       "tags": []
@@ -366,160 +432,6 @@
       "description": "",
       "path": "/server/",
       "file": "concepts/server.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-01-overview",
-      "type": "concept",
-      "title": "1 · Overview",
-      "description": "",
-      "path": "/target-architecture/01-overview/",
-      "file": "concepts/target-architecture-01-overview.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-02-domain",
-      "type": "concept",
-      "title": "2 · Domain",
-      "description": "",
-      "path": "/target-architecture/02-domain/",
-      "file": "concepts/target-architecture-02-domain.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-03-server",
-      "type": "concept",
-      "title": "3 · Server",
-      "description": "",
-      "path": "/target-architecture/03-server/",
-      "file": "concepts/target-architecture-03-server.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-04-client",
-      "type": "concept",
-      "title": "4 · Web app",
-      "description": "",
-      "path": "/target-architecture/04-client/",
-      "file": "concepts/target-architecture-04-client.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-05-security",
-      "type": "concept",
-      "title": "5 · Security",
-      "description": "",
-      "path": "/target-architecture/05-security/",
-      "file": "concepts/target-architecture-05-security.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-06-data-and-time",
-      "type": "concept",
-      "title": "6 · Data and time",
-      "description": "",
-      "path": "/target-architecture/06-data-and-time/",
-      "file": "concepts/target-architecture-06-data-and-time.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-07-repo-and-rules",
-      "type": "concept",
-      "title": "7 · Repository, enforced rules, testing, agents",
-      "description": "",
-      "path": "/target-architecture/07-repo-and-rules/",
-      "file": "concepts/target-architecture-07-repo-and-rules.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-08-decisions",
-      "type": "concept",
-      "title": "8 · Decisions",
-      "description": "",
-      "path": "/target-architecture/08-decisions/",
-      "file": "concepts/target-architecture-08-decisions.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-09-feedback-map",
-      "type": "concept",
-      "title": "9 · Feedback and issues, mapped to the design",
-      "description": "",
-      "path": "/target-architecture/09-feedback-map/",
-      "file": "concepts/target-architecture-09-feedback-map.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-10-path-from-here",
-      "type": "concept",
-      "title": "10 · A path from the current code",
-      "description": "",
-      "path": "/target-architecture/10-path-from-here/",
-      "file": "concepts/target-architecture-10-path-from-here.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture",
-      "type": "concept",
-      "title": "Target architecture",
-      "description": "",
-      "path": "/target-architecture/",
-      "file": "concepts/target-architecture.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-diagrams",
-      "type": "concept",
-      "title": "Diagrams",
-      "description": "",
-      "path": "/target-architecture/diagrams/",
-      "file": "concepts/target-architecture-diagrams.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-glossary",
-      "type": "concept",
-      "title": "Glossary",
-      "description": "",
-      "path": "/target-architecture/glossary/",
-      "file": "concepts/target-architecture-glossary.md",
-      "locale": "",
-      "version": "",
-      "tags": []
-    },
-    {
-      "id": "target-architecture-open-questions",
-      "type": "concept",
-      "title": "Open questions",
-      "description": "",
-      "path": "/target-architecture/open-questions/",
-      "file": "concepts/target-architecture-open-questions.md",
       "locale": "",
       "version": "",
       "tags": []

@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0013: The unit of work"
 source: "https://developers.schellingboard.org/adr/0013-unit-of-work/"
 path: /adr/0013-unit-of-work/
-updated: 2026-11-04
+updated: 2026-11-07
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-04T20:28:11.299Z"
+  generated_at: "2026-11-07T12:21:37.470Z"
 ---
 # ADR 0013: The unit of work
 
@@ -15,11 +15,11 @@ okf:
 
 ## Context
 
-The [target architecture](../target-architecture/03-server.md#use-cases) runs each use case in one
-transaction, `uow.run(async (tx) => …)`, where `tx` holds the repositories and `record(change)`.
-After commit, and before the writer lock is released, the kernel calls `publish` for in-process
-subscribers (the jobs nudge now, the feed hub later), so they see changes in `seq` order. The
-snapshot reads its state and its `seq` in one read transaction.
+The [target architecture](../server.md) runs each use case in one transaction,
+`uow.run(async (tx) => …)`, where `tx` holds the repositories and `record(change)`. After commit,
+and before the writer lock is released, the kernel calls `publish` for in-process subscribers (the
+jobs nudge now, the feed hub later), so they see changes in `seq` order. The snapshot reads its
+state and its `seq` in one read transaction.
 
 Today repositories open their own transactions, `SqliteSessionsRepository` logs session changes in
 its own (ADR 0011), so a use case that writes through two repository calls is not atomic (ADR 0012),
@@ -36,8 +36,8 @@ and session use cases call `nudgeJobs()` themselves. Facts that constrain the re
   from an open write transaction but runs no query in parallel with it.
 - **The database is not in WAL mode.** `db/container.ts` opens one connection with the default
   rollback journal and sets only `foreign_keys`. The target
-  ([06](../target-architecture/06-data-and-time.md#sqlite-settings)) asks for WAL, one write
-  connection and a small read pool.
+  ([06](https://github.com/schellingboard/schellingboard/blob/fb2a2cba1d05ab0421aee2985bc0d75db3c41323/docs/dev/target-architecture/06-data-and-time.md))
+  asks for WAL, one write connection and a small read pool.
 - **The test helpers need one in-memory connection.** `tests/helpers/db.ts` serializes the migrated
   in-memory database once and restores it from the buffer before each test. A second connection
   cannot open that database.
@@ -100,7 +100,7 @@ agree, such as the snapshot. Single-statement queries take neither.
 - **Test helpers:** unchanged.
 - **WAL in production:** not needed.
 - **Snapshot:** `uow.read` holds off writes while it assembles, a few milliseconds at the target's
-  [capacity](../target-architecture/03-server.md#capacity).
+  [capacity](../server.md).
 - **Cost:** the least code. The kernel interface is that of (a), so moving to (a) later changes the
   kernel and the test helpers, not the use cases.
 

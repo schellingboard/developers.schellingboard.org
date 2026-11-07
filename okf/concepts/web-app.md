@@ -3,77 +3,65 @@ type: concept
 title: "The web app (`apps/web`)"
 source: "https://developers.schellingboard.org/web-app/"
 path: /web-app/
-updated: 2026-11-04
+updated: 2026-11-07
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-04T20:28:11.312Z"
+  generated_at: "2026-11-07T12:21:37.485Z"
 ---
 # The web app (`apps/web`)
 
-`apps/web` is the single-page app that is replacing the Next pages one screen family at a time
+`apps/web` is the single-page app that replaced the Next pages
 ([ADR 0015](adr/0015-spa-alongside-next.md)). It is a workspace package built with Vite, React and
-TanStack Router, styled with Tailwind and the colour tokens in `styles/tokens.css` (the Next pages
-import the same file). [Client design](target-architecture/04-client.md) describes where it is
-going.
+TanStack Router, styled with Tailwind and the colour tokens in `styles/tokens.css`.
+[Architecture](architecture/README.md) has the whole picture.
 
 ## How it reaches the browser
 
-- The Next pages live under `/legacy`. Every other root path that is not `/api`, `/media`,
-  `/locations`, `/sw.js`, an icon or the manifest is a page of the SPA.
-- `proxy.ts` applies the site password to those paths (not to `/admin/**`, which gets the shell: the
-  admin API holds the gate, and the sign-in follows from it), then rewrites them to
-  `/api/spa/shell`, which reads `apps/web/dist/index.html` from disk on each request and answers
-  `no-store`.
-- Hashed files are requested as `/_spa/assets/…`. The proxy skips them; a rewrite in
-  `next.config.js` hands them to `/api/spa/assets/…`, which serves them as immutable and answers 404
-  for anything missing, never the shell.
+- Every root path that is not `/api`, `/media`, `/locations`, `/sw.js`, an icon or the manifest is a
+  page of the SPA.
+- `server/http/web.ts` applies the site password to those paths (not to `/admin/**`, which gets the
+  shell: the admin API holds the gate, and the sign-in follows from it), then serves the shell: it
+  reads `apps/web/dist/index.html` from disk on each request and answers `no-store`.
+- Hashed files are requested as `/_spa/assets/…`, served without the password as immutable; a
+  missing one is a 404, never the shell.
 - The router owns `/` (`app/home-page.tsx`: the event list from `GET /api/v1/events` and
   `GET /api/v1/site`, or a redirect to the only event), `/{slug}` (an event's schedule),
   `/{slug}/proposals/**` (list, quick voting, new, edit; `?viewProposal=` opens the modal), the
   session forms, `/{slug}/meetings`, `/guests/**`, `/settings`, `/notifications`, `/auth/login`,
   `/auth/reset`, `/account-security`, `/login` (the site password, open to visitors without the
   cookie; `POST /api/v1/auth/site`) (`app/account-pages.tsx`) and `/admin/**`
-  (`app/admin-pages.tsx`). No Next page is left. Everything else the SPA does not own is forwarded:
-  the catch-all route replaces the location with `/legacy` + path + query (a path already under
-  `/legacy` is left alone).
-- Legacy pages link to the SPA with plain anchors, never Next's `Link` (`AppLink`, which does that
-  for every root path outside `/legacy`): Next has nothing to fetch there.
+  (`app/admin-pages.tsx`). Anything else is "Page not found".
 
 - `public/sw.js` (registered by `main.tsx` outside the dev server) caches the shell and the
   `/_spa/assets/` files. SPA navigations go to the network first and fall back to the cached shell,
-  so a new build shows as soon as it is reachable; `/api`, `/legacy` and the other Next paths are
+  so a new build shows as soon as it is reachable; `/api`, `/media` and the other server paths are
   never touched. A page compares the shell's build id with `/api/v1/health` (`app/reload-offer.tsx`:
   on load, every 5 minutes, on `online` and when the tab is shown). The viewer is remembered in
   `localStorage` so the saved schedule opens offline.
 
-The files are read relative to the working directory, so the same code serves `next start`, and the
-Docker image, which copies `apps/web/dist` next to `server.js`.
+The files are read relative to the working directory, so the same code serves `make start`, and the
+Docker image, which copies `apps/web/dist` next to `dist/server`.
 
 ## Build and run
 
-- `make build` and the E2E web server run `vite build apps/web` before `next build`; the Dockerfile
-  does the same. Next serves what is in `apps/web/dist`, so rebuild the SPA after changing it when
-  testing through Next.
-- `make dev` runs Next on `PORT + 1` and Vite on `PORT` (default 3000). Open the Vite port: it
-  serves the SPA with hot reload and proxies `/legacy`, `/api`, `/media` and the other Next paths to
-  Next. The shell gate does not apply in dev. A bare `next dev` answers root pages with the shell
-  (503 until the SPA is built): use `/legacy/...` URLs with it, as the screenshots script does.
-- E2E specs call `page.goto` with root paths; the fixture sends them to `/legacy/...` so a click
-  never lands before hydration, except these SPA addresses (an event's `/{slug}` and
-  `/{slug}/proposals/…`, `/guests/…`, `/settings`, `/notifications`, `/admin/…`), which open as they
-  are. One spec covers the shell's forward.
+- `make build` and the E2E web server run `vite build apps/web` and `scripts/build-server.ts` (one
+  esbuild bundle, `dist/server/main.mjs`; the native addons stay external); the Dockerfile does the
+  same. The server serves what is in `apps/web/dist`, so rebuild the SPA after changing it when
+  testing through the server.
+- `make dev` rebuilds the bundle on change, runs it on `PORT + 1` with `node --watch`, and runs Vite
+  on `PORT` (default 3000). Open the Vite port: it serves the SPA with hot reload and proxies
+  `/api`, `/media` and the other server paths to the Node server. The shell gate does not apply in
+  dev.
 
 ## Layout and rules
 
-`apps/web/src/` follows [the client layout](target-architecture/04-client.md#layout); `app/`
-(layout, nav bar, shell, pages), `ui/` (dialog, button, tooltip, icons, notices),
-`features/schedule/`, `replica/`, `commands/` and `queries/` exist so far (the replica: store,
-`apply` from `packages/contracts/src/feed-apply.ts`, feed client, sync state, a server clock offset
-and IndexedDB persistence keyed by event and viewer, opened as `stale`). dependency-cruiser enforces
+`apps/web/src/` holds `app/` (layout, nav bar, shell, pages), `ui/` (dialog, button, tooltip, icons,
+notices), `features/schedule/`, `replica/`, `commands/` and `queries/` (the replica: store, `apply`
+from `packages/contracts/src/feed-apply.ts`, feed client, sync state, a server clock offset and
+IndexedDB persistence keyed by event and viewer, opened as `stale`). dependency-cruiser enforces
 that the package imports `packages/domain`, `packages/contracts` and `packages/api-client` only
-(never `app/`, `server/`, `utils/` or `next`), that nothing imports it, that `features/` never
-imports `api-client`, and that it declares what it imports. See
-[Architecture rules](architecture-rules.md).
+(never `server/`, `utils/` or `db/`), that nothing imports it, that `features/` never imports
+`api-client`, and that it declares what it imports. See [Architecture rules](architecture-rules.md).
 
 ## The viewer and the user picker
 
@@ -92,23 +80,22 @@ while the first identity fetch fails. `commands/keys.ts` holds the `newKey` the 
 ## Theme, footer and dev clock
 
 `app/theme.tsx` keeps the ADR 0005 `sb-theme` cookie (read at start, written with the `light`/`dark`
-class on `<html>`; `index.html`'s inline script applies it before first paint, as the Next layout
-does). The footer's version and build come from `GET /api/v1/health` (`useHealth`); for the admin,
-`GET /api/v1/updates` (`useUpdateStatus`) adds a red dot and the latest release; its release notes
-are `packages/domain`'s. The dev clock toolbar needs `devTools` from the same endpoint
+class on `<html>`; `index.html`'s inline script applies it before first paint). The footer's version
+and build come from `GET /api/v1/health` (`useHealth`); for the admin, `GET /api/v1/updates`
+(`useUpdateStatus`) adds a red dot and the latest release; its release notes are
+`packages/domain`'s. The dev clock toolbar needs `devTools` from the same endpoint
 (`SB_ENABLE_DEV_TOOLS`) and `?dev=1`; it writes the `time-override` cookie and calls `onChange`,
-which the shell makes reload the app so the replica is read under the new time. The legacy toolbar's
-"Send due reminders" button has no SPA counterpart.
+which the shell makes reload the app so the replica is read under the new time.
 
 ## Sync indicator, error boundary and the shell
 
 `SyncIndicator` shows the replica's link state (`useSyncState`: live, reconnecting after a short
 grace, stale) and re-renders at the instant it next changes. `ErrorBoundary` keeps the nav and
-footer when one screen crashes (try again, reload, or open `/legacy`). `Shell` (`app/shell.tsx`)
-composes theme, viewer, layout, nav, user menu, footer, boundary and dev clock from props (events,
-the picker's guests, location). `ShellProviders` (theme and viewer) and `ShellFrame` are also
-exported, for a screen that needs the viewer before it can say what the frame shows. The schedule
-page mounts it.
+footer when one screen crashes (try again, reload, or go to the home page). `Shell`
+(`app/shell.tsx`) composes theme, viewer, layout, nav, map button (`MapButton`, from `GET /site`),
+user menu, footer, boundary and dev clock from props (events, the picker's guests, location).
+`ShellProviders` (theme and viewer) and `ShellFrame` are also exported, for a screen that needs the
+viewer before it can say what the frame shows. The schedule page mounts it.
 
 ## The sign-in screens
 
@@ -118,6 +105,11 @@ browsers). They take `signInCalls(api)` and, for the last, an `AccountSecuritySt
 `createAccountSecurityQuery`; forms wait for the answer (`useFormMutation` with `explainRefusals`,
 since the server's wording "Wrong password" is the message). `app/account-pages.tsx` routes them:
 the guest named by `?guest=` comes from the attendee directory, and a login reloads the app on `/`.
+
+`features/sign-in/` also holds `JoinScreen` (`/join/$token`: a personal join link signs the person
+in and opens the event) and `BootstrapScreen` (`/auth/bootstrap`: the site-admin bootstrap link).
+The admin guests screen has the join-link actions (`features/admin/join-links.tsx`), and the event
+form (`event-config.tsx`) has the Identity select.
 
 ## The schedule
 

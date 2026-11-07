@@ -3,18 +3,17 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-11-04
+updated: 2026-11-07
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-04T20:28:11.305Z"
+  generated_at: "2026-11-07T12:21:37.483Z"
 ---
 # The server and the API
 
-`server/` holds the use cases and the `/api/v1` HTTP API in front of them. Server actions, the
-legacy `/api/*` routes and `/api/v1` all call the same use cases, so a rule is written once.
-[ADR 0012](adr/0012-http-api-v1.md) has the decisions; this page is how the code is laid out and how
-to add to it. The user-facing description of the API is
-[HTTP API](https://docs.schellingboard.org/self-hosting/api/).
+`server/` holds the use cases and the `/api/v1` HTTP API in front of them. The API and the jobs loop
+call the same use cases, so a rule is written once. [ADR 0012](adr/0012-http-api-v1.md) has the
+decisions; this page is how the code is laid out and how to add to it. The user-facing description
+of the API is [HTTP API](https://docs.schellingboard.org/self-hosting/api/).
 
 ## Layout
 
@@ -36,9 +35,11 @@ The modules are `sessions` (sessions, RSVPs, room unavailability, attendee count
 `notifications`, `events` (events and days), `venue` (locations), `settings` (site settings) and
 `updates` (the daily GitHub look-up of the latest release, shown to the admin).
 
-The Next mount is `app/api/v1/[[...route]]/route.ts`; `proxy.ts` gates it like any other route (site
-password for `/api/v1`, a guest cookie for `/api/v1/admin/`, whose use cases check the site-admin
-role). Repositories stay in `db/`.
+`server/main.ts` runs the Hono app in `server/http/web.ts` on `@hono/node-server`, in its own Node
+process, and starts the mailer and the jobs loop. `scripts/build-server.ts` bundles it with esbuild
+into `dist/server/main.mjs`. The app gates `/api/v1` (site password; a guest cookie for
+`/api/v1/admin/`, whose use cases check the site-admin role), serves `/media`, the public files, the
+manifest and the SPA, and adds the security headers. Repositories stay in `db/`.
 
 `db/container.ts` opens the database in WAL mode with two connections. Repository methods named
 `find…` (but not `findOrCreate…`), `list…`, `search…`, `count…` or `get…` run on a read-only
@@ -65,13 +66,13 @@ auth flows allow-listed.
 
 ## Choosing a name
 
-`PUT /api/v1/me/identity` makes the browser act as an open guest name and `DELETE` signs it out;
-`GET` answers who the browser acts as now (null for a protected name not yet logged in, the SPA's
-viewer); all three set the `guest` cookie, which the route adapter builds from the use case's
-`Identity` (`people/application/identity.ts`). A protected name answers `403 guest.protected`: the
-SPA sends the user to the sign-in. `POST /auth/site` takes the shared site password (open to
-visitors without the cookie; `site.passwordWrong`, and `auth.tooManyAttempts` per address) and sets
-the site cookie.
+`PUT /api/v1/me/identity` makes the browser act as an open guest name; `GET` answers who the browser
+acts as now (null for a protected name not yet logged in, the SPA's viewer); `PUT` sets the `guest`
+cookie, which the route adapter builds from the use case's `Identity`
+(`people/application/identity.ts`). A protected name answers `403 guest.protected`: the SPA sends
+the user to the sign-in. `POST /auth/site` takes the shared site password (open to visitors without
+the cookie; `site.passwordWrong`, and `auth.tooManyAttempts` per address) and sets the site cookie;
+`DELETE /auth/site` clears it and ends the login session (not rate limited).
 
 ## Signing in
 
@@ -81,7 +82,7 @@ sets a `verified` session cookie, `POST /auth/sign-out` ends it (`people/applica
 email cap, and a limit answers `429` (kind `limited`). Problem codes: `auth.credentialWrong` (wrong,
 spent or expired password or code, indistinguishable on purpose), `auth.tooManyAttempts`,
 `auth.codeRecentlySent`, `auth.codeSpent`, `auth.tooManyEmails`, `auth.mailUnavailable`,
-`auth.mailFailed`. A `limited` refusal carries `Retry-After`. The proxy refuses a cross-site
+`auth.mailFailed`. A `limited` refusal carries `Retry-After`. The web gate refuses a cross-site
 `/api/v1/auth/*` request like the admin API's (403 `request.crossSite`). The per-address limit
 applies only with `SB_TRUSTED_PROXIES` set; its burst is `SB_AUTH_RATE_BURST` (default 30), and
 sign-out is not limited. The SPA's sign-in screens call these routes.
@@ -139,31 +140,21 @@ turns that off.
 
 `SB_API_RATE_BURST` sets the burst of the per-address API rate limit (default 1000).
 
-`GET /api/v1/health` also names the `version` and the `buildId` (Next's `.next/BUILD_ID`, the
-version outside a production build). The SPA shell carries the build id it was served by
-(`<meta name="sb-build">`, added by `serveSpaShell`); a client that sees `health` report another one
-offers a reload, and a kiosk reloads by itself. It stays behind the site password.
+`GET /api/v1/health` also names the `version` and the `buildId` (`dist/server/BUILD_ID`, written by
+`scripts/build-server.ts`; the version outside a production build). The SPA shell carries the build
+id it was served by (`<meta name="sb-build">`, added by `serveSpaShell`); a client that sees
+`health` report another one offers a reload, and a kiosk reloads by itself. It stays behind the site
+password.
 
-The in-app release notes live in `packages/domain/src/release-notes.ts` so the Next footer and the
-SPA import the same data.
-
-## Pages under `/legacy`
-
-The Next pages live in `app/legacy/` ([ADR 0015](adr/0015-spa-alongside-next.md)), so a page path in
-code is written `/legacy/…` (`<a href>`, `router.push`, `redirect()`, `revalidatePath()`). `/api`
-and `/media` stay at the root. `proxy.ts` rewrites every other root path to the SPA shell, whose
-router owns most of them and forwards the rest to `/legacy` + path, so emails and push links keep
-their root URLs ([web app](web-app.md)). The proxy applies its gates to a `/legacy` path without the
-prefix.
+The in-app release notes live in `packages/domain/src/release-notes.ts` so the footer imports it.
 
 ## Keys from the UI
 
-A server action or route that creates something runs under `idempotentAction()` from
-`composition.ts`, with a key the caller made for the attempt, sent as the `Idempotency-Key` header
-or an argument outside the zod schema. The SPA's command runner makes one per command and reuses it
-on a retry. A success is stored and replayed for a repeat; a refusal frees the key. The changes it
-records carry the key, and the feed echoes it to the sender, which is how the runner's optimistic
-prediction knows its command has arrived and drops it.
+A route that creates something runs under `idempotencyMiddleware` (`server/http/idempotency.ts`),
+with a key the caller made for the attempt, sent as the `Idempotency-Key` header. The SPA's command
+runner makes one per command and reuses it on a retry. A success is stored and replayed for a
+repeat; a refusal frees the key. The changes it records carry the key, and the feed echoes it to the
+sender, which is how the runner's optimistic prediction knows its command has arrived and drops it.
 
 ## Adding a use case and its route
 
@@ -181,12 +172,9 @@ prediction knows its command has arrived and drops it.
    `json(schema, …)` for each success status, `...problemDefault` for problems, and
    `headers: idempotencyHeaders` on every mutation. The handler reads `c.req.valid(…)`, calls the
    use case with `c.var.actor` and `c.var.now`, and returns `problem(result.error)` on failure.
-   Admin routes go under `/admin/`, or the proxy will not gate them. Register a new route function
+   Admin routes go under `/admin/`, or the gate will not cover them. Register a new route function
    in `server/http/app.ts`.
-4. **Callers.** A server action resolves the actor with `actorOf(await cookies())` and calls the use
-   case from `server/composition.ts`. A legacy route uses `legacyActor` and `legacyRefusal` from
-   `app/api/legacy.ts` and keeps its old response body.
-5. **`make openapi`.** It rewrites `packages/contracts/openapi.json` and the client's types in
+4. **`make openapi`.** It rewrites `packages/contracts/openapi.json` and the client's types in
    `packages/api-client/src/schema.ts`; commit both. `make openapi-check`, in `make precommit` and
    CI, fails while either is stale.
 
