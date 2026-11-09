@@ -269,6 +269,13 @@
       "priority": "medium"
     },
     {
+      "title": "Statistics in the admin: proposal",
+      "url": "https://developers.schellingboard.org/statistics-proposal/",
+      "description": "",
+      "section": "Statistics Proposal",
+      "priority": "medium"
+    },
+    {
       "title": "Testing",
       "url": "https://developers.schellingboard.org/testing/",
       "description": "",

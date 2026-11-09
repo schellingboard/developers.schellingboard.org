@@ -3,10 +3,10 @@ type: concept
 title: "The web app (`apps/web`)"
 source: "https://developers.schellingboard.org/web-app/"
 path: /web-app/
-updated: 2026-11-07
+updated: 2026-11-09
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-07T12:21:37.485Z"
+  generated_at: "2026-11-09T21:01:50.301Z"
 ---
 # The web app (`apps/web`)
 

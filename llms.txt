@@ -85,6 +85,10 @@
 
 - [The server and the API](https://developers.schellingboard.org/server/)
 
+## Statistics Proposal
+
+- [Statistics in the admin: proposal](https://developers.schellingboard.org/statistics-proposal/)
+
 ## Testing
 
 - [Testing](https://developers.schellingboard.org/testing/)

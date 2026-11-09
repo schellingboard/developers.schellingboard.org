@@ -1,0 +1,2282 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>Statistics in the admin: proposal - SchellingBoard Developers</title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mw9qy86f">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mw9qy86f">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mw9qy86f" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mw9qy86f" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/statistics-proposal/">
+<meta property="og:title" content="Statistics in the admin: proposal - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/statistics-proposal/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Statistics in the admin: proposal - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SchellingBoard Developers","item":"https://developers.schellingboard.org/"},{"@type":"ListItem","position":2,"name":"Design"},{"@type":"ListItem","position":3,"name":"Statistics proposal","item":"https://developers.schellingboard.org/statistics-proposal/"}]}
+</script>
+
+
+
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mw9qy86f" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mw9qy86f" >
+
+    
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mw9qy86f">
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/statistics-proposal.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../" class="logo-link">
+              <img
+                src="../logo/logo.svg"
+                alt="SchellingBoard" class="logo logo-light light-logo" style="height: 1.5rem;">
+              <img
+                src="../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo logo-dark dark-logo" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme" title="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../server/" class=" "
+          >
+           
+<svg class="lucide-icon icon-server " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-server"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Server and API
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../web-app/" class=" "
+          >
+           
+<svg class="lucide-icon icon-monitor " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-monitor"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="14" x="2" y="3" rx="2" />
+  <line x1="8" x2="16" y1="21" y2="21" />
+  <line x1="12" x2="12" y1="17" y2="21" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="active-parent expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../adr/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0010-workspace-packages/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0010: Domain and contracts as workspace packages
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0011-change-log-and-jobs-loop/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0011: A change log and one jobs loop
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0012-http-api-v1/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0012: A versioned HTTP API in the Next process
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0013-unit-of-work/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0013: The unit of work
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0014-change-feed-and-snapshot/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0014: The change feed and the snapshot
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0015-spa-alongside-next/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0015: The SPA alongside Next
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0016-remaining-screen-families/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0016: The remaining screen families
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0017-identity-and-roles/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0017: Identity and roles
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0018-api-review-for-5-0/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0018: The API review for 5.0.0
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../architecture/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture/decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../architecture/not-built/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Not built
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target="_blank" rel="noopener">
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../attendance-model/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="active" >
+      
+        <a href="../statistics-proposal/" class="active "
+          >
+           
+<svg class="lucide-icon icon-chart-bar " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-bar"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="M7 16h8" />
+  <path d="M7 11h12" />
+  <path d="M7 6h3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Statistics proposal
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target="_blank" rel="noopener">
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Statistics in the admin: proposal
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Statistics%20in%20the%20admin%3A%20proposal%0A%0AStatus%3A%20decided%2C%20implementation%20in%20progress%3B%20ADR%200019%20will%20record%20the%20decisions.%20Issue%20%23389%20is%20the%0Abrainstorm%3B%20this%20narrows%20it%20to%20what%20the%20data%20in%20the%20database%20supports%20today%2C%20and%20sketches%20what%20to%0Acollect%20later.%0A%0A%23%23%20Goal%0A%0AAn%20organizer%2C%20during%20and%20after%20an%20event%2C%20answers%3A%20did%20the%20process%20work%20(proposals%20%E2%86%92%20votes%20%E2%86%92%20sessions%0A%E2%86%92%20attendance)%2C%20did%20the%20venue%20work%20(rooms%2C%20gaps%2C%20peak%20times)%2C%20and%20which%20features%20people%20used%0A(1-on-1s%2C%20profiles%2C%20comments%2C%20notifications).%20Every%20figure%20is%20a%20table%20that%20downloads%20as%20CSV%2C%20and%0Amost%20have%20a%20chart.%20The%20same%20page%20serves%20a%20past%20event%20after%20an%20upgrade.%0A%0A%23%23%20Principles%0A%0A1.%20**No%20new%20disclosure.**%20The%20page%20shows%20a%20site%20admin%20nothing%20the%20admin%20cannot%20see%20elsewhere%2C%20except%0A%20%20%20as%20aggregates.%20Today%20an%20admin%20sees%20vote%20_counts_%20per%20proposal%2C%20never%20who%20voted%20what.%20That%20stays%0A%20%20%20true.%20One%20exception%3A%20the%20reported%20attendee%20count%20per%20session.%20ADR%200007%20%C2%A73%20keeps%20it%20out%20of%20the%0A%20%20%20admin%20read%20surface%20and%20of%20exports%3B%20decided%3A%20the%20statistics%20ADR%20supersedes%20that%20part.%0A2.%20**Names%20only%20where%20already%20public**%3A%20titles%2C%20hosts%2C%20locations.%20People%20who%20only%20voted%2C%20RSVPed%20or%0A%20%20%20requested%20a%201-on-1%20never%20appear%20by%20name.%0A3.%20**Per-person%20tables%20are%20not%20joinable.**%20A%20per-person%20table%20(e.g.%20%22votes%20per%20voter%22)%20has%20no%20guest%0A%20%20%20id%2C%20a%20pseudonym%20(%60P001%60%E2%80%A6)%20assigned%20per%20table%20and%20per%20request%20in%20sorted%20order%2C%20and%20rows%20sorted%20by%0A%20%20%20value.%20Two%20tables%20can%20therefore%20not%20be%20joined%20to%20rebuild%20a%20person.%20Relations%20across%20domains%20(%22do%0A%20%20%20voters%20RSVP%20more%3F%22)%20are%20computed%20on%20the%20server%20and%20shown%20as%20aggregates.%0A4.%20**Small%20numbers%20are%20suppressed%20in%20free%20text.**%20Values%20of%20free-text%20fields%20(based%20in%2C%20meeting%0A%20%20%20point%2C%20languages)%20appear%20only%20when%20at%20least%203%20people%20share%20them%3B%20the%20rest%20is%20%22Other%22.%0A5.%20**Read-only.**%20Statistics%20compute%20on%20read%20from%20the%20current%20tables.%20No%20new%20table%2C%20no%20migration%2C%20no%0A%20%20%20change-log%20entry.%0A6.%20**Honest%20correlations.**%20A%20correlation%20shows%20Spearman&#039;s%20%CF%81%20with%20%60n%60%2C%20and%20below%20%60n%20%3D%2015%60%20the%20text%0A%20%20%20%22too%20few%20to%20say%22.%20No%20trend%20line%20implies%20cause.%20(See%20the%20attendance%20model%3A%2013%20sessions%20gave%20p%20%E2%89%88%0A%20%20%200.07.)%0A%0A%23%23%20What%20the%20data%20supports%20today%0A%0A%7C%20Data%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Has%20time%3F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Note%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20--------------------%20%7C%20-----------------------------%20%7C%20-------------------------------------------------------------%20%7C%0A%7C%20proposals%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60created_time%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20proposal%20timeline%2C%20%22late%20proposals%20get%20fewer%20votes%22%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20votes%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20no%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20no%20voting%20timeline%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20sessions%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20start%2Fend%3B%20no%20creation%20time%20%20%20%7C%20origin%20derived%20(below)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20rsvps%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20no%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20no%20RSVP%20timeline%2C%20no%20cancellations%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20attendee%20count%20%20%20%20%20%20%20%7C%20%E2%80%94%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20host-reported%2C%20nullable%20(NULL%20%3D%20not%20reported)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20comments%2C%20likes%20%20%20%20%20%20%7C%20%60created_time%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20profile%20comments%20have%20no%20event%3A%20scope%20by%20profile&#039;s%20membership%20%7C%0A%7C%20meetings%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60created_at%60%2C%20%60responded_at%60%20%20%7C%20%60responded_at%60%20%3D%20last%20status%20change%3B%20expired%20derived%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20meeting%20availability%20%7C%20slot%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20who%20offered%20how%20much%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20notifications%20%20%20%20%20%20%20%20%7C%20%60created_at%60%2C%20%60read_at%60%20%20%20%20%20%20%20%7C%20read%20rate%20per%20type%3B%20guests%20can%20delete%20them%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20email%20settings%2C%20push%20%7C%20no%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20per%20guest%2C%20global%3A%20report%20over%20the%20event&#039;s%20members%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20change%20log%20%20%20%20%20%20%20%20%20%20%20%7C%20yes%2C%20but%20pruned%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20not%20a%20source%20for%20history%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20login%20sessions%20%20%20%20%20%20%20%7C%20yes%2C%20but%20expire%20after%2030%20days%20%7C%20not%20a%20source%20for%20history%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A**Session%20origin**%20(derived%2C%20a%20heuristic%2C%20stated%20on%20the%20page)%3A%20%60blocker%60%20when%20%60blocker%60%20is%20set%3B%20else%0A%60proposal%60%20when%20%60proposal_id%60%20is%20set%3B%20else%20%60organizer%60%20when%20%60admin_managed%60%3B%20else%20%60spontaneous%60.%20A%0Adeleted%20proposal%20turns%20its%20session%20into%20%22spontaneous%22%20(%60proposal_id%60%20is%20set%20null)%3B%20an%20admin%20can%0Auntick%20admin-managed.%0A%0A**Past%20events.**%20An%20organizer%20upgrades%20an%20old%20database%20(e.g.%203.8.1)%20and%20opens%20the%20page.%20A%20figure%0Awhose%20data%20an%20older%20release%20did%20not%20collect%20(attendee%20counts%20before%203.6.0%2C%201-on-1s%20before%20they%0Aexisted)%20says%20%22No%20data%22%2C%20never%200.%20The%20release-upgrade%20fixtures%20check%20that%20the%20page%20works%20on%20every%0Amigrated%20release.%0A%0A%23%23%20Filtering%20out%20volunteer%20shifts%20and%20other%20non-sessions%0A%0AOne%20past%20event%3A%20rooms%20%22Volunteers%20N%22%2C%20every%20session%20there%20hosted%20by%20one%20organizer%20account.%20Manual%0Aremoval%20in%20a%20CSV%20does%20not%20work%20for%20the%20figures%20that%20matter%20most%3A%20unique%20hosts%2C%20room%20utilization%2C%0Aparallel%20sessions%2C%20RSVPs%20per%20attendee.%20So%20the%20filter%20applies%20on%20the%20server%2C%20to%20every%20table%2C%20chart%0Aand%20CSV.%0A%0AGeneric%20facets%2C%20no%20event-specific%20concept%3A%0A%0A-%20**Exclude%20locations**%20(checkbox%20list).%20A%20session%20with%20all%20its%20locations%20excluded%20is%20excluded%3B%20the%0A%20%20location%20disappears%20from%20location%20tables.%0A-%20**Exclude%20hosts**%20(checkbox%20list%20of%20hosts).%20A%20session%20whose%20hosts%20are%20all%20excluded%20is%20excluded.%0A%20%20The%20host%20also%20leaves%20every%20people%20figure%20(members%2C%20voters%2C%20RSVPs%2C%201-on-1s%2C%20profiles)%3A%20an%20organizer%0A%20%20account%20is%20not%20an%20attendee.%0A-%20**Exclude%20origins**%3A%20blocker%20(default%20excluded)%2C%20organizer%2C%20spontaneous%2C%20proposal.%0A%0AThe%20filter%20lives%20in%20the%20URL%20query%20only%20(nothing%20stored)%2C%20so%20a%20filtered%20view%20is%20a%20link%20and%20the%20CSV%0Alink%20carries%20it.%20The%20page%20shows%20the%20active%20filter%20in%20one%20line%20(%22Excluding%204%20locations%2C%201%20host%2C%0Ablockers%22)%3B%20the%20CSV%20file%20name%20carries%20a%20short%20form%20(%60my-event-sessions-filtered.csv%60).%0A%0AEvery%20session%20table%20keeps%20%60locations%60%2C%20%60hosts%60%20and%20%60origin%60%20columns%2C%20so%20a%20CSV%20user%20can%20filter%0Afurther%20by%20hand.%0A%0ALater%2C%20when%20session%20kinds%20(%60not-built.md%60%3A%20session%2C%20shift%2C%20fixture)%20exist%2C%20shifts%20and%20fixtures%20are%0Aexcluded%20by%20default%20and%20the%20facets%20stay%20for%20the%20rest.%0A%0A%23%23%20Sections%0A%0AEach%20section%20is%20a%20set%20of%20figures.%20A%20figure%20is%3A%20a%20table%20(sortable%2C%20CSV)%20and%2C%20where%20it%20helps%2C%20a%20chart.%0A**Bold**%20marks%20the%20figures%20we%20think%20matter%20most.%0A%0A%23%23%23%201.%20Overview%0A%0A-%20**Headline%20numbers**%3A%20members%2C%20active%20members%20(voted%2C%20RSVPed%2C%20proposed%2C%20hosted%2C%20commented%20or%0A%20%20offered%201-on-1%20times)%2C%20voters%2C%20RSVPers%2C%20proposals%2C%20sessions%2C%20hosts%2C%20sessions%20with%20an%20attendee%0A%20%20report.%0A-%20**Participation%20funnel**%20(chart%3A%20horizontal%20bars)%3A%20members%20%E2%86%92%20active%20%E2%86%92%20voted%20%E2%86%92%20RSVPed%20%E2%86%92%20hosted.%0A-%20**Who%20did%20what**%20(aggregate%20overlap)%3A%20how%20many%20members%20voted%20only%2C%20RSVPed%20only%2C%20both%2C%20neither%3B%0A%20%20mean%20RSVPs%20of%20voters%20vs%20non-voters.%20This%20answers%20%22do%20voters%20engage%20more%22%20without%20a%20joinable%20table.%0A%0A%23%23%23%202.%20Proposals%20and%20voting%0A%0A-%20**Proposal%20funnel%20table**%2C%20one%20row%20per%20proposal%3A%20title%2C%20hosts%2C%20created%2C%20duration%2C%20cohost%20wanted%2C%0A%20%20interested%20%2F%20maybe%20%2F%20skip%2C%20voters%2C%20interest%20share%20%60s%60%2C%20rank%2C%20became%20a%20session%2C%20the%20session&#039;s%0A%20%20RSVPs%2C%20reported%20attendees%2C%20comments.%20This%20is%20the%20%22votes%20%E2%86%92%20RSVPs%20%E2%86%92%20attendance%22%20line%20asked%20for.%0A%20%20Chart%3A%20ranked%20bars%20of%20interest%2C%20coloured%20by%20%22became%20a%20session%22.%0A-%20**Popular%20but%20never%20scheduled**%3A%20the%20top-quartile%20proposals%20without%20a%20session.%20Short%20list%2C%20high%0A%20%20value.%0A-%20**Late%20proposals%20get%20fewer%20votes%3F**%20Scatter%3A%20created%20time%20vs%20voters%2C%20%CF%81.%20Tells%20the%20organizer%0A%20%20whether%20the%20proposal%20phase%20or%20the%20voting%20phase%20was%20too%20short.%0A-%20**Proposals%20over%20time**%3A%20proposals%20created%20per%20day%20across%20the%20phases%20(bars%2C%20phase%20bands).%0A-%20**Votes%20per%20voter**%20(per-person%2C%20pseudonymous)%3A%20total%2C%20interested%2C%20maybe%2C%20skip%2C%20share%20of%20proposals%0A%20%20covered.%20Chart%3A%20histogram%20of%20totals.%20Also%3A%20share%20of%20voters%20who%20voted%20on%20every%20proposal.%0A-%20**Choice%20mix**%3A%20interested%20%2F%20maybe%20%2F%20skip%20overall%2C%20and%20a%20histogram%20of%20each%20voter&#039;s%20interested%0A%20%20share%20(%22picky%20vs%20generous%22%20voters).%0A-%20**Hosts%20and%20proposals**%3A%20proposals%20per%20host%20(histogram)%2C%20co-hosted%20proposals%2C%20cohost%20wanted%20vs%0A%20%20cohost%20found.%0A-%20**Conversion**%3A%20proposals%20%E2%86%92%20sessions%2C%20by%20interest%20quartile.%0A%0A%23%23%23%203.%20Sessions%0A%0A-%20**Session%20table**%2C%20one%20row%20per%20session%3A%20title%2C%20origin%2C%20day%2C%20start%2C%20end%2C%20duration%2C%20locations%2C%0A%20%20hosts%2C%20capacity%2C%20RSVPs%2C%20fill%20(RSVPs%20%2F%20capacity)%2C%20reported%20attendees%2C%20attendees%20per%20RSVP%2C%20closed%2C%0A%20%20parallel%20sessions%20(others%20overlapping%20it)%2C%20proposal%20votes%2C%20comments.%0A-%20**Sessions%20by%20popularity**%3A%20ranked%20bars%20of%20RSVPs%2C%20with%20the%20capacity%20as%20a%20tick%20and%20reported%0A%20%20attendees%20as%20a%20second%20mark.%0A-%20**Origins**%3A%20count%20and%20median%20RSVPs%20per%20origin%20(proposal%20%2F%20spontaneous%20%2F%20organizer).%0A-%20**Hosts**%3A%20sessions%20hosted%2C%20unique%20hosts%2C%20share%20of%20members%20who%20hosted%2C%20sessions%20per%20host%0A%20%20(histogram)%2C%20sessions%20with%20more%20than%20one%20host.%0A-%20**Attendance%20reports%20%E2%80%94%20did%20hosts%20report%3F**%20Ended%20sessions%20with%20hosts%2C%20sessions%20reported%2C%20share%3B%0A%20%20the%20same%20by%20origin%20and%20by%20day%3B%20hosts%20asked%20vs%20hosts%20who%20reported%20at%20least%20once%3B%20share%20reported%0A%20%20where%20the%20follow-up%20reminder%20went%20out%20(a%20%60followUp%60%20row%20in%20%60session_reminders%60%20with%20%60sent_at%60%20or%0A%20%20%60notified_at%60)%20vs%20where%20it%20did%20not.%20The%20answer%20decides%20how%20much%20every%20attendance%20figure%20below%20can%0A%20%20be%20trusted.%0A-%20**Attendance**%3A%20attendees%20vs%20RSVPs%20scatter%20with%20%CF%81%3B%20attendees%20per%20RSVP%20distribution%20(the%20%22no-show%22%0A%20%20ratio%2C%20which%20can%20exceed%201).%0A-%20**Predicted%20vs%20real%20attendance**%3A%20for%20sessions%20from%20proposals%2C%20the%20attendance%20model&#039;s%20midpoint%20and%0A%20%2050%25%20and%2080%25%20ranges%20(%60docs%2Fdev%2Fattendance-model%2F%60)%20next%20to%20the%20reported%20count.%20Inputs%20per%20event%3A%0A%20%20%60N%60%20%3D%20members%20after%20the%20filter%2C%20%60P%60%20%3D%20mean%20parallel%20sessions%20over%20the%20booked%20time%2C%20%60s%CC%84%60%20%3D%20mean%0A%20%20interest%20share.%20Figures%3A%20predicted%20vs%20real%20scatter%20with%20the%20ranges%2C%20and%20calibration%20(share%20of%0A%20%20reports%20inside%20the%2050%25%20and%2080%25%20ranges%3B%20the%20model%20expects%20about%2050%25%20and%2080%25).%20Labelled%20%22model%0A%20%20fitted%20on%20one%20event%2C%20n%20%3D%2013%22.%20Each%20new%20event&#039;s%20result%20is%20a%20test%20of%20the%20model.%0A-%20**Votes%20%E2%86%92%20RSVPs**%3A%20scatter%20of%20interest%20share%20vs%20RSVPs%20for%20sessions%20from%20proposals%2C%20%CF%81.%0A-%20**Duration**%3A%20histogram%3B%20median%20RSVPs%20and%20attendees%20per%20duration%20bucket%3B%20duration%20by%20origin.%0A-%20**Time%20and%20competition**%3A%20median%20RSVPs%20by%20start%20hour%20and%20by%20day%3B%20RSVPs%20vs%20parallel%20sessions%2C%20%CF%81.%0A%20%20Answers%20%22were%20late-night%20or%20crowded%20slots%20weaker%22.%0A-%20**Closed%20sessions**%3A%20count%2C%20and%20their%20RSVPs%20and%20attendance%20vs%20the%20others.%0A-%20**Capacity**%3A%20sessions%20where%20RSVPs%20exceeded%20capacity%2C%20by%20location.%0A%0A%23%23%23%204.%20Attendees%20(RSVP%20behaviour)%0A%0A-%20**RSVPs%20per%20attendee**%20(per-person%2C%20pseudonymous)%3A%20RSVPs%2C%20days%20with%20RSVPs%2C%20hours%20booked%2C%0A%20%20back-to-back%20pairs%20(gap%20%E2%89%A4%20the%20event&#039;s%20break)%2C%20overlapping%20pairs%20(double%20bookings)%2C%20median%20gap.%0A%20%20Chart%3A%20histogram%20of%20RSVPs.%0A-%20**Gaps%20between%20RSVPed%20sessions**%3A%20histogram%20of%20gap%20lengths%20on%20the%20same%20day%20(0%2C%20%E2%89%A4%20break%2C%20%E2%89%A4%2030%20min%2C%0A%20%20%E2%89%A4%201%20h%2C%20%E2%89%A4%202%20h%2C%20more).%20Answers%20%22back%20to%20back%20or%20with%20breaks%22.%0A-%20**Double%20bookings**%3A%20share%20of%20attendees%20with%20overlapping%20RSVPs.%20A%20sign%20of%20hedging%2C%20and%20that%20RSVPs%0A%20%20overstate%20attendance.%0A-%20**Hosts%20attend%20too**%3A%20share%20of%20hosts%20with%20RSVPs%20to%20other%20sessions.%0A%0ARSVPs%20are%20intent%2C%20not%20attendance%3B%20the%20section%20says%20so%20once.%0A%0A%23%23%23%205.%20Locations%20and%20schedule%0A%0A-%20**Location%20table**%3A%20sessions%2C%20booked%20hours%2C%20available%20hours%20(the%20days&#039;%20booking%20windows%20minus%0A%20%20location%20unavailability)%2C%20utilization%2C%20gaps%2C%20total%20gap%20time%2C%20longest%20gap%2C%20median%20RSVPs%2C%20capacity%2C%0A%20%20sessions%20over%20capacity%2C%20bookable.%0A-%20**Gaps**%3A%20a%20gap%20is%20free%20time%20inside%20the%20booking%20window.%20Gaps%20shorter%20than%20the%20slot%20increment%20plus%0A%20%20break%20are%20counted%20apart%20as%20%22unusable%20fragments%22%20%E2%80%94%20they%20show%20where%20the%20grid%20wastes%20time.%0A-%20**Utilization%20heatmap**%3A%20location%20%C3%97%20hour%2C%20per%20day.%0A-%20**Supply%20and%20demand%20by%20hour**%3A%20parallel%20sessions%20per%20hour%20vs%20RSVPs%20per%20hour%20(two%20lines).%20The%20input%0A%20%20for%20next%20year&#039;s%20grid%3A%20where%20were%20there%20too%20many%20sessions%20for%20too%20few%20people.%0A-%20Excluded%20sessions%20in%20a%20kept%20location%20count%20as%20**occupied%2C%20not%20as%20sessions**%2C%20so%20a%20room&#039;s%20gaps%20stay%0A%20%20true.%0A%0A%23%23%23%206.%201-on-1s%0A%0AOnly%20when%20the%20event%20has%201-on-1s%20enabled.%0A%0A-%20**Adoption**%3A%20members%20with%20availability%2C%20share%3B%20availability%20slots%20per%20person%20(histogram).%0A-%20**Requests**%3A%20total%2C%20by%20status%20(pending%2C%20accepted%2C%20declined%2C%20canceled%2C%20expired)%2C%20distinct%0A%20%20requesters%2C%20distinct%20recipients%2C%20people%20with%20at%20least%20one%20accepted%20meeting.%0A-%20**Per%20person**%20(pseudonymous)%3A%20requests%20sent%2C%20received%2C%20accepted.%0A-%20**Response%20time**%3A%20median%20and%20distribution%20of%20%60responded_at%20%E2%88%92%20created_at%60%2C%20for%20accepted%20and%0A%20%20declined%20requests%20only.%20Every%20status%20change%20overwrites%20%60responded_at%60%2C%20so%20a%20cancel%20hides%20the%0A%20%20response%20time%3B%20the%20page%20says%20so.%0A-%20**When**%3A%20accepted%20meetings%20by%20hour%20and%20day.%0A-%20**Meeting%20points**%3A%20the%20organizer&#039;s%20points%20by%20use%3B%20free-text%20points%20only%20as%20%22Other%22.%0A%0A%23%23%23%207.%20Profiles%0A%0AOver%20the%20event&#039;s%20members%3A%20share%20with%20photo%2C%20about%20me%2C%20pronouns%2C%20based%20in%2C%20languages%2C%20prompts%2C%0Acontacts%3B%20profile%20fields%20filled%20per%20person%20(histogram)%3B%20top%20languages%20and%20based-in%20values%20(k%20%E2%89%A5%203)%3B%0Acontact%20types%20used%20(counts%20by%20type%2C%20never%20values).%0A%0A%23%23%23%208.%20Comments%0A%0APer%20target%20(proposal%2C%20session%2C%20profile)%3A%20comments%2C%20distinct%20authors%2C%20replies%2C%20likes%2C%20edited%2C%0Adeleted.%20Comments%20per%20day.%20Comments%20per%20author%20(histogram).%20The%20most%20discussed%20proposals%20and%0Asessions%20are%20a%20column%20in%20their%20tables%2C%20not%20a%20separate%20list.%0A%0A%23%23%23%209.%20Notifications%0A%0A-%20**Email%20settings**%3A%20per%20setting%2C%20share%20of%20members%20with%20it%20on%3B%20members%20without%20email.%0A-%20**Push**%3A%20members%20with%20at%20least%20one%20push%20subscription.%0A-%20**In-app**%3A%20notifications%20sent%20per%20type%20and%20share%20read.%20Tells%20which%20notifications%20people%20act%20on.%0A%20%20Notifications%20carry%20no%20event%2C%20so%20on%20a%20multi-event%20site%20this%20counts%20all%20events%20of%20the%20members%2C%20and%0A%20%20a%20guest%20can%20delete%20one%20unread%3A%20the%20read%20share%20is%20a%20lower%20bound.%0A%0A%23%23%20Shape%0A%0A-%20**Server**%3A%20a%20read-only%20module%20%60server%2Fmodules%2Fstats%60.%20One%20use%20case%2C%0A%20%20%60eventStatistics(actor%2C%20eventId%2C%20filter)%60%2C%20site%20admin%20only.%20A%20%60StatsRepository%60%20port%20loads%20the%0A%20%20event&#039;s%20raw%20facts%20in%20a%20few%20bulk%20queries%3B%20the%20figures%20are%20computed%20in%20TypeScript.%20An%20event%20is%20small%0A%20%20(hundreds%20of%20sessions%2C%20thousands%20of%20RSVPs)%2C%20so%20this%20is%20fast%20and%20testable.%0A-%20**Pure%20functions**%20in%20%60packages%2Fdomain%2Fsrc%2Fstats%2F%60%3A%20interval%20math%20(overlap%2C%20gaps%2C%20utilization%2C%0A%20%20concurrency)%2C%20rank%20correlation%2C%20binning%2C%20pseudonyms%2C%20small-number%20suppression%2C%20CSV%20encoding.%0A-%20**Contract**%3A%20a%20generic%20%60StatsTable%60%20(%60id%60%2C%20%60title%60%2C%20%60columns%3A%20%7Bkey%2C%20label%2C%20type%7D%5B%5D%60%2C%20%60rows%60)%2C%0A%20%20with%20column%20types%20%60text%20%7C%20integer%20%7C%20number%20%7C%20percent%20%7C%20minutes%20%7C%20datetime%20%7C%20boolean%60.%20One%20table%0A%20%20component%20renders%20all%20of%20them%3B%20charts%20are%20bound%20by%20table%20id.%0A-%20**API**%3A%20%60GET%20%2Fapi%2Fv1%2Fadmin%2Fevents%2F%7Bid%7D%2Fstats%3F%7Bfilter%7D%60%20(JSON%2C%20all%20tables)%20and%0A%20%20%60GET%20%2Fapi%2Fv1%2Fadmin%2Fevents%2F%7Bid%7D%2Fstats%2F%7Btable%7D.csv%3F%7Bfilter%7D%60.%20The%20server%20writes%20the%20CSV%2C%20so%20one%0A%20%20encoder%20serves%20the%20button%2C%20a%20script%20and%20%60curl%60.%0A-%20**Download%20all**%3A%20%60GET%20%2Fapi%2Fv1%2Fadmin%2Fevents%2F%7Bid%7D%2Fstats.zip%3F%7Bfilter%7D%60%2C%20every%20CSV%20plus%20%60about.txt%60%0A%20%20(event%2C%20filter%2C%20time%20of%20export%2C%20release%2C%20the%20caveats).%20Built%20on%20the%20server%20with%20fflate.%0A-%20**CSV**%3A%20RFC%204180%2C%20UTF-8%20with%20BOM%20(Excel)%2C%20times%20in%20the%20event&#039;s%20zone%20as%20%60YYYY-MM-DD%20HH%3Amm%60%2C%0A%20%20durations%20in%20minutes%2C%20plain%20numbers.%20A%20cell%20starting%20with%20%60%3D%20%2B%20-%20%40%60%20gets%20a%20leading%20%60&#039;%60%3A%20titles%20are%0A%20%20user%20input%20(formula%20injection).%0A-%20**SPA**%3A%20a%20%22Statistics%22%20tab%20in%20the%20admin%20event%20layout%2C%20sections%20as%20sub-navigation%2C%20a%20filter%20panel%2C%0A%20%20each%20figure%20as%20a%20card%20with%20chart%2C%20%22Show%20table%22%2C%20%22Download%20CSV%22.%0A-%20**Charts**%3A%20a%20mature%20library%2C%20chosen%20by%20a%20spike%20and%20recorded%20in%20an%20ADR%20(see%20below).%20The%20Statistics%0A%20%20screen%20is%20a%20lazy%20chunk%2C%20so%20attendees%20do%20not%20download%20it.%0A%0A%23%23%23%20Choosing%20the%20chart%20library%0A%0ACharts%20needed%3A%20ranked%20bars%20with%20marks%20(capacity%2C%20attendees)%2C%20histogram%2C%20scatter%20with%20ranges%20and%20a%0Atrend%2C%20stacked%20bars%2C%20heatmap%20(location%20%C3%97%20hour)%2C%20lines%2C%20small%20multiples%20per%20day.%0A%0AOwn%20SVG%20components%20were%20the%20first%20idea.%20The%20reasons%20do%20not%20hold%20up%3A%0A%0A-%20_Bundle%20size_%3A%20the%20SPA%20has%20no%20code%20splitting%20yet%2C%20so%20a%20library%20would%20reach%20every%20attendee.%20A%20lazy%0A%20%20import%20of%20the%20Statistics%20screen%20fixes%20that%2C%20and%20is%20worth%20doing%20anyway.%0A-%20_Theming%20and%20dark%20mode_%3A%20a%20library%20that%20renders%20SVG%20can%20take%20the%20colours%20of%20the%20tokens.%0A-%20_Few%20chart%20types_%3A%20true%2C%20but%20scales%2C%20ticks%2C%20label%20overlap%2C%20tooltips%20and%20resizing%20are%20most%20of%20the%0A%20%20work%2C%20and%20a%20library%20has%20solved%20them.%0A%0AThus%20a%20library%2C%20unless%20the%20spike%20finds%20a%20blocker.%20Candidates%3A%0A%0A%7C%20Library%20%20%20%20%20%20%20%20%20%7C%20For%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Against%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20---------------%20%7C%20-------------------------------------------------------------------------------------------------------------------%20%7C%20------------------------------------------------------------------------------------------%20%7C%0A%7C%20Observable%20Plot%20%7C%20made%20for%20statistics%3A%20bin%2C%20cell%20(heatmap)%2C%20regression%2C%20stack%2C%20facets%3B%20plain%20SVG%3B%20by%20the%20D3%20authors%3B%20ISC%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20not%20React%20(a%20small%20wrapper%20with%20a%20ref)%3B%20colours%20are%20attributes%2C%20CSS%20variables%20need%20a%20check%20%7C%0A%7C%20Recharts%20%20%20%20%20%20%20%20%7C%20React%2C%20the%20most%20used%3B%20tooltips%2C%20legends%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20no%20heatmap%2C%20no%20binning%3B%20%60ResponsiveContainer%60%20needs%20%60ResizeObserver%60%20in%20tests%3B%20larger%20%20%20%20%20%20%7C%0A%7C%20Others%20%20%20%20%20%20%20%20%20%20%7C%20Chart.js%20and%20ECharts%20draw%20on%20canvas%20(no%20CSS%20colours%2C%20poor%20accessibility)%3B%20Nivo%20and%20visx%3A%20more%20packages%2C%20more%20wiring%20%7C%20%E2%80%94%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0AFavourite%3A%20**Observable%20Plot**.%20The%20spike%20draws%20the%20heatmap%20and%20the%20predicted-vs-real%20scatter%20in%0APlot%20and%20Recharts%20and%20compares%3A%20gzip%20size%20of%20the%20lazy%20chunk%2C%20dark%20mode%20with%20the%20tokens%2C%20a%20render%0Atest%20in%20Vitest%20(happy-dom)%2C%20phone%20width%2C%20tooltips%2C%20accessible%20names%2C%20release%20activity.%20The%20ADR%0Arecords%20the%20result.%0A%0A%23%23%20Later%3A%20what%20to%20collect%20for%20better%20statistics%0A%0ARough%3B%20each%20item%20needs%20its%20own%20design%20and%20an%20entry%20in%20the%20data%20collection%20statement%20(%23801).%0A%0A-%20**Coarse%20timestamps%20on%20votes%20and%20RSVPs**%20(to%20the%20hour)%3A%20voting%20and%20RSVP%20timelines%2C%20%22how%20late%20do%0A%20%20people%20RSVP%22.%20Deleted%20with%20the%20vote%20or%20RSVP.%0A-%20**Aggregate%20counters%20without%20people**%3A%20RSVP%20cancellations%20per%20session%2C%20notification%20clicks%20per%0A%20%20type%2C%20feature%20use%20per%20day%20(schedule%2C%20map%2C%20search).%20No%20ids%2C%20no%20addresses%2C%20no%20third-party%20analytics.%0A-%20**Daily%20snapshots**%3A%20the%20jobs%20loop%20writes%20a%20few%20event-wide%20counts%20per%20day%20to%20a%20table%2C%20since%20the%0A%20%20change%20log%20is%20pruned.%20Gives%20history%20without%20per-person%20rows.%0A-%20**Attendance%20confirmation**%3A%20an%20attendee%20taps%20%22I%20was%20there%22%20(opt-in).%20Better%20than%20host%20counts%20and%0A%20%20RSVPs.%20Stored%20as%20an%20RSVP%20flag%2C%20so%20it%20goes%20with%20the%20RSVP.%0A-%20**Anonymous%20ratings%20after%20a%20session**%20(%23389%2C%20%231053)%3A%20store%20the%20rating%20without%20a%20guest%20id%3B%20prevent%0A%20%20a%20second%20rating%20with%20a%20separate%20%22rated%22%20row%20per%20(guest%2C%20session)%2C%20deleted%20after%20the%20event.%0A-%20**Device%20class**%20(phone%2C%20desktop)%20per%20login%20session%2C%20not%20the%20user%20agent.%0A-%20**Rules%20for%20all%20of%20it**%3A%20data%20minimisation%20(collect%20what%20a%20figure%20needs%2C%20coarsen%20times)%2C%20no%0A%20%20per-person%20data%20that%20outlives%20the%20person&#039;s%20account%2C%20k%20%E2%89%A5%203%20for%20anything%20shown%2C%20documented%20purpose%0A%20%20and%20retention%2C%20aggregates%20only%20for%20anything%20kept%20after%20the%20event.%0A" style="display: none;"></div>
+                  
+                    <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
+                      <ol>
+                        
+                        
+                          <li class="breadcrumb-item " >
+                            
+                              <span>Design</span>
+                            
+                            
+                              <span class="breadcrumb-separator">
+<svg class="lucide-icon icon-chevron-right " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+                            
+                          </li>
+                        
+                          <li class="breadcrumb-item active" aria-current=&quot;page&quot;>
+                            
+                              <span>Statistics proposal</span>
+                            
+                            
+                          </li>
+                        
+                      </ol>
+                    </nav>
+                  
+
+                  
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                      
+                    </div>
+                  
+                </div>
+                
+                  <h1 class="docmd-focus-title">
+                    Statistics in the admin: proposal
+                  </h1>
+                
+                <h1 id="statistics-in-the-admin-proposal" class="docmd-heading"><a href="#statistics-in-the-admin-proposal" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Statistics in the admin: proposal</h1>
+<p>Status: decided, implementation in progress; ADR 0019 will record the decisions. Issue #389 is the
+brainstorm; this narrows it to what the data in the database supports today, and sketches what to
+collect later.</p>
+<h2 id="statistics-in-the-admin-proposal-goal" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-goal" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Goal</h2>
+<p>An organizer, during and after an event, answers: did the process work (proposals → votes → sessions
+→ attendance), did the venue work (rooms, gaps, peak times), and which features people used
+(1-on-1s, profiles, comments, notifications). Every figure is a table that downloads as CSV, and
+most have a chart. The same page serves a past event after an upgrade.</p>
+<h2 id="statistics-in-the-admin-proposal-principles" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-principles" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Principles</h2>
+<ol>
+<li><strong>No new disclosure.</strong> The page shows a site admin nothing the admin cannot see elsewhere, except
+as aggregates. Today an admin sees vote <em>counts</em> per proposal, never who voted what. That stays
+true. One exception: the reported attendee count per session. ADR 0007 §3 keeps it out of the
+admin read surface and of exports; decided: the statistics ADR supersedes that part.</li>
+<li><strong>Names only where already public</strong>: titles, hosts, locations. People who only voted, RSVPed or
+requested a 1-on-1 never appear by name.</li>
+<li><strong>Per-person tables are not joinable.</strong> A per-person table (e.g. “votes per voter”) has no guest
+id, a pseudonym (<code>P001</code>…) assigned per table and per request in sorted order, and rows sorted by
+value. Two tables can therefore not be joined to rebuild a person. Relations across domains (“do
+voters RSVP more?”) are computed on the server and shown as aggregates.</li>
+<li><strong>Small numbers are suppressed in free text.</strong> Values of free-text fields (based in, meeting
+point, languages) appear only when at least 3 people share them; the rest is “Other”.</li>
+<li><strong>Read-only.</strong> Statistics compute on read from the current tables. No new table, no migration, no
+change-log entry.</li>
+<li><strong>Honest correlations.</strong> A correlation shows Spearman’s ρ with <code>n</code>, and below <code>n = 15</code> the text
+“too few to say”. No trend line implies cause. (See the attendance model: 13 sessions gave p ≈
+0.07.)</li>
+</ol>
+<h2 id="statistics-in-the-admin-proposal-what-the-data-supports-today" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-what-the-data-supports-today" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>What the data supports today</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Has time?</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>proposals</td>
+<td><code>created_time</code></td>
+<td>proposal timeline, “late proposals get fewer votes”</td>
+</tr>
+<tr>
+<td>votes</td>
+<td>no</td>
+<td>no voting timeline</td>
+</tr>
+<tr>
+<td>sessions</td>
+<td>start/end; no creation time</td>
+<td>origin derived (below)</td>
+</tr>
+<tr>
+<td>rsvps</td>
+<td>no</td>
+<td>no RSVP timeline, no cancellations</td>
+</tr>
+<tr>
+<td>attendee count</td>
+<td>—</td>
+<td>host-reported, nullable (NULL = not reported)</td>
+</tr>
+<tr>
+<td>comments, likes</td>
+<td><code>created_time</code></td>
+<td>profile comments have no event: scope by profile’s membership</td>
+</tr>
+<tr>
+<td>meetings</td>
+<td><code>created_at</code>, <code>responded_at</code></td>
+<td><code>responded_at</code> = last status change; expired derived</td>
+</tr>
+<tr>
+<td>meeting availability</td>
+<td>slot</td>
+<td>who offered how much</td>
+</tr>
+<tr>
+<td>notifications</td>
+<td><code>created_at</code>, <code>read_at</code></td>
+<td>read rate per type; guests can delete them</td>
+</tr>
+<tr>
+<td>email settings, push</td>
+<td>no</td>
+<td>per guest, global: report over the event’s members</td>
+</tr>
+<tr>
+<td>change log</td>
+<td>yes, but pruned</td>
+<td>not a source for history</td>
+</tr>
+<tr>
+<td>login sessions</td>
+<td>yes, but expire after 30 days</td>
+<td>not a source for history</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Session origin</strong> (derived, a heuristic, stated on the page): <code>blocker</code> when <code>blocker</code> is set; else
+<code>proposal</code> when <code>proposal_id</code> is set; else <code>organizer</code> when <code>admin_managed</code>; else <code>spontaneous</code>. A
+deleted proposal turns its session into “spontaneous” (<code>proposal_id</code> is set null); an admin can
+untick admin-managed.</p>
+<p><strong>Past events.</strong> An organizer upgrades an old database (e.g. 3.8.1) and opens the page. A figure
+whose data an older release did not collect (attendee counts before 3.6.0, 1-on-1s before they
+existed) says “No data”, never 0. The release-upgrade fixtures check that the page works on every
+migrated release.</p>
+<h2 id="statistics-in-the-admin-proposal-filtering-out-volunteer-shifts-and-other-non-sessions" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-filtering-out-volunteer-shifts-and-other-non-sessions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Filtering out volunteer shifts and other non-sessions</h2>
+<p>One past event: rooms “Volunteers N”, every session there hosted by one organizer account. Manual
+removal in a CSV does not work for the figures that matter most: unique hosts, room utilization,
+parallel sessions, RSVPs per attendee. So the filter applies on the server, to every table, chart
+and CSV.</p>
+<p>Generic facets, no event-specific concept:</p>
+<ul>
+<li><strong>Exclude locations</strong> (checkbox list). A session with all its locations excluded is excluded; the
+location disappears from location tables.</li>
+<li><strong>Exclude hosts</strong> (checkbox list of hosts). A session whose hosts are all excluded is excluded.
+The host also leaves every people figure (members, voters, RSVPs, 1-on-1s, profiles): an organizer
+account is not an attendee.</li>
+<li><strong>Exclude origins</strong>: blocker (default excluded), organizer, spontaneous, proposal.</li>
+</ul>
+<p>The filter lives in the URL query only (nothing stored), so a filtered view is a link and the CSV
+link carries it. The page shows the active filter in one line (“Excluding 4 locations, 1 host,
+blockers”); the CSV file name carries a short form (<code>my-event-sessions-filtered.csv</code>).</p>
+<p>Every session table keeps <code>locations</code>, <code>hosts</code> and <code>origin</code> columns, so a CSV user can filter
+further by hand.</p>
+<p>Later, when session kinds (<code>not-built.md</code>: session, shift, fixture) exist, shifts and fixtures are
+excluded by default and the facets stay for the rest.</p>
+<h2 id="statistics-in-the-admin-proposal-sections" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Sections</h2>
+<p>Each section is a set of figures. A figure is: a table (sortable, CSV) and, where it helps, a chart.
+<strong>Bold</strong> marks the figures we think matter most.</p>
+<h3 id="statistics-in-the-admin-proposal-sections-1-overview" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-1-overview" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>1. Overview</h3>
+<ul>
+<li><strong>Headline numbers</strong>: members, active members (voted, RSVPed, proposed, hosted, commented or
+offered 1-on-1 times), voters, RSVPers, proposals, sessions, hosts, sessions with an attendee
+report.</li>
+<li><strong>Participation funnel</strong> (chart: horizontal bars): members → active → voted → RSVPed → hosted.</li>
+<li><strong>Who did what</strong> (aggregate overlap): how many members voted only, RSVPed only, both, neither;
+mean RSVPs of voters vs non-voters. This answers “do voters engage more” without a joinable table.</li>
+</ul>
+<h3 id="statistics-in-the-admin-proposal-sections-2-proposals-and-voting" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-2-proposals-and-voting" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>2. Proposals and voting</h3>
+<ul>
+<li><strong>Proposal funnel table</strong>, one row per proposal: title, hosts, created, duration, cohost wanted,
+interested / maybe / skip, voters, interest share <code>s</code>, rank, became a session, the session’s
+RSVPs, reported attendees, comments. This is the “votes → RSVPs → attendance” line asked for.
+Chart: ranked bars of interest, coloured by “became a session”.</li>
+<li><strong>Popular but never scheduled</strong>: the top-quartile proposals without a session. Short list, high
+value.</li>
+<li><strong>Late proposals get fewer votes?</strong> Scatter: created time vs voters, ρ. Tells the organizer
+whether the proposal phase or the voting phase was too short.</li>
+<li><strong>Proposals over time</strong>: proposals created per day across the phases (bars, phase bands).</li>
+<li><strong>Votes per voter</strong> (per-person, pseudonymous): total, interested, maybe, skip, share of proposals
+covered. Chart: histogram of totals. Also: share of voters who voted on every proposal.</li>
+<li><strong>Choice mix</strong>: interested / maybe / skip overall, and a histogram of each voter’s interested
+share (“picky vs generous” voters).</li>
+<li><strong>Hosts and proposals</strong>: proposals per host (histogram), co-hosted proposals, cohost wanted vs
+cohost found.</li>
+<li><strong>Conversion</strong>: proposals → sessions, by interest quartile.</li>
+</ul>
+<h3 id="statistics-in-the-admin-proposal-sections-3-sessions" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-3-sessions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>3. Sessions</h3>
+<ul>
+<li><strong>Session table</strong>, one row per session: title, origin, day, start, end, duration, locations,
+hosts, capacity, RSVPs, fill (RSVPs / capacity), reported attendees, attendees per RSVP, closed,
+parallel sessions (others overlapping it), proposal votes, comments.</li>
+<li><strong>Sessions by popularity</strong>: ranked bars of RSVPs, with the capacity as a tick and reported
+attendees as a second mark.</li>
+<li><strong>Origins</strong>: count and median RSVPs per origin (proposal / spontaneous / organizer).</li>
+<li><strong>Hosts</strong>: sessions hosted, unique hosts, share of members who hosted, sessions per host
+(histogram), sessions with more than one host.</li>
+<li><strong>Attendance reports — did hosts report?</strong> Ended sessions with hosts, sessions reported, share;
+the same by origin and by day; hosts asked vs hosts who reported at least once; share reported
+where the follow-up reminder went out (a <code>followUp</code> row in <code>session_reminders</code> with <code>sent_at</code> or
+<code>notified_at</code>) vs where it did not. The answer decides how much every attendance figure below can
+be trusted.</li>
+<li><strong>Attendance</strong>: attendees vs RSVPs scatter with ρ; attendees per RSVP distribution (the “no-show”
+ratio, which can exceed 1).</li>
+<li><strong>Predicted vs real attendance</strong>: for sessions from proposals, the attendance model’s midpoint and
+50% and 80% ranges (<code>docs/dev/attendance-model/</code>) next to the reported count. Inputs per event:
+<code>N</code> = members after the filter, <code>P</code> = mean parallel sessions over the booked time, <code>s̄</code> = mean
+interest share. Figures: predicted vs real scatter with the ranges, and calibration (share of
+reports inside the 50% and 80% ranges; the model expects about 50% and 80%). Labelled “model
+fitted on one event, n = 13”. Each new event’s result is a test of the model.</li>
+<li><strong>Votes → RSVPs</strong>: scatter of interest share vs RSVPs for sessions from proposals, ρ.</li>
+<li><strong>Duration</strong>: histogram; median RSVPs and attendees per duration bucket; duration by origin.</li>
+<li><strong>Time and competition</strong>: median RSVPs by start hour and by day; RSVPs vs parallel sessions, ρ.
+Answers “were late-night or crowded slots weaker”.</li>
+<li><strong>Closed sessions</strong>: count, and their RSVPs and attendance vs the others.</li>
+<li><strong>Capacity</strong>: sessions where RSVPs exceeded capacity, by location.</li>
+</ul>
+<h3 id="statistics-in-the-admin-proposal-sections-4-attendees-rsvp-behaviour" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-4-attendees-rsvp-behaviour" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>4. Attendees (RSVP behaviour)</h3>
+<ul>
+<li><strong>RSVPs per attendee</strong> (per-person, pseudonymous): RSVPs, days with RSVPs, hours booked,
+back-to-back pairs (gap ≤ the event’s break), overlapping pairs (double bookings), median gap.
+Chart: histogram of RSVPs.</li>
+<li><strong>Gaps between RSVPed sessions</strong>: histogram of gap lengths on the same day (0, ≤ break, ≤ 30 min,
+≤ 1 h, ≤ 2 h, more). Answers “back to back or with breaks”.</li>
+<li><strong>Double bookings</strong>: share of attendees with overlapping RSVPs. A sign of hedging, and that RSVPs
+overstate attendance.</li>
+<li><strong>Hosts attend too</strong>: share of hosts with RSVPs to other sessions.</li>
+</ul>
+<p>RSVPs are intent, not attendance; the section says so once.</p>
+<h3 id="statistics-in-the-admin-proposal-sections-5-locations-and-schedule" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-5-locations-and-schedule" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>5. Locations and schedule</h3>
+<ul>
+<li><strong>Location table</strong>: sessions, booked hours, available hours (the days’ booking windows minus
+location unavailability), utilization, gaps, total gap time, longest gap, median RSVPs, capacity,
+sessions over capacity, bookable.</li>
+<li><strong>Gaps</strong>: a gap is free time inside the booking window. Gaps shorter than the slot increment plus
+break are counted apart as “unusable fragments” — they show where the grid wastes time.</li>
+<li><strong>Utilization heatmap</strong>: location × hour, per day.</li>
+<li><strong>Supply and demand by hour</strong>: parallel sessions per hour vs RSVPs per hour (two lines). The input
+for next year’s grid: where were there too many sessions for too few people.</li>
+<li>Excluded sessions in a kept location count as <strong>occupied, not as sessions</strong>, so a room’s gaps stay
+true.</li>
+</ul>
+<h3 id="statistics-in-the-admin-proposal-sections-6-1-on-1s" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-6-1-on-1s" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>6. 1-on-1s</h3>
+<p>Only when the event has 1-on-1s enabled.</p>
+<ul>
+<li><strong>Adoption</strong>: members with availability, share; availability slots per person (histogram).</li>
+<li><strong>Requests</strong>: total, by status (pending, accepted, declined, canceled, expired), distinct
+requesters, distinct recipients, people with at least one accepted meeting.</li>
+<li><strong>Per person</strong> (pseudonymous): requests sent, received, accepted.</li>
+<li><strong>Response time</strong>: median and distribution of <code>responded_at − created_at</code>, for accepted and
+declined requests only. Every status change overwrites <code>responded_at</code>, so a cancel hides the
+response time; the page says so.</li>
+<li><strong>When</strong>: accepted meetings by hour and day.</li>
+<li><strong>Meeting points</strong>: the organizer’s points by use; free-text points only as “Other”.</li>
+</ul>
+<h3 id="statistics-in-the-admin-proposal-sections-7-profiles" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-7-profiles" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>7. Profiles</h3>
+<p>Over the event’s members: share with photo, about me, pronouns, based in, languages, prompts,
+contacts; profile fields filled per person (histogram); top languages and based-in values (k ≥ 3);
+contact types used (counts by type, never values).</p>
+<h3 id="statistics-in-the-admin-proposal-sections-8-comments" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-8-comments" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>8. Comments</h3>
+<p>Per target (proposal, session, profile): comments, distinct authors, replies, likes, edited,
+deleted. Comments per day. Comments per author (histogram). The most discussed proposals and
+sessions are a column in their tables, not a separate list.</p>
+<h3 id="statistics-in-the-admin-proposal-sections-9-notifications" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-sections-9-notifications" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>9. Notifications</h3>
+<ul>
+<li><strong>Email settings</strong>: per setting, share of members with it on; members without email.</li>
+<li><strong>Push</strong>: members with at least one push subscription.</li>
+<li><strong>In-app</strong>: notifications sent per type and share read. Tells which notifications people act on.
+Notifications carry no event, so on a multi-event site this counts all events of the members, and
+a guest can delete one unread: the read share is a lower bound.</li>
+</ul>
+<h2 id="statistics-in-the-admin-proposal-shape" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-shape" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Shape</h2>
+<ul>
+<li><strong>Server</strong>: a read-only module <code>server/modules/stats</code>. One use case,
+<code>eventStatistics(actor, eventId, filter)</code>, site admin only. A <code>StatsRepository</code> port loads the
+event’s raw facts in a few bulk queries; the figures are computed in TypeScript. An event is small
+(hundreds of sessions, thousands of RSVPs), so this is fast and testable.</li>
+<li><strong>Pure functions</strong> in <code>packages/domain/src/stats/</code>: interval math (overlap, gaps, utilization,
+concurrency), rank correlation, binning, pseudonyms, small-number suppression, CSV encoding.</li>
+<li><strong>Contract</strong>: a generic <code>StatsTable</code> (<code>id</code>, <code>title</code>, <code>columns: {key, label, type}[]</code>, <code>rows</code>),
+with column types <code>text | integer | number | percent | minutes | datetime | boolean</code>. One table
+component renders all of them; charts are bound by table id.</li>
+<li><strong>API</strong>: <code>GET /api/v1/admin/events/{id}/stats?{filter}</code> (JSON, all tables) and
+<code>GET /api/v1/admin/events/{id}/stats/{table}.csv?{filter}</code>. The server writes the CSV, so one
+encoder serves the button, a script and <code>curl</code>.</li>
+<li><strong>Download all</strong>: <code>GET /api/v1/admin/events/{id}/stats.zip?{filter}</code>, every CSV plus <code>about.txt</code>
+(event, filter, time of export, release, the caveats). Built on the server with fflate.</li>
+<li><strong>CSV</strong>: RFC 4180, UTF-8 with BOM (Excel), times in the event’s zone as <code>YYYY-MM-DD HH:mm</code>,
+durations in minutes, plain numbers. A cell starting with <code>= + - @</code> gets a leading <code>'</code>: titles are
+user input (formula injection).</li>
+<li><strong>SPA</strong>: a “Statistics” tab in the admin event layout, sections as sub-navigation, a filter panel,
+each figure as a card with chart, “Show table”, “Download CSV”.</li>
+<li><strong>Charts</strong>: a mature library, chosen by a spike and recorded in an ADR (see below). The Statistics
+screen is a lazy chunk, so attendees do not download it.</li>
+</ul>
+<h3 id="statistics-in-the-admin-proposal-shape-choosing-the-chart-library" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-shape-choosing-the-chart-library" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Choosing the chart library</h3>
+<p>Charts needed: ranked bars with marks (capacity, attendees), histogram, scatter with ranges and a
+trend, stacked bars, heatmap (location × hour), lines, small multiples per day.</p>
+<p>Own SVG components were the first idea. The reasons do not hold up:</p>
+<ul>
+<li><em>Bundle size</em>: the SPA has no code splitting yet, so a library would reach every attendee. A lazy
+import of the Statistics screen fixes that, and is worth doing anyway.</li>
+<li><em>Theming and dark mode</em>: a library that renders SVG can take the colours of the tokens.</li>
+<li><em>Few chart types</em>: true, but scales, ticks, label overlap, tooltips and resizing are most of the
+work, and a library has solved them.</li>
+</ul>
+<p>Thus a library, unless the spike finds a blocker. Candidates:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Library</th>
+<th>For</th>
+<th>Against</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Observable Plot</td>
+<td>made for statistics: bin, cell (heatmap), regression, stack, facets; plain SVG; by the D3 authors; ISC</td>
+<td>not React (a small wrapper with a ref); colours are attributes, CSS variables need a check</td>
+</tr>
+<tr>
+<td>Recharts</td>
+<td>React, the most used; tooltips, legends</td>
+<td>no heatmap, no binning; <code>ResponsiveContainer</code> needs <code>ResizeObserver</code> in tests; larger</td>
+</tr>
+<tr>
+<td>Others</td>
+<td>Chart.js and ECharts draw on canvas (no CSS colours, poor accessibility); Nivo and visx: more packages, more wiring</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div><p>Favourite: <strong>Observable Plot</strong>. The spike draws the heatmap and the predicted-vs-real scatter in
+Plot and Recharts and compares: gzip size of the lazy chunk, dark mode with the tokens, a render
+test in Vitest (happy-dom), phone width, tooltips, accessible names, release activity. The ADR
+records the result.</p>
+<h2 id="statistics-in-the-admin-proposal-later-what-to-collect-for-better-statistics" class="docmd-heading"><a href="#statistics-in-the-admin-proposal-later-what-to-collect-for-better-statistics" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Later: what to collect for better statistics</h2>
+<p>Rough; each item needs its own design and an entry in the data collection statement (#801).</p>
+<ul>
+<li><strong>Coarse timestamps on votes and RSVPs</strong> (to the hour): voting and RSVP timelines, “how late do
+people RSVP”. Deleted with the vote or RSVP.</li>
+<li><strong>Aggregate counters without people</strong>: RSVP cancellations per session, notification clicks per
+type, feature use per day (schedule, map, search). No ids, no addresses, no third-party analytics.</li>
+<li><strong>Daily snapshots</strong>: the jobs loop writes a few event-wide counts per day to a table, since the
+change log is pruned. Gives history without per-person rows.</li>
+<li><strong>Attendance confirmation</strong>: an attendee taps “I was there” (opt-in). Better than host counts and
+RSVPs. Stored as an RSVP flag, so it goes with the RSVP.</li>
+<li><strong>Anonymous ratings after a session</strong> (#389, #1053): store the rating without a guest id; prevent
+a second rating with a separate “rated” row per (guest, session), deleted after the event.</li>
+<li><strong>Device class</strong> (phone, desktop) per login session, not the user agent.</li>
+<li><strong>Rules for all of it</strong>: data minimisation (collect what a figure needs, coarsen times), no
+per-person data that outlives the person’s account, k ≥ 3 for anything shown, documented purpose
+and retention, aggregates only for anything kept after the event.</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <a href="../exploration/matrix-chat/" class="prev-page">
+                        
+<svg class="lucide-icon icon-arrow-left page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+</svg>
+
+                        <span><small>Previous</small><strong>
+                            Matrix chat feasibility
+                          </strong></span>
+                      </a>
+                    
+                    
+                      <div class="next-page-placeholder">
+                      </div>
+                    
+                  </div>
+                
+              </div>
+              
+              
+              <div class="toc-sidebar">
+                
+                
+                  
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#statistics-in-the-admin-proposal" class="toc-link">Statistics in the admin: proposal</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#statistics-in-the-admin-proposal-goal" class="toc-link">Goal</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#statistics-in-the-admin-proposal-principles" class="toc-link">Principles</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#statistics-in-the-admin-proposal-what-the-data-supports-today" class="toc-link">What the data supports today</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#statistics-in-the-admin-proposal-filtering-out-volunteer-shifts-and-other-non-sessions" class="toc-link">Filtering out volunteer shifts and other non-sessions</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#statistics-in-the-admin-proposal-sections" class="toc-link">Sections</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-1-overview" class="toc-link">1. Overview</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-2-proposals-and-voting" class="toc-link">2. Proposals and voting</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-3-sessions" class="toc-link">3. Sessions</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-4-attendees-rsvp-behaviour" class="toc-link">4. Attendees (RSVP behaviour)</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-5-locations-and-schedule" class="toc-link">5. Locations and schedule</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-6-1-on-1s" class="toc-link">6. 1-on-1s</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-7-profiles" class="toc-link">7. Profiles</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-8-comments" class="toc-link">8. Comments</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-sections-9-notifications" class="toc-link">9. Notifications</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#statistics-in-the-admin-proposal-shape" class="toc-link">Shape</a>
+        </li>
+      
+        <li class="toc-item toc-level-3">
+          <a href="#statistics-in-the-admin-proposal-shape-choosing-the-chart-library" class="toc-link">Choosing the chart library</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#statistics-in-the-admin-proposal-later-what-to-collect-for-better-statistics" class="toc-link">Later: what to collect for better statistics</a>
+        </li>
+      
+    </ul>
+  </div>
+
+                
+                
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1794053387000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1794053387000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: plan statistics in the admin">docs: plan statistics in the admin</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1794053387000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      <script src="../assets/js/docmd-main.js?v=mw9qy86f"></script>
+      
+      <script src="../assets/js/docmd-git.js?v=mw9qy86f"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mw9qy86f" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mw9qy86f" ></script>
+<script src="../assets/js/docmd-search.js?v=mw9qy86f" ></script>
+<script src="../assets/js/docmd-git.js?v=mw9qy86f" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../assets/js/likec4-embed.js?v=mw9qy86f"></script>
+        
+      
+      
+  </body>
+</html>

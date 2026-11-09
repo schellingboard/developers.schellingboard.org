@@ -3,10 +3,10 @@ type: concept
 title: "SchellingBoard developer documentation"
 source: "https://developers.schellingboard.org/"
 path: /
-updated: 2026-11-07
+updated: 2026-11-09
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-07T12:21:37.463Z"
+  generated_at: "2026-11-09T21:01:50.282Z"
 ---
 # SchellingBoard developer documentation
 
@@ -51,6 +51,7 @@ the repository.
 | [Diagram explorer](https://developers.schellingboard.org/diagrams/) | the same C4 model, browsable — every view, with drill-down               |
 | [Attendance model](attendance-model/README.md)                      | predicting how many people show up to a session, from its voting results |
 | [Matrix chat feasibility](exploration/matrix-chat.md)               | exploratory notes on integrating a Matrix chat server — not yet decided  |
+| [Statistics proposal](statistics-proposal.md)                       | statistics in the admin: figures, privacy rules, filter — not yet built  |
 
 ## Elsewhere
 

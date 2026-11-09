@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-11-07T12:21:37.485Z",
+    "generated_at": "2026-11-09T21:01:50.302Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 41,
+    "concepts": 42,
     "by_type": {
-      "concept": 41
+      "concept": 42
     },
     "locales": [],
     "versions": []
@@ -432,6 +432,17 @@
       "description": "",
       "path": "/server/",
       "file": "concepts/server.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "statistics-proposal",
+      "type": "concept",
+      "title": "Statistics in the admin: proposal",
+      "description": "",
+      "path": "/statistics-proposal/",
+      "file": "concepts/statistics-proposal.md",
       "locale": "",
       "version": "",
       "tags": []

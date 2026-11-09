@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0018: The API review for 5.0.0"
 source: "https://developers.schellingboard.org/adr/0018-api-review-for-5-0/"
 path: /adr/0018-api-review-for-5-0/
-updated: 2026-11-07
+updated: 2026-11-09
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-07T12:21:37.473Z"
+  generated_at: "2026-11-09T21:01:50.291Z"
 ---
 # ADR 0018: The API review for 5.0.0
 
@@ -107,7 +107,10 @@ Benefit and who breaks are given for each change. Since `/api/v1` is unreleased,
     for everyone else, and neither the snapshot nor the feed carries it. #1331 makes the guest
     `email` nullable in the admin guest view and optional in create and import, adds `username`,
     reports skipped (no-email) guests when mailing join links, and adds `emailEnabled` to
-    `GET /site` so the SPA can hide what needs mail. These land in 5.0.0, before the policy applies.
+    `GET /site` so the SPA can hide what needs mail. `GET /me/credentials` gains `hasEmail` and
+    `canSetPassword`; `POST /me/credentials/password` may now replace a password (409
+    `auth.passwordSet` otherwise), but only for a join-link login where no mail can reset it. These
+    land in 5.0.0, before the policy applies.
 
 ### What the unbuilt designs need
 

@@ -36,6 +36,7 @@
 [WARN] missing-type /multiple-instances/  (using fallback 'concept')
 [WARN] missing-type /releasing/  (using fallback 'concept')
 [WARN] missing-type /server/  (using fallback 'concept')
+[WARN] missing-type /statistics-proposal/  (using fallback 'concept')
 [WARN] missing-type /testing/  (using fallback 'concept')
 [WARN] missing-type /version-control/  (using fallback 'concept')
 [WARN] missing-type /web-app/  (using fallback 'concept')
