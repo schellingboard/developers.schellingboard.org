@@ -3,10 +3,10 @@ type: concept
 title: "The web app (`apps/web`)"
 source: "https://developers.schellingboard.org/web-app/"
 path: /web-app/
-updated: 2026-11-09
+updated: 2026-11-10
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-09T21:01:50.301Z"
+  generated_at: "2026-11-10T17:43:22.181Z"
 ---
 # The web app (`apps/web`)
 
@@ -62,6 +62,10 @@ IndexedDB persistence keyed by event and viewer, opened as `stale`). dependency-
 that the package imports `packages/domain`, `packages/contracts` and `packages/api-client` only
 (never `server/`, `utils/` or `db/`), that nothing imports it, that `features/` never imports
 `api-client`, and that it declares what it imports. See [Architecture rules](architecture-rules.md).
+
+The admin pages are the SPA's one lazy chunk (`lazyRouteComponent` over `app/admin-pages.tsx` in
+`router.tsx`). Import admin code only from that module's graph, and never import `admin-pages`
+statically elsewhere, or attendees download it again.
 
 ## The viewer and the user picker
 

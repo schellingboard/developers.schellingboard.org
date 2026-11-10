@@ -26,6 +26,7 @@
 - [ADR 0016: The remaining screen families](https://developers.schellingboard.org/adr/0016-remaining-screen-families/)
 - [ADR 0017: Identity and roles](https://developers.schellingboard.org/adr/0017-identity-and-roles/)
 - [ADR 0018: The API review for 5.0.0](https://developers.schellingboard.org/adr/0018-api-review-for-5-0/)
+- [ADR 0019: Statistics in the admin](https://developers.schellingboard.org/adr/0019-statistics/)
 - [Architecture decision records](https://developers.schellingboard.org/adr/)
 
 ## Architecture Rules
@@ -87,7 +88,11 @@
 
 ## Statistics Proposal
 
-- [Statistics in the admin: proposal](https://developers.schellingboard.org/statistics-proposal/)
+- [Statistics in the admin: later](https://developers.schellingboard.org/statistics-proposal/)
+
+## Statistics
+
+- [Statistics in the admin: figures](https://developers.schellingboard.org/statistics/)
 
 ## Testing
 

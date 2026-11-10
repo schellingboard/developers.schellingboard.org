@@ -129,6 +129,13 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0019: Statistics in the admin",
+      "url": "https://developers.schellingboard.org/adr/0019-statistics/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
@@ -269,10 +276,17 @@
       "priority": "medium"
     },
     {
-      "title": "Statistics in the admin: proposal",
+      "title": "Statistics in the admin: later",
       "url": "https://developers.schellingboard.org/statistics-proposal/",
       "description": "",
       "section": "Statistics Proposal",
+      "priority": "medium"
+    },
+    {
+      "title": "Statistics in the admin: figures",
+      "url": "https://developers.schellingboard.org/statistics/",
+      "description": "",
+      "section": "Statistics",
       "priority": "medium"
     },
     {

@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-11-09
+updated: 2026-11-10
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-09T21:01:50.300Z"
+  generated_at: "2026-11-10T17:43:22.179Z"
 ---
 # The server and the API
 
@@ -33,7 +33,9 @@ server/
 The modules are `sessions` (sessions, RSVPs, room unavailability, attendee counts), `proposals`
 (proposals and votes), `comments`, `meetings`, `people` (profiles and the admin guest list),
 `notifications`, `events` (events and days), `venue` (locations), `settings` (site settings) and
-`updates` (the daily GitHub look-up of the latest release, shown to the admin).
+`updates` (the daily GitHub look-up of the latest release, shown to the admin) and `stats` (the
+read-only admin statistics, [ADR 0019](adr/0019-statistics.md): one `StatsRepository.getEventFacts`
+read, tables computed in the use case, CSV and ZIP from the routes).
 
 `server/main.ts` runs the Hono app in `server/http/web.ts` on `@hono/node-server`, in its own Node
 process, and starts the mailer and the jobs loop. `scripts/build-server.ts` bundles it with esbuild

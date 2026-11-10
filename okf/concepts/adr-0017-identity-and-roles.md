@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0017: Identity and roles"
 source: "https://developers.schellingboard.org/adr/0017-identity-and-roles/"
 path: /adr/0017-identity-and-roles/
-updated: 2026-11-09
+updated: 2026-11-10
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-09T21:01:50.291Z"
+  generated_at: "2026-11-10T17:43:22.169Z"
 ---
 # ADR 0017: Identity and roles
 

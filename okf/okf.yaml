@@ -5,12 +5,12 @@ bundle:
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-09T21:01:50.302Z"
+  generated_at: "2026-11-10T17:43:22.181Z"
   default_type: concept
 stats:
-  concepts: 42
+  concepts: 44
   by_type:
-    concept: 42
+    concept: 44
   locales: 
   versions: 
 concepts:
@@ -182,6 +182,15 @@ concepts:
     description: ""
     path: /adr/0018-api-review-for-5-0/
     file: concepts/adr-0018-api-review-for-5-0.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0019-statistics
+    type: concept
+    title: "ADR 0019: Statistics in the admin"
+    description: ""
+    path: /adr/0019-statistics/
+    file: concepts/adr-0019-statistics.md
     locale: ""
     version: ""
     tags: 
@@ -358,10 +367,19 @@ concepts:
     tags: 
   - id: statistics-proposal
     type: concept
-    title: "Statistics in the admin: proposal"
+    title: "Statistics in the admin: later"
     description: ""
     path: /statistics-proposal/
     file: concepts/statistics-proposal.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: statistics
+    type: concept
+    title: "Statistics in the admin: figures"
+    description: ""
+    path: /statistics/
+    file: concepts/statistics.md
     locale: ""
     version: ""
     tags: 
