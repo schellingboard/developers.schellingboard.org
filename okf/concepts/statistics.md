@@ -3,15 +3,16 @@ type: concept
 title: "Statistics in the admin: figures"
 source: "https://developers.schellingboard.org/statistics/"
 path: /statistics/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.180Z"
+  generated_at: "2026-11-11T16:13:21.429Z"
 ---
 # Statistics in the admin: figures
 
-The design of the "Statistics" tab. The decisions (privacy rules, filter, table contract, CSV, chart
-library) are in [ADR 0019](adr/0019-statistics.md); this note lists the data and the figures.
+The design of the admin's "Statistics" area (`/admin/statistics/{event}`). The decisions (privacy
+rules, filter, table contract, CSV, chart library) are in [ADR 0019](adr/0019-statistics.md); this
+note lists the data and the figures.
 
 ## Goal
 
@@ -45,7 +46,9 @@ migrated release.
 ## Figures
 
 Each section is a set of figures. A figure is: a table (sortable, CSV) and, where it helps, a chart.
-**Bold** marks the figures we think matter most.
+The SPA shows each as a card with an explanation (`features/admin/stats-figures.tsx`, the
+catalogue); a big table's charts get cards of their own there. **Bold** marks the figures we think
+matter most.
 
 ### 1. Overview
 
@@ -66,14 +69,15 @@ Each section is a set of figures. A figure is: a table (sortable, CSV) and, wher
   value.
 - **Late proposals get fewer votes?** Scatter: created time vs voters, ρ. Tells the organizer
   whether the proposal phase or the voting phase was too short.
-- **Proposals over time**: proposals created per day across the phases (bars, phase bands).
+- **Proposals over time**: proposals created per day per day (line; no phase bands).
 - **Votes per voter** (per-person, pseudonymous): total, interested, maybe, skip, share of proposals
   covered. Chart: histogram of totals. Also: share of voters who voted on every proposal.
 - **Choice mix**: interested / maybe / skip overall, and a histogram of each voter's interested
   share ("picky vs generous" voters).
 - **Hosts and proposals**: proposals per host (histogram), co-hosted proposals, cohost wanted vs
   cohost found.
-- **Conversion**: proposals → sessions, by interest quartile.
+- **Conversion**: proposals → sessions, by interest quartile. A proposal "became a session" if it
+  has any session, even one the filter removes; its RSVPs and report come from a kept session only.
 
 ### 3. Sessions
 
@@ -123,8 +127,9 @@ RSVPs are intent, not attendance; the section says so once.
 - **Location table**: sessions, booked hours, available hours (the days' booking windows minus
   location unavailability), utilization, gaps, total gap time, longest gap, median RSVPs, capacity,
   sessions over capacity, bookable.
-- **Gaps**: a gap is free time inside the booking window. Gaps shorter than the slot increment plus
-  break are counted apart as "unusable fragments" — they show where the grid wastes time.
+- **Gaps**: a gap is free time inside the booking window. A gap that holds no whole grid slot (a
+  session booked from slot S starts at S + break, so S must be at or after the gap start minus the
+  break) is counted apart as an "unusable fragment" — they show where the grid wastes time.
 - **Utilization heatmap**: location × hour, per day.
 - **Supply and demand by hour**: parallel sessions per hour vs RSVPs per hour (two lines). The input
   for next year's grid: where were there too many sessions for too few people.
@@ -133,29 +138,38 @@ RSVPs are intent, not attendance; the section says so once.
 
 ### 6. 1-on-1s
 
-Only when the event has 1-on-1s enabled.
+Only when the event has 1-on-1s enabled, or has availability or requests from when it did.
 
 - **Adoption**: members with availability, share; availability slots per person (histogram).
-- **Requests**: total, by status (pending, accepted, declined, canceled, expired), distinct
-  requesters, distinct recipients, people with at least one accepted meeting.
+- **Requests**: by status (pending, accepted, declined, canceled, expired), distinct requesters,
+  distinct recipients, people with at least one accepted meeting.
 - **Per person** (pseudonymous): requests sent, received, accepted.
-- **Response time**: median and distribution of `responded_at − created_at`, for accepted and
-  declined requests only. Every status change overwrites `responded_at`, so a cancel hides the
-  response time; the page says so.
+- **Response time**: median of `responded_at − created_at`, for accepted and declined requests only.
+  Every status change overwrites `responded_at`, so a cancel hides the response time; the page says
+  so.
 - **When**: accepted meetings by hour and day.
 - **Meeting points**: the organizer's points by use; free-text points only as "Other".
+
+A meeting with an excluded host on either side leaves every 1-on-1 figure. A pending request whose
+slot has started counts as expired. Availability outside the current days is not counted. Without
+availability, requests or the switch, the section has no tables.
 
 ### 7. Profiles
 
 Over the event's members: share with photo, about me, pronouns, based in, languages, prompts,
 contacts; profile fields filled per person (histogram); top languages and based-in values (k ≥ 3);
-contact types used (counts by type, never values).
+contact types used (counts by type, never values). Languages and based-in values show only when at
+least 3 members share them; the rest is "Other". Section absent when nobody filled in a profile.
 
 ### 8. Comments
 
 Per target (proposal, session, profile): comments, distinct authors, replies, likes, edited,
 deleted. Comments per day. Comments per author (histogram). The most discussed proposals and
-sessions are a column in their tables, not a separate list.
+sessions are a column in their tables, not a separate list. Comments by an excluded host and
+comments on filtered sessions or proposals leave; a deleted comment keeps no author, so only its
+target filters it. Deleted counts only tombstones: a deleted comment without replies is removed from
+the database. Profile comments have no event, so on a multi-event site they count in every event the
+member belongs to. Section absent when the event has no comments.
 
 ### 9. Notifications
 
@@ -163,4 +177,5 @@ sessions are a column in their tables, not a separate list.
 - **Push**: members with at least one push subscription.
 - **In-app**: notifications sent per type and share read. Tells which notifications people act on.
   Notifications carry no event, so on a multi-event site this counts all events of the members, and
-  a guest can delete one unread: the read share is a lower bound.
+  a guest can delete one unread: the read share is a lower bound. Only members of the event count.
+  Not built: a count of members who switched notifications off after receiving them (not stored).

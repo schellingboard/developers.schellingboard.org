@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0013: The unit of work"
 source: "https://developers.schellingboard.org/adr/0013-unit-of-work/"
 path: /adr/0013-unit-of-work/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.168Z"
+  generated_at: "2026-11-11T16:13:21.406Z"
 ---
 # ADR 0013: The unit of work
 

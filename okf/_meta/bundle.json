@@ -1,12 +1,12 @@
 {
-  "okf_version": "0.9.8",
+  "okf_version": "0.9.9",
   "bundle": {
     "name": "schellingboard-developers",
     "title": "SchellingBoard Developers",
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-11-10T17:43:22.181Z",
+    "generated_at": "2026-11-11T16:13:21.430Z",
     "default_type": "concept"
   },
   "stats": {

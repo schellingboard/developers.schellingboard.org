@@ -3,10 +3,10 @@ type: concept
 title: "Getting started"
 source: "https://developers.schellingboard.org/getting-started/"
 path: /getting-started/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.177Z"
+  generated_at: "2026-11-11T16:13:21.426Z"
 ---
 # Getting started
 
@@ -79,7 +79,9 @@ build enforces today are in [Architecture rules](architecture-rules.md).
    ```
 
    Open [http://localhost:3000](http://localhost:3000) in your browser. That is the Vite dev server
-   for the SPA; it proxies the API to the server, which runs on the next port (3001).
+   for the SPA; it proxies the API to the server, which runs on the next port (3001). When it is
+   ready, it prints the test credentials: the site password, the seeded site admin and guests, and
+   Mailpit.
 
 ## Development commands
 

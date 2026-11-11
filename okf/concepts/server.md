@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.179Z"
+  generated_at: "2026-11-11T16:13:21.428Z"
 ---
 # The server and the API
 
@@ -133,8 +133,8 @@ The client applies messages to its replica in `apps/web/src/replica/`
 `feed-apply.ts`: unknown types only move `seq`.
 
 A cascade change that carries `tellAttendees` (day and location deletes) makes the
-`changeNotifications` reaction notify the session's RSVPed guests, never its hosts; event and guest
-deletes record none.
+`changeNotifications` reaction notify the session's hosts and RSVPed guests; event and guest deletes
+record none.
 
 `GET /api/v1/updates` (the `updates` module) answers the admin with the running and the latest
 release, and anyone else with null. The server asks GitHub at most daily; `SB_UPDATE_CHECK=false`

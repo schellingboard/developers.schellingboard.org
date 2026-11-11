@@ -3,10 +3,10 @@ type: concept
 title: "The web app (`apps/web`)"
 source: "https://developers.schellingboard.org/web-app/"
 path: /web-app/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.181Z"
+  generated_at: "2026-11-11T16:13:21.430Z"
 ---
 # The web app (`apps/web`)
 
@@ -27,10 +27,11 @@ TanStack Router, styled with Tailwind and the colour tokens in `styles/tokens.cs
 - The router owns `/` (`app/home-page.tsx`: the event list from `GET /api/v1/events` and
   `GET /api/v1/site`, or a redirect to the only event), `/{slug}` (an event's schedule),
   `/{slug}/proposals/**` (list, quick voting, new, edit; `?viewProposal=` opens the modal), the
-  session forms, `/{slug}/meetings`, `/guests/**`, `/settings`, `/notifications`, `/auth/login`,
-  `/auth/reset`, `/account-security`, `/login` (the site password, open to visitors without the
-  cookie; `POST /api/v1/auth/site`) (`app/account-pages.tsx`) and `/admin/**`
-  (`app/admin-pages.tsx`). Anything else is "Page not found".
+  session forms, `/{slug}/meetings`, `/guests/**`, `/settings` (with its Account security section;
+  `/account-security` redirects to `/settings#security`), `/notifications`, `/auth/login`,
+  `/auth/reset`, `/login` (the site password, open to visitors without the cookie;
+  `POST /api/v1/auth/site`) (`app/account-pages.tsx`) and `/admin/**` (`app/admin-pages.tsx`).
+  Anything else is "Page not found".
 
 - `public/sw.js` (registered by `main.tsx` outside the dev server) caches the shell and the
   `/_spa/assets/` files. SPA navigations go to the network first and fall back to the cached shell,
@@ -64,8 +65,9 @@ that the package imports `packages/domain`, `packages/contracts` and `packages/a
 `api-client`, and that it declares what it imports. See [Architecture rules](architecture-rules.md).
 
 The admin pages are the SPA's one lazy chunk (`lazyRouteComponent` over `app/admin-pages.tsx` in
-`router.tsx`). Import admin code only from that module's graph, and never import `admin-pages`
-statically elsewhere, or attendees download it again.
+`router.tsx`). The chart wrappers (`ui/charts/`) import `@observablehq/plot` dynamically, so Plot is
+a third chunk, fetched when the statistics show a chart. Import admin code only from that module's
+graph, and never import `admin-pages` statically elsewhere, or attendees download it again.
 
 ## The viewer and the user picker
 

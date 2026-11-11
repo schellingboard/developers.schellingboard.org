@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0014: The change feed and the snapshot"
 source: "https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/"
 path: /adr/0014-change-feed-and-snapshot/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.168Z"
+  generated_at: "2026-11-11T16:13:21.406Z"
 ---
 # ADR 0014: The change feed and the snapshot
 
@@ -187,8 +187,8 @@ session they hosted, `session.attendanceChanged` for each session they had an RS
 `meeting.deleted` for each of their meetings (audience: the other guest) and `guest.left`. `apply`
 stays one subject per change, and the log answers "where did this session go". The
 session-notification reaction skips changes marked `cascade: true`, except those a day or location
-delete records with `tellAttendees: true`: for those it notifies the RSVPed guests, not the hosts.
-Event and guest deletes stay silent.
+delete records with `tellAttendees: true`: for those it notifies the session's hosts and RSVPed
+guests. Event and guest deletes stay silent.
 
 ### 10. The feed
 
@@ -271,7 +271,8 @@ connection that closes unregisters.
 
 ## Open questions
 
-1. **Cascades and notifications.** _Answered:_ RSVPed guests are told when a day or location delete
-   removes or changes their session (section 9). Event and guest deletes stay silent.
+1. **Cascades and notifications.** _Answered:_ Hosts and RSVPed guests are told when a day or
+   location delete removes or changes their session (section 9). Event and guest deletes stay
+   silent.
 2. **Hidden tabs.** Closing the feed after 30 seconds hidden is the recommendation. The alternative
    is to keep every tab connected and rely only on HTTP/2.

@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0019: Statistics in the admin"
 source: "https://developers.schellingboard.org/adr/0019-statistics/"
 path: /adr/0019-statistics/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.170Z"
+  generated_at: "2026-11-11T16:13:21.420Z"
 ---
 # ADR 0019: Statistics in the admin
 
@@ -41,8 +41,8 @@ in [Statistics: figures](../statistics.md). No real event database is available 
 4. **Small numbers are suppressed in free text.** Values of free-text fields (based in, meeting
    point, languages) appear only when at least 3 people share them; the rest is "Other".
 5. **Honest correlations.** A correlation shows Spearman's ρ with `n`, and below `n = 15` the text
-   "too few to say". No trend line implies cause. (See the attendance model: 13 sessions gave p ≈
-   0.07.)
+   "too few to say". A trend line is drawn only from `n = 15` and does not imply cause. (See the
+   attendance model: 13 sessions gave p ≈ 0.07.)
 
 ### Read-only, on the server
 
@@ -94,7 +94,9 @@ turns its session into "spontaneous" (`proposal_id` is set null); an admin can u
 
 - **Contract**: a generic `StatsTable` (`id`, `title`, `columns: {key, label, type}[]`, `rows`),
   with column types `text | integer | number | percent | minutes | datetime | boolean`. One table
-  component renders all of them; charts are bound by table id.
+  component renders all of them; charts are bound by table id. A `datetime` cell is a string the
+  server already formatted in the event's zone (`YYYY-MM-DD HH:mm`, as in the CSV), so the payload
+  needs no zone and the table shows it as given.
 - **API**: `GET /api/v1/admin/events/{id}/stats?{filter}` (JSON, all tables) and
   `GET /api/v1/admin/events/{id}/stats/{table}.csv?{filter}`. The server writes the CSV, so one
   encoder serves the button, a script and `curl`.
@@ -103,7 +105,8 @@ turns its session into "spontaneous" (`proposal_id` is set null); an admin can u
 - **CSV**: RFC 4180, UTF-8 with BOM (Excel), times in the event's zone as `YYYY-MM-DD HH:mm`,
   durations in minutes, plain numbers. A cell starting with `= + - @` gets a leading `'`: titles are
   user input (formula injection).
-- **SPA**: a "Statistics" tab in the admin event layout, sections as sub-navigation, a filter panel,
+- **SPA**: a "Statistics" tab in the admin event layout (since moved to its own admin area,
+  `/admin/statistics/{event}`, for the screen width), sections as sub-navigation, a filter panel,
   each figure as a card with chart, "Show table", "Download CSV".
 - **Charts**: Observable Plot (next section), loaded as described there.
 
@@ -154,6 +157,8 @@ workarounds, and nothing found blocks it. Costs to accept: the `ResizeObserver` 
 colours read at render time for scales, an own legend. Loading rule: the chart wrappers in
 `apps/web/src/ui/charts/` import Plot with a dynamic import, so Plot (about 94 kB gzip) is fetched
 only when a Statistics tab shows a chart. Neither attendees nor the other admin pages download it.
+Measured in the app: 93 kB gzip (278 kB raw) in its own chunk, because `ui/charts/plot.ts`
+re-exports only the marks used.
 
 ## Consequences
 

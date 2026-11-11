@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0016: The remaining screen families"
 source: "https://developers.schellingboard.org/adr/0016-remaining-screen-families/"
 path: /adr/0016-remaining-screen-families/
-updated: 2026-11-10
+updated: 2026-11-11
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-10T17:43:22.169Z"
+  generated_at: "2026-11-11T16:13:21.418Z"
 ---
 # ADR 0016: The remaining screen families
 

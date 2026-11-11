@@ -2068,8 +2068,8 @@ session they hosted, `session.attendanceChanged` for each session they had an RS
 `meeting.deleted` for each of their meetings (audience: the other guest) and `guest.left`. `apply`
 stays one subject per change, and the log answers "where did this session go". The
 session-notification reaction skips changes marked `cascade: true`, except those a day or location
-delete records with `tellAttendees: true`: for those it notifies the RSVPed guests, not the hosts.
-Event and guest deletes stay silent.
+delete records with `tellAttendees: true`: for those it notifies the session's hosts and RSVPed
+guests. Event and guest deletes stay silent.
 
 ### 10. The feed
 
@@ -2152,8 +2152,9 @@ connection that closes unregisters.
 
 ## Open questions
 
-1. **Cascades and notifications.** _Answered:_ RSVPed guests are told when a day or location delete
-   removes or changes their session (section 9). Event and guest deletes stay silent.
+1. **Cascades and notifications.** _Answered:_ Hosts and RSVPed guests are told when a day or
+   location delete removes or changes their session (section 9). Event and guest deletes stay
+   silent.
 2. **Hidden tabs.** Closing the feed after 30 seconds hidden is the recommendation. The alternative
    is to keep every tab connected and rely only on HTTP/2.
 
@@ -2701,8 +2702,8 @@ in [Statistics: figures](../statistics.md). No real event database is available 
 4. **Small numbers are suppressed in free text.** Values of free-text fields (based in, meeting
    point, languages) appear only when at least 3 people share them; the rest is "Other".
 5. **Honest correlations.** A correlation shows Spearman's ρ with `n`, and below `n = 15` the text
-   "too few to say". No trend line implies cause. (See the attendance model: 13 sessions gave p ≈
-   0.07.)
+   "too few to say". A trend line is drawn only from `n = 15` and does not imply cause. (See the
+   attendance model: 13 sessions gave p ≈ 0.07.)
 
 ### Read-only, on the server
 
@@ -2754,7 +2755,9 @@ turns its session into "spontaneous" (`proposal_id` is set null); an admin can u
 
 - **Contract**: a generic `StatsTable` (`id`, `title`, `columns: {key, label, type}[]`, `rows`),
   with column types `text | integer | number | percent | minutes | datetime | boolean`. One table
-  component renders all of them; charts are bound by table id.
+  component renders all of them; charts are bound by table id. A `datetime` cell is a string the
+  server already formatted in the event's zone (`YYYY-MM-DD HH:mm`, as in the CSV), so the payload
+  needs no zone and the table shows it as given.
 - **API**: `GET /api/v1/admin/events/{id}/stats?{filter}` (JSON, all tables) and
   `GET /api/v1/admin/events/{id}/stats/{table}.csv?{filter}`. The server writes the CSV, so one
   encoder serves the button, a script and `curl`.
@@ -2763,7 +2766,8 @@ turns its session into "spontaneous" (`proposal_id` is set null); an admin can u
 - **CSV**: RFC 4180, UTF-8 with BOM (Excel), times in the event's zone as `YYYY-MM-DD HH:mm`,
   durations in minutes, plain numbers. A cell starting with `= + - @` gets a leading `'`: titles are
   user input (formula injection).
-- **SPA**: a "Statistics" tab in the admin event layout, sections as sub-navigation, a filter panel,
+- **SPA**: a "Statistics" tab in the admin event layout (since moved to its own admin area,
+  `/admin/statistics/{event}`, for the screen width), sections as sub-navigation, a filter panel,
   each figure as a card with chart, "Show table", "Download CSV".
 - **Charts**: Observable Plot (next section), loaded as described there.
 
@@ -2814,6 +2818,8 @@ workarounds, and nothing found blocks it. Costs to accept: the `ResizeObserver` 
 colours read at render time for scales, an own legend. Loading rule: the chart wrappers in
 `apps/web/src/ui/charts/` import Plot with a dynamic import, so Plot (about 94 kB gzip) is fetched
 only when a Statistics tab shows a chart. Neither attendees nor the other admin pages download it.
+Measured in the app: 93 kB gzip (278 kB raw) in its own chunk, because `ui/charts/plot.ts`
+re-exports only the marks used.
 
 ## Consequences
 
@@ -4381,7 +4387,9 @@ build enforces today are in [Architecture rules](architecture-rules.md).
    ```
 
    Open [http://localhost:3000](http://localhost:3000) in your browser. That is the Vite dev server
-   for the SPA; it proxies the API to the server, which runs on the next port (3001).
+   for the SPA; it proxies the API to the server, which runs on the next port (3001). When it is
+   ready, it prints the test credentials: the site password, the seeded site admin and guests, and
+   Mailpit.
 
 ## Development commands
 
@@ -5104,8 +5112,8 @@ The client applies messages to its replica in `apps/web/src/replica/`
 `feed-apply.ts`: unknown types only move `seq`.
 
 A cascade change that carries `tellAttendees` (day and location deletes) makes the
-`changeNotifications` reaction notify the session's RSVPed guests, never its hosts; event and guest
-deletes record none.
+`changeNotifications` reaction notify the session's hosts and RSVPed guests; event and guest deletes
+record none.
 
 `GET /api/v1/updates` (the `updates` module) answers the admin with the running and the latest
 release, and anyone else with null. The server asks GitHub at most daily; `SB_UPDATE_CHECK=false`
@@ -5214,8 +5222,9 @@ Rough; each item needs its own design and an entry in the data collection statem
 
 # Statistics in the admin: figures
 
-The design of the "Statistics" tab. The decisions (privacy rules, filter, table contract, CSV, chart
-library) are in [ADR 0019](adr/0019-statistics.md); this note lists the data and the figures.
+The design of the admin's "Statistics" area (`/admin/statistics/{event}`). The decisions (privacy
+rules, filter, table contract, CSV, chart library) are in [ADR 0019](adr/0019-statistics.md); this
+note lists the data and the figures.
 
 ## Goal
 
@@ -5249,7 +5258,9 @@ migrated release.
 ## Figures
 
 Each section is a set of figures. A figure is: a table (sortable, CSV) and, where it helps, a chart.
-**Bold** marks the figures we think matter most.
+The SPA shows each as a card with an explanation (`features/admin/stats-figures.tsx`, the
+catalogue); a big table's charts get cards of their own there. **Bold** marks the figures we think
+matter most.
 
 ### 1. Overview
 
@@ -5270,14 +5281,15 @@ Each section is a set of figures. A figure is: a table (sortable, CSV) and, wher
   value.
 - **Late proposals get fewer votes?** Scatter: created time vs voters, ρ. Tells the organizer
   whether the proposal phase or the voting phase was too short.
-- **Proposals over time**: proposals created per day across the phases (bars, phase bands).
+- **Proposals over time**: proposals created per day per day (line; no phase bands).
 - **Votes per voter** (per-person, pseudonymous): total, interested, maybe, skip, share of proposals
   covered. Chart: histogram of totals. Also: share of voters who voted on every proposal.
 - **Choice mix**: interested / maybe / skip overall, and a histogram of each voter's interested
   share ("picky vs generous" voters).
 - **Hosts and proposals**: proposals per host (histogram), co-hosted proposals, cohost wanted vs
   cohost found.
-- **Conversion**: proposals → sessions, by interest quartile.
+- **Conversion**: proposals → sessions, by interest quartile. A proposal "became a session" if it
+  has any session, even one the filter removes; its RSVPs and report come from a kept session only.
 
 ### 3. Sessions
 
@@ -5327,8 +5339,9 @@ RSVPs are intent, not attendance; the section says so once.
 - **Location table**: sessions, booked hours, available hours (the days' booking windows minus
   location unavailability), utilization, gaps, total gap time, longest gap, median RSVPs, capacity,
   sessions over capacity, bookable.
-- **Gaps**: a gap is free time inside the booking window. Gaps shorter than the slot increment plus
-  break are counted apart as "unusable fragments" — they show where the grid wastes time.
+- **Gaps**: a gap is free time inside the booking window. A gap that holds no whole grid slot (a
+  session booked from slot S starts at S + break, so S must be at or after the gap start minus the
+  break) is counted apart as an "unusable fragment" — they show where the grid wastes time.
 - **Utilization heatmap**: location × hour, per day.
 - **Supply and demand by hour**: parallel sessions per hour vs RSVPs per hour (two lines). The input
   for next year's grid: where were there too many sessions for too few people.
@@ -5337,29 +5350,38 @@ RSVPs are intent, not attendance; the section says so once.
 
 ### 6. 1-on-1s
 
-Only when the event has 1-on-1s enabled.
+Only when the event has 1-on-1s enabled, or has availability or requests from when it did.
 
 - **Adoption**: members with availability, share; availability slots per person (histogram).
-- **Requests**: total, by status (pending, accepted, declined, canceled, expired), distinct
-  requesters, distinct recipients, people with at least one accepted meeting.
+- **Requests**: by status (pending, accepted, declined, canceled, expired), distinct requesters,
+  distinct recipients, people with at least one accepted meeting.
 - **Per person** (pseudonymous): requests sent, received, accepted.
-- **Response time**: median and distribution of `responded_at − created_at`, for accepted and
-  declined requests only. Every status change overwrites `responded_at`, so a cancel hides the
-  response time; the page says so.
+- **Response time**: median of `responded_at − created_at`, for accepted and declined requests only.
+  Every status change overwrites `responded_at`, so a cancel hides the response time; the page says
+  so.
 - **When**: accepted meetings by hour and day.
 - **Meeting points**: the organizer's points by use; free-text points only as "Other".
+
+A meeting with an excluded host on either side leaves every 1-on-1 figure. A pending request whose
+slot has started counts as expired. Availability outside the current days is not counted. Without
+availability, requests or the switch, the section has no tables.
 
 ### 7. Profiles
 
 Over the event's members: share with photo, about me, pronouns, based in, languages, prompts,
 contacts; profile fields filled per person (histogram); top languages and based-in values (k ≥ 3);
-contact types used (counts by type, never values).
+contact types used (counts by type, never values). Languages and based-in values show only when at
+least 3 members share them; the rest is "Other". Section absent when nobody filled in a profile.
 
 ### 8. Comments
 
 Per target (proposal, session, profile): comments, distinct authors, replies, likes, edited,
 deleted. Comments per day. Comments per author (histogram). The most discussed proposals and
-sessions are a column in their tables, not a separate list.
+sessions are a column in their tables, not a separate list. Comments by an excluded host and
+comments on filtered sessions or proposals leave; a deleted comment keeps no author, so only its
+target filters it. Deleted counts only tombstones: a deleted comment without replies is removed from
+the database. Profile comments have no event, so on a multi-event site they count in every event the
+member belongs to. Section absent when the event has no comments.
 
 ### 9. Notifications
 
@@ -5367,7 +5389,8 @@ sessions are a column in their tables, not a separate list.
 - **Push**: members with at least one push subscription.
 - **In-app**: notifications sent per type and share read. Tells which notifications people act on.
   Notifications carry no event, so on a multi-event site this counts all events of the members, and
-  a guest can delete one unread: the read share is a lower bound.
+  a guest can delete one unread: the read share is a lower bound. Only members of the event count.
+  Not built: a count of members who switched notifications off after receiving them (not stored).
 
 
 ---
@@ -5815,10 +5838,11 @@ TanStack Router, styled with Tailwind and the colour tokens in `styles/tokens.cs
 - The router owns `/` (`app/home-page.tsx`: the event list from `GET /api/v1/events` and
   `GET /api/v1/site`, or a redirect to the only event), `/{slug}` (an event's schedule),
   `/{slug}/proposals/**` (list, quick voting, new, edit; `?viewProposal=` opens the modal), the
-  session forms, `/{slug}/meetings`, `/guests/**`, `/settings`, `/notifications`, `/auth/login`,
-  `/auth/reset`, `/account-security`, `/login` (the site password, open to visitors without the
-  cookie; `POST /api/v1/auth/site`) (`app/account-pages.tsx`) and `/admin/**`
-  (`app/admin-pages.tsx`). Anything else is "Page not found".
+  session forms, `/{slug}/meetings`, `/guests/**`, `/settings` (with its Account security section;
+  `/account-security` redirects to `/settings#security`), `/notifications`, `/auth/login`,
+  `/auth/reset`, `/login` (the site password, open to visitors without the cookie;
+  `POST /api/v1/auth/site`) (`app/account-pages.tsx`) and `/admin/**` (`app/admin-pages.tsx`).
+  Anything else is "Page not found".
 
 - `public/sw.js` (registered by `main.tsx` outside the dev server) caches the shell and the
   `/_spa/assets/` files. SPA navigations go to the network first and fall back to the cached shell,
@@ -5852,8 +5876,9 @@ that the package imports `packages/domain`, `packages/contracts` and `packages/a
 `api-client`, and that it declares what it imports. See [Architecture rules](architecture-rules.md).
 
 The admin pages are the SPA's one lazy chunk (`lazyRouteComponent` over `app/admin-pages.tsx` in
-`router.tsx`). Import admin code only from that module's graph, and never import `admin-pages`
-statically elsewhere, or attendees download it again.
+`router.tsx`). The chart wrappers (`ui/charts/`) import `@observablehq/plot` dynamically, so Plot is
+a third chunk, fetched when the statistics show a chart. Import admin code only from that module's
+graph, and never import `admin-pages` statically elsewhere, or attendees download it again.
 
 ## The viewer and the user picker
 
