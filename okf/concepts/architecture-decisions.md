@@ -3,10 +3,10 @@ type: concept
 title: Decisions
 source: "https://developers.schellingboard.org/architecture/decisions/"
 path: /architecture/decisions/
-updated: 2026-11-11
+updated: 2026-11-12
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-11T16:13:21.421Z"
+  generated_at: "2026-11-12T19:25:29.960Z"
 ---
 # Decisions
 

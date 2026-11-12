@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mwcbixv5">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mwcbixv5">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mwdxtwl4">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mwdxtwl4">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mwcbixv5" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mwcbixv5" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mwdxtwl4" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mwdxtwl4" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mwcbixv5" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mwcbixv5" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mwdxtwl4" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mwdxtwl4" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mwcbixv5">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mwdxtwl4">
     
     
   </head>
@@ -2159,16 +2159,16 @@ and request.</li>
       </div>
       
       
-      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-11T16:13:18.529Z","buildDate":"2026-11-11","buildYear":"2026","gitCommit":"36f3c11c","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-11","GIT_COMMIT":"36f3c11c","GIT_BRANCH":"main","git":{"commit":"36f3c11c","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"ADR 0019: Statistics in the admin","slug":"/adr/0019-statistics/","path":"adr/0019-statistics/index.html"},"frontmatter":{"title":"ADR 0019: Statistics in the admin","_git":{"lastUpdated":"2026-11-07T18:48:40.000Z","lastUpdatedTimestamp":1794077320000,"commits":[{"hash":"824c24b91965aa23a090703f3048a81e64027cb2","shortHash":"824c24b9","author":"Omar Kohl","timestamp":1794077320000,"date":"2026-11-07T18:48:40.000Z","message":"feat: statistics as their own area in the admin","avatarUrl":""},{"hash":"c801b72febad73bbab2ceced3d472a122e52bc0e","shortHash":"c801b72f","author":"Omar Kohl","timestamp":1794066479000,"date":"2026-11-07T15:47:59.000Z","message":"feat: sessions section in the statistics","avatarUrl":""},{"hash":"9181f9551926fabf53662af6874c6c116215590a","shortHash":"9181f955","author":"Omar Kohl","timestamp":1794065045000,"date":"2026-11-07T15:24:05.000Z","message":"feat: chart wrappers for the statistics, with the funnel on the Overview","avatarUrl":""},{"hash":"709f3e6ab4115a14bc6646f2e7c53a0ed5ff8e81","shortHash":"709f3e6a","author":"Omar Kohl","timestamp":1794063880000,"date":"2026-11-07T15:04:40.000Z","message":"feat: statistics tab in the event admin","avatarUrl":""},{"hash":"2c8d68280f83a875b8094d12f3d438c520abce04","shortHash":"2c8d6828","author":"Omar Kohl","timestamp":1794058058000,"date":"2026-11-07T13:27:38.000Z","message":"docs: ADR 0019 records the decisions for the admin statistics","avatarUrl":""}]}}};</script>
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-12T19:25:27.828Z","buildDate":"2026-11-12","buildYear":"2026","gitCommit":"d4251b92","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-12","GIT_COMMIT":"d4251b92","GIT_BRANCH":"main","git":{"commit":"d4251b92","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"ADR 0019: Statistics in the admin","slug":"/adr/0019-statistics/","path":"adr/0019-statistics/index.html"},"frontmatter":{"title":"ADR 0019: Statistics in the admin","_git":{"lastUpdated":"2026-11-07T18:48:40.000Z","lastUpdatedTimestamp":1794077320000,"commits":[{"hash":"824c24b91965aa23a090703f3048a81e64027cb2","shortHash":"824c24b9","author":"Omar Kohl","timestamp":1794077320000,"date":"2026-11-07T18:48:40.000Z","message":"feat: statistics as their own area in the admin","avatarUrl":""},{"hash":"c801b72febad73bbab2ceced3d472a122e52bc0e","shortHash":"c801b72f","author":"Omar Kohl","timestamp":1794066479000,"date":"2026-11-07T15:47:59.000Z","message":"feat: sessions section in the statistics","avatarUrl":""},{"hash":"9181f9551926fabf53662af6874c6c116215590a","shortHash":"9181f955","author":"Omar Kohl","timestamp":1794065045000,"date":"2026-11-07T15:24:05.000Z","message":"feat: chart wrappers for the statistics, with the funnel on the Overview","avatarUrl":""},{"hash":"709f3e6ab4115a14bc6646f2e7c53a0ed5ff8e81","shortHash":"709f3e6a","author":"Omar Kohl","timestamp":1794063880000,"date":"2026-11-07T15:04:40.000Z","message":"feat: statistics tab in the event admin","avatarUrl":""},{"hash":"2c8d68280f83a875b8094d12f3d438c520abce04","shortHash":"2c8d6828","author":"Omar Kohl","timestamp":1794058058000,"date":"2026-11-07T13:27:38.000Z","message":"docs: ADR 0019 records the decisions for the admin statistics","avatarUrl":""}]}}};</script>
       
-      <script src="../../assets/js/docmd-runtime.js?v=mwcbixv5"></script>
-      <script src="../../assets/js/docmd-main.js?v=mwcbixv5"></script>
+      <script src="../../assets/js/docmd-runtime.js?v=mwdxtwl4"></script>
+      <script src="../../assets/js/docmd-main.js?v=mwdxtwl4"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mwcbixv5"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mwcbixv5" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mwcbixv5" ></script>
-<script src="../../assets/js/docmd-search.js?v=mwcbixv5" ></script>
-<script src="../../assets/js/docmd-git.js?v=mwcbixv5" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mwdxtwl4"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mwdxtwl4" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mwdxtwl4" ></script>
+<script src="../../assets/js/docmd-search.js?v=mwdxtwl4" ></script>
+<script src="../../assets/js/docmd-git.js?v=mwdxtwl4" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2246,7 +2246,7 @@ and request.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mwcbixv5"></script>
+          src="../../assets/js/likec4-embed.js?v=mwdxtwl4"></script>
         
       
       
