@@ -3,10 +3,10 @@ type: concept
 title: "Not built"
 source: "https://developers.schellingboard.org/architecture/not-built/"
 path: /architecture/not-built/
-updated: 2026-11-18
+updated: 2026-11-19
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-18T22:02:02.350Z"
+  generated_at: "2026-11-19T18:43:20.996Z"
 ---
 # Not built
 

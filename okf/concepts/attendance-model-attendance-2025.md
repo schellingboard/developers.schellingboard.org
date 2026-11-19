@@ -3,10 +3,10 @@ type: concept
 title: "Predicting session attendance from voting results"
 source: "https://developers.schellingboard.org/attendance-model/attendance-2025/"
 path: /attendance-model/attendance-2025/
-updated: 2026-11-18
+updated: 2026-11-19
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-18T22:02:02.352Z"
+  generated_at: "2026-11-19T18:43:20.997Z"
 ---
 # Predicting session attendance from voting results
 

@@ -3,10 +3,10 @@ type: concept
 title: "Version control and pull requests"
 source: "https://developers.schellingboard.org/version-control/"
 path: /version-control/
-updated: 2026-11-18
+updated: 2026-11-19
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-18T22:02:02.358Z"
+  generated_at: "2026-11-19T18:43:21.003Z"
 ---
 # Version control and pull requests
 
@@ -15,9 +15,9 @@ okf:
 - Use conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, etc.)
 - Subject line ≤ 72 chars; explain WHY in the body if not obvious
 - Wrap the body at 80 chars; a line with a URL, or one unbreakable word, may exceed it
-- `make commit-check` verifies the commits since `origin/main` (`RANGE=a..b` for another range); CI
-  runs it on pull requests. Check a draft first with
-  `echo "<message>" | bun scripts/check-commit-messages.ts --stdin`
+- `make commit-check` verifies the commits since `origin/main`, or `trunk()..@` in a jj repo
+  (`RANGE=a..b`, or a jj revset, for another range); CI runs it on pull requests. Check a draft
+  first with `echo "<message>" | bun scripts/check-commit-messages.ts --stdin`
 - Before committing, run `make precommit`
 - When working on a GitHub issue, add a footer: `issue #123` (partial work) or `fixes #123` (fully
   resolves it)
