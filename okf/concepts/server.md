@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-11-19
+updated: 2026-11-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-19T18:43:21.002Z"
+  generated_at: "2026-11-20T06:58:12.120Z"
 ---
 # The server and the API
 

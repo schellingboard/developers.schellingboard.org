@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0014: The change feed and the snapshot"
 source: "https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/"
 path: /adr/0014-change-feed-and-snapshot/
-updated: 2026-11-19
+updated: 2026-11-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-19T18:43:20.991Z"
+  generated_at: "2026-11-20T06:58:12.110Z"
 ---
 # ADR 0014: The change feed and the snapshot
 
@@ -49,6 +49,7 @@ it, including `version` where the row has one, so a form opened from the replica
 | Proposal               | `proposal.created`, `proposal.changed`, `proposal.deleted` | event              |
 | RSVP count             | `session.attendanceChanged` (`sessionId`, `numRsvps`)      | event              |
 | Own RSVP               | `rsvp.added`, `rsvp.removed`                               | guests: the RSVPer |
+| Own mark               | `mark.set`, `mark.cleared`                                 | guests: the owner  |
 | Own vote               | `vote.cast`, `vote.withdrawn`                              | guests: the voter  |
 | Location in this event | `location.changed`, `location.removed`                     | event              |
 | Room unavailability    | `unavailability.added`, `unavailability.removed`           | event              |
