@@ -6,7 +6,7 @@ path: /web-app/
 updated: 2026-11-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T06:58:12.122Z"
+  generated_at: "2026-11-20T13:04:39.422Z"
 ---
 # The web app (`apps/web`)
 
@@ -25,13 +25,15 @@ TanStack Router, styled with Tailwind and the colour tokens in `styles/tokens.cs
 - Hashed files are requested as `/_spa/assets/…`, served without the password as immutable; a
   missing one is a 404, never the shell.
 - The router owns `/` (`app/home-page.tsx`: the event list from `GET /api/v1/events` and
-  `GET /api/v1/site`, or a redirect to the only event), `/{slug}` (an event's schedule),
-  `/{slug}/proposals/**` (list, quick voting, new, edit; `?viewProposal=` opens the modal), the
-  session forms, `/{slug}/meetings`, `/guests/**`, `/settings` (with its Account security section;
-  `/account-security` redirects to `/settings#security`), `/notifications`, `/auth/login`,
-  `/auth/reset`, `/login` (the site password, open to visitors without the cookie;
-  `POST /api/v1/auth/site`) (`app/account-pages.tsx`) and `/admin/**` (`app/admin-pages.tsx`).
-  Anything else is "Page not found".
+  `GET /api/v1/site`, or a redirect to the only event), `/{slug}` (an event's address: it only
+  forwards, replacing the entry, to `/{slug}/schedule` with the same search params and hash if it
+  has params or scheduling has started, else to `/{slug}/proposals`; `app/event-landing.tsx`),
+  `/{slug}/schedule` (the schedule), `/{slug}/proposals/**` (list, quick voting, new, edit;
+  `?viewProposal=` opens the modal), the session forms, `/{slug}/meetings`, `/guests/**`,
+  `/settings` (with its Account security section; `/account-security` redirects to
+  `/settings#security`), `/notifications`, `/auth/login`, `/auth/reset`, `/login` (the site
+  password, open to visitors without the cookie; `POST /api/v1/auth/site`) (`app/account-pages.tsx`)
+  and `/admin/**` (`app/admin-pages.tsx`). Anything else is "Page not found".
 
 - `public/sw.js` (registered by `main.tsx` outside the dev server) caches the shell and the
   `/_spa/assets/` files. SPA navigations go to the network first and fall back to the cached shell,
@@ -142,8 +144,9 @@ scheduling phase.
 `app/schedule-page.tsx` composes it: `useScheduleSession` (`replica/session.ts`: `openReplica`,
 `connectFeed`, `autosaveReplica`, hidden-tab and back/forward-cache handling, plus a command runner)
 for the viewer from `useViewer()`, the events for the nav (`GET /api/v1/events`), the snapshot's
-guests for the picker, the proposals redirect for an event not in its scheduling phase. A viewer
-change closes the feed and opens the event again.
+guests for the picker, the schedule outside the scheduling phase (`scheduleReadOnly` in
+`packages/domain`: `ScheduleData.readOnly` hides RSVP, Edit and free slots, and a notice names the
+opening). A viewer change closes the feed and opens the event again.
 
 ## Tests
 

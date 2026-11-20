@@ -6,7 +6,7 @@ path: /adr/0011-change-log-and-jobs-loop/
 updated: 2026-11-20
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T06:58:12.108Z"
+  generated_at: "2026-11-20T13:04:39.411Z"
 ---
 # ADR 0011: A change log and one jobs loop
 
