@@ -3,10 +3,10 @@ type: concept
 title: "Getting started"
 source: "https://developers.schellingboard.org/getting-started/"
 path: /getting-started/
-updated: 2026-11-20
+updated: 2026-11-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T13:04:39.419Z"
+  generated_at: "2026-11-21T22:50:11.964Z"
 ---
 # Getting started
 
@@ -95,10 +95,11 @@ make lint     # Lint code
 make format   # Format code
 ```
 
-Before committing or pushing, run:
+Before committing, and before pushing, run:
 
 ```bash
-make precommit  # Format, lint, type check, and run all tests (incl. e2e)
+make precommit  # Format and lint the last change, run its tests and changed E2E specs
+make prepush    # Format, lint, type check, and run all tests (incl. e2e)
 ```
 
 ## Admin UI

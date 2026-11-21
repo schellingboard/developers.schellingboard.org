@@ -3,10 +3,10 @@ type: concept
 title: Glossary
 source: "https://developers.schellingboard.org/architecture/glossary/"
 path: /architecture/glossary/
-updated: 2026-11-20
+updated: 2026-11-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T13:04:39.416Z"
+  generated_at: "2026-11-21T22:50:11.960Z"
 ---
 # Glossary
 

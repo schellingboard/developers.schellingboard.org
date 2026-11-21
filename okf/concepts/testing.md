@@ -3,10 +3,10 @@ type: concept
 title: Testing
 source: "https://developers.schellingboard.org/testing/"
 path: /testing/
-updated: 2026-11-20
+updated: 2026-11-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T13:04:39.421Z"
+  generated_at: "2026-11-21T22:50:11.967Z"
 ---
 # Testing
 
@@ -209,8 +209,8 @@ IMAGE=schellingboard/schellingboard:v3.1.0 \
 bun set-env.ts test bash scripts/e2e-docker.sh tests/e2e/proposals.spec.ts
 ```
 
-It is not part of `make precommit` — it builds an image and takes a few minutes. The release
-workflow runs it against the image it is about to publish and refuses to publish if it fails (see
+It is not part of `make prepush` — it builds an image and takes a few minutes. The release workflow
+runs it against the image it is about to publish and refuses to publish if it fails (see
 [Releasing a New Version](releasing.md)), so the reason to run it by hand is a change to the
 `Dockerfile`, the server bundle, or anything touching paths, uploads or migrations — well before a
 release rather than at one.
@@ -245,6 +245,27 @@ and `playwright.config.ts` omits its `webServer` when it sees them.
 and the browser share your machine's timezone, so code that formats a date in the ambient zone gives
 the same text on both sides and the fault stays invisible. In the image it does not. Dates must be
 formatted in an explicit zone — the event's — never the process's.
+
+## Load testing
+
+`scripts/load/` simulates attendees against a throwaway server with its own port and database (the
+`large` seed, as `make screenshots` does). It is not part of `make precommit` or `make test`.
+
+- `make load USERS=1000 DURATION=15m` — background load while you explore the UI by hand. The output
+  names the URL and site password.
+- `make load-test` — 200 attendees for a minute, then fails on a 5xx, a 429, a p95/p99 above the
+  thresholds in `scripts/load/index.ts`, or RSVP counts that differ from the confirmed responses.
+  `--report out.json` writes the figures; `--no-build` reuses `dist/`.
+
+Each attendee opens the app (shell, assets, identity, both snapshots), holds the change feed open,
+then acts every 5–30 s: about 90 % reads, 8 % RSVP or vote, 2 % comment. The weights are at the top
+of `scripts/load/attendee.ts`. Guests sign in through `login_sessions` rows written straight to the
+database, which gets each one its own rate-limit bucket. Opening the app is judged apart from steady
+use, since the whole crowd arriving within seconds is the worst case. No SMTP or push keys are set,
+so no notification leaves the machine.
+
+The script calls the API, not a browser, so it cannot count how many identity requests one in-app
+navigation makes: it counts one per page load.
 
 ## Flake hunting
 

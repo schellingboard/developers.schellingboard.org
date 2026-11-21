@@ -5,12 +5,12 @@ bundle:
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T13:04:39.422Z"
+  generated_at: "2026-11-21T22:50:11.969Z"
   default_type: concept
 stats:
-  concepts: 44
+  concepts: 45
   by_type:
-    concept: 44
+    concept: 45
   locales: 
   versions: 
 concepts:
@@ -191,6 +191,15 @@ concepts:
     description: ""
     path: /adr/0019-statistics/
     file: concepts/adr-0019-statistics.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: adr-0020-side-panel-for-linked-views
+    type: concept
+    title: "ADR 0020: A side panel for linked views"
+    description: ""
+    path: /adr/0020-side-panel-for-linked-views/
+    file: concepts/adr-0020-side-panel-for-linked-views.md
     locale: ""
     version: ""
     tags: 

@@ -3,10 +3,10 @@ type: concept
 title: "SchellingBoard developer documentation"
 source: "https://developers.schellingboard.org/"
 path: /
-updated: 2026-11-20
+updated: 2026-11-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T13:04:39.407Z"
+  generated_at: "2026-11-21T22:50:11.947Z"
 ---
 # SchellingBoard developer documentation
 
@@ -25,7 +25,7 @@ the repository.
 | ----------------------------------------- | ------------------------------------------------------------------------------ |
 | [Getting started](getting-started.md)     | stack, prerequisites, setup, env vars, the dev commands                        |
 | [Coding guidelines](coding-guidelines.md) | code style, when to write a comment, the colour tokens, the authorization rule |
-| [Testing](testing.md)                     | test strategy, TDD workflow, running tests, the Docker tier                    |
+| [Testing](testing.md)                     | test strategy, TDD workflow, running tests, the Docker tier, load testing      |
 | [Version control](version-control.md)     | commit conventions, pull requests, issues                                      |
 | [Changelog](changelog.md)                 | what belongs in `CHANGELOG.md` and in the in-app release notes                 |
 

@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mwozqy2y">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mwozqy2y">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mwr03sqf">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mwr03sqf">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mwozqy2y" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mwozqy2y" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mwr03sqf" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mwr03sqf" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mwozqy2y" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mwozqy2y" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mwr03sqf" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mwr03sqf" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mwozqy2y">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mwr03sqf">
     
     
   </head>
@@ -1180,6 +1180,22 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="../adr/0020-side-panel-for-linked-views/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0020: A side panel for linked views
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1585,7 +1601,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Version%20control%20and%20pull%20requests%0A%0A%23%23%20Commits%0A%0A-%20Use%20conventional%20commits%20(%60feat%3A%60%2C%20%60fix%3A%60%2C%20%60docs%3A%60%2C%20%60refactor%3A%60%2C%20etc.)%0A-%20Subject%20line%20%E2%89%A4%2072%20chars%3B%20explain%20WHY%20in%20the%20body%20if%20not%20obvious%0A-%20Wrap%20the%20body%20at%2080%20chars%3B%20a%20line%20with%20a%20URL%2C%20or%20one%20unbreakable%20word%2C%20may%20exceed%20it%0A-%20%60make%20commit-check%60%20verifies%20the%20commits%20since%20%60origin%2Fmain%60%2C%20or%20%60trunk()..%40%60%20in%20a%20jj%20repo%0A%20%20(%60RANGE%3Da..b%60%2C%20or%20a%20jj%20revset%2C%20for%20another%20range)%3B%20CI%20runs%20it%20on%20pull%20requests.%20Check%20a%20draft%0A%20%20first%20with%20%60echo%20%22%3Cmessage%3E%22%20%7C%20bun%20scripts%2Fcheck-commit-messages.ts%20--stdin%60%0A-%20Before%20committing%2C%20run%20%60make%20precommit%60%0A-%20When%20working%20on%20a%20GitHub%20issue%2C%20add%20a%20footer%3A%20%60issue%20%23123%60%20(partial%20work)%20or%20%60fixes%20%23123%60%20(fully%0A%20%20resolves%20it)%0A%0AEither%20%60jj%60%20or%20%60git%60%20works%3B%20the%20repository%20is%20git-colocated.%20The%20%60jj%60-specific%20gotchas%20an%20agent%0Akeeps%20hitting%20%E2%80%94%20bracketed%20route%20paths%20as%20path%20arguments%2C%20non-interactive%20%60squash%60%20and%20%60split%60%20%E2%80%94%20are%0Ain%20%5B%60AGENTS.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md).%0A%0AMigration%20meta%20files%20conflict%20whenever%20two%20branches%20add%20a%20migration%3B%20see%0A%5BDatabase%20migrations%5D(migrations.md%23resolving-migration-conflicts)%20rather%20than%20resolving%20them%20by%0Ahand.%0A%0A%23%23%20Pull%20requests%0A%0ASelf-review%20before%20submitting%20is%20mandatory%20%E2%80%94%20read%20your%20own%20diff%2C%20check%20for%20obvious%20mistakes%2C%20and%0Amake%20sure%20the%20PR%20description%20is%20accurate.%20Do%20not%20offload%20that%20work%20onto%20the%20reviewer.%20This%20is%0Aespecially%20important%20when%20using%20AI%20agents%2C%20which%20can%20produce%20plausible-looking%20but%20incorrect%20code.%0ADraft%20PRs%20are%20fine%20for%20sharing%20work-in-progress%20without%20that%20expectation.%0A%0A%23%23%20Issues%0A%0AIssue%20Type%20and%20Priority%20are%20GitHub%20project%20fields%20that%20%60gh%20issue%20create%60%20cannot%20set%3B%0A%5BGitHub%20issues%5D(github-issues.md)%20has%20the%20%60gh%20api%20graphql%60%20calls%20that%20can.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Version%20control%20and%20pull%20requests%0A%0A%23%23%20Commits%0A%0A-%20Use%20conventional%20commits%20(%60feat%3A%60%2C%20%60fix%3A%60%2C%20%60docs%3A%60%2C%20%60refactor%3A%60%2C%20etc.)%0A-%20Subject%20line%20%E2%89%A4%2072%20chars%3B%20explain%20WHY%20in%20the%20body%20if%20not%20obvious%0A-%20Wrap%20the%20body%20at%2080%20chars%3B%20a%20line%20with%20a%20URL%2C%20or%20one%20unbreakable%20word%2C%20may%20exceed%20it%0A-%20%60make%20commit-check%60%20verifies%20the%20commits%20since%20%60origin%2Fmain%60%2C%20or%20%60trunk()..%40%60%20in%20a%20jj%20repo%0A%20%20(%60RANGE%3Da..b%60%2C%20or%20a%20jj%20revset%2C%20for%20another%20range)%3B%20CI%20runs%20it%20on%20pull%20requests.%20Check%20a%20draft%0A%20%20first%20with%20%60echo%20%22%3Cmessage%3E%22%20%7C%20bun%20scripts%2Fcheck-commit-messages.ts%20--stdin%60%0A-%20Before%20committing%2C%20run%20%60make%20precommit%60%3A%20it%20formats%20and%20lints%20the%20last%20change&#039;s%20files%20(jj%20%60%40%60%2C%20or%0A%20%20%60%40-%60%20when%20%60%40%60%20is%20empty%3B%20git&#039;s%20uncommitted%20changes%2C%20or%20%60HEAD%60%20when%20there%20are%20none)%2C%20type%20checks%2C%0A%20%20and%20runs%20the%20tests%20related%20to%20them%20and%20the%20E2E%20specs%20it%20changed.%20A%20change%20to%20tooling%20or%20test%20setup%0A%20%20runs%20everything.%20Before%20pushing%2C%20run%20%60make%20prepush%60%20for%20the%20full%20suite%0A-%20When%20working%20on%20a%20GitHub%20issue%2C%20add%20a%20footer%3A%20%60issue%20%23123%60%20(partial%20work)%20or%20%60fixes%20%23123%60%20(fully%0A%20%20resolves%20it)%0A%0AEither%20%60jj%60%20or%20%60git%60%20works%3B%20the%20repository%20is%20git-colocated.%20The%20%60jj%60-specific%20gotchas%20an%20agent%0Akeeps%20hitting%20%E2%80%94%20bracketed%20route%20paths%20as%20path%20arguments%2C%20non-interactive%20%60squash%60%20and%20%60split%60%20%E2%80%94%20are%0Ain%20%5B%60AGENTS.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md).%0A%0AMigration%20meta%20files%20conflict%20whenever%20two%20branches%20add%20a%20migration%3B%20see%0A%5BDatabase%20migrations%5D(migrations.md%23resolving-migration-conflicts)%20rather%20than%20resolving%20them%20by%0Ahand.%0A%0A%23%23%20Pull%20requests%0A%0ASelf-review%20before%20submitting%20is%20mandatory%20%E2%80%94%20read%20your%20own%20diff%2C%20check%20for%20obvious%20mistakes%2C%20and%0Amake%20sure%20the%20PR%20description%20is%20accurate.%20Do%20not%20offload%20that%20work%20onto%20the%20reviewer.%20This%20is%0Aespecially%20important%20when%20using%20AI%20agents%2C%20which%20can%20produce%20plausible-looking%20but%20incorrect%20code.%0ADraft%20PRs%20are%20fine%20for%20sharing%20work-in-progress%20without%20that%20expectation.%0A%0A%23%23%20Issues%0A%0AIssue%20Type%20and%20Priority%20are%20GitHub%20project%20fields%20that%20%60gh%20issue%20create%60%20cannot%20set%3B%0A%5BGitHub%20issues%5D(github-issues.md)%20has%20the%20%60gh%20api%20graphql%60%20calls%20that%20can.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1665,7 +1681,10 @@
 <li><code>make commit-check</code> verifies the commits since <code>origin/main</code>, or <code>trunk()..@</code> in a jj repo
 (<code>RANGE=a..b</code>, or a jj revset, for another range); CI runs it on pull requests. Check a draft
 first with <code>echo &quot;&lt;message&gt;&quot; | bun scripts/check-commit-messages.ts --stdin</code></li>
-<li>Before committing, run <code>make precommit</code></li>
+<li>Before committing, run <code>make precommit</code>: it formats and lints the last change’s files (jj <code>@</code>, or
+<code>@-</code> when <code>@</code> is empty; git’s uncommitted changes, or <code>HEAD</code> when there are none), type checks,
+and runs the tests related to them and the E2E specs it changed. A change to tooling or test setup
+runs everything. Before pushing, run <code>make prepush</code> for the full suite</li>
 <li>When working on a GitHub issue, add a footer: <code>issue #123</code> (partial work) or <code>fixes #123</code> (fully
 resolves it)</li>
 </ul>
@@ -1792,17 +1811,32 @@ Draft PRs are fine for sharing work-in-progress without that expectation.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1795110199000">
+                <span class="git-last-updated" data-timestamp="1795247697000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1795110199000"></span>
+                  <span class="git-time" data-timestamp="1795247697000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="build: fast make precommit for the last change, full suite in prepush">build: fast make precommit for the la...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1795247697000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1891,16 +1925,16 @@ Draft PRs are fine for sharing work-in-progress without that expectation.</p>
       </div>
       
       
-      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-20T13:04:37.014Z","buildDate":"2026-11-20","buildYear":"2026","gitCommit":"3bbf17d7","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-20","GIT_COMMIT":"3bbf17d7","GIT_BRANCH":"main","git":{"commit":"3bbf17d7","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"Version control and pull requests","slug":"/version-control/","path":"version-control/index.html"},"frontmatter":{"title":"Version control and pull requests","_git":{"lastUpdated":"2026-11-19T17:43:19.000Z","lastUpdatedTimestamp":1795110199000,"commits":[{"hash":"4101fd1faf8c1cd96817579a8d150c0552edd2b8","shortHash":"4101fd1f","author":"Omar Kohl","timestamp":1795110199000,"date":"2026-11-19T17:43:19.000Z","message":"build: make commit-check work in jj repositories","avatarUrl":""},{"hash":"415f84b064c1b212dd98afba40820868642bf8d0","shortHash":"415f84b0","author":"Omar Kohl","timestamp":1793221960000,"date":"2026-10-28T21:12:40.000Z","message":"style: wrap markdown at 100 columns with prettier","avatarUrl":""},{"hash":"2e2c5e95473af132fbb98f7247256f4c7833f065","shortHash":"2e2c5e95","author":"Omar Kohl","timestamp":1793216665000,"date":"2026-10-28T19:44:25.000Z","message":"ci: check commit message format locally and on pull requests","avatarUrl":""},{"hash":"59db14893591159d45e7adaaca0ed75b08d81ecd","shortHash":"59db1489","author":"Omar Kohl","timestamp":1789892736000,"date":"2026-09-20T08:25:36.000Z","message":"docs: split CONTRIBUTING.md into developer-docs chapters","avatarUrl":""}]}}};</script>
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-21T22:50:08.900Z","buildDate":"2026-11-21","buildYear":"2026","gitCommit":"8d20736a","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-21","GIT_COMMIT":"8d20736a","GIT_BRANCH":"main","git":{"commit":"8d20736a","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"Version control and pull requests","slug":"/version-control/","path":"version-control/index.html"},"frontmatter":{"title":"Version control and pull requests","_git":{"lastUpdated":"2026-11-21T07:54:57.000Z","lastUpdatedTimestamp":1795247697000,"commits":[{"hash":"12258ca48a27fa5e7f15141c6743f9090593d19f","shortHash":"12258ca4","author":"Omar Kohl","timestamp":1795247697000,"date":"2026-11-21T07:54:57.000Z","message":"build: fast make precommit for the last change, full suite in prepush","avatarUrl":""},{"hash":"4101fd1faf8c1cd96817579a8d150c0552edd2b8","shortHash":"4101fd1f","author":"Omar Kohl","timestamp":1795110199000,"date":"2026-11-19T17:43:19.000Z","message":"build: make commit-check work in jj repositories","avatarUrl":""},{"hash":"415f84b064c1b212dd98afba40820868642bf8d0","shortHash":"415f84b0","author":"Omar Kohl","timestamp":1793221960000,"date":"2026-10-28T21:12:40.000Z","message":"style: wrap markdown at 100 columns with prettier","avatarUrl":""},{"hash":"2e2c5e95473af132fbb98f7247256f4c7833f065","shortHash":"2e2c5e95","author":"Omar Kohl","timestamp":1793216665000,"date":"2026-10-28T19:44:25.000Z","message":"ci: check commit message format locally and on pull requests","avatarUrl":""},{"hash":"59db14893591159d45e7adaaca0ed75b08d81ecd","shortHash":"59db1489","author":"Omar Kohl","timestamp":1789892736000,"date":"2026-09-20T08:25:36.000Z","message":"docs: split CONTRIBUTING.md into developer-docs chapters","avatarUrl":""}]}}};</script>
       
-      <script src="../assets/js/docmd-runtime.js?v=mwozqy2y"></script>
-      <script src="../assets/js/docmd-main.js?v=mwozqy2y"></script>
+      <script src="../assets/js/docmd-runtime.js?v=mwr03sqf"></script>
+      <script src="../assets/js/docmd-main.js?v=mwr03sqf"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mwozqy2y"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mwozqy2y" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mwozqy2y" ></script>
-<script src="../assets/js/docmd-search.js?v=mwozqy2y" ></script>
-<script src="../assets/js/docmd-git.js?v=mwozqy2y" ></script>
+      <script src="../assets/js/docmd-git.js?v=mwr03sqf"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mwr03sqf" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mwr03sqf" ></script>
+<script src="../assets/js/docmd-search.js?v=mwr03sqf" ></script>
+<script src="../assets/js/docmd-git.js?v=mwr03sqf" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -1978,7 +2012,7 @@ Draft PRs are fine for sharing work-in-progress without that expectation.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mwozqy2y"></script>
+          src="../assets/js/likec4-embed.js?v=mwr03sqf"></script>
         
       
       

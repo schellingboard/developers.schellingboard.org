@@ -3,10 +3,10 @@ type: concept
 title: "The server and the API"
 source: "https://developers.schellingboard.org/server/"
 path: /server/
-updated: 2026-11-20
+updated: 2026-11-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T13:04:39.420Z"
+  generated_at: "2026-11-21T22:50:11.966Z"
 ---
 # The server and the API
 
@@ -177,8 +177,8 @@ sender, which is how the runner's optimistic prediction knows its command has ar
    Admin routes go under `/admin/`, or the gate will not cover them. Register a new route function
    in `server/http/app.ts`.
 4. **`make openapi`.** It rewrites `packages/contracts/openapi.json` and the client's types in
-   `packages/api-client/src/schema.ts`; commit both. `make openapi-check`, in `make precommit` and
-   CI, fails while either is stale.
+   `packages/api-client/src/schema.ts`; commit both. `make openapi-check`, in `make precommit`,
+   `make prepush` and CI, fails while either is stale.
 
 `make arch` enforces the layout (see [Architecture rules](architecture-rules.md)): the kernel
 reaches no module, HTTP code or framework, even indirectly; `application/` imports no HTTP,

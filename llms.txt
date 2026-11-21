@@ -27,6 +27,7 @@
 - [ADR 0017: Identity and roles](https://developers.schellingboard.org/adr/0017-identity-and-roles/)
 - [ADR 0018: The API review for 5.0.0](https://developers.schellingboard.org/adr/0018-api-review-for-5-0/)
 - [ADR 0019: Statistics in the admin](https://developers.schellingboard.org/adr/0019-statistics/)
+- [ADR 0020: A side panel for linked views](https://developers.schellingboard.org/adr/0020-side-panel-for-linked-views/)
 - [Architecture decision records](https://developers.schellingboard.org/adr/)
 
 ## Architecture Rules

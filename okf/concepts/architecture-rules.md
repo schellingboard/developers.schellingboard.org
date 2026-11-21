@@ -3,10 +3,10 @@ type: concept
 title: "Architecture rules"
 source: "https://developers.schellingboard.org/architecture-rules/"
 path: /architecture-rules/
-updated: 2026-11-20
+updated: 2026-11-21
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-20T13:04:39.417Z"
+  generated_at: "2026-11-21T22:50:11.961Z"
 ---
 # Architecture rules
 
@@ -20,7 +20,7 @@ Two mechanisms, split by what they can see:
 | ESLint               | one file at a time     | banned calls, banned syntax, required shapes  |
 | `dependency-cruiser` | the whole module graph | cycles, layer boundaries, "X may not reach Y" |
 
-Run them with `make lint` and `make arch`; `make precommit` runs both.
+Run them with `make lint` and `make arch`; `make precommit` and `make prepush` run both.
 
 ## ESLint: rules about code inside a file
 

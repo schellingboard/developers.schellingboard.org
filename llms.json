@@ -136,6 +136,13 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0020: A side panel for linked views",
+      "url": "https://developers.schellingboard.org/adr/0020-side-panel-for-linked-views/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
