@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mwrqz0o9">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mwrqz0o9">
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mwrspopj">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mwrspopj">
     
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mwrqz0o9" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mwrqz0o9" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mwrspopj" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mwrspopj" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mwrqz0o9" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mwrqz0o9" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mwrspopj" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mwrspopj" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mwrqz0o9">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mwrspopj">
     
     
   </head>
@@ -2310,16 +2310,16 @@ is to keep every tab connected and rely only on HTTP/2.</li>
       </div>
       
       
-      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T11:22:15.549Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"f48ba51f","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"f48ba51f","GIT_BRANCH":"main","git":{"commit":"f48ba51f","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"ADR 0014: The change feed and the snapshot","slug":"/adr/0014-change-feed-and-snapshot/","path":"adr/0014-change-feed-and-snapshot/index.html"},"frontmatter":{"title":"ADR 0014: The change feed and the snapshot","_git":{"lastUpdated":"2026-11-11T18:49:29.000Z","lastUpdatedTimestamp":1794422969000,"commits":[{"hash":"c23e637f6b213633b1f748cbe78f5f6f49440b9a","shortHash":"c23e637f","author":"Omar Kohl","timestamp":1794422969000,"date":"2026-11-11T18:49:29.000Z","message":"feat: shared moments show as a striped band across the schedule grid","avatarUrl":""},{"hash":"34660e5a6eae3d8cc57802ec72c47c59c504e209","shortHash":"34660e5a","author":"Omar Kohl","timestamp":1794250982000,"date":"2026-11-09T19:03:02.000Z","message":"feat: store private session marks (bookmark, hidden)","avatarUrl":""},{"hash":"8ee473cd64ccaf3c98b19efd2a89b854e4977350","shortHash":"8ee473cd","author":"Claude","timestamp":1795021599000,"date":"2026-11-18T17:06:39.000Z","message":"fix: show new notifications without a page reload","avatarUrl":""},{"hash":"11f45694182ce63e1d07b36bb4d5fa133c66f123","shortHash":"11f45694","author":"Omar Kohl","timestamp":1794126297000,"date":"2026-11-08T08:24:57.000Z","message":"fix: tell hosts when a day or location delete changes their session","avatarUrl":""},{"hash":"46f0092e38bdfa3abd809189e32ee0290c38eaa5","shortHash":"46f0092e","author":"Omar Kohl","timestamp":1793560589000,"date":"2026-11-01T19:16:29.000Z","message":"docs: the target architecture is the architecture","avatarUrl":""}]}}};</script>
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T12:10:59.360Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"378fff3b","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"378fff3b","GIT_BRANCH":"main","git":{"commit":"378fff3b","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"ADR 0014: The change feed and the snapshot","slug":"/adr/0014-change-feed-and-snapshot/","path":"adr/0014-change-feed-and-snapshot/index.html"},"frontmatter":{"title":"ADR 0014: The change feed and the snapshot","_git":{"lastUpdated":"2026-11-11T18:49:29.000Z","lastUpdatedTimestamp":1794422969000,"commits":[{"hash":"c23e637f6b213633b1f748cbe78f5f6f49440b9a","shortHash":"c23e637f","author":"Omar Kohl","timestamp":1794422969000,"date":"2026-11-11T18:49:29.000Z","message":"feat: shared moments show as a striped band across the schedule grid","avatarUrl":""},{"hash":"34660e5a6eae3d8cc57802ec72c47c59c504e209","shortHash":"34660e5a","author":"Omar Kohl","timestamp":1794250982000,"date":"2026-11-09T19:03:02.000Z","message":"feat: store private session marks (bookmark, hidden)","avatarUrl":""},{"hash":"8ee473cd64ccaf3c98b19efd2a89b854e4977350","shortHash":"8ee473cd","author":"Claude","timestamp":1795021599000,"date":"2026-11-18T17:06:39.000Z","message":"fix: show new notifications without a page reload","avatarUrl":""},{"hash":"11f45694182ce63e1d07b36bb4d5fa133c66f123","shortHash":"11f45694","author":"Omar Kohl","timestamp":1794126297000,"date":"2026-11-08T08:24:57.000Z","message":"fix: tell hosts when a day or location delete changes their session","avatarUrl":""},{"hash":"46f0092e38bdfa3abd809189e32ee0290c38eaa5","shortHash":"46f0092e","author":"Omar Kohl","timestamp":1793560589000,"date":"2026-11-01T19:16:29.000Z","message":"docs: the target architecture is the architecture","avatarUrl":""}]}}};</script>
       
-      <script src="../../assets/js/docmd-runtime.js?v=mwrqz0o9"></script>
-      <script src="../../assets/js/docmd-main.js?v=mwrqz0o9"></script>
+      <script src="../../assets/js/docmd-runtime.js?v=mwrspopj"></script>
+      <script src="../../assets/js/docmd-main.js?v=mwrspopj"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mwrqz0o9"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mwrqz0o9" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mwrqz0o9" ></script>
-<script src="../../assets/js/docmd-search.js?v=mwrqz0o9" ></script>
-<script src="../../assets/js/docmd-git.js?v=mwrqz0o9" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mwrspopj"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mwrspopj" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mwrspopj" ></script>
+<script src="../../assets/js/docmd-search.js?v=mwrspopj" ></script>
+<script src="../../assets/js/docmd-git.js?v=mwrspopj" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2397,7 +2397,7 @@ is to keep every tab connected and rely only on HTTP/2.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mwrqz0o9"></script>
+          src="../../assets/js/likec4-embed.js?v=mwrspopj"></script>
         
       
       
