@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0020: A side panel for linked views"
 source: "https://developers.schellingboard.org/adr/0020-side-panel-for-linked-views/"
 path: /adr/0020-side-panel-for-linked-views/
-updated: 2026-11-21
+updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-21T22:50:11.958Z"
+  generated_at: "2026-11-22T10:48:22.356Z"
 ---
 # ADR 0020: A side panel for linked views
 

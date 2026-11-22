@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0004: Dev fake clock for time-traveling event phases"
 source: "https://developers.schellingboard.org/adr/0004-dev-fake-clock/"
 path: /adr/0004-dev-fake-clock/
-updated: 2026-11-21
+updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-21T22:50:11.950Z"
+  generated_at: "2026-11-22T10:48:22.352Z"
 ---
 # ADR 0004: Dev fake clock for time-traveling event phases
 

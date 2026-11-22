@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0005: Dark mode via semantic tokens and a per-device cookie"
 source: "https://developers.schellingboard.org/adr/0005-dark-mode/"
 path: /adr/0005-dark-mode/
-updated: 2026-11-21
+updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-21T22:50:11.951Z"
+  generated_at: "2026-11-22T10:48:22.352Z"
 ---
 # ADR 0005: Dark mode via semantic tokens and a per-device cookie
 

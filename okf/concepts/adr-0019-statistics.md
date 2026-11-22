@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0019: Statistics in the admin"
 source: "https://developers.schellingboard.org/adr/0019-statistics/"
 path: /adr/0019-statistics/
-updated: 2026-11-21
+updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-21T22:50:11.957Z"
+  generated_at: "2026-11-22T10:48:22.356Z"
 ---
 # ADR 0019: Statistics in the admin
 
