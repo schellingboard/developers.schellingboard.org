@@ -6,7 +6,7 @@ path: /adr/0005-dark-mode/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:11:02.482Z"
+  generated_at: "2026-11-22T12:30:06.257Z"
 ---
 # ADR 0005: Dark mode via semantic tokens and a per-device cookie
 

@@ -6,7 +6,7 @@ path: /adr/0009-standalone-repository-in-own-org/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:11:02.484Z"
+  generated_at: "2026-11-22T12:30:06.260Z"
 ---
 # ADR 0009: Move to a standalone repo in new schellingboard GitHub org
 

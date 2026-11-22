@@ -6,12 +6,14 @@ path: /adr/0020-side-panel-for-linked-views/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:11:02.489Z"
+  generated_at: "2026-11-22T12:30:06.266Z"
 ---
 # ADR 0020: A side panel for linked views
 
 - **Status:** Accepted
 - **Date:** 2026-11-09
+- **Amended by:** [ADR 0021](0021-forms-in-the-side-panel.md): create and edit forms are panel kinds
+  too
 
 ## Context
 

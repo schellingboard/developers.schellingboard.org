@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-11-22T12:11:02.501Z",
+    "generated_at": "2026-11-22T12:30:06.280Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 46,
+    "concepts": 47,
     "by_type": {
-      "concept": 46
+      "concept": 47
     },
     "locales": [],
     "versions": []
@@ -245,6 +245,17 @@
       "description": "",
       "path": "/adr/0020-side-panel-for-linked-views/",
       "file": "concepts/adr-0020-side-panel-for-linked-views.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0021-forms-in-the-side-panel",
+      "type": "concept",
+      "title": "ADR 0021: Create and edit forms open in the side panel",
+      "description": "",
+      "path": "/adr/0021-forms-in-the-side-panel/",
+      "file": "concepts/adr-0021-forms-in-the-side-panel.md",
       "locale": "",
       "version": "",
       "tags": []

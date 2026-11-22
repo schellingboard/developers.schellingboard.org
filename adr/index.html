@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mwrspopj">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mwrspopj">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mwrte728">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mwrte728">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mwrspopj" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mwrspopj" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mwrte728" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mwrte728" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mwrspopj" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mwrspopj" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mwrte728" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mwrte728" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mwrspopj">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mwrte728">
     
     
   </head>
@@ -1196,6 +1196,22 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="../adr/0021-forms-in-the-side-panel/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0021: Create and edit forms open in the side panel
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1601,7 +1617,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Architecture%20decision%20records%0A%0AOne%20record%20per%20decision%20that%20was%20expensive%20to%20make%20and%20would%20be%20expensive%20to%20revisit%3A%20what%20the%0Asituation%20was%2C%20what%20was%20chosen%2C%20and%20what%20that%20costs.%20They%20are%20not%20updated%20as%20the%20code%20moves%20on%20%E2%80%94%20a%0Adecision%20that%20no%20longer%20holds%20gets%20a%20new%20ADR%20superseding%20it%2C%20so%20the%20reasoning%20at%20the%20time%20stays%0Areadable.%0A%0AWrite%20one%20when%20a%20choice%20constrains%20later%20work%20(a%20dependency%2C%20a%20data%20model%2C%20a%20protocol%2C%20a%20deployment%0Ashape)%2C%20not%20for%20every%20design%20discussion.%20Number%20it%20after%20the%20highest%20existing%20ADR%20and%20give%20it%20the%0Asame%20header%20block%3A%20status%2C%20date%2C%20and%20the%20tracking%20issue%20where%20there%20is%20one.%0A%0A%7C%20ADR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Decision%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Date%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------%20%7C%20-----------------------------------------------------------%20%7C%20----------%20%7C%0A%7C%20%5B0001%5D(0001-replace-airtable-with-sql-database.md)%20%20%20%7C%20Replace%20Airtable%20with%20a%20SQL%20database%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-16%20%7C%0A%7C%20%5B0002%5D(0002-testing-strategy.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Testing%20strategy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-23%20%7C%0A%7C%20%5B0003%5D(0003-form-field-validation-with-zod.md)%20%20%20%20%20%20%20%7C%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%20%20%20%7C%202026-07-02%20%7C%0A%7C%20%5B0004%5D(0004-dev-fake-clock.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-07-23%20%7C%0A%7C%20%5B0005%5D(0005-dark-mode.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%20%20%20%20%20%20%20%7C%202026-08-17%20%7C%0A%7C%20%5B0006%5D(0006-push-notifications.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Push%20notifications%20through%20an%20installable%20web%20app%20%20%20%20%20%20%20%20%20%20%20%7C%202026-09-05%20%7C%0A%7C%20%5B0007%5D(0007-attendee-count-and-reminder-dispatch.md)%20%7C%20Attendee%20count%20storage%20and%20in-process%20reminder%20dispatch%20%20%20%20%20%7C%202026-08-25%20%7C%0A%7C%20%5B0008%5D(0008-publish-developer-docs.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Publish%20the%20developer%20docs%20at%20developers.schellingboard.org%20%7C%202026-09-18%20%7C%0A%7C%20%5B0009%5D(0009-standalone-repository-in-own-org.md)%20%20%20%20%20%7C%20Move%20to%20a%20standalone%20repo%20in%20new%20schellingboard%20GitHub%20org%20%20%7C%202026-09-19%20%7C%0A%7C%20%5B0010%5D(0010-workspace-packages.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Domain%20and%20contracts%20as%20workspace%20packages%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0011%5D(0011-change-log-and-jobs-loop.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20change%20log%20and%20one%20jobs%20loop%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0012%5D(0012-http-api-v1.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20versioned%20HTTP%20API%20in%20the%20Next%20process%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-04%20%7C%0A%7C%20%5B0013%5D(0013-unit-of-work.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20unit%20of%20work%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-06%20%7C%0A%7C%20%5B0014%5D(0014-change-feed-and-snapshot.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20change%20feed%20and%20the%20snapshot%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-07%20%7C%0A%7C%20%5B0015%5D(0015-spa-alongside-next.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20SPA%20alongside%20Next%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-08%20%7C%0A%7C%20%5B0016%5D(0016-remaining-screen-families.md)%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20remaining%20screen%20families%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-25%20%7C%0A%7C%20%5B0017%5D(0017-identity-and-roles.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Identity%20and%20roles%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-28%20%7C%0A%7C%20%5B0018%5D(0018-api-review-for-5-0.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20API%20review%20for%205.0.0%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-11-01%20%7C%0A%7C%20%5B0019%5D(0019-statistics.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Statistics%20in%20the%20admin%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-11-07%20%7C%0A%7C%20%5B0020%5D(0020-side-panel-for-linked-views.md)%20%20%20%20%20%20%20%20%20%20%7C%20A%20side%20panel%20for%20linked%20views%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-11-09%20%7C%0A%0ALonger%20design%20work%20that%20isn&#039;t%20a%20single%20decision%20lives%20next%20door%3A%0A%5BArchitecture%5D(..%2Farchitecture%2FREADME.md)%20and%20%5BAttendance%20model%5D(..%2Fattendance-model%2FREADME.md).%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Architecture%20decision%20records%0A%0AOne%20record%20per%20decision%20that%20was%20expensive%20to%20make%20and%20would%20be%20expensive%20to%20revisit%3A%20what%20the%0Asituation%20was%2C%20what%20was%20chosen%2C%20and%20what%20that%20costs.%20They%20are%20not%20updated%20as%20the%20code%20moves%20on%20%E2%80%94%20a%0Adecision%20that%20no%20longer%20holds%20gets%20a%20new%20ADR%20superseding%20it%2C%20so%20the%20reasoning%20at%20the%20time%20stays%0Areadable.%0A%0AWrite%20one%20when%20a%20choice%20constrains%20later%20work%20(a%20dependency%2C%20a%20data%20model%2C%20a%20protocol%2C%20a%20deployment%0Ashape)%2C%20not%20for%20every%20design%20discussion.%20Number%20it%20after%20the%20highest%20existing%20ADR%20and%20give%20it%20the%0Asame%20header%20block%3A%20status%2C%20date%2C%20and%20the%20tracking%20issue%20where%20there%20is%20one.%0A%0A%7C%20ADR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Decision%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Date%20%20%20%20%20%20%20%7C%0A%7C%20----------------------------------------------------%20%7C%20-----------------------------------------------------------%20%7C%20----------%20%7C%0A%7C%20%5B0001%5D(0001-replace-airtable-with-sql-database.md)%20%20%20%7C%20Replace%20Airtable%20with%20a%20SQL%20database%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-16%20%7C%0A%7C%20%5B0002%5D(0002-testing-strategy.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Testing%20strategy%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-04-23%20%7C%0A%7C%20%5B0003%5D(0003-form-field-validation-with-zod.md)%20%20%20%20%20%20%20%7C%20Form%20handling%20and%20validation%20with%20React%20Hook%20Form%20and%20Zod%20%20%20%7C%202026-07-02%20%7C%0A%7C%20%5B0004%5D(0004-dev-fake-clock.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dev%20fake%20clock%20for%20time-traveling%20event%20phases%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-07-23%20%7C%0A%7C%20%5B0005%5D(0005-dark-mode.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Dark%20mode%20via%20semantic%20tokens%20and%20a%20per-device%20cookie%20%20%20%20%20%20%20%7C%202026-08-17%20%7C%0A%7C%20%5B0006%5D(0006-push-notifications.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Push%20notifications%20through%20an%20installable%20web%20app%20%20%20%20%20%20%20%20%20%20%20%7C%202026-09-05%20%7C%0A%7C%20%5B0007%5D(0007-attendee-count-and-reminder-dispatch.md)%20%7C%20Attendee%20count%20storage%20and%20in-process%20reminder%20dispatch%20%20%20%20%20%7C%202026-08-25%20%7C%0A%7C%20%5B0008%5D(0008-publish-developer-docs.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Publish%20the%20developer%20docs%20at%20developers.schellingboard.org%20%7C%202026-09-18%20%7C%0A%7C%20%5B0009%5D(0009-standalone-repository-in-own-org.md)%20%20%20%20%20%7C%20Move%20to%20a%20standalone%20repo%20in%20new%20schellingboard%20GitHub%20org%20%20%7C%202026-09-19%20%7C%0A%7C%20%5B0010%5D(0010-workspace-packages.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Domain%20and%20contracts%20as%20workspace%20packages%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0011%5D(0011-change-log-and-jobs-loop.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20change%20log%20and%20one%20jobs%20loop%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-03%20%7C%0A%7C%20%5B0012%5D(0012-http-api-v1.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20A%20versioned%20HTTP%20API%20in%20the%20Next%20process%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-04%20%7C%0A%7C%20%5B0013%5D(0013-unit-of-work.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20unit%20of%20work%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-06%20%7C%0A%7C%20%5B0014%5D(0014-change-feed-and-snapshot.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20change%20feed%20and%20the%20snapshot%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-07%20%7C%0A%7C%20%5B0015%5D(0015-spa-alongside-next.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20SPA%20alongside%20Next%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-08%20%7C%0A%7C%20%5B0016%5D(0016-remaining-screen-families.md)%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20remaining%20screen%20families%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-25%20%7C%0A%7C%20%5B0017%5D(0017-identity-and-roles.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Identity%20and%20roles%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-10-28%20%7C%0A%7C%20%5B0018%5D(0018-api-review-for-5-0.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20The%20API%20review%20for%205.0.0%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-11-01%20%7C%0A%7C%20%5B0019%5D(0019-statistics.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Statistics%20in%20the%20admin%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-11-07%20%7C%0A%7C%20%5B0020%5D(0020-side-panel-for-linked-views.md)%20%20%20%20%20%20%20%20%20%20%7C%20A%20side%20panel%20for%20linked%20views%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-11-09%20%7C%0A%7C%20%5B0021%5D(0021-forms-in-the-side-panel.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Create%20and%20edit%20forms%20open%20in%20the%20side%20panel%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%202026-11-12%20%7C%0A%0ALonger%20design%20work%20that%20isn&#039;t%20a%20single%20decision%20lives%20next%20door%3A%0A%5BArchitecture%5D(..%2Farchitecture%2FREADME.md)%20and%20%5BAttendance%20model%5D(..%2Fattendance-model%2FREADME.md).%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1813,6 +1829,11 @@ same header block: status, date, and the tracking issue where there is one.</p>
 <td>A side panel for linked views</td>
 <td>2026-11-09</td>
 </tr>
+<tr>
+<td><a href="0021-forms-in-the-side-panel/">0021</a></td>
+<td>Create and edit forms open in the side panel</td>
+<td>2026-11-12</td>
+</tr>
 </tbody>
 </table>
 </div><p>Longer design work that isn’t a single decision lives next door:
@@ -1888,17 +1909,32 @@ same header block: status, date, and the tracking issue where there is one.</p>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1794257427000">
+                <span class="git-last-updated" data-timestamp="1794593423000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1794257427000"></span>
+                  <span class="git-time" data-timestamp="1794593423000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: ADR 0021 forms in the side panel; guard covers all controls">feat: ADR 0021 forms in the side pane...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1794593423000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1960,21 +1996,6 @@ same header block: status, date, and the tracking issue where there is one.</p>
                           </div>
                         </li>
                       
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="docs: ADR 0017 on identity and roles">docs: ADR 0017 on identity and roles</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1793266230000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
                     </ul>
                   </div>
                   
@@ -2002,16 +2023,16 @@ same header block: status, date, and the tracking issue where there is one.</p>
       </div>
       
       
-      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T12:10:59.360Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"378fff3b","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"378fff3b","GIT_BRANCH":"main","git":{"commit":"378fff3b","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"Architecture decision records","slug":"/adr/","path":"adr/index.html"},"frontmatter":{"title":"Architecture decision records","_git":{"lastUpdated":"2026-11-09T20:50:27.000Z","lastUpdatedTimestamp":1794257427000,"commits":[{"hash":"714224ef3c30e3eb78a2bde9f445d769e8ec3a06","shortHash":"714224ef","author":"Omar Kohl","timestamp":1794257427000,"date":"2026-11-09T20:50:27.000Z","message":"docs: ADR 0020, a side panel for linked views","avatarUrl":""},{"hash":"2c8d68280f83a875b8094d12f3d438c520abce04","shortHash":"2c8d6828","author":"Omar Kohl","timestamp":1794058058000,"date":"2026-11-07T13:27:38.000Z","message":"docs: ADR 0019 records the decisions for the admin statistics","avatarUrl":""},{"hash":"a929fbec38955814156d68b13f1362908e0aae98","shortHash":"a929fbec","author":"Omar Kohl","timestamp":1793561160000,"date":"2026-11-01T19:26:00.000Z","message":"docs: ADR 0018, the API review for 5.0.0","avatarUrl":""},{"hash":"46f0092e38bdfa3abd809189e32ee0290c38eaa5","shortHash":"46f0092e","author":"Omar Kohl","timestamp":1793560589000,"date":"2026-11-01T19:16:29.000Z","message":"docs: the target architecture is the architecture","avatarUrl":""},{"hash":"f727b9c4b9a0d9f2be38832075de8d21c8c78d62","shortHash":"f727b9c4","author":"Omar Kohl","timestamp":1793266230000,"date":"2026-10-29T09:30:30.000Z","message":"docs: ADR 0017 on identity and roles","avatarUrl":""}]}}};</script>
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T12:30:02.893Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"c9c630d3","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"c9c630d3","GIT_BRANCH":"main","git":{"commit":"c9c630d3","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"Architecture decision records","slug":"/adr/","path":"adr/index.html"},"frontmatter":{"title":"Architecture decision records","_git":{"lastUpdated":"2026-11-13T18:10:23.000Z","lastUpdatedTimestamp":1794593423000,"commits":[{"hash":"34904047e981a1b079f5f9a4b8a1d89679f9b080","shortHash":"34904047","author":"Omar Kohl","timestamp":1794593423000,"date":"2026-11-13T18:10:23.000Z","message":"feat: ADR 0021 forms in the side panel; guard covers all controls","avatarUrl":""},{"hash":"714224ef3c30e3eb78a2bde9f445d769e8ec3a06","shortHash":"714224ef","author":"Omar Kohl","timestamp":1794257427000,"date":"2026-11-09T20:50:27.000Z","message":"docs: ADR 0020, a side panel for linked views","avatarUrl":""},{"hash":"2c8d68280f83a875b8094d12f3d438c520abce04","shortHash":"2c8d6828","author":"Omar Kohl","timestamp":1794058058000,"date":"2026-11-07T13:27:38.000Z","message":"docs: ADR 0019 records the decisions for the admin statistics","avatarUrl":""},{"hash":"a929fbec38955814156d68b13f1362908e0aae98","shortHash":"a929fbec","author":"Omar Kohl","timestamp":1793561160000,"date":"2026-11-01T19:26:00.000Z","message":"docs: ADR 0018, the API review for 5.0.0","avatarUrl":""},{"hash":"46f0092e38bdfa3abd809189e32ee0290c38eaa5","shortHash":"46f0092e","author":"Omar Kohl","timestamp":1793560589000,"date":"2026-11-01T19:16:29.000Z","message":"docs: the target architecture is the architecture","avatarUrl":""}]}}};</script>
       
-      <script src="../assets/js/docmd-runtime.js?v=mwrspopj"></script>
-      <script src="../assets/js/docmd-main.js?v=mwrspopj"></script>
+      <script src="../assets/js/docmd-runtime.js?v=mwrte728"></script>
+      <script src="../assets/js/docmd-main.js?v=mwrte728"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mwrspopj"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mwrspopj" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mwrspopj" ></script>
-<script src="../assets/js/docmd-search.js?v=mwrspopj" ></script>
-<script src="../assets/js/docmd-git.js?v=mwrspopj" ></script>
+      <script src="../assets/js/docmd-git.js?v=mwrte728"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mwrte728" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mwrte728" ></script>
+<script src="../assets/js/docmd-search.js?v=mwrte728" ></script>
+<script src="../assets/js/docmd-git.js?v=mwrte728" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2089,7 +2110,7 @@ same header block: status, date, and the tracking issue where there is one.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mwrspopj"></script>
+          src="../assets/js/likec4-embed.js?v=mwrte728"></script>
         
       
       

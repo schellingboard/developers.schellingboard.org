@@ -6,7 +6,7 @@ path: /architecture/glossary/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:11:02.491Z"
+  generated_at: "2026-11-22T12:30:06.269Z"
 ---
 # Glossary
 

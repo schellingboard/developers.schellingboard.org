@@ -143,6 +143,13 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0021: Create and edit forms open in the side panel",
+      "url": "https://developers.schellingboard.org/adr/0021-forms-in-the-side-panel/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",

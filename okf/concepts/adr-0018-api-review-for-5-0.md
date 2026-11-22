@@ -6,7 +6,7 @@ path: /adr/0018-api-review-for-5-0/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:11:02.488Z"
+  generated_at: "2026-11-22T12:30:06.265Z"
 ---
 # ADR 0018: The API review for 5.0.0
 

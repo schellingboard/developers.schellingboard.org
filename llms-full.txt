@@ -2844,6 +2844,8 @@ re-exports only the marks used.
 
 - **Status:** Accepted
 - **Date:** 2026-11-09
+- **Amended by:** [ADR 0021](0021-forms-in-the-side-panel.md): create and edit forms are panel kinds
+  too
 
 ## Context
 
@@ -2909,6 +2911,54 @@ keeps the panel's stack depth in `history.state.panel`. Close travels back over 
 
 ---
 
+## [ADR 0021: Create and edit forms open in the side panel](https://developers.schellingboard.org/adr/0021-forms-in-the-side-panel/) (Adr)
+
+# ADR 0021: Create and edit forms open in the side panel
+
+- **Status:** Accepted
+- **Date:** 2026-11-12
+- **Amends:** [ADR 0020](0020-side-panel-for-linked-views.md), decision 1 ("tasks stay dialogs")
+
+## Context
+
+ADR 0020 put views in the side panel and left tasks as dialogs or pages. The forms that create or
+edit a proposal, a session or a profile are long, and a page for each hides what the user came from:
+the schedule grid, the proposal being discussed, the directory. Writing a session while seeing the
+grid (clashes, free rooms), or a proposal while reading the one beside it, is the point of the
+panel.
+
+## Decision
+
+1. **Create and edit forms of proposals, sessions and the profile are panel kinds.** They open in
+   the same panel as the views, with a URL, over the page the user came from, and are full screen on
+   phones. The event details dialog is a view, so it becomes a panel too.
+2. **Short tasks stay dialogs.** Confirmations, booking a 1-on-1, the meeting request, What's new,
+   the map and "Liked by" do not change. Quick Voting stays a page. Settings, sign-in,
+   notifications, "My comments" and the admin area keep their pages and frames.
+3. **Saving closes the form, one step; deleting closes the panel.** A save returns to the entry
+   under the form in the panel's stack (a proposal's view, when the form was opened from it) or to
+   the page when it is the first. A delete leaves the panel, as that entry would show what is gone.
+   Cancel and Close leave the panel, as for a view.
+4. **Leaving a form asks first when something was entered.** The guard covers text, selects,
+   checkboxes, radios and dates, and fires on Close, Cancel, Escape, the panel's Back arrow, browser
+   Back and leaving the page. A control that only changes the view (a page size, a sort) opts out
+   with `data-discard-ignore`; comboboxes, search boxes, number fields and file inputs are never
+   counted by the DOM check. A form whose state the DOM cannot show (a photo, a combobox, a removed
+   row) registers its own check with `usePanelGuard().track`.
+5. **Old addresses keep working.** The routes of the former pages redirect to the panel over the
+   list they belong to, as ADR 0020 does for `?viewSession=`.
+
+## Consequences
+
+- A form panel needs the page behind to stay mounted, which ADR 0020 already guarantees.
+- Dialogs inside a form (clash confirmations, pickers) open over the panel, as they do over views.
+- The 780-line session form has to work at 320 to 800 px; its inner layout may need to stack.
+- E2E specs that open these forms by route change to click through the UI, and gain a cancel and
+  discard case per form.
+
+
+---
+
 ## [Architecture decision records](https://developers.schellingboard.org/adr/) (Adr)
 
 # Architecture decision records
@@ -2944,6 +2994,7 @@ same header block: status, date, and the tracking issue where there is one.
 | [0018](0018-api-review-for-5-0.md)                   | The API review for 5.0.0                                    | 2026-11-01 |
 | [0019](0019-statistics.md)                           | Statistics in the admin                                     | 2026-11-07 |
 | [0020](0020-side-panel-for-linked-views.md)          | A side panel for linked views                               | 2026-11-09 |
+| [0021](0021-forms-in-the-side-panel.md)              | Create and edit forms open in the side panel                | 2026-11-12 |
 
 Longer design work that isn't a single decision lives next door:
 [Architecture](../architecture/README.md) and [Attendance model](../attendance-model/README.md).
@@ -6143,10 +6194,11 @@ The pure parts (`grid-layout`, `column`, `meeting-column`, `agenda`, `fold`, `fi
 schedule. `model.ts` has the new pure rules (narrowing by room, matching, day folds). `links.ts` is
 the one place that decides where a session, a 1-on-1, add-session or booking link goes: a session
 (`/{slug}/sessions/:id`) and a 1-on-1 (`/{slug}/meetings/:id`) open in the panel over the schedule,
-booking (`?bookMeeting=`) in a dialog, the add and edit session links go to the session form
-(`app/sessions-pages.tsx`, `/{slug}/add-session`, `/{slug}/edit-session`). `/{slug}/meetings`
-(`app/meetings-page.tsx`) only redirects an old `?viewMeeting=` address to the 1-on-1's panel;
-outside the scheduling phase the panel is read-only.
+booking (`?bookMeeting=`) in a dialog, the add and edit session links open the session form in the
+panel (`session-form`, `/{slug}/sessions/new` with the slot or proposal as query,
+`/{slug}/sessions/:id/edit`; the former `add-session` and `edit-session` addresses land the same
+way). `/{slug}/meetings` (`app/meetings-page.tsx`) only redirects an old `?viewMeeting=` address to
+the 1-on-1's panel; outside the scheduling phase the panel is read-only.
 
 `app/schedule-page.tsx` composes it: `useScheduleSession` (`replica/session.ts`: `openReplica`,
 `connectFeed`, `autosaveReplica`, hidden-tab and back/forward-cache handling, plus a command runner)
@@ -6175,9 +6227,13 @@ behind does not belong to. `app/panel-history.ts` keeps the page behind it and t
 `history.state`; `SpaLinks` opens these links in the panel. An address opened directly lands on the
 schedule (for a session or a 1-on-1), the proposals list or the directory with the panel over it
 (only the directory behind a profile gives it Prev and Next), and `?viewSession=`, `?viewProposal=`
-and `?viewMeeting=` (also at `/{slug}/meetings`) redirect the same way. Booking a 1-on-1 stays a
-dialog, `?bookMeeting=` on the schedule. Links from legacy pages and emails are plain anchors: build
-them with `links.ts` and `utils/notifications.ts`, never a second copy.
+and `?viewMeeting=` (also at `/{slug}/meetings`) redirect the same way. The proposal form is a panel
+kind too (`proposal-form` at `/{slug}/proposals/new` and `.../:id/edit`, `session-form`, and
+`profile-form` at `/guests/edit`, ADR 0021): `ProposalFormHost`, `SessionFormHost` and
+`ProfileFormHost` block history Back over unsaved changes with `history.block`, and `leaving` marks
+a confirmed or saved exit so the blocker lets it through. Booking a 1-on-1 stays a dialog,
+`?bookMeeting=` on the schedule. Links from legacy pages and emails are plain anchors: build them
+with `links.ts` and `utils/notifications.ts`, never a second copy.
 
 Two gotchas. The panel is `role="dialog"` with `aria-modal="false"`, so `dialog` locators in E2E
 still find it while the page behind stays usable. `landOnPanel` replaces the entry with the list
@@ -6193,6 +6249,15 @@ in `list-model.ts`); the typed text stays local and its debounced value goes to 
 `ui/use-scroll-restoration.ts`, keyed by `useHistoryEntry` (the page's position in the stack,
 whatever panels are open over it). The router's `scrollRestoration` is `createScrollReset()`, which
 resets the window only when the page behind changes and restores nothing itself.
+
+## Leaving over unsaved changes
+
+`useDiscardGuard` (`ui/use-discard-guard.tsx`) is what `Dialog` and `SidePanel` use to ask "Discard
+your changes?" before Close, Escape or the Back arrow. It counts text, selects, checkboxes, radio
+groups and dates once the control was focused or pressed and now differs. Comboboxes, search boxes,
+number fields and file inputs are never counted; give any other control that only changes the view
+(a page size, a sort) a `data-discard-ignore` attribute. `beforeUnload: true` also warns when the
+page is left; only form panels turn it on.
 
 ## Failure notices
 
