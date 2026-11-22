@@ -4678,6 +4678,85 @@ Match existing issues' style:
 
 ---
 
+## [Internationalisation](https://developers.schellingboard.org/i18n/) (I18n)
+
+# Internationalisation
+
+The web app uses [Lingui](https://lingui.dev) (ICU messages, source strings as keys). Catalogs are
+plain `.po` files in `apps/web/locales/<locale>/messages.po`, committed. `en` is the source; other
+locales load on demand. The plan and open steps are in issue #1328.
+
+## Adding a string
+
+1. Write the text with a macro (below).
+2. Run `make i18n-extract`. It updates every catalog; commit the result.
+3. Translations go into the other locales' `.po` files (none yet besides `en`).
+
+## Conventions
+
+- **Message ids are the source strings.** Never write explicit ids. Changing the English text
+  changes the id, so a reword means the translators see a new message; keep rewording to a minimum.
+- **In components, use the macros.** `` t`Save` `` from `@lingui/core/macro` for text in props and
+  expressions (for example an `aria-label` set to ``t`Close` ``); `<Trans>` from
+  `@lingui/react/macro` for text in JSX, also with inline elements
+  (`<Trans>Read the <a href="…">guide</a></Trans>`). `t` reads the global catalog and is
+  re-evaluated because the provider remounts the tree when the language changes.
+- **Outside a render** (module constants, tables of labels, values stored before use) write
+  `` msg`Save` `` from `@lingui/core/macro` and translate where it is shown with
+  `i18n._(descriptor)` (or `const { t } = useLingui()` from `@lingui/react/macro`). Never call `t`
+  at module level: no language is active yet and it would not follow a switch.
+- **Never concatenate sentence parts or build them by hand.** One sentence is one message, with
+  placeholders: `` t`Hello ${name}` ``, not `t`Hello ` + name`. Word order differs between
+  languages. Do not put a translated word inside another message; if two messages share a word, they
+  translate it twice.
+- **Plurals use ICU**, never `n === 1 ? … : …`:
+  `plural(count, { one: "# session", other: "# sessions" })` (`plural` from `@lingui/core/macro`).
+- **Enum labels** (kinds, statuses, notification types) are a function or an object of `msg`
+  descriptors keyed by the enum, typed `Record<Kind, MessageDescriptor>`, so a new member does not
+  compile without a label. Show it with `i18n._(label[kind])`. Never turn an enum value into text
+  with a string transform.
+- **Context and comments.** Add `comment` (and `context` when the same English word needs two
+  translations) only where a translator cannot tell the meaning from the sentence: a single word
+  like "Open", "Post", "Close" (verb or adjective?), or a placeholder whose content is not obvious.
+  `t({ message: "Open", comment: "Button: open the session" })`. Otherwise leave them out.
+- **Not translated:** user-written content, event and room names, identifiers, URLs, CSS classes,
+  test ids, logs, and `Error` messages that never reach the screen. Text in `title=` and
+  `aria-label=` is translated like any other; the lint rule does not flag `title=`, so check those
+  by hand.
+- **Numbers in messages:** ICU `#` and `{count}` are formatted for the locale, so 1000 reads "1,000"
+  in English. That is intended.
+- **Tests** keep asserting the English text; the test setup activates `en` and lets `<Trans>` render
+  without a provider.
+
+User-written content (titles, bios) is never translated.
+
+## Formatting
+
+Dates, times and relative times follow `useFormatLocale()`: the app's language, with the region the
+browser asks for when it is the same language. The event's time zone stays separate. See
+`apps/web/src/i18n/format.ts`.
+
+## Guardrails
+
+- **Lint:** `lingui/no-unlocalized-strings` flags literal text in `.tsx` files. It only runs on the
+  files listed in `eslint.config.mjs`; step 5 of #1328 adds an area at a time and ends with all of
+  `apps/web/src`. Add a file when its strings are in the catalog. `ignore`, `ignoreNames` and
+  `ignoreFunctions` there skip class lists, SVG attributes, DOM calls and the like; extend them
+  rather than disabling the rule. The rule does not flag `title=` attributes: check those by hand.
+  It does not run on `.ts` files: a `.ts` file that holds text shown to the user (such as
+  `ui/resize-image.ts`) uses `t` by hand.
+- **Catalogs:** `make i18n-check` (part of `make precommit`) runs `lingui extract --clean` and fails
+  when that changed a catalog, and when a translated locale has a missing or empty message. Run
+  `make i18n-extract` and commit.
+- **Pseudo-locale:** `pseudo-LOCALE` accents every message so hard-coded strings stand out (they
+  stay plain), and pads each by about 30% with `~` so overflowing layouts show. It is generated from
+  `en`, development only, and not in the settings switcher. Turn it on with
+  `localStorage.setItem("sb-pseudo", "1")` and reload; the server's stored language does not
+  override it. Production builds ignore it.
+
+
+---
+
 ## [SchellingBoard developer documentation](https://developers.schellingboard.org/)
 
 # SchellingBoard developer documentation
@@ -4703,16 +4782,17 @@ the repository.
 
 ## Reference
 
-| Chapter                                             | For                                                       |
-| --------------------------------------------------- | --------------------------------------------------------- |
-| [Architecture rules](architecture-rules.md)         | the conventions the build enforces, and how to add one    |
-| [The server and the API](server.md)                 | `server/` and `/api/v1`: adding a use case and its route  |
-| [The web app](web-app.md)                           | `apps/web`: the SPA, how the server serves it, running it |
-| [Database migrations](migrations.md)                | generating migrations, resolving drizzle conflicts        |
-| [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine   |
-| [Documentation and the sites](documentation.md)     | how the three published sites are built                   |
-| [Releasing a new version](releasing.md)             | tagging, the release checklist, publishing Docker images  |
-| [GitHub issues](github-issues.md)                   | setting Issue Type and Priority via `gh api graphql`      |
+| Chapter                                             | For                                                                        |
+| --------------------------------------------------- | -------------------------------------------------------------------------- |
+| [Architecture rules](architecture-rules.md)         | the conventions the build enforces, and how to add one                     |
+| [The server and the API](server.md)                 | `server/` and `/api/v1`: adding a use case and its route                   |
+| [The web app](web-app.md)                           | `apps/web`: the SPA, how the server serves it, running it                  |
+| [Internationalisation](i18n.md)                     | Lingui, adding strings, the catalog and lint guardrails, the pseudo-locale |
+| [Database migrations](migrations.md)                | generating migrations, resolving drizzle conflicts                         |
+| [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine                    |
+| [Documentation and the sites](documentation.md)     | how the three published sites are built                                    |
+| [Releasing a new version](releasing.md)             | tagging, the release checklist, publishing Docker images                   |
+| [GitHub issues](github-issues.md)                   | setting Issue Type and Priority via `gh api graphql`                       |
 
 ## Design
 
@@ -5903,8 +5983,9 @@ helpers: `tests/helpers/auth.ts` (`login`, `loginAndGoto`).
   `echo "<message>" | bun scripts/check-commit-messages.ts --stdin`
 - Before committing, run `make precommit`: it formats and lints the last change's files (jj `@`, or
   `@-` when `@` is empty; git's uncommitted changes, or `HEAD` when there are none), type checks,
-  and runs the tests related to them and the E2E specs it changed. A change to tooling or test setup
-  runs everything. Before pushing, run `make prepush` for the full suite
+  checks the message catalogs, and runs the tests related to them and the E2E specs that use them. A
+  tooling or test setup change widens only the checks it affects (the lint config lints all files);
+  a `Makefile` change runs everything. Before pushing, run `make prepush` for the full suite
 - When working on a GitHub issue, add a footer: `issue #123` (partial work) or `fixes #123` (fully
   resolves it)
 

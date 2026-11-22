@@ -5,12 +5,12 @@ bundle:
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T10:48:22.362Z"
+  generated_at: "2026-11-22T11:22:18.649Z"
   default_type: concept
 stats:
-  concepts: 45
+  concepts: 46
   by_type:
-    concept: 45
+    concept: 46
   locales: 
   versions: 
 concepts:
@@ -335,6 +335,15 @@ concepts:
     description: ""
     path: /github-issues/
     file: concepts/github-issues.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: i18n
+    type: concept
+    title: Internationalisation
+    description: ""
+    path: /i18n/
+    file: concepts/i18n.md
     locale: ""
     version: ""
     tags: 

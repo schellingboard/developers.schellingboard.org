@@ -34,6 +34,7 @@
 [WARN] missing-type /exploration/matrix-chat/  (using fallback 'concept')
 [WARN] missing-type /getting-started/  (using fallback 'concept')
 [WARN] missing-type /github-issues/  (using fallback 'concept')
+[WARN] missing-type /i18n/  (using fallback 'concept')
 [WARN] missing-type /migrations/  (using fallback 'concept')
 [WARN] missing-type /multiple-instances/  (using fallback 'concept')
 [WARN] missing-type /releasing/  (using fallback 'concept')

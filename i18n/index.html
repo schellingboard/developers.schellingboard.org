@@ -1,0 +1,1986 @@
+<!--
+  ---------------------------------------------------------------
+  docmd : the zero-config documentation engine.
+  @website https://docmd.io
+  [docmd-source] - Please do not remove this header.
+  ---------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="docmd v0.9.9">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+      var root = "../";
+      if (root && !root.endsWith('/')) root += '/';
+      if (root === '') root = './';
+      window.DOCMD_ROOT = root;
+
+      window.DOCMD_SITE_ROOT = "/";
+
+      window.DOCMD_APPEARANCE = "system";
+      window.DOCMD_VERSION_ROOT = "/";
+      window.DOCMD_BASE = "/";
+      window.DOCMD_LOCALE = "";
+      window.DOCMD_DEFAULT_LOCALE = "";
+    </script>
+    <script>/**
+ * --------------------------------------------------------------------
+ * docmd : the zero-config documentation engine.
+ *
+ * @package     @docmd/core (and ecosystem)
+ * @website     https://docmd.io
+ * @repository  https://github.com/docmd-io/docmd
+ * @license     MIT
+ * @copyright   Copyright (c) 2025-present docmd.io
+ *
+ * [docmd-source] - Please do not remove this header.
+ * --------------------------------------------------------------------
+ */
+
+(function () {
+  try {
+    // 1. Determine Theme
+    //
+    // Resolve from three sources, in priority order:
+    //   1. localStorage explicit user choice (light / dark)
+    //   2. window.DOCMD_APPEARANCE  (current canonical name, set by EJS templates)
+    //   3. window.DOCMD_DEFAULT_MODE (legacy alias kept for pre-0.8.7 outputs)
+    //   4. 'light' as the final fallback
+    //
+    // Note: localStorage is only honoured when it holds an explicit
+    // 'light' or 'dark' value. A stored 'system' value (from a prior
+    // session where the user picked "follow system") must NOT win over
+    // a freshly resolved config value — the resolved value will itself
+    // be 'system' in that case and the OS preference check below takes
+    // over, so this is a no-op for the in-session behaviour but keeps
+    // any future storage migration simple.
+    var localValue = localStorage.getItem('docmd-theme');
+    var configValue = window.DOCMD_APPEARANCE
+      || window.DOCMD_DEFAULT_MODE
+      || 'light';
+    var theme = (localValue === 'light' || localValue === 'dark')
+      ? localValue
+      : configValue;
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // 2. Apply to Root
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // 3. Highlight.js Toggle Strategy
+    var lightLink = document.getElementById('hljs-light');
+    var darkLink = document.getElementById('hljs-dark');
+
+    if (lightLink && darkLink) {
+      if (theme === 'dark') {
+        lightLink.disabled = true;
+        darkLink.disabled = false;
+      } else {
+        lightLink.disabled = false;
+        darkLink.disabled = true;
+      }
+    }
+
+    document.documentElement.style.visibility = "visible";
+  } catch (e) {
+    document.documentElement.style.visibility = "visible";
+    console.error('Theme init failed', e);
+  }
+})();</script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>Internationalisation - SchellingBoard Developers</title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mwrqz0o9">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mwrqz0o9">
+    
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mwrqz0o9" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mwrqz0o9" id="hljs-dark" disabled>
+    
+    
+<meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<link rel="canonical" href="https://developers.schellingboard.org/i18n/">
+<meta property="og:title" content="Internationalisation - SchellingBoard Developers">
+<meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta property="og:url" content="https://developers.schellingboard.org/i18n/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Internationalisation - SchellingBoard Developers">
+<meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SchellingBoard Developers","item":"https://developers.schellingboard.org/"},{"@type":"ListItem","position":2,"name":"Internationalisation","item":"https://developers.schellingboard.org/i18n"}]}
+</script>
+
+
+
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mwrqz0o9" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mwrqz0o9" >
+
+    
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mwrqz0o9">
+    
+    
+  </head>
+  <body
+    class="sidebar-collapsible"
+    data-default-collapsed="false"
+    data-copy-code-enabled="true" data-spa-enabled="true" data-source-file="docs/dev/i18n.md">
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    
+    
+
+    
+
+    
+    
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          
+<a href="../" class="logo-link">
+              <img
+                src="../logo/logo.svg"
+                alt="SchellingBoard" class="logo logo-light light-logo" style="height: 1.5rem;">
+              <img
+                src="../logo/logo-reversed.svg"
+                alt="SchellingBoard" class="logo logo-dark dark-logo" style="height: 1.5rem;">
+            </a>
+          
+          <span class="mobile-view sidebar-menu-button float-right">
+            
+<svg class="lucide-icon icon-menu " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-menu"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
+          </span>
+        </div>
+        <div class="sidebar-top-group">
+          
+          
+          
+            <div class="sidebar-options-wrapper">
+              
+
+
+<div class="docmd-options-menu">
+    
+    <button class="docmd-search-trigger" aria-label="Search">
+        
+<svg class="lucide-icon icon-search " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-search"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
+        <span class="search-label">Search</span>
+        <span class="search-keys"><kbd class="docmd-kbd">⌘</kbd><kbd class="docmd-kbd">K</kbd></span>
+    </button>
+    
+
+    
+
+    
+
+    
+    <button class="theme-toggle-button" aria-label="Toggle theme" title="Toggle theme">
+        
+<svg class="lucide-icon icon-sun icon-sun" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-sun"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+ 
+<svg class="lucide-icon icon-moon icon-moon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-moon"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+</svg>
+
+    </button>
+    
+
+    
+
+    
+</div>
+
+            </div>
+          
+          
+          
+        </div>
+        
+
+<nav class="sidebar-nav" aria-label="Main Navigation">
+  <ul>
+    
+      <li class="" >
+      
+        <a href="../" class=" "
+          >
+           
+<svg class="lucide-icon icon-home " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-house"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Overview
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../getting-started/" class=" "
+          >
+           
+<svg class="lucide-icon icon-rocket " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-rocket"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" />
+  <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Getting started
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../coding-guidelines/" class=" "
+          >
+           
+<svg class="lucide-icon icon-code " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-code"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 18 6-6-6-6" />
+  <path d="m8 6-6 6 6 6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Coding guidelines
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../testing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-flask-conical " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-flask-conical"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+  <path d="M6.453 15h11.094" />
+  <path d="M8.5 2h7" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Testing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../version-control/" class=" "
+          >
+           
+<svg class="lucide-icon icon-git-branch " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-git-branch"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 6a9 9 0 0 0-9 9V3" />
+  <circle cx="18" cy="6" r="3" />
+  <circle cx="6" cy="18" r="3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Version control
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../changelog/" class=" "
+          >
+           
+<svg class="lucide-icon icon-list " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-list"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 5h.01" />
+  <path d="M3 12h.01" />
+  <path d="M3 19h.01" />
+  <path d="M8 5h13" />
+  <path d="M8 12h13" />
+  <path d="M8 19h13" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Changelog
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Reference
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture-rules/" class=" "
+          >
+           
+<svg class="lucide-icon icon-shield-check " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-shield-check"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  <path d="m9 12 2 2 4-4" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture rules
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../server/" class=" "
+          >
+           
+<svg class="lucide-icon icon-server " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-server"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+  <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+  <line x1="6" x2="6.01" y1="6" y2="6" />
+  <line x1="6" x2="6.01" y1="18" y2="18" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Server and API
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../web-app/" class=" "
+          >
+           
+<svg class="lucide-icon icon-monitor " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-monitor"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="14" x="2" y="3" rx="2" />
+  <line x1="8" x2="16" y1="21" y2="21" />
+  <line x1="12" x2="12" y1="17" y2="21" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../migrations/" class=" "
+          >
+           
+<svg class="lucide-icon icon-database " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-database"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Database migrations
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../multiple-instances/" class=" "
+          >
+           
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Running multiple instances
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../documentation/" class=" "
+          >
+           
+<svg class="lucide-icon icon-file-text " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-file-text"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+  <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Documentation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../releasing/" class=" "
+          >
+           
+<svg class="lucide-icon icon-package " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-package"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+  <path d="M12 22V12" />
+  <polyline points="3.29 7 12 12 20.71 7" />
+  <path d="m7.5 4.27 9 5.15" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Releasing
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../github-issues/" class=" "
+          >
+           
+<svg class="lucide-icon icon-circle-dot " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-circle-dot"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="12" cy="12" r="10" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            GitHub issues
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="expanded nav-group" >
+      
+        <span class="nav-label nav-group">
+           
+<svg class="lucide-icon icon-drafting-compass " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-drafting-compass"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m12.99 6.74 1.93 3.44" />
+  <path d="M19.136 12a10 10 0 0 1-14.271 0" />
+  <path d="m21 21-2.16-3.84" />
+  <path d="m3 21 8.02-14.26" />
+  <circle cx="12" cy="5" r="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Design
+          </span>
+          
+        </span>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../adr/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-gavel " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-gavel"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+  <path d="m16 16 6-6" />
+  <path d="m21.5 10.5-8-8" />
+  <path d="m8 8 6-6" />
+  <path d="m8.5 7.5 8 8" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Decision records
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../adr/0001-replace-airtable-with-sql-database/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0001: Replace Airtable with a SQL database
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0002-testing-strategy/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0002: Testing strategy
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0003-form-field-validation-with-zod/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0003: Form handling and validation with React Hook Form and Zod
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0004-dev-fake-clock/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0004: Dev fake clock for time-traveling event phases
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0005-dark-mode/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0005: Dark mode via semantic tokens and a per-device cookie
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0006-push-notifications/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0006: Push notifications through an installable web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0007-attendee-count-and-reminder-dispatch/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0007: Attendee count storage and in-process reminder dispatch
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0008-publish-developer-docs/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0008: Publish the developer docs at developers.schellingboard.org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0009-standalone-repository-in-own-org/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0009: Move to a standalone repo in new schellingboard GitHub org
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0010-workspace-packages/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0010: Domain and contracts as workspace packages
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0011-change-log-and-jobs-loop/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0011: A change log and one jobs loop
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0012-http-api-v1/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0012: A versioned HTTP API in the Next process
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0013-unit-of-work/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0013: The unit of work
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0014-change-feed-and-snapshot/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0014: The change feed and the snapshot
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0015-spa-alongside-next/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0015: The SPA alongside Next
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0016-remaining-screen-families/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0016: The remaining screen families
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0017-identity-and-roles/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0017: Identity and roles
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0018-api-review-for-5-0/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0018: The API review for 5.0.0
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0019-statistics/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0019: Statistics in the admin
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0020-side-panel-for-linked-views/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0020: A side panel for linked views
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../architecture/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-layers " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-layers"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+  <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+  <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Architecture
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../architecture/decisions/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Decisions
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../architecture/diagrams/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Diagrams
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../architecture/glossary/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Glossary
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../architecture/not-built/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Not built
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="/diagrams/" class=" "
+          target="_blank" rel="noopener">
+           
+<svg class="lucide-icon icon-workflow " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-workflow"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="8" height="8" x="3" y="3" rx="2" />
+  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
+  <rect width="8" height="8" x="13" y="13" rx="2" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Diagram explorer
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="collapsible nav-group"  aria-expanded="false" >
+      
+        <a href="../attendance-model/" class=" nav-group"
+          >
+           
+<svg class="lucide-icon icon-chart-line " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-line"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="m19 9-5 5-4-4-3 3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Attendance model
+            </span>
+          
+            <span class="collapse-icon-wrapper">
+<svg class="lucide-icon icon-chevron-right collapse-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m9 18 6-6-6-6" />
+</svg>
+</span>
+          
+          
+        </a>
+        
+
+        
+          <ul class="submenu">
+            
+      <li class="" >
+      
+        <a href="../attendance-model/attendance-2025/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            Predicting session attendance from voting results
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../exploration/matrix-chat/" class=" "
+          >
+           
+<svg class="lucide-icon icon-message-circle " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-circle"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Matrix chat feasibility
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../statistics-proposal/" class=" "
+          >
+           
+<svg class="lucide-icon icon-chart-bar " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chart-bar"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+  <path d="M7 16h8" />
+  <path d="M7 11h12" />
+  <path d="M7 6h3" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Statistics proposal
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+          </ul>
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="https://github.com/schellingboard/schellingboard" class=" "
+          target="_blank" rel="noopener">
+           
+          
+          <span class="nav-item-title">
+            GitHub
+            </span>
+          
+           
+<svg class="lucide-icon icon-external-link nav-external-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-external-link"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
+          
+        </a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+        <div class="sidebar-bottom-group mt-auto">
+          
+          
+          
+          
+          
+        </div>
+      </aside>
+      
+      <div class="main-content-wrapper">
+        
+        
+        
+          <header class="page-header">
+            <div class="header-left">
+              
+                <button id="sidebar-toggle-button" class="sidebar-toggle-button"
+                  aria-label="Toggle Sidebar">
+                  
+<svg class="lucide-icon icon-chevron-left " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-left"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15 18-6-6 6-6" />
+</svg>
+
+                </button>
+              
+              <div class="header-titles-wrapper">
+                <span class="header-title">
+                  Internationalisation
+                </span>
+              </div>
+            </div>
+            <div class="header-right">
+              
+            </div>
+          </header>
+        
+        <div class="content-theme-cover">
+          <main class="content-area" id="main-content">
+            <div class="content-layout">
+              <div class="main-content">
+                <div class="docmd-breadcrumbs-row">
+                  <div id="docmd-raw-markdown" data-content="%23%20Internationalisation%0A%0AThe%20web%20app%20uses%20%5BLingui%5D(https%3A%2F%2Flingui.dev)%20(ICU%20messages%2C%20source%20strings%20as%20keys).%20Catalogs%20are%0Aplain%20%60.po%60%20files%20in%20%60apps%2Fweb%2Flocales%2F%3Clocale%3E%2Fmessages.po%60%2C%20committed.%20%60en%60%20is%20the%20source%3B%20other%0Alocales%20load%20on%20demand.%20The%20plan%20and%20open%20steps%20are%20in%20issue%20%231328.%0A%0A%23%23%20Adding%20a%20string%0A%0A1.%20Write%20the%20text%20with%20a%20macro%20(below).%0A2.%20Run%20%60make%20i18n-extract%60.%20It%20updates%20every%20catalog%3B%20commit%20the%20result.%0A3.%20Translations%20go%20into%20the%20other%20locales&#039;%20%60.po%60%20files%20(none%20yet%20besides%20%60en%60).%0A%0A%23%23%20Conventions%0A%0A-%20**Message%20ids%20are%20the%20source%20strings.**%20Never%20write%20explicit%20ids.%20Changing%20the%20English%20text%0A%20%20changes%20the%20id%2C%20so%20a%20reword%20means%20the%20translators%20see%20a%20new%20message%3B%20keep%20rewording%20to%20a%20minimum.%0A-%20**In%20components%2C%20use%20the%20macros.**%20%60%60%20t%60Save%60%20%60%60%20from%20%60%40lingui%2Fcore%2Fmacro%60%20for%20text%20in%20props%20and%0A%20%20expressions%20(for%20example%20an%20%60aria-label%60%20set%20to%20%60%60t%60Close%60%20%60%60)%3B%20%60%3CTrans%3E%60%20from%0A%20%20%60%40lingui%2Freact%2Fmacro%60%20for%20text%20in%20JSX%2C%20also%20with%20inline%20elements%0A%20%20(%60%3CTrans%3ERead%20the%20%3Ca%20href%3D%22%E2%80%A6%22%3Eguide%3C%2Fa%3E%3C%2FTrans%3E%60).%20%60t%60%20reads%20the%20global%20catalog%20and%20is%0A%20%20re-evaluated%20because%20the%20provider%20remounts%20the%20tree%20when%20the%20language%20changes.%0A-%20**Outside%20a%20render**%20(module%20constants%2C%20tables%20of%20labels%2C%20values%20stored%20before%20use)%20write%0A%20%20%60%60%20msg%60Save%60%20%60%60%20from%20%60%40lingui%2Fcore%2Fmacro%60%20and%20translate%20where%20it%20is%20shown%20with%0A%20%20%60i18n._(descriptor)%60%20(or%20%60const%20%7B%20t%20%7D%20%3D%20useLingui()%60%20from%20%60%40lingui%2Freact%2Fmacro%60).%20Never%20call%20%60t%60%0A%20%20at%20module%20level%3A%20no%20language%20is%20active%20yet%20and%20it%20would%20not%20follow%20a%20switch.%0A-%20**Never%20concatenate%20sentence%20parts%20or%20build%20them%20by%20hand.**%20One%20sentence%20is%20one%20message%2C%20with%0A%20%20placeholders%3A%20%60%60%20t%60Hello%20%24%7Bname%7D%60%20%60%60%2C%20not%20%60t%60Hello%20%60%20%2B%20name%60.%20Word%20order%20differs%20between%0A%20%20languages.%20Do%20not%20put%20a%20translated%20word%20inside%20another%20message%3B%20if%20two%20messages%20share%20a%20word%2C%20they%0A%20%20translate%20it%20twice.%0A-%20**Plurals%20use%20ICU**%2C%20never%20%60n%20%3D%3D%3D%201%20%3F%20%E2%80%A6%20%3A%20%E2%80%A6%60%3A%0A%20%20%60plural(count%2C%20%7B%20one%3A%20%22%23%20session%22%2C%20other%3A%20%22%23%20sessions%22%20%7D)%60%20(%60plural%60%20from%20%60%40lingui%2Fcore%2Fmacro%60).%0A-%20**Enum%20labels**%20(kinds%2C%20statuses%2C%20notification%20types)%20are%20a%20function%20or%20an%20object%20of%20%60msg%60%0A%20%20descriptors%20keyed%20by%20the%20enum%2C%20typed%20%60Record%3CKind%2C%20MessageDescriptor%3E%60%2C%20so%20a%20new%20member%20does%20not%0A%20%20compile%20without%20a%20label.%20Show%20it%20with%20%60i18n._(label%5Bkind%5D)%60.%20Never%20turn%20an%20enum%20value%20into%20text%0A%20%20with%20a%20string%20transform.%0A-%20**Context%20and%20comments.**%20Add%20%60comment%60%20(and%20%60context%60%20when%20the%20same%20English%20word%20needs%20two%0A%20%20translations)%20only%20where%20a%20translator%20cannot%20tell%20the%20meaning%20from%20the%20sentence%3A%20a%20single%20word%0A%20%20like%20%22Open%22%2C%20%22Post%22%2C%20%22Close%22%20(verb%20or%20adjective%3F)%2C%20or%20a%20placeholder%20whose%20content%20is%20not%20obvious.%0A%20%20%60t(%7B%20message%3A%20%22Open%22%2C%20comment%3A%20%22Button%3A%20open%20the%20session%22%20%7D)%60.%20Otherwise%20leave%20them%20out.%0A-%20**Not%20translated%3A**%20user-written%20content%2C%20event%20and%20room%20names%2C%20identifiers%2C%20URLs%2C%20CSS%20classes%2C%0A%20%20test%20ids%2C%20logs%2C%20and%20%60Error%60%20messages%20that%20never%20reach%20the%20screen.%20Text%20in%20%60title%3D%60%20and%0A%20%20%60aria-label%3D%60%20is%20translated%20like%20any%20other%3B%20the%20lint%20rule%20does%20not%20flag%20%60title%3D%60%2C%20so%20check%20those%0A%20%20by%20hand.%0A-%20**Numbers%20in%20messages%3A**%20ICU%20%60%23%60%20and%20%60%7Bcount%7D%60%20are%20formatted%20for%20the%20locale%2C%20so%201000%20reads%20%221%2C000%22%0A%20%20in%20English.%20That%20is%20intended.%0A-%20**Tests**%20keep%20asserting%20the%20English%20text%3B%20the%20test%20setup%20activates%20%60en%60%20and%20lets%20%60%3CTrans%3E%60%20render%0A%20%20without%20a%20provider.%0A%0AUser-written%20content%20(titles%2C%20bios)%20is%20never%20translated.%0A%0A%23%23%20Formatting%0A%0ADates%2C%20times%20and%20relative%20times%20follow%20%60useFormatLocale()%60%3A%20the%20app&#039;s%20language%2C%20with%20the%20region%20the%0Abrowser%20asks%20for%20when%20it%20is%20the%20same%20language.%20The%20event&#039;s%20time%20zone%20stays%20separate.%20See%0A%60apps%2Fweb%2Fsrc%2Fi18n%2Fformat.ts%60.%0A%0A%23%23%20Guardrails%0A%0A-%20**Lint%3A**%20%60lingui%2Fno-unlocalized-strings%60%20flags%20literal%20text%20in%20%60.tsx%60%20files.%20It%20only%20runs%20on%20the%0A%20%20files%20listed%20in%20%60eslint.config.mjs%60%3B%20step%205%20of%20%231328%20adds%20an%20area%20at%20a%20time%20and%20ends%20with%20all%20of%0A%20%20%60apps%2Fweb%2Fsrc%60.%20Add%20a%20file%20when%20its%20strings%20are%20in%20the%20catalog.%20%60ignore%60%2C%20%60ignoreNames%60%20and%0A%20%20%60ignoreFunctions%60%20there%20skip%20class%20lists%2C%20SVG%20attributes%2C%20DOM%20calls%20and%20the%20like%3B%20extend%20them%0A%20%20rather%20than%20disabling%20the%20rule.%20The%20rule%20does%20not%20flag%20%60title%3D%60%20attributes%3A%20check%20those%20by%20hand.%0A%20%20It%20does%20not%20run%20on%20%60.ts%60%20files%3A%20a%20%60.ts%60%20file%20that%20holds%20text%20shown%20to%20the%20user%20(such%20as%0A%20%20%60ui%2Fresize-image.ts%60)%20uses%20%60t%60%20by%20hand.%0A-%20**Catalogs%3A**%20%60make%20i18n-check%60%20(part%20of%20%60make%20precommit%60)%20runs%20%60lingui%20extract%20--clean%60%20and%20fails%0A%20%20when%20that%20changed%20a%20catalog%2C%20and%20when%20a%20translated%20locale%20has%20a%20missing%20or%20empty%20message.%20Run%0A%20%20%60make%20i18n-extract%60%20and%20commit.%0A-%20**Pseudo-locale%3A**%20%60pseudo-LOCALE%60%20accents%20every%20message%20so%20hard-coded%20strings%20stand%20out%20(they%0A%20%20stay%20plain)%2C%20and%20pads%20each%20by%20about%2030%25%20with%20%60~%60%20so%20overflowing%20layouts%20show.%20It%20is%20generated%20from%0A%20%20%60en%60%2C%20development%20only%2C%20and%20not%20in%20the%20settings%20switcher.%20Turn%20it%20on%20with%0A%20%20%60localStorage.setItem(%22sb-pseudo%22%2C%20%221%22)%60%20and%20reload%3B%20the%20server&#039;s%20stored%20language%20does%20not%0A%20%20override%20it.%20Production%20builds%20ignore%20it.%0A" style="display: none;"></div>
+                  
+                    <div class="docmd-breadcrumbs-spacer"></div>
+                  
+
+                  
+                  
+                    <div class="docmd-copy-widgets">
+                      
+                        <button class="docmd-copy-btn docmd-copy-raw-btn" data-copied="Copied!" title="Copy Markdown" aria-label="Copy Markdown">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-copy " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-copy"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>
+</span>
+                        </button>
+                      
+                      
+                        <button class="docmd-copy-btn docmd-copy-context-btn" data-copied="Copied!" title="Copy Context">
+                          <span class="docmd-btn-icon">
+<svg class="lucide-icon icon-message-square " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-message-square"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+</svg>
+</span>
+                          <span class="docmd-btn-text">Copy Context</span>
+                        </button>
+                      
+                      
+                    </div>
+                  
+                </div>
+                
+                  <h1 class="docmd-focus-title">
+                    Internationalisation
+                  </h1>
+                
+                <h1 id="internationalisation" class="docmd-heading"><a href="#internationalisation" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Internationalisation</h1>
+<p>The web app uses <a href="https://lingui.dev">Lingui</a> (ICU messages, source strings as keys). Catalogs are
+plain <code>.po</code> files in <code>apps/web/locales/&lt;locale&gt;/messages.po</code>, committed. <code>en</code> is the source; other
+locales load on demand. The plan and open steps are in issue #1328.</p>
+<h2 id="internationalisation-adding-a-string" class="docmd-heading"><a href="#internationalisation-adding-a-string" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Adding a string</h2>
+<ol>
+<li>Write the text with a macro (below).</li>
+<li>Run <code>make i18n-extract</code>. It updates every catalog; commit the result.</li>
+<li>Translations go into the other locales’ <code>.po</code> files (none yet besides <code>en</code>).</li>
+</ol>
+<h2 id="internationalisation-conventions" class="docmd-heading"><a href="#internationalisation-conventions" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Conventions</h2>
+<ul>
+<li><strong>Message ids are the source strings.</strong> Never write explicit ids. Changing the English text
+changes the id, so a reword means the translators see a new message; keep rewording to a minimum.</li>
+<li><strong>In components, use the macros.</strong> <code>t`Save`</code> from <code>@lingui/core/macro</code> for text in props and
+expressions (for example an <code>aria-label</code> set to <code>t`Close` </code>); <code>&lt;Trans&gt;</code> from
+<code>@lingui/react/macro</code> for text in JSX, also with inline elements
+(<code>&lt;Trans&gt;Read the &lt;a href=&quot;…&quot;&gt;guide&lt;/a&gt;&lt;/Trans&gt;</code>). <code>t</code> reads the global catalog and is
+re-evaluated because the provider remounts the tree when the language changes.</li>
+<li><strong>Outside a render</strong> (module constants, tables of labels, values stored before use) write
+<code>msg`Save`</code> from <code>@lingui/core/macro</code> and translate where it is shown with
+<code>i18n._(descriptor)</code> (or <code>const { t } = useLingui()</code> from <code>@lingui/react/macro</code>). Never call <code>t</code>
+at module level: no language is active yet and it would not follow a switch.</li>
+<li><strong>Never concatenate sentence parts or build them by hand.</strong> One sentence is one message, with
+placeholders: <code>t`Hello ${name}`</code>, not <code>t</code>Hello <code> + name</code>. Word order differs between
+languages. Do not put a translated word inside another message; if two messages share a word, they
+translate it twice.</li>
+<li><strong>Plurals use ICU</strong>, never <code>n === 1 ? … : …</code>:
+<code>plural(count, { one: &quot;# session&quot;, other: &quot;# sessions&quot; })</code> (<code>plural</code> from <code>@lingui/core/macro</code>).</li>
+<li><strong>Enum labels</strong> (kinds, statuses, notification types) are a function or an object of <code>msg</code>
+descriptors keyed by the enum, typed <code>Record&lt;Kind, MessageDescriptor&gt;</code>, so a new member does not
+compile without a label. Show it with <code>i18n._(label[kind])</code>. Never turn an enum value into text
+with a string transform.</li>
+<li><strong>Context and comments.</strong> Add <code>comment</code> (and <code>context</code> when the same English word needs two
+translations) only where a translator cannot tell the meaning from the sentence: a single word
+like “Open”, “Post”, “Close” (verb or adjective?), or a placeholder whose content is not obvious.
+<code>t({ message: &quot;Open&quot;, comment: &quot;Button: open the session&quot; })</code>. Otherwise leave them out.</li>
+<li><strong>Not translated:</strong> user-written content, event and room names, identifiers, URLs, CSS classes,
+test ids, logs, and <code>Error</code> messages that never reach the screen. Text in <code>title=</code> and
+<code>aria-label=</code> is translated like any other; the lint rule does not flag <code>title=</code>, so check those
+by hand.</li>
+<li><strong>Numbers in messages:</strong> ICU <code>#</code> and <code>{count}</code> are formatted for the locale, so 1000 reads “1,000”
+in English. That is intended.</li>
+<li><strong>Tests</strong> keep asserting the English text; the test setup activates <code>en</code> and lets <code>&lt;Trans&gt;</code> render
+without a provider.</li>
+</ul>
+<p>User-written content (titles, bios) is never translated.</p>
+<h2 id="internationalisation-formatting" class="docmd-heading"><a href="#internationalisation-formatting" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Formatting</h2>
+<p>Dates, times and relative times follow <code>useFormatLocale()</code>: the app’s language, with the region the
+browser asks for when it is the same language. The event’s time zone stays separate. See
+<code>apps/web/src/i18n/format.ts</code>.</p>
+<h2 id="internationalisation-guardrails" class="docmd-heading"><a href="#internationalisation-guardrails" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>Guardrails</h2>
+<ul>
+<li><strong>Lint:</strong> <code>lingui/no-unlocalized-strings</code> flags literal text in <code>.tsx</code> files. It only runs on the
+files listed in <code>eslint.config.mjs</code>; step 5 of #1328 adds an area at a time and ends with all of
+<code>apps/web/src</code>. Add a file when its strings are in the catalog. <code>ignore</code>, <code>ignoreNames</code> and
+<code>ignoreFunctions</code> there skip class lists, SVG attributes, DOM calls and the like; extend them
+rather than disabling the rule. The rule does not flag <code>title=</code> attributes: check those by hand.
+It does not run on <code>.ts</code> files: a <code>.ts</code> file that holds text shown to the user (such as
+<code>ui/resize-image.ts</code>) uses <code>t</code> by hand.</li>
+<li><strong>Catalogs:</strong> <code>make i18n-check</code> (part of <code>make precommit</code>) runs <code>lingui extract --clean</code> and fails
+when that changed a catalog, and when a translated locale has a missing or empty message. Run
+<code>make i18n-extract</code> and commit.</li>
+<li><strong>Pseudo-locale:</strong> <code>pseudo-LOCALE</code> accents every message so hard-coded strings stand out (they
+stay plain), and pads each by about 30% with <code>~</code> so overflowing layouts show. It is generated from
+<code>en</code>, development only, and not in the settings switcher. Turn it on with
+<code>localStorage.setItem(&quot;sb-pseudo&quot;, &quot;1&quot;)</code> and reload; the server’s stored language does not
+override it. Production builds ignore it.</li>
+</ul>
+
+                
+                  <div class="page-navigation">
+                    
+                      <div class="prev-page-placeholder">
+                      </div>
+                    
+                    
+                      <a href="../" class="next-page">
+                        <span><small>Next</small>
+                          <strong>
+                            Overview
+                          </strong></span>
+                        
+<svg class="lucide-icon icon-arrow-right page-nav-icon" width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-arrow-right"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
+                      </a>
+                    
+                  </div>
+                
+              </div>
+              
+              
+              <div class="toc-sidebar">
+                
+                
+                  
+
+
+  <div class="toc-container">
+    <h2 class="toc-title">On This Page<span class="mobile-view toc-menu-button float-right">
+<svg class="lucide-icon icon-chevron-down " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-chevron-down"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</span></h2>
+    <ul class="toc-list">
+      
+        <li class="toc-item toc-level-1">
+          <a href="#internationalisation" class="toc-link">Internationalisation</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#internationalisation-adding-a-string" class="toc-link">Adding a string</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#internationalisation-conventions" class="toc-link">Conventions</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#internationalisation-formatting" class="toc-link">Formatting</a>
+        </li>
+      
+        <li class="toc-item toc-level-2">
+          <a href="#internationalisation-guardrails" class="toc-link">Guardrails</a>
+        </li>
+      
+    </ul>
+  </div>
+
+                
+                
+              </div>
+              
+            </div>
+            <div class="page-footer-actions">
+              
+              
+                <span class="git-last-updated" data-timestamp="1794436101000">
+                  <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span class="git-label">Last updated:</span>
+                  <span class="git-time" data-timestamp="1794436101000"></span>
+                  
+                  <div class="git-commit-tooltip" role="tooltip">
+                    <div class="git-tooltip-title">Recent commits</div>
+                    <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: externalize the shared UI strings">feat: externalize the shared UI strings</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1794436101000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: guardrails for translatable strings">feat: guardrails for translatable str...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1794435817000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </span>
+              
+              <span class="git-spacer"></span>
+              
+            </div>
+          </main>
+          
+
+
+<footer class="page-footer">
+  <div class="footer-content">
+    <div class="user-footer">Developer documentation, built from <code>main</code> — <a href="https://docs.schellingboard.org">user documentation</a> is published from release tags. <a href="https://github.com/schellingboard/schellingboard">Source on GitHub</a>.</div>
+    
+      <div class="branding-footer">
+        Built with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"></path><path d="m18 15-2-2"></path><path d="m15 18-2-2"></path></svg> <a href="https://docmd.io" target="_blank" rel="noopener">docmd.</a>
+      </div>
+    
+  </div>
+</footer>
+
+        </div>
+      </div>
+      
+      
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T11:22:15.549Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"f48ba51f","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"f48ba51f","GIT_BRANCH":"main","git":{"commit":"f48ba51f","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"Internationalisation","slug":"/i18n/","path":"i18n/index.html"},"frontmatter":{"title":"Internationalisation","_git":{"lastUpdated":"2026-11-11T22:28:21.000Z","lastUpdatedTimestamp":1794436101000,"commits":[{"hash":"8247bb85f7bde29e0504ff3c26e96867b76a0a44","shortHash":"8247bb85","author":"Omar Kohl","timestamp":1794436101000,"date":"2026-11-11T22:28:21.000Z","message":"feat: externalize the shared UI strings","avatarUrl":""},{"hash":"57537c76ab0e5b643ccf13f990a6b18420bf36c5","shortHash":"57537c76","author":"Omar Kohl","timestamp":1794435817000,"date":"2026-11-11T22:23:37.000Z","message":"feat: guardrails for translatable strings","avatarUrl":""}]}}};</script>
+      
+      <script src="../assets/js/docmd-runtime.js?v=mwrqz0o9"></script>
+      <script src="../assets/js/docmd-main.js?v=mwrqz0o9"></script>
+      
+      <script src="../assets/js/docmd-git.js?v=mwrqz0o9"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mwrqz0o9" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mwrqz0o9" ></script>
+<script src="../assets/js/docmd-search.js?v=mwrqz0o9" ></script>
+<script src="../assets/js/docmd-git.js?v=mwrqz0o9" ></script>
+
+  <!-- Search Modal (Injected by @docmd/plugin-search) -->
+  <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
+       data-search-placeholder="Search documentation..."
+       data-search-no-results="No results found."
+       data-search-error="Failed to load search index."
+       data-search-offline="Search requires a web server. Open this site via http://localhost instead of file:// to enable search."
+       data-search-offline-build="Search is disabled because these docs were built with the --offline flag. Rebuild the site without the flag to enable search."
+       data-search-initial="Type to start searching..."
+       data-search-navigate="to navigate"
+       data-search-escape="to close">
+      <div class="docmd-search-box">
+          <div class="docmd-search-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              <input type="text" id="docmd-search-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false">
+              <button onclick="window.closeDocmdSearch()" class="docmd-search-close" aria-label="Close search">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-icon icon-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+              </button>
+          </div>
+          <div id="docmd-search-results" class="docmd-search-results"></div>
+          <div class="docmd-search-footer">
+              <span><kbd class="docmd-kbd">↑</kbd> <kbd class="docmd-kbd">↓</kbd> to navigate</span>
+              <span><kbd class="docmd-kbd">ESC</kbd> to close</span>
+          </div>
+      </div>
+  </div>
+
+    <script>
+      (function() {
+        var searchDebounceTimer;
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link || !window.gtag) return;
+          
+          var url = link.href;
+          var hostname = window.location.hostname;
+          var isExternal = link.hostname && link.hostname !== hostname;
+          var isDownload = link.hasAttribute('download') || url.match(/\.(pdf|zip|tar|gz|exe|pkg)$/i);
+          
+          if (isExternal) {
+            gtag('event', 'click_external', { 'url': url, 'link_text': link.innerText.trim() });
+          } else if (isDownload) {
+            gtag('event', 'download', { 'file_name': url.split('/').pop(), 'url': url });
+          }
+
+          // TOC tracking
+          if (link.classList.contains('toc-link')) {
+            gtag('event', 'toc_click', { 'target_id': link.getAttribute('href'), 'title': link.innerText.trim() });
+          }
+
+          // Permalink tracking
+          if (link.classList.contains('heading-anchor')) {
+            gtag('event', 'permalink_click', { 'url': url });
+          }
+        });
+
+        
+        // Search Keyword Tracking
+        document.addEventListener('input', function(e) {
+          if (e.target.id === 'docmd-search-input' && window.gtag) {
+            var query = e.target.value.trim();
+            if (query.length < 3) return;
+            
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+              gtag('event', 'search', { 'search_term': query });
+            }, 1000);
+          }
+        });
+        
+      })();
+    </script>
+
+<script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
+      
+        <script
+          src="../assets/js/likec4-embed.js?v=mwrqz0o9"></script>
+        
+      
+      
+  </body>
+</html>

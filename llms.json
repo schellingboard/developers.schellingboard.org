@@ -248,6 +248,13 @@
       "priority": "medium"
     },
     {
+      "title": "Internationalisation",
+      "url": "https://developers.schellingboard.org/i18n/",
+      "description": "",
+      "section": "I18n",
+      "priority": "medium"
+    },
+    {
       "title": "SchellingBoard developer documentation",
       "url": "https://developers.schellingboard.org/",
       "description": "",

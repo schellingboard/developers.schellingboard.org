@@ -6,7 +6,7 @@ path: /statistics/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T10:48:22.361Z"
+  generated_at: "2026-11-22T11:22:18.647Z"
 ---
 # Statistics in the admin: figures
 

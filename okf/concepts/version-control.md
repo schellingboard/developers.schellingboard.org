@@ -6,7 +6,7 @@ path: /version-control/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T10:48:22.362Z"
+  generated_at: "2026-11-22T11:22:18.648Z"
 ---
 # Version control and pull requests
 
@@ -21,8 +21,9 @@ okf:
   `echo "<message>" | bun scripts/check-commit-messages.ts --stdin`
 - Before committing, run `make precommit`: it formats and lints the last change's files (jj `@`, or
   `@-` when `@` is empty; git's uncommitted changes, or `HEAD` when there are none), type checks,
-  and runs the tests related to them and the E2E specs it changed. A change to tooling or test setup
-  runs everything. Before pushing, run `make prepush` for the full suite
+  checks the message catalogs, and runs the tests related to them and the E2E specs that use them. A
+  tooling or test setup change widens only the checks it affects (the lint config lints all files);
+  a `Makefile` change runs everything. Before pushing, run `make prepush` for the full suite
 - When working on a GitHub issue, add a footer: `issue #123` (partial work) or `fixes #123` (fully
   resolves it)
 

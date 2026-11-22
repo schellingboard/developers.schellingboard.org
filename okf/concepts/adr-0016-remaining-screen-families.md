@@ -6,7 +6,7 @@ path: /adr/0016-remaining-screen-families/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T10:48:22.355Z"
+  generated_at: "2026-11-22T11:22:18.636Z"
 ---
 # ADR 0016: The remaining screen families
 

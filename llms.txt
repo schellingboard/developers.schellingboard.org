@@ -71,6 +71,10 @@
 
 - [Creating and Reading GitHub Issues](https://developers.schellingboard.org/github-issues/)
 
+## I18n
+
+- [Internationalisation](https://developers.schellingboard.org/i18n/)
+
 ## Migrations
 
 - [Database Migrations](https://developers.schellingboard.org/migrations/)
