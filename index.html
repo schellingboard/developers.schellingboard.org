@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="./logo/favicon.svg?v=mwrte728">
-    <link rel="stylesheet" href="./assets/css/docmd-main.css?v=mwrte728">
+    <link id="site-favicon" rel="icon" href="./logo/favicon.svg?v=mwrv3051">
+    <link rel="stylesheet" href="./assets/css/docmd-main.css?v=mwrv3051">
     
-    <link rel="stylesheet" href="./assets/css/docmd-highlight-light.css?v=mwrte728" id="hljs-light" >
-    <link rel="stylesheet" href="./assets/css/docmd-highlight-dark.css?v=mwrte728" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="./assets/css/docmd-highlight-light.css?v=mwrv3051" id="hljs-light" >
+    <link rel="stylesheet" href="./assets/css/docmd-highlight-dark.css?v=mwrv3051" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="./assets/css/docmd-git.css?v=mwrte728" >
-<link rel="stylesheet" href="./assets/css/docmd-openapi.css?v=mwrte728" >
+<link rel="stylesheet" href="./assets/css/docmd-git.css?v=mwrv3051" >
+<link rel="stylesheet" href="./assets/css/docmd-openapi.css?v=mwrv3051" >
 
     
-      <link rel="stylesheet" href="./assets/css/docmd-overrides.css?v=mwrte728">
+      <link rel="stylesheet" href="./assets/css/docmd-overrides.css?v=mwrv3051">
     
     
   </head>
@@ -605,6 +605,76 @@
           
           <span class="nav-item-title">
             Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="./i18n/" class=" "
+          >
+           
+<svg class="lucide-icon icon-languages " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-languages"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m5 8 6 6" />
+  <path d="m4 14 6-6 2-3" />
+  <path d="M2 5h12" />
+  <path d="M7 2h1" />
+  <path d="m22 22-5-10-5 10" />
+  <path d="M14 18h6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Internationalisation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="./i18n-glossary-de/" class=" "
+          >
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            German glossary
             </span>
           
           
@@ -1212,6 +1282,38 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="./adr/0022-event-access-and-people-scope/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0022: Event access and people scope
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="./adr/0023-translation-library-and-format/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0023: Lingui, ICU messages and `.po` catalogs
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1617,7 +1719,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20SchellingBoard%20developer%20documentation%0A%0ASchellingBoard%20is%20a%20scheduling%20app%20for%20participant-driven%20events%20%E2%80%94%20attendees%20propose%20sessions%2C%20vote%0Aon%20them%2C%20and%20the%20accepted%20ones%20are%20scheduled%20onto%20a%20grid%20of%20rooms%20and%20time%20slots.%20It%20is%20self-hosted%2C%0Abacked%20by%20a%20single%20SQLite%20file%2C%20and%20documented%20for%20its%20users%20at%0A%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org).%0A%0AThis%20site%20is%20for%20people%20working%20_on_%20it.%20It%20tracks%20%60main%60%2C%20so%20it%20describes%20the%20code%20as%20it%20is%20now%0Arather%20than%20the%20last%20release%3B%20a%20contributor%20on%20a%20release%20branch%20reads%20that%20branch&#039;s%20%60docs%2Fdev%2F%60%20in%0Athe%20repository.%0A%0A%23%23%20Start%20here%0A%0A%7C%20Chapter%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20For%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20-----------------------------------------%20%7C%20------------------------------------------------------------------------------%20%7C%0A%7C%20%5BGetting%20started%5D(getting-started.md)%20%20%20%20%20%7C%20stack%2C%20prerequisites%2C%20setup%2C%20env%20vars%2C%20the%20dev%20commands%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BCoding%20guidelines%5D(coding-guidelines.md)%20%7C%20code%20style%2C%20when%20to%20write%20a%20comment%2C%20the%20colour%20tokens%2C%20the%20authorization%20rule%20%7C%0A%7C%20%5BTesting%5D(testing.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20test%20strategy%2C%20TDD%20workflow%2C%20running%20tests%2C%20the%20Docker%20tier%2C%20load%20testing%20%20%20%20%20%20%7C%0A%7C%20%5BVersion%20control%5D(version-control.md)%20%20%20%20%20%7C%20commit%20conventions%2C%20pull%20requests%2C%20issues%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BChangelog%5D(changelog.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20what%20belongs%20in%20%60CHANGELOG.md%60%20and%20in%20the%20in-app%20release%20notes%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%23%23%20Reference%0A%0A%7C%20Chapter%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20For%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20---------------------------------------------------%20%7C%20--------------------------------------------------------------------------%20%7C%0A%7C%20%5BArchitecture%20rules%5D(architecture-rules.md)%20%20%20%20%20%20%20%20%20%7C%20the%20conventions%20the%20build%20enforces%2C%20and%20how%20to%20add%20one%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BThe%20server%20and%20the%20API%5D(server.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60server%2F%60%20and%20%60%2Fapi%2Fv1%60%3A%20adding%20a%20use%20case%20and%20its%20route%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BThe%20web%20app%5D(web-app.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60apps%2Fweb%60%3A%20the%20SPA%2C%20how%20the%20server%20serves%20it%2C%20running%20it%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BInternationalisation%5D(i18n.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Lingui%2C%20adding%20strings%2C%20the%20catalog%20and%20lint%20guardrails%2C%20the%20pseudo-locale%20%7C%0A%7C%20%5BDatabase%20migrations%5D(migrations.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20generating%20migrations%2C%20resolving%20drizzle%20conflicts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BRunning%20multiple%20instances%5D(multiple-instances.md)%20%7C%20ports%20and%20env%20files%20when%20several%20clones%20share%20a%20machine%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BDocumentation%20and%20the%20sites%5D(documentation.md)%20%20%20%20%20%7C%20how%20the%20three%20published%20sites%20are%20built%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BReleasing%20a%20new%20version%5D(releasing.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20tagging%2C%20the%20release%20checklist%2C%20publishing%20Docker%20images%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BGitHub%20issues%5D(github-issues.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20setting%20Issue%20Type%20and%20Priority%20via%20%60gh%20api%20graphql%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%23%23%20Design%0A%0A%7C%20Chapter%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20For%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20-------------------------------------------------------------------%20%7C%20------------------------------------------------------------------------%20%7C%0A%7C%20%5BADRs%5D(adr%2FREADME.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20why%20the%20significant%20decisions%20were%20made%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BArchitecture%5D(architecture%2FREADME.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20the%20design%20on%20one%20screen%2C%20decisions%2C%20C4%20diagrams%2C%20what%20is%20not%20built%20%20%20%20%20%20%7C%0A%7C%20%5BDiagram%20explorer%5D(https%3A%2F%2Fdevelopers.schellingboard.org%2Fdiagrams%2F)%20%7C%20the%20same%20C4%20model%2C%20browsable%20%E2%80%94%20every%20view%2C%20with%20drill-down%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BAttendance%20model%5D(attendance-model%2FREADME.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20predicting%20how%20many%20people%20show%20up%20to%20a%20session%2C%20from%20its%20voting%20results%20%7C%0A%7C%20%5BMatrix%20chat%20feasibility%5D(exploration%2Fmatrix-chat.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20exploratory%20notes%20on%20integrating%20a%20Matrix%20chat%20server%20%E2%80%94%20not%20yet%20decided%20%20%7C%0A%7C%20%5BStatistics%3A%20figures%5D(statistics.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20the%20admin%20statistics%3A%20data%20and%20figures%20(decisions%20in%20ADR%200019)%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BStatistics%3A%20later%5D(statistics-proposal.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20what%20to%20collect%20for%20better%20statistics%20%E2%80%94%20not%20built%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%23%23%20Elsewhere%0A%0A-%20%5BThe%20repository%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard)%20%E2%80%94%0A%20%20%5B%60CONTRIBUTING.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FCONTRIBUTING.md)%0A%20%20points%20back%20here%2C%20and%0A%20%20%5B%60AGENTS.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md)%20holds%20the%0A%20%20instructions%20coding%20agents%20are%20given.%0A-%20%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20%E2%80%94%20the%20attendee%2C%20organizer%20and%0A%20%20self-hosting%20documentation%2C%20published%20from%20release%20tags.%0A-%20%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20%E2%80%94%20the%20project&#039;s%20landing%20page.%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20SchellingBoard%20developer%20documentation%0A%0ASchellingBoard%20is%20a%20scheduling%20app%20for%20participant-driven%20events%20%E2%80%94%20attendees%20propose%20sessions%2C%20vote%0Aon%20them%2C%20and%20the%20accepted%20ones%20are%20scheduled%20onto%20a%20grid%20of%20rooms%20and%20time%20slots.%20It%20is%20self-hosted%2C%0Abacked%20by%20a%20single%20SQLite%20file%2C%20and%20documented%20for%20its%20users%20at%0A%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org).%0A%0AThis%20site%20is%20for%20people%20working%20_on_%20it.%20It%20tracks%20%60main%60%2C%20so%20it%20describes%20the%20code%20as%20it%20is%20now%0Arather%20than%20the%20last%20release%3B%20a%20contributor%20on%20a%20release%20branch%20reads%20that%20branch&#039;s%20%60docs%2Fdev%2F%60%20in%0Athe%20repository.%0A%0A%23%23%20Start%20here%0A%0A%7C%20Chapter%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20For%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20-----------------------------------------%20%7C%20------------------------------------------------------------------------------%20%7C%0A%7C%20%5BGetting%20started%5D(getting-started.md)%20%20%20%20%20%7C%20stack%2C%20prerequisites%2C%20setup%2C%20env%20vars%2C%20the%20dev%20commands%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BCoding%20guidelines%5D(coding-guidelines.md)%20%7C%20code%20style%2C%20when%20to%20write%20a%20comment%2C%20the%20colour%20tokens%2C%20the%20authorization%20rule%20%7C%0A%7C%20%5BTesting%5D(testing.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20test%20strategy%2C%20TDD%20workflow%2C%20running%20tests%2C%20the%20Docker%20tier%2C%20load%20testing%20%20%20%20%20%20%7C%0A%7C%20%5BVersion%20control%5D(version-control.md)%20%20%20%20%20%7C%20commit%20conventions%2C%20pull%20requests%2C%20issues%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BChangelog%5D(changelog.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20what%20belongs%20in%20%60CHANGELOG.md%60%20and%20in%20the%20in-app%20release%20notes%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%23%23%20Reference%0A%0A%7C%20Chapter%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20For%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20---------------------------------------------------%20%7C%20--------------------------------------------------------------------------%20%7C%0A%7C%20%5BArchitecture%20rules%5D(architecture-rules.md)%20%20%20%20%20%20%20%20%20%7C%20the%20conventions%20the%20build%20enforces%2C%20and%20how%20to%20add%20one%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BThe%20server%20and%20the%20API%5D(server.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60server%2F%60%20and%20%60%2Fapi%2Fv1%60%3A%20adding%20a%20use%20case%20and%20its%20route%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BThe%20web%20app%5D(web-app.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20%60apps%2Fweb%60%3A%20the%20SPA%2C%20how%20the%20server%20serves%20it%2C%20running%20it%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BInternationalisation%5D(i18n.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20Lingui%2C%20adding%20strings%2C%20the%20catalog%20and%20lint%20guardrails%2C%20the%20pseudo-locale%20%7C%0A%7C%20%5BGerman%20glossary%5D(i18n-glossary-de.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20the%20terms%20of%20the%20German%20catalog%2C%20for%20translators%20and%20reviewers%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BDatabase%20migrations%5D(migrations.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20generating%20migrations%2C%20resolving%20drizzle%20conflicts%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BRunning%20multiple%20instances%5D(multiple-instances.md)%20%7C%20ports%20and%20env%20files%20when%20several%20clones%20share%20a%20machine%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BDocumentation%20and%20the%20sites%5D(documentation.md)%20%20%20%20%20%7C%20how%20the%20three%20published%20sites%20are%20built%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BReleasing%20a%20new%20version%5D(releasing.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20tagging%2C%20the%20release%20checklist%2C%20publishing%20Docker%20images%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BGitHub%20issues%5D(github-issues.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20setting%20Issue%20Type%20and%20Priority%20via%20%60gh%20api%20graphql%60%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%23%23%20Design%0A%0A%7C%20Chapter%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20For%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20-------------------------------------------------------------------%20%7C%20------------------------------------------------------------------------%20%7C%0A%7C%20%5BADRs%5D(adr%2FREADME.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20why%20the%20significant%20decisions%20were%20made%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BArchitecture%5D(architecture%2FREADME.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20the%20design%20on%20one%20screen%2C%20decisions%2C%20C4%20diagrams%2C%20what%20is%20not%20built%20%20%20%20%20%20%7C%0A%7C%20%5BDiagram%20explorer%5D(https%3A%2F%2Fdevelopers.schellingboard.org%2Fdiagrams%2F)%20%7C%20the%20same%20C4%20model%2C%20browsable%20%E2%80%94%20every%20view%2C%20with%20drill-down%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BAttendance%20model%5D(attendance-model%2FREADME.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20predicting%20how%20many%20people%20show%20up%20to%20a%20session%2C%20from%20its%20voting%20results%20%7C%0A%7C%20%5BMatrix%20chat%20feasibility%5D(exploration%2Fmatrix-chat.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20exploratory%20notes%20on%20integrating%20a%20Matrix%20chat%20server%20%E2%80%94%20not%20yet%20decided%20%20%7C%0A%7C%20%5BStatistics%3A%20figures%5D(statistics.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20the%20admin%20statistics%3A%20data%20and%20figures%20(decisions%20in%20ADR%200019)%20%20%20%20%20%20%20%20%20%20%20%7C%0A%7C%20%5BStatistics%3A%20later%5D(statistics-proposal.md)%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%20what%20to%20collect%20for%20better%20statistics%20%E2%80%94%20not%20built%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7C%0A%0A%23%23%20Elsewhere%0A%0A-%20%5BThe%20repository%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard)%20%E2%80%94%0A%20%20%5B%60CONTRIBUTING.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FCONTRIBUTING.md)%0A%20%20points%20back%20here%2C%20and%0A%20%20%5B%60AGENTS.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md)%20holds%20the%0A%20%20instructions%20coding%20agents%20are%20given.%0A-%20%5Bdocs.schellingboard.org%5D(https%3A%2F%2Fdocs.schellingboard.org)%20%E2%80%94%20the%20attendee%2C%20organizer%20and%0A%20%20self-hosting%20documentation%2C%20published%20from%20release%20tags.%0A-%20%5Bschellingboard.org%5D(https%3A%2F%2Fschellingboard.org)%20%E2%80%94%20the%20project&#039;s%20landing%20page.%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1751,6 +1853,10 @@ the repository.</p>
 <tr>
 <td><a href="./i18n/">Internationalisation</a></td>
 <td>Lingui, adding strings, the catalog and lint guardrails, the pseudo-locale</td>
+</tr>
+<tr>
+<td><a href="./i18n-glossary-de/">German glossary</a></td>
+<td>the terms of the German catalog, for translators and reviewers</td>
 </tr>
 <tr>
 <td><a href="./migrations/">Database migrations</a></td>
@@ -1917,17 +2023,32 @@ self-hosting documentation, published from release tags.</li>
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1794435817000">
+                <span class="git-last-updated" data-timestamp="1794603246000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1794435817000"></span>
+                  <span class="git-time" data-timestamp="1794603246000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: SchellingBoard is available in German">feat: SchellingBoard is available in ...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1794603246000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1989,21 +2110,6 @@ self-hosting documentation, published from release tags.</li>
                           </div>
                         </li>
                       
-                        <li class="git-commit-item">
-                          <div class="git-commit-avatar" title="Omar Kohl">
-                            
-                              OK
-                            
-                          </div>
-                          <div class="git-commit-details">
-                            <div class="git-commit-message" title="docs: the target architecture is the architecture">docs: the target architecture is the ...</div>
-                            <div class="git-commit-meta">
-                              <span class="git-commit-author">Omar Kohl</span>
-                              <span class="git-commit-date" data-timestamp="1793560589000"></span>
-                            </div>
-                          </div>
-                        </li>
-                      
                     </ul>
                   </div>
                   
@@ -2031,16 +2137,16 @@ self-hosting documentation, published from release tags.</li>
       </div>
       
       
-      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T12:30:02.893Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"c9c630d3","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"c9c630d3","GIT_BRANCH":"main","git":{"commit":"c9c630d3","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"SchellingBoard developer documentation","slug":"/","path":"index.html"},"frontmatter":{"title":"SchellingBoard developer documentation","_git":{"lastUpdated":"2026-11-11T22:23:37.000Z","lastUpdatedTimestamp":1794435817000,"commits":[{"hash":"57537c76ab0e5b643ccf13f990a6b18420bf36c5","shortHash":"57537c76","author":"Omar Kohl","timestamp":1794435817000,"date":"2026-11-11T22:23:37.000Z","message":"feat: guardrails for translatable strings","avatarUrl":""},{"hash":"2fc621aaf4a0b124eec1d3d3e11944c85cd2bc72","shortHash":"2fc621aa","author":"Omar Kohl","timestamp":1794419830000,"date":"2026-11-11T17:57:10.000Z","message":"feat: load script and make load-test for N simulated attendees","avatarUrl":""},{"hash":"2c8d68280f83a875b8094d12f3d438c520abce04","shortHash":"2c8d6828","author":"Omar Kohl","timestamp":1794058058000,"date":"2026-11-07T13:27:38.000Z","message":"docs: ADR 0019 records the decisions for the admin statistics","avatarUrl":""},{"hash":"511d9a1b122b899a379080b76f1279820fd9b016","shortHash":"511d9a1b","author":"Omar Kohl","timestamp":1794053387000,"date":"2026-11-07T12:09:47.000Z","message":"docs: plan statistics in the admin","avatarUrl":""},{"hash":"46f0092e38bdfa3abd809189e32ee0290c38eaa5","shortHash":"46f0092e","author":"Omar Kohl","timestamp":1793560589000,"date":"2026-11-01T19:16:29.000Z","message":"docs: the target architecture is the architecture","avatarUrl":""}]}}};</script>
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T13:17:19.933Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"761d015d","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"761d015d","GIT_BRANCH":"main","git":{"commit":"761d015d","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"SchellingBoard developer documentation","slug":"/","path":"index.html"},"frontmatter":{"title":"SchellingBoard developer documentation","_git":{"lastUpdated":"2026-11-13T20:54:06.000Z","lastUpdatedTimestamp":1794603246000,"commits":[{"hash":"9e70b3af9e43b1baf2e70f9a4b9748f24d7ad8b6","shortHash":"9e70b3af","author":"Omar Kohl","timestamp":1794603246000,"date":"2026-11-13T20:54:06.000Z","message":"feat: SchellingBoard is available in German","avatarUrl":""},{"hash":"57537c76ab0e5b643ccf13f990a6b18420bf36c5","shortHash":"57537c76","author":"Omar Kohl","timestamp":1794435817000,"date":"2026-11-11T22:23:37.000Z","message":"feat: guardrails for translatable strings","avatarUrl":""},{"hash":"2fc621aaf4a0b124eec1d3d3e11944c85cd2bc72","shortHash":"2fc621aa","author":"Omar Kohl","timestamp":1794419830000,"date":"2026-11-11T17:57:10.000Z","message":"feat: load script and make load-test for N simulated attendees","avatarUrl":""},{"hash":"2c8d68280f83a875b8094d12f3d438c520abce04","shortHash":"2c8d6828","author":"Omar Kohl","timestamp":1794058058000,"date":"2026-11-07T13:27:38.000Z","message":"docs: ADR 0019 records the decisions for the admin statistics","avatarUrl":""},{"hash":"511d9a1b122b899a379080b76f1279820fd9b016","shortHash":"511d9a1b","author":"Omar Kohl","timestamp":1794053387000,"date":"2026-11-07T12:09:47.000Z","message":"docs: plan statistics in the admin","avatarUrl":""}]}}};</script>
       
-      <script src="./assets/js/docmd-runtime.js?v=mwrte728"></script>
-      <script src="./assets/js/docmd-main.js?v=mwrte728"></script>
+      <script src="./assets/js/docmd-runtime.js?v=mwrv3051"></script>
+      <script src="./assets/js/docmd-main.js?v=mwrv3051"></script>
       
-      <script src="./assets/js/docmd-git.js?v=mwrte728"></script>
-      <script src="./assets/js/docmd-image-lightbox.js?v=mwrte728" ></script>
-<script src="./assets/js/vendor/minisearch.js?v=mwrte728" ></script>
-<script src="./assets/js/docmd-search.js?v=mwrte728" ></script>
-<script src="./assets/js/docmd-git.js?v=mwrte728" ></script>
+      <script src="./assets/js/docmd-git.js?v=mwrv3051"></script>
+      <script src="./assets/js/docmd-image-lightbox.js?v=mwrv3051" ></script>
+<script src="./assets/js/vendor/minisearch.js?v=mwrv3051" ></script>
+<script src="./assets/js/docmd-search.js?v=mwrv3051" ></script>
+<script src="./assets/js/docmd-git.js?v=mwrv3051" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2118,7 +2224,7 @@ self-hosting documentation, published from release tags.</li>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="./assets/js/likec4-embed.js?v=mwrte728"></script>
+          src="./assets/js/likec4-embed.js?v=mwrv3051"></script>
         
       
       

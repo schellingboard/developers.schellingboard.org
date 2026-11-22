@@ -2866,7 +2866,9 @@ where most attendees use the app, and need a non-drag alternative (WCAG 2.5.7).
    behind stays usable. On a narrow screen the panel fills the screen. Confirmations, booking a
    1-on-1 and the meeting request stay modal dialogs, and one can open over the panel. On a wide
    screen the panel lies over the right part of the page; the page does not lay out again. The page
-   gets room at its right end the width of the panel, so it can scroll out from under it.
+   gets room at its right end the width of the panel, so it can scroll out from under it. Escape
+   closes the panel unless a text field in the page behind has focus, and so does a click on the
+   page behind that lands on none of its controls.
 2. **The panel is resizable.** A drag handle on its left edge sets the width, and the content flows
    to it. The handle is a focusable separator that arrow keys also move (WCAG 2.5.7). The width has
    a minimum and a maximum and is remembered per device (`localStorage`).
@@ -2959,6 +2961,150 @@ panel.
 
 ---
 
+## [ADR 0022: Event access and people scope](https://developers.schellingboard.org/adr/0022-event-access-and-people-scope/) (Adr)
+
+# ADR 0022: Event access and people scope
+
+- **Status:** Accepted
+- **Date:** 2026-11-13, accepted 2026-11-13
+- **Amends:** [ADR 0017](0017-identity-and-roles.md) point 11 (reading),
+  [ADR 0014](0014-change-feed-and-snapshot.md) section 1 (the `event` audience)
+- **Issue:** [#629](https://github.com/schellingboard/schellingboard/issues/629) (labels)
+
+## Context
+
+An event is a filter on shared tables, not a boundary. Anyone past the optional `SITE_PASSWORD` (or
+anyone, without it) reads every guest's profile and contacts, every event's snapshot and feed, and
+`guest.changed` reaches every connection of an event. Membership is a rule for writes and labels
+only, and in `open` mode it is forgeable by picking a name.
+
+Live labels (#629) exposed this: the directory is site-wide and has no feed, and the `event`
+audience would show labels to non-members. A viewer-level feed was proposed. This ADR instead
+decides what several events on one instance are for and scopes people to the event.
+
+Almost every deployment runs one event and is torn down after it. Several events on one instance
+exist for **related events of one organizer** (a main event and satellite workshops, two retreats in
+a season): the same organizers, venue and much of the same community.
+
+## Decision
+
+1. **Purpose.** Several events on one instance serve related events of one organizer. Two cases are
+   non-goals: a series across years (delete the data after the event, import again next year) and
+   unrelated organizers on one instance (run one deployment each; one admin, one location pool and
+   one database make isolation a matter of every query). The site admin stays global; per-event
+   organizers stay out of scope.
+2. **Two data tiers.** The **program** (event, days, sessions, times, rooms, host names, proposals,
+   moments) follows the read setting. The **people** tier (directory, profiles, contacts, RSVP
+   lists, labels, comments) is for insiders only and is never public. Contacts get no extra tier.
+3. **Read setting per event:** `public` (program for anyone, people for insiders), `link` (a secret
+   event link sets a cookie; rotatable; holders are insiders) or `participants` (signed-in members
+   are insiders). A kiosk device link reads the program tier only.
+4. **Allowed pairs** of read setting and identity mode: `link`+`open`, `link`+`verified`,
+   `participants`+`verified`, `public`+either. `participants`+`open` is refused: the name picker
+   would show the roster it protects, to anyone. The bare site shows public events and the sign-in
+   form, never a name picker; after sign-in it also lists the person's events and those whose link
+   cookie the browser holds.
+5. **`SITE_PASSWORD` goes.** The event link replaces it with more entropy and nothing to type.
+   People who do not keep the link set personal credentials.
+6. **Admin settings, understood without docs.** Each event's admin settings choose the read setting
+   and the identity mode, offering only the allowed pairs. Each choice states in plain words who can
+   see the program, who can see people and how people get in. A change states its effect before it
+   is saved ("everyone without the new link loses access"). The same screen shows and copies the
+   event link and rotates it in one confirmed step, for when it leaks.
+7. **Feed and snapshot.** Snapshot and feed check access at connect and refuse outsiders. The
+   `event` audience splits into `program` and `insiders`; a program-only connection (public event,
+   kiosk) gets neither people changes nor the people part of the snapshot.
+8. **People are seen through an event.** The directory becomes an event screen, `/{slug}/people`;
+   `/guests` goes. One profile per person stays. Activity, `isHost`, `openToMeetings` and RSVP lists
+   are filtered to events the viewer may read. Profiles show no "also at" other events. 1-on-1s stay
+   per event.
+9. **A host is always a member.** Picking a non-member as host in the admin asks "Add X to this
+   event?" (Add or Cancel). Removing a member who hosts asks the same. A migration adds existing
+   non-member hosts to their events. "Shown in an event" then means "member".
+10. **Profile comments belong to an event** (`event_id`), written and read in that event. Migration:
+    the only event, otherwise the newest event the author and the subject share.
+11. **Labels are public within the event.** Labels and label types travel in the snapshot's people
+    tier and change through the event feed. No viewer-level feed, no per-label visibility; sensitive
+    notes stay outside the app.
+12. **Delete event** (admin, confirmed by typing the event name, showing the counts) deletes the
+    event and all its data, and every member in no other event except site admins. "Keep locations"
+    is on by default; cleared, it also deletes locations no other event uses. No undo; backups keep
+    a copy until rotated, and the docs say so. Thirty days after the last day, the admin sees a
+    reminder. Nothing is deleted automatically.
+13. **Delete my account** is always in settings, disabled for unverified accounts with the reason
+    ("add an email or a password first"), which makes trolling and mistakes harder and rewards
+    protecting the account. After confirmation it deletes all the person's data; a session or
+    proposal goes only when the person is its last host, otherwise the person leaves its hosts; the
+    confirmation lists the items that will go. The last site admin cannot delete their account.
+
+## Consequences
+
+- Most leaks close at two gates (snapshot/feed connect and the people-tier read layer) instead of in
+  every use case, but each people read path still needs the insider check and a test per role.
+- Live labels need no new transport; #629's live part depends on the event directory (point 8).
+- `open` events can no longer be read without the link; organizers of such events must share it.
+- A link opened in a messenger's in-app browser sets its cookie there only; the attendee must open
+  the link again in their browser or set credentials.
+- Rotating a link ends read access for everyone who held it.
+- A member of event A cannot see event B's people unless also inside B.
+
+## Alternatives
+
+- **A viewer-level feed for labels.** A new hub and resume over several events, for a directory that
+  belongs to an event anyway.
+- **One feed connection per visible event.** Six-connection limit, and traffic the directory
+  ignores.
+- **Per-event guest identities or per-event databases.** Real tenant isolation for a use case that
+  is a non-goal, at the cost of a full migration of every guest reference.
+- **Labels with an admins-only visibility.** Invites sensitive data into the app.
+- **Account deletion only after the person's events are over.** Unclear when a person is in several
+  events, and people can already delete their data step by step.
+
+## Later
+
+- Anonymized exports of an event (program without people, aggregates) before deleting it.
+
+
+---
+
+## [ADR 0023: Lingui, ICU messages and \`.po\` catalogs](https://developers.schellingboard.org/adr/0023-translation-library-and-format/) (Adr)
+
+# ADR 0023: Lingui, ICU messages and `.po` catalogs
+
+- **Status:** Accepted
+- **Date:** 2026-11-13
+
+## Context
+
+The app is written in English only, yet events are run in other languages (issue #1328). Emails and
+notifications are written by the server, everything else by the web app, so both need one set of
+translations. The web app also works offline, so a language must not need the network once loaded.
+
+## Decision
+
+1. **[Lingui](https://lingui.dev) is the library**, for the web app and, through its core and a
+   build-time macro transform, for the server.
+2. **Messages are ICU MessageFormat.** Plurals, selects and number formatting follow the language's
+   own rules, so no code branches on `n === 1`.
+3. **Source strings are the ids.** Authors write English in the code and never invent keys. A reword
+   creates a new message; translators see it as new.
+4. **Catalogs are `.po` files**, `apps/web/locales/<locale>/messages.po`, committed. Translators can
+   use any PO editor; a review reads as a diff. `en` is bundled with the app; other locales are lazy
+   chunks.
+5. **The service worker caches the locale chunks.** The shell names them, so the worker fetches them
+   ahead of use, and it keeps them until the build changes. A language works offline, also right
+   after an upgrade.
+
+## Consequences
+
+- Extraction runs in `make precommit` (`make i18n-check`); a stale or incomplete catalog fails it.
+- The server reads the same `.po` files, copied into the Docker image, and compiles them at runtime.
+- Rewording an English message costs a translation, so wording changes are deliberate.
+- The conventions for writing messages are in [i18n.md](../i18n.md).
+
+
+---
+
 ## [Architecture decision records](https://developers.schellingboard.org/adr/) (Adr)
 
 # Architecture decision records
@@ -2995,6 +3141,8 @@ same header block: status, date, and the tracking issue where there is one.
 | [0019](0019-statistics.md)                           | Statistics in the admin                                     | 2026-11-07 |
 | [0020](0020-side-panel-for-linked-views.md)          | A side panel for linked views                               | 2026-11-09 |
 | [0021](0021-forms-in-the-side-panel.md)              | Create and edit forms open in the side panel                | 2026-11-12 |
+| [0022](0022-event-access-and-people-scope.md)        | Event access and people scope                               | 2026-11-13 |
+| [0023](0023-translation-library-and-format.md)       | Lingui, ICU messages and `.po` catalogs                     | 2026-11-13 |
 
 Longer design work that isn't a single decision lives next door:
 [Architecture](../architecture/README.md) and [Attendance model](../attendance-model/README.md).
@@ -3856,9 +4004,9 @@ file/function names, library versions) — describe what changed for them, not h
 **Conventions**:
 
 - One bullet per change, at most two lines:
-  `- **Bold lead phrase** (#123): what changed, and — where it isn't obvious — what was wrong before`
+  `- **Bold lead phrase** ([#123](https://github.com/schellingboard/schellingboard/issues/123)): what changed, and — where it isn't obvious — what was wrong before`
 - Reference the GitHub issue when one exists, taken from the commit's `fixes #123` / `issue #123`
-  footer (not the PR number in a squashed subject)
+  footer (not the PR number in a squashed subject), as a link to the issue
 - Several commits delivering one feature get one bullet between them
 - Order bullets within a section roughly by importance
 - Breaking changes: `> **Breaking change**: ...` blockquote at the top of the release
@@ -3872,10 +4020,14 @@ The full rules, with the hard limits and worked examples, are in
 
 ## In-app release notes
 
-The app carries a much shorter version of the changelog:
-[`packages/domain/src/release-notes.ts`](https://github.com/schellingboard/schellingboard/blob/main/packages/domain/src/release-notes.ts),
-shown when the footer's version is clicked. It holds **3–5 highlights** of the coming release —
-inline markdown, taking the same **bold** lead phrase as the changelog bullets.
+The app carries a much shorter version of the changelog, shown when the footer's version is clicked.
+The text is translatable, so it lives in the web app's `apps/web/src/app/release-highlights.ts`
+(Lingui messages keyed by version), while
+[`packages/domain/src/release-notes.ts`](https://github.com/schellingboard/schellingboard/blob/main/packages/domain/src/release-notes.ts)
+keeps the versions and dates. A test fails when a shown release has no highlights or one names a
+release the domain does not list. It holds **3–5 highlights** of the coming release — inline
+markdown, taking the same **bold** lead phrase as the changelog bullets. The changelog itself stays
+English.
 
 Add yours to the first entry — the undated `"Unreleased"` one — as the change lands, and replace a
 weaker highlight rather than adding a sixth. Finalizing the release gives that entry its version and
@@ -4729,6 +4881,61 @@ Match existing issues' style:
 
 ---
 
+## [German glossary](https://developers.schellingboard.org/i18n-glossary-de/) (I18n Glossary De)
+
+# German glossary
+
+Terms of the German catalog (`apps/web/locales/de/messages.po`), chosen by the implementing agent
+for the owner to review. Changing a term means editing every message that uses it; search the
+catalog for the old word.
+
+**Address:** informal _du_ throughout (imperatives such as "Wähle", possessives such as "dein"), the
+tone of a community event tool. Genders are avoided with neutral wording, no stars or colons:
+_Teilnehmende_, _Organisierende_, _eine teilnehmende Person_, _Abstimmende_.
+
+| English        | German              | Note                                                                |
+| -------------- | ------------------- | ------------------------------------------------------------------- |
+| session        | Session             | Loan word, as at German tech events                                 |
+| proposal       | Vorschlag           | "Session-Vorschlag" where the context needs it                      |
+| 1-on-1         | 1:1-Gespräch        | Plural 1:1-Gespräche                                                |
+| host / co-host | Host / Co-Host      | Loan word; "hosten" as a verb                                       |
+| attendee       | Teilnehmende(r)     | Plural _Teilnehmende_, singular _teilnehmende Person_               |
+| organizer      | Organisierende      | "eine organisierende Person" for one                                |
+| guest          | Gast                | Plural _Gäste_                                                      |
+| user (account) | Person, Konto       | Never _Nutzer_ (male-only); admin list is _Personen_                |
+| RSVP (noun)    | Zusage              | Verb _zusagen_, "RSVP'd" is _zugesagt_; not _Anmeldung_ (= sign-in) |
+| vote / voting  | Stimme / Abstimmung | _Abstimmende_ for voters                                            |
+| interested     | Interessiert        | Vote choices: Interessiert, Vielleicht, Überspringen                |
+| schedule       | Programm            | "Mein Programm"; _Planung_ for the scheduling phase                 |
+| agenda         | Agenda              |                                                                     |
+| event          | Veranstaltung       |                                                                     |
+| location, room | Ort, Raum           |                                                                     |
+| slot           | Zeitfenster         |                                                                     |
+| blocker        | Sperre              | "Sperr-Session" in running text                                     |
+| shared moment  | gemeinsamer Moment  |                                                                     |
+| meeting point  | Treffpunkt          |                                                                     |
+| bookmark       | merken              | "Gemerkt" for bookmarked                                            |
+| like           | Like                | "liken", "Likes"                                                    |
+| directory      | Verzeichnis         |                                                                     |
+| settings       | Einstellungen       |                                                                     |
+| sign in / out  | Anmelden / Abmelden | "Log in" uses the same words                                        |
+| join link      | Beitrittslink       |                                                                     |
+| protection     | Schutz              | Name protection                                                     |
+| site admin     | Site-Admin          |                                                                     |
+| Quick Voting   | Quick Voting        | Product name, kept                                                  |
+| Need ideas?    | Brauchst du Ideen?  |                                                                     |
+| label          | Label               | Attendee labels                                                     |
+| time zone      | Zeitzone            |                                                                     |
+| What's new     | Was ist neu         |                                                                     |
+
+Kept in English: SchellingBoard, CSV, Markdown, Discord, WhatsApp, Telegram, Signal, pronoun
+examples (they/them), and the Lingui and HTML syntax inside messages. Statistics wording follows the
+English closely; terms such as "Trichter" (funnel) and "Auslastung" (utilization) are the plain
+German ones.
+
+
+---
+
 ## [Internationalisation](https://developers.schellingboard.org/i18n/) (I18n)
 
 # Internationalisation
@@ -4741,7 +4948,8 @@ locales load on demand. The plan and open steps are in issue #1328.
 
 1. Write the text with a macro (below).
 2. Run `make i18n-extract`. It updates every catalog; commit the result.
-3. Translations go into the other locales' `.po` files (none yet besides `en`).
+3. Translate the new messages in the other locales' `.po` files (`de` is the first; its terms are in
+   the [German glossary](i18n-glossary-de.md)). `make i18n-check` fails on an empty translation.
 
 ## Conventions
 
@@ -4779,7 +4987,55 @@ locales load on demand. The plan and open steps are in issue #1328.
 - **Tests** keep asserting the English text; the test setup activates `en` and lets `<Trans>` render
   without a provider.
 
+- **Validation messages:** the contracts' zod messages are English. A form shows them through
+  `commands/field-message.ts`, which maps the English text to a message; add a new contract message
+  there. Text that only goes into emails or notifications stays English until the server translates
+  it per recipient (step 29).
+
+- **Statistics tables:** the server sends ids, not text (`titleId`, `labelId`, cells of a `label`
+  column as `id` or `id:param`, and the filter as counts). The web maps them in
+  `features/admin/stats-text.ts`. A new id goes in `packages/domain/src/stats/text.ts` (English, for
+  the CSV files) and in that map; the type of the map fails to compile until both exist.
+
+- **Release notes:** the footer's highlights are `msg` descriptors in
+  `apps/web/src/app/release-highlights.ts`, keyed by version; the domain's `releaseNotes` keeps only
+  versions and dates. `CHANGELOG.md` stays English.
+
 User-written content (titles, bios) is never translated.
+
+## Server text
+
+Emails and notifications are written by the server in the recipient's language: `guests.locale`,
+falling back to `en` (there is no event default). The server reads the same `.po` files as the web
+(`apps/web/locales`, copied into the Docker image) through `translatorFor(locale)` in
+`server/kernel/translator.ts`, which compiles the same ICU messages. API errors stay English codes
+and messages; the web translates them.
+
+Server code writes messages with the `msg` macro from `@lingui/core/macro` (not `t`, which needs a
+global `i18n`) and passes the descriptor to the recipient's translator. `scripts/lingui-macro.ts`
+transforms the macros in the esbuild server build and in Vitest; scripts that import server code
+(`openapi`, `bootstrap-link`) run through `scripts/run-bundled.ts` for the same reason. ESLint bans
+`t`, `Trans` and `useLingui` there.
+
+Email templates are `(props, t)` functions: `t` is the recipient's `Translate`
+(`translatorFor(guest.locale)`, built when the mail is sent, not when it is queued). A queued recipe
+holds instants and the event's zone (`EmailTime` in `server/kernel/localized-text.ts`) and place
+names, never formatted text, so the language and the zone are applied per recipient at send time;
+`formatTime` writes the weekday and month in the recipient's language in the event's zone (English
+keeps its fixed wording; other languages use the locale's own pattern). A translated phrase never
+fills a value of another message: write one message per variant. Rolling back to a version before
+this one cannot render a queued mail that holds an `EmailTime`: it fails and retries until the
+24-hour give-up, so drain the queue first.
+
+An in-app notification is stored with its English text (`notifications.text`, for older readers and
+rows) and a `message` (a `NoticeMessage`: id, source text, values; builders in `utils/notices.ts`).
+The server writes it in the reader's `guests.locale` when it lists or reads notifications; rows from
+before the column read as `text`. A push holds the mail recipe and the notice and is written in the
+recipient's language when it is sent. A time or place list in a notice's values is formatted at that
+point; a notice that can be unscheduled or without a place says so with an ICU `select` inside its
+own message, and so does a name that can be gone (a deleted guest: "Someone"; `whoOf`/`nameOf`,
+emails too). API problem text (`day-window`, `session-booking`, the contracts) stays English: the
+web does not show it. `make i18n-extract` also scans `emails/`, `server/` and `utils/`.
 
 ## Formatting
 
@@ -4790,13 +5046,12 @@ browser asks for when it is the same language. The event's time zone stays separ
 
 ## Guardrails
 
-- **Lint:** `lingui/no-unlocalized-strings` flags literal text in `.tsx` files. It only runs on the
-  files listed in `eslint.config.mjs`; step 5 of #1328 adds an area at a time and ends with all of
-  `apps/web/src`. Add a file when its strings are in the catalog. `ignore`, `ignoreNames` and
-  `ignoreFunctions` there skip class lists, SVG attributes, DOM calls and the like; extend them
-  rather than disabling the rule. The rule does not flag `title=` attributes: check those by hand.
-  It does not run on `.ts` files: a `.ts` file that holds text shown to the user (such as
-  `ui/resize-image.ts`) uses `t` by hand.
+- **Lint:** `lingui/no-unlocalized-strings` flags literal text in `.tsx` files. It runs on every
+  `.tsx` file of `apps/web/src` except tests, test support and the dev toolbar (English on purpose).
+  `ignore`, `ignoreNames` and `ignoreFunctions` in `eslint.config.mjs` skip class lists, SVG
+  attributes, DOM calls and the like; extend them rather than disabling the rule. The rule does not
+  flag `title=` attributes: check those by hand. It does not run on `.ts` files: a `.ts` file that
+  holds text shown to the user (such as `ui/resize-image.ts`) uses `t` by hand.
 - **Catalogs:** `make i18n-check` (part of `make precommit`) runs `lingui extract --clean` and fails
   when that changed a catalog, and when a translated locale has a missing or empty message. Run
   `make i18n-extract` and commit.
@@ -4805,6 +5060,14 @@ browser asks for when it is the same language. The event's time zone stays separ
   `en`, development only, and not in the settings switcher. Turn it on with
   `localStorage.setItem("sb-pseudo", "1")` and reload; the server's stored language does not
   override it. Production builds ignore it.
+
+## Offline
+
+The service worker (`public/sw.js`) caches a locale's chunk when the page loads it, and keeps it
+until the build changes. The build also names every locale chunk in the shell
+(`<meta name="sb-locale-chunks">`, from `localeChunks` in `apps/web/vite.config.ts`), so the worker
+fetches them all ahead of use and a language works offline after an upgrade too, even when it has
+not been opened yet. The decision is in [ADR 0023](adr/0023-translation-library-and-format.md).
 
 
 ---
@@ -4840,6 +5103,7 @@ the repository.
 | [The server and the API](server.md)                 | `server/` and `/api/v1`: adding a use case and its route                   |
 | [The web app](web-app.md)                           | `apps/web`: the SPA, how the server serves it, running it                  |
 | [Internationalisation](i18n.md)                     | Lingui, adding strings, the catalog and lint guardrails, the pseudo-locale |
+| [German glossary](i18n-glossary-de.md)              | the terms of the German catalog, for translators and reviewers             |
 | [Database migrations](migrations.md)                | generating migrations, resolving drizzle conflicts                         |
 | [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine                    |
 | [Documentation and the sites](documentation.md)     | how the three published sites are built                                    |
@@ -5057,8 +5321,9 @@ versioned per minor release, so `v3.2.1` republishes the `3.2` documentation.
 
    **Release the in-app notes in the same commit** — in `packages/domain/src/release-notes.ts`, the
    first entry of `releaseNotes` is the one being prepared: replace its `version: "Unreleased"` with
-   this version and add the `date`. Nothing else moves. `make test` fails until the newest release
-   the changelog names has an entry.
+   this version and add the `date`, and rename the same key in `releaseHighlights`
+   (`apps/web/src/app/release-highlights.ts`). Nothing else moves. `make test` fails until the
+   newest release the changelog names has an entry.
 
    **Re-read those highlights against the finalized changelog first.** They were written one at a
    time, before it was known what else the release would hold, so they are a draft, not a record:
@@ -5103,7 +5368,8 @@ versioned per minor release, so `v3.2.1` republishes the `3.2` documentation.
 4. **Reopen the changelog** — in a follow-up commit on `main`, add an empty `## [Unreleased]`
    section above `## [X.Y.Z]` and an `[Unreleased]` compare link from `vX.Y.Z` to `HEAD`. **Reopen
    the in-app notes too** — in `packages/domain/src/release-notes.ts`, add a new first entry with
-   `version: "Unreleased"` and no `date`, above the one just released.
+   `version: "Unreleased"` and no `date`, above the one just released, and an empty `Unreleased`
+   list in `releaseHighlights`. Drop the highlights of releases the modal no longer shows.
 
 ## What the release workflow does
 
@@ -5335,7 +5601,8 @@ id it was served by (`<meta name="sb-build">`, added by `serveSpaShell`); a clie
 `health` report another one offers a reload, and a kiosk reloads by itself. It stays behind the site
 password.
 
-The in-app release notes live in `packages/domain/src/release-notes.ts` so the footer imports it.
+The in-app release versions and dates live in `packages/domain/src/release-notes.ts`; the highlight
+text is in the web app.
 
 ## Keys from the UI
 
@@ -5792,6 +6059,9 @@ oldest version still covered.
 
 ## Testing the Docker image
 
+The image installs with `--linker hoisted` while dev and CI install isolated; only this tier (not
+part of `make precommit`) catches a break there.
+
 `make test-e2e` runs the suite against the server built on the host, which is not what we ship. The
 image runs `node dist/server/main.mjs`, as a different user, with the database, migrations and
 uploads on a mounted `/data` volume. `make test-e2e-docker` runs the same suite against a container
@@ -6221,19 +6491,20 @@ covered by the E2E suite; there is no browser component runner.
 A session, a proposal, a 1-on-1 and a profile open in the side panel (`ui/side-panel.tsx`) at
 `/{slug}/sessions/:id`, `/{slug}/proposals/:id`, `/{slug}/meetings/:id` and `/guests/:id`. The first
 three are mounted by `app/panel-host.tsx` inside the event; a profile is mounted by
-`app/profile-host.tsx` at the root, over any page. `PanelLinks` opens its links, and those of any
-event's session, proposal or 1-on-1. `ForeignPanelHost` opens the replica of an event the page
-behind does not belong to. `app/panel-history.ts` keeps the page behind it and the stack depth in
-`history.state`; `SpaLinks` opens these links in the panel. An address opened directly lands on the
-schedule (for a session or a 1-on-1), the proposals list or the directory with the panel over it
-(only the directory behind a profile gives it Prev and Next), and `?viewSession=`, `?viewProposal=`
-and `?viewMeeting=` (also at `/{slug}/meetings`) redirect the same way. The proposal form is a panel
-kind too (`proposal-form` at `/{slug}/proposals/new` and `.../:id/edit`, `session-form`, and
-`profile-form` at `/guests/edit`, ADR 0021): `ProposalFormHost`, `SessionFormHost` and
-`ProfileFormHost` block history Back over unsaved changes with `history.block`, and `leaving` marks
-a confirmed or saved exit so the blocker lets it through. Booking a 1-on-1 stays a dialog,
-`?bookMeeting=` on the schedule. Links from legacy pages and emails are plain anchors: build them
-with `links.ts` and `utils/notifications.ts`, never a second copy.
+`app/profile-host.tsx` at the root, over any page. The event's own details are an `event` kind at
+`/{slug}/details`, mounted by `panel-host.tsx` too, over the schedule. `PanelLinks` opens its links,
+and those of any event's session, proposal or 1-on-1. `ForeignPanelHost` opens the replica of an
+event the page behind does not belong to. `app/panel-history.ts` keeps the page behind it and the
+stack depth in `history.state`; `SpaLinks` opens these links in the panel. An address opened
+directly lands on the schedule (for a session or a 1-on-1), the proposals list or the directory with
+the panel over it (only the directory behind a profile gives it Prev and Next), and `?viewSession=`,
+`?viewProposal=` and `?viewMeeting=` (also at `/{slug}/meetings`) redirect the same way. The
+proposal form is a panel kind too (`proposal-form` at `/{slug}/proposals/new` and `.../:id/edit`,
+`session-form`, and `profile-form` at `/guests/edit`, ADR 0021): `ProposalFormHost`,
+`SessionFormHost` and `ProfileFormHost` block history Back over unsaved changes with
+`history.block`, and `leaving` marks a confirmed or saved exit so the blocker lets it through.
+Booking a 1-on-1 stays a dialog, `?bookMeeting=` on the schedule. Links from legacy pages and emails
+are plain anchors: build them with `links.ts` and `utils/notifications.ts`, never a second copy.
 
 Two gotchas. The panel is `role="dialog"` with `aria-modal="false"`, so `dialog` locators in E2E
 still find it while the page behind stays usable. `landOnPanel` replaces the entry with the list

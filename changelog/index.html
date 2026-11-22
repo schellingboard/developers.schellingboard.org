@@ -102,11 +102,11 @@
     
     
 
-    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mwrte728">
-    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mwrte728">
+    <link id="site-favicon" rel="icon" href="../logo/favicon.svg?v=mwrv3051">
+    <link rel="stylesheet" href="../assets/css/docmd-main.css?v=mwrv3051">
     
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mwrte728" id="hljs-light" >
-    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mwrte728" id="hljs-dark" disabled>
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-light.css?v=mwrv3051" id="hljs-light" >
+    <link rel="stylesheet" href="../assets/css/docmd-highlight-dark.css?v=mwrv3051" id="hljs-dark" disabled>
     
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
@@ -124,11 +124,11 @@
 
 
 
-<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mwrte728" >
-<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mwrte728" >
+<link rel="stylesheet" href="../assets/css/docmd-git.css?v=mwrv3051" >
+<link rel="stylesheet" href="../assets/css/docmd-openapi.css?v=mwrv3051" >
 
     
-      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mwrte728">
+      <link rel="stylesheet" href="../assets/css/docmd-overrides.css?v=mwrv3051">
     
     
   </head>
@@ -605,6 +605,76 @@
           
           <span class="nav-item-title">
             Web app
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../i18n/" class=" "
+          >
+           
+<svg class="lucide-icon icon-languages " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-languages"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m5 8 6 6" />
+  <path d="m4 14 6-6 2-3" />
+  <path d="M2 5h12" />
+  <path d="M7 2h1" />
+  <path d="m22 22-5-10-5 10" />
+  <path d="M14 18h6" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            Internationalisation
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../i18n-glossary-de/" class=" "
+          >
+           
+<svg class="lucide-icon icon-book-open " width="1em" height="1em" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>
+
+          
+          <span class="nav-item-title">
+            German glossary
             </span>
           
           
@@ -1212,6 +1282,38 @@
         
       </li>
     
+      <li class="" >
+      
+        <a href="../adr/0022-event-access-and-people-scope/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0022: Event access and people scope
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
+      <li class="" >
+      
+        <a href="../adr/0023-translation-library-and-format/" class=" "
+          >
+          
+          <span class="nav-item-title">
+            0023: Lingui, ICU messages and `.po` catalogs
+            </span>
+          
+          
+        </a>
+        
+
+        
+      </li>
+    
           </ul>
         
       </li>
@@ -1617,7 +1719,7 @@
             <div class="content-layout">
               <div class="main-content">
                 <div class="docmd-breadcrumbs-row">
-                  <div id="docmd-raw-markdown" data-content="%23%20Changelog%20and%20release%20notes%0A%0A%23%23%20The%20changelog%0A%0AUpdate%20%5B%60CHANGELOG.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FCHANGELOG.md)%0Aunder%20%60%5BUnreleased%5D%60%20alongside%20any%20user-facing%20change.%0A%0A**Audience**%3A%20event%20organizers%2C%20not%20developers.%20Plain%20language%2C%20no%20jargon%20(framework%20names%2C%0Afile%2Ffunction%20names%2C%20library%20versions)%20%E2%80%94%20describe%20what%20changed%20for%20them%2C%20not%20how%20it%20was%20implemented.%0A%0A**Sections**%20(Keep%20a%20Changelog%20order%3B%20use%20only%20what%20applies)%3A%0A%0A-%20%60Added%60%20%E2%80%94%20new%20features%0A-%20%60Changed%60%20%E2%80%94%20changes%20to%20existing%20behavior%0A-%20%60Deprecated%60%20%E2%80%94%20features%20being%20phased%20out%0A-%20%60Removed%60%20%E2%80%94%20removed%20features%0A-%20%60Fixed%60%20%E2%80%94%20bug%20fixes%0A-%20%60Security%60%20%E2%80%94%20vulnerability%20fixes%0A-%20%60Internal%60%20%E2%80%94%20dev-only%20changes%20(tooling%2C%20tests%2C%20refactors%2C%20CI)%20with%20no%20visible%20effect%20on%20organizers%0A%0A**Conventions**%3A%0A%0A-%20One%20bullet%20per%20change%2C%20at%20most%20two%20lines%3A%0A%20%20%60-%20**Bold%20lead%20phrase**%20(%23123)%3A%20what%20changed%2C%20and%20%E2%80%94%20where%20it%20isn&#039;t%20obvious%20%E2%80%94%20what%20was%20wrong%20before%60%0A-%20Reference%20the%20GitHub%20issue%20when%20one%20exists%2C%20taken%20from%20the%20commit&#039;s%20%60fixes%20%23123%60%20%2F%20%60issue%20%23123%60%0A%20%20footer%20(not%20the%20PR%20number%20in%20a%20squashed%20subject)%0A-%20Several%20commits%20delivering%20one%20feature%20get%20one%20bullet%20between%20them%0A-%20Order%20bullets%20within%20a%20section%20roughly%20by%20importance%0A-%20Breaking%20changes%3A%20%60%3E%20**Breaking%20change**%3A%20...%60%20blockquote%20at%20the%20top%20of%20the%20release%0A-%20Leave%20out%20rationale%2C%20implementation%2C%20edge%20cases%20and%20how%20a%20bug%20was%20found%20%E2%80%94%20those%20belong%20in%20the%0A%20%20commit%20message%2C%20an%20ADR%20or%20these%20developer%20docs%0A-%20%60Internal%60%20is%20not%20a%20second%20commit%20history%3A%20only%20internal%20changes%20that%20are%20particularly%20valuable%2C%0A%20%20disruptive%20or%20a%20highlight%2C%20around%20three%20per%20release%2C%20one%20line%20each%0A%0AThe%20full%20rules%2C%20with%20the%20hard%20limits%20and%20worked%20examples%2C%20are%20in%0A%5B%60AGENTS.md%20%C2%A7%20Changelog%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md%23changelog).%0A%0A%23%23%20In-app%20release%20notes%0A%0AThe%20app%20carries%20a%20much%20shorter%20version%20of%20the%20changelog%3A%0A%5B%60packages%2Fdomain%2Fsrc%2Frelease-notes.ts%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2Fpackages%2Fdomain%2Fsrc%2Frelease-notes.ts)%2C%0Ashown%20when%20the%20footer&#039;s%20version%20is%20clicked.%20It%20holds%20**3%E2%80%935%20highlights**%20of%20the%20coming%20release%20%E2%80%94%0Ainline%20markdown%2C%20taking%20the%20same%20**bold**%20lead%20phrase%20as%20the%20changelog%20bullets.%0A%0AAdd%20yours%20to%20the%20first%20entry%20%E2%80%94%20the%20undated%20%60%22Unreleased%22%60%20one%20%E2%80%94%20as%20the%20change%20lands%2C%20and%20replace%20a%0Aweaker%20highlight%20rather%20than%20adding%20a%20sixth.%20Finalizing%20the%20release%20gives%20that%20entry%20its%20version%20and%0Adate%2C%20after%20checking%20its%20highlights%20against%20the%20changelog%20%E2%80%94%20see%0A%5BReleasing%20a%20new%20version%5D(releasing.md).%0A" style="display: none;"></div>
+                  <div id="docmd-raw-markdown" data-content="%23%20Changelog%20and%20release%20notes%0A%0A%23%23%20The%20changelog%0A%0AUpdate%20%5B%60CHANGELOG.md%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FCHANGELOG.md)%0Aunder%20%60%5BUnreleased%5D%60%20alongside%20any%20user-facing%20change.%0A%0A**Audience**%3A%20event%20organizers%2C%20not%20developers.%20Plain%20language%2C%20no%20jargon%20(framework%20names%2C%0Afile%2Ffunction%20names%2C%20library%20versions)%20%E2%80%94%20describe%20what%20changed%20for%20them%2C%20not%20how%20it%20was%20implemented.%0A%0A**Sections**%20(Keep%20a%20Changelog%20order%3B%20use%20only%20what%20applies)%3A%0A%0A-%20%60Added%60%20%E2%80%94%20new%20features%0A-%20%60Changed%60%20%E2%80%94%20changes%20to%20existing%20behavior%0A-%20%60Deprecated%60%20%E2%80%94%20features%20being%20phased%20out%0A-%20%60Removed%60%20%E2%80%94%20removed%20features%0A-%20%60Fixed%60%20%E2%80%94%20bug%20fixes%0A-%20%60Security%60%20%E2%80%94%20vulnerability%20fixes%0A-%20%60Internal%60%20%E2%80%94%20dev-only%20changes%20(tooling%2C%20tests%2C%20refactors%2C%20CI)%20with%20no%20visible%20effect%20on%20organizers%0A%0A**Conventions**%3A%0A%0A-%20One%20bullet%20per%20change%2C%20at%20most%20two%20lines%3A%0A%20%20%60-%20**Bold%20lead%20phrase**%20(%5B%23123%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fissues%2F123))%3A%20what%20changed%2C%20and%20%E2%80%94%20where%20it%20isn&#039;t%20obvious%20%E2%80%94%20what%20was%20wrong%20before%60%0A-%20Reference%20the%20GitHub%20issue%20when%20one%20exists%2C%20taken%20from%20the%20commit&#039;s%20%60fixes%20%23123%60%20%2F%20%60issue%20%23123%60%0A%20%20footer%20(not%20the%20PR%20number%20in%20a%20squashed%20subject)%2C%20as%20a%20link%20to%20the%20issue%0A-%20Several%20commits%20delivering%20one%20feature%20get%20one%20bullet%20between%20them%0A-%20Order%20bullets%20within%20a%20section%20roughly%20by%20importance%0A-%20Breaking%20changes%3A%20%60%3E%20**Breaking%20change**%3A%20...%60%20blockquote%20at%20the%20top%20of%20the%20release%0A-%20Leave%20out%20rationale%2C%20implementation%2C%20edge%20cases%20and%20how%20a%20bug%20was%20found%20%E2%80%94%20those%20belong%20in%20the%0A%20%20commit%20message%2C%20an%20ADR%20or%20these%20developer%20docs%0A-%20%60Internal%60%20is%20not%20a%20second%20commit%20history%3A%20only%20internal%20changes%20that%20are%20particularly%20valuable%2C%0A%20%20disruptive%20or%20a%20highlight%2C%20around%20three%20per%20release%2C%20one%20line%20each%0A%0AThe%20full%20rules%2C%20with%20the%20hard%20limits%20and%20worked%20examples%2C%20are%20in%0A%5B%60AGENTS.md%20%C2%A7%20Changelog%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2FAGENTS.md%23changelog).%0A%0A%23%23%20In-app%20release%20notes%0A%0AThe%20app%20carries%20a%20much%20shorter%20version%20of%20the%20changelog%2C%20shown%20when%20the%20footer&#039;s%20version%20is%20clicked.%0AThe%20text%20is%20translatable%2C%20so%20it%20lives%20in%20the%20web%20app&#039;s%20%60apps%2Fweb%2Fsrc%2Fapp%2Frelease-highlights.ts%60%0A(Lingui%20messages%20keyed%20by%20version)%2C%20while%0A%5B%60packages%2Fdomain%2Fsrc%2Frelease-notes.ts%60%5D(https%3A%2F%2Fgithub.com%2Fschellingboard%2Fschellingboard%2Fblob%2Fmain%2Fpackages%2Fdomain%2Fsrc%2Frelease-notes.ts)%0Akeeps%20the%20versions%20and%20dates.%20A%20test%20fails%20when%20a%20shown%20release%20has%20no%20highlights%20or%20one%20names%20a%0Arelease%20the%20domain%20does%20not%20list.%20It%20holds%20**3%E2%80%935%20highlights**%20of%20the%20coming%20release%20%E2%80%94%20inline%0Amarkdown%2C%20taking%20the%20same%20**bold**%20lead%20phrase%20as%20the%20changelog%20bullets.%20The%20changelog%20itself%20stays%0AEnglish.%0A%0AAdd%20yours%20to%20the%20first%20entry%20%E2%80%94%20the%20undated%20%60%22Unreleased%22%60%20one%20%E2%80%94%20as%20the%20change%20lands%2C%20and%20replace%20a%0Aweaker%20highlight%20rather%20than%20adding%20a%20sixth.%20Finalizing%20the%20release%20gives%20that%20entry%20its%20version%20and%0Adate%2C%20after%20checking%20its%20highlights%20against%20the%20changelog%20%E2%80%94%20see%0A%5BReleasing%20a%20new%20version%5D(releasing.md).%0A" style="display: none;"></div>
                   
                     <nav aria-label="breadcrumb" class="docmd-breadcrumbs">
                       <ol>
@@ -1707,9 +1809,9 @@ file/function names, library versions) — describe what changed for them, not h
 <p><strong>Conventions</strong>:</p>
 <ul>
 <li>One bullet per change, at most two lines:
-<code>- **Bold lead phrase** (#123): what changed, and — where it isn't obvious — what was wrong before</code></li>
+<code>- **Bold lead phrase** ([#123](https://github.com/schellingboard/schellingboard/issues/123)): what changed, and — where it isn't obvious — what was wrong before</code></li>
 <li>Reference the GitHub issue when one exists, taken from the commit’s <code>fixes #123</code> / <code>issue #123</code>
-footer (not the PR number in a squashed subject)</li>
+footer (not the PR number in a squashed subject), as a link to the issue</li>
 <li>Several commits delivering one feature get one bullet between them</li>
 <li>Order bullets within a section roughly by importance</li>
 <li>Breaking changes: <code>&gt; **Breaking change**: ...</code> blockquote at the top of the release</li>
@@ -1721,10 +1823,14 @@ disruptive or a highlight, around three per release, one line each</li>
 <p>The full rules, with the hard limits and worked examples, are in
 <a href="https://github.com/schellingboard/schellingboard/blob/main/AGENTS.md#changelog"><code>AGENTS.md § Changelog</code></a>.</p>
 <h2 id="changelog-and-release-notes-in-app-release-notes" class="docmd-heading"><a href="#changelog-and-release-notes-in-app-release-notes" class="heading-anchor" aria-label="Permalink to this section"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2m6 0h2a5 5 0 1 1 0 10h-2m-7-5h8"/></svg></a>In-app release notes</h2>
-<p>The app carries a much shorter version of the changelog:
-<a href="https://github.com/schellingboard/schellingboard/blob/main/packages/domain/src/release-notes.ts"><code>packages/domain/src/release-notes.ts</code></a>,
-shown when the footer’s version is clicked. It holds <strong>3–5 highlights</strong> of the coming release —
-inline markdown, taking the same <strong>bold</strong> lead phrase as the changelog bullets.</p>
+<p>The app carries a much shorter version of the changelog, shown when the footer’s version is clicked.
+The text is translatable, so it lives in the web app’s <code>apps/web/src/app/release-highlights.ts</code>
+(Lingui messages keyed by version), while
+<a href="https://github.com/schellingboard/schellingboard/blob/main/packages/domain/src/release-notes.ts"><code>packages/domain/src/release-notes.ts</code></a>
+keeps the versions and dates. A test fails when a shown release has no highlights or one names a
+release the domain does not list. It holds <strong>3–5 highlights</strong> of the coming release — inline
+markdown, taking the same <strong>bold</strong> lead phrase as the changelog bullets. The changelog itself stays
+English.</p>
 <p>Add yours to the first entry — the undated <code>&quot;Unreleased&quot;</code> one — as the change lands, and replace a
 weaker highlight rather than adding a sixth. Finalizing the release gives that entry its version and
 date, after checking its highlights against the changelog — see
@@ -1834,17 +1940,47 @@ date, after checking its highlights against the changelog — see
             <div class="page-footer-actions">
               
               
-                <span class="git-last-updated" data-timestamp="1793221960000">
+                <span class="git-last-updated" data-timestamp="1794599653000">
                   <svg class="git-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                   <span class="git-label">Last updated:</span>
-                  <span class="git-time" data-timestamp="1793221960000"></span>
+                  <span class="git-time" data-timestamp="1794599653000"></span>
                   
                   <div class="git-commit-tooltip" role="tooltip">
                     <div class="git-tooltip-title">Recent commits</div>
                     <ul class="git-commit-list">
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="feat: release highlights are translatable messages">feat: release highlights are translat...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1794599653000"></span>
+                            </div>
+                          </div>
+                        </li>
+                      
+                        <li class="git-commit-item">
+                          <div class="git-commit-avatar" title="Omar Kohl">
+                            
+                              OK
+                            
+                          </div>
+                          <div class="git-commit-details">
+                            <div class="git-commit-message" title="docs: link every issue reference in the changelog">docs: link every issue reference in t...</div>
+                            <div class="git-commit-meta">
+                              <span class="git-commit-author">Omar Kohl</span>
+                              <span class="git-commit-date" data-timestamp="1794595909000"></span>
+                            </div>
+                          </div>
+                        </li>
                       
                         <li class="git-commit-item">
                           <div class="git-commit-avatar" title="Omar Kohl">
@@ -1918,16 +2054,16 @@ date, after checking its highlights against the changelog — see
       </div>
       
       
-      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T12:30:02.893Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"c9c630d3","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"c9c630d3","GIT_BRANCH":"main","git":{"commit":"c9c630d3","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"Changelog and release notes","slug":"/changelog/","path":"changelog/index.html"},"frontmatter":{"title":"Changelog and release notes","_git":{"lastUpdated":"2026-10-28T21:12:40.000Z","lastUpdatedTimestamp":1793221960000,"commits":[{"hash":"415f84b064c1b212dd98afba40820868642bf8d0","shortHash":"415f84b0","author":"Omar Kohl","timestamp":1793221960000,"date":"2026-10-28T21:12:40.000Z","message":"style: wrap markdown at 100 columns with prettier","avatarUrl":""},{"hash":"0a0678d087dbf10b6bcca617ba4d1ac50580beee","shortHash":"0a0678d0","author":"Omar Kohl","timestamp":1791810604000,"date":"2026-10-12T13:10:04.000Z","message":"feat: server time and build id for the SPA shell","avatarUrl":""},{"hash":"59db14893591159d45e7adaaca0ed75b08d81ecd","shortHash":"59db1489","author":"Omar Kohl","timestamp":1789892736000,"date":"2026-09-20T08:25:36.000Z","message":"docs: split CONTRIBUTING.md into developer-docs chapters","avatarUrl":""}]}}};</script>
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T13:17:19.933Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"761d015d","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"761d015d","GIT_BRANCH":"main","git":{"commit":"761d015d","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"Changelog and release notes","slug":"/changelog/","path":"changelog/index.html"},"frontmatter":{"title":"Changelog and release notes","_git":{"lastUpdated":"2026-11-13T19:54:13.000Z","lastUpdatedTimestamp":1794599653000,"commits":[{"hash":"eeb1ca37e76855f55254ea284dba5120c4d94a16","shortHash":"eeb1ca37","author":"Omar Kohl","timestamp":1794599653000,"date":"2026-11-13T19:54:13.000Z","message":"feat: release highlights are translatable messages","avatarUrl":""},{"hash":"55614565584cbaf5e61983b0d3b03febab3a6bd5","shortHash":"55614565","author":"Omar Kohl","timestamp":1794595909000,"date":"2026-11-13T18:51:49.000Z","message":"docs: link every issue reference in the changelog","avatarUrl":""},{"hash":"415f84b064c1b212dd98afba40820868642bf8d0","shortHash":"415f84b0","author":"Omar Kohl","timestamp":1793221960000,"date":"2026-10-28T21:12:40.000Z","message":"style: wrap markdown at 100 columns with prettier","avatarUrl":""},{"hash":"0a0678d087dbf10b6bcca617ba4d1ac50580beee","shortHash":"0a0678d0","author":"Omar Kohl","timestamp":1791810604000,"date":"2026-10-12T13:10:04.000Z","message":"feat: server time and build id for the SPA shell","avatarUrl":""},{"hash":"59db14893591159d45e7adaaca0ed75b08d81ecd","shortHash":"59db1489","author":"Omar Kohl","timestamp":1789892736000,"date":"2026-09-20T08:25:36.000Z","message":"docs: split CONTRIBUTING.md into developer-docs chapters","avatarUrl":""}]}}};</script>
       
-      <script src="../assets/js/docmd-runtime.js?v=mwrte728"></script>
-      <script src="../assets/js/docmd-main.js?v=mwrte728"></script>
+      <script src="../assets/js/docmd-runtime.js?v=mwrv3051"></script>
+      <script src="../assets/js/docmd-main.js?v=mwrv3051"></script>
       
-      <script src="../assets/js/docmd-git.js?v=mwrte728"></script>
-      <script src="../assets/js/docmd-image-lightbox.js?v=mwrte728" ></script>
-<script src="../assets/js/vendor/minisearch.js?v=mwrte728" ></script>
-<script src="../assets/js/docmd-search.js?v=mwrte728" ></script>
-<script src="../assets/js/docmd-git.js?v=mwrte728" ></script>
+      <script src="../assets/js/docmd-git.js?v=mwrv3051"></script>
+      <script src="../assets/js/docmd-image-lightbox.js?v=mwrv3051" ></script>
+<script src="../assets/js/vendor/minisearch.js?v=mwrv3051" ></script>
+<script src="../assets/js/docmd-search.js?v=mwrv3051" ></script>
+<script src="../assets/js/docmd-git.js?v=mwrv3051" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2005,7 +2141,7 @@ date, after checking its highlights against the changelog — see
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../assets/js/likec4-embed.js?v=mwrte728"></script>
+          src="../assets/js/likec4-embed.js?v=mwrv3051"></script>
         
       
       

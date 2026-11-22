@@ -29,6 +29,8 @@
 - [ADR 0019: Statistics in the admin](https://developers.schellingboard.org/adr/0019-statistics/)
 - [ADR 0020: A side panel for linked views](https://developers.schellingboard.org/adr/0020-side-panel-for-linked-views/)
 - [ADR 0021: Create and edit forms open in the side panel](https://developers.schellingboard.org/adr/0021-forms-in-the-side-panel/)
+- [ADR 0022: Event access and people scope](https://developers.schellingboard.org/adr/0022-event-access-and-people-scope/)
+- [ADR 0023: Lingui, ICU messages and \`.po\` catalogs](https://developers.schellingboard.org/adr/0023-translation-library-and-format/)
 - [Architecture decision records](https://developers.schellingboard.org/adr/)
 
 ## Architecture Rules
@@ -71,6 +73,10 @@
 ## Github Issues
 
 - [Creating and Reading GitHub Issues](https://developers.schellingboard.org/github-issues/)
+
+## I18n Glossary De
+
+- [German glossary](https://developers.schellingboard.org/i18n-glossary-de/)
 
 ## I18n
 

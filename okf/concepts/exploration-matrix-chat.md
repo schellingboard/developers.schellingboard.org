@@ -6,7 +6,7 @@ path: /exploration/matrix-chat/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:30:06.273Z"
+  generated_at: "2026-11-22T13:17:23.197Z"
 ---
 # Matrix chat integration — feasibility notes
 

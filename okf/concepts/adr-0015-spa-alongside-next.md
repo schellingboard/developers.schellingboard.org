@@ -6,7 +6,7 @@ path: /adr/0015-spa-alongside-next/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:30:06.263Z"
+  generated_at: "2026-11-22T13:17:23.189Z"
 ---
 # ADR 0015: The SPA alongside Next
 

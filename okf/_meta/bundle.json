@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-11-22T12:30:06.280Z",
+    "generated_at": "2026-11-22T13:17:23.202Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 47,
+    "concepts": 50,
     "by_type": {
-      "concept": 47
+      "concept": 50
     },
     "locales": [],
     "versions": []
@@ -261,6 +261,28 @@
       "tags": []
     },
     {
+      "id": "adr-0022-event-access-and-people-scope",
+      "type": "concept",
+      "title": "ADR 0022: Event access and people scope",
+      "description": "",
+      "path": "/adr/0022-event-access-and-people-scope/",
+      "file": "concepts/adr-0022-event-access-and-people-scope.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0023-translation-library-and-format",
+      "type": "concept",
+      "title": "ADR 0023: Lingui, ICU messages and `.po` catalogs",
+      "description": "",
+      "path": "/adr/0023-translation-library-and-format/",
+      "file": "concepts/adr-0023-translation-library-and-format.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
       "id": "adr",
       "type": "concept",
       "title": "Architecture decision records",
@@ -421,6 +443,17 @@
       "description": "",
       "path": "/github-issues/",
       "file": "concepts/github-issues.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "i18n-glossary-de",
+      "type": "concept",
+      "title": "German glossary",
+      "description": "",
+      "path": "/i18n-glossary-de/",
+      "file": "concepts/i18n-glossary-de.md",
       "locale": "",
       "version": "",
       "tags": []

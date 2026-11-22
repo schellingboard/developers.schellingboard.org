@@ -150,6 +150,20 @@
       "priority": "medium"
     },
     {
+      "title": "ADR 0022: Event access and people scope",
+      "url": "https://developers.schellingboard.org/adr/0022-event-access-and-people-scope/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
+      "title": "ADR 0023: Lingui, ICU messages and \\`.po\\` catalogs",
+      "url": "https://developers.schellingboard.org/adr/0023-translation-library-and-format/",
+      "description": "",
+      "section": "Adr",
+      "priority": "medium"
+    },
+    {
       "title": "Architecture decision records",
       "url": "https://developers.schellingboard.org/adr/",
       "description": "",
@@ -252,6 +266,13 @@
       "url": "https://developers.schellingboard.org/github-issues/",
       "description": "",
       "section": "Github Issues",
+      "priority": "medium"
+    },
+    {
+      "title": "German glossary",
+      "url": "https://developers.schellingboard.org/i18n-glossary-de/",
+      "description": "",
+      "section": "I18n Glossary De",
       "priority": "medium"
     },
     {

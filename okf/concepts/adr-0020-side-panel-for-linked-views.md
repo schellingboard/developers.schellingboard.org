@@ -6,7 +6,7 @@ path: /adr/0020-side-panel-for-linked-views/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:30:06.266Z"
+  generated_at: "2026-11-22T13:17:23.191Z"
 ---
 # ADR 0020: A side panel for linked views
 
@@ -34,7 +34,9 @@ where most attendees use the app, and need a non-drag alternative (WCAG 2.5.7).
    behind stays usable. On a narrow screen the panel fills the screen. Confirmations, booking a
    1-on-1 and the meeting request stay modal dialogs, and one can open over the panel. On a wide
    screen the panel lies over the right part of the page; the page does not lay out again. The page
-   gets room at its right end the width of the panel, so it can scroll out from under it.
+   gets room at its right end the width of the panel, so it can scroll out from under it. Escape
+   closes the panel unless a text field in the page behind has focus, and so does a click on the
+   page behind that lands on none of its controls.
 2. **The panel is resizable.** A drag handle on its left edge sets the width, and the content flows
    to it. The handle is a focusable separator that arrow keys also move (WCAG 2.5.7). The width has
    a minimum and a maximum and is remembered per device (`localStorage`).

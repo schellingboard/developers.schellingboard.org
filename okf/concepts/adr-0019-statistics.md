@@ -6,7 +6,7 @@ path: /adr/0019-statistics/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:30:06.265Z"
+  generated_at: "2026-11-22T13:17:23.191Z"
 ---
 # ADR 0019: Statistics in the admin
 

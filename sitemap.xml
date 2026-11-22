@@ -111,6 +111,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://developers.schellingboard.org/adr/0022-event-access-and-people-scope/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/adr/0023-translation-library-and-format/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://developers.schellingboard.org/adr/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -182,6 +192,11 @@
   </url>
   <url>
     <loc>https://developers.schellingboard.org/github-issues/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/i18n-glossary-de/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

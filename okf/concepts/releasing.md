@@ -6,7 +6,7 @@ path: /releasing/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:30:06.276Z"
+  generated_at: "2026-11-22T13:17:23.199Z"
 ---
 # Releasing a New Version
 
@@ -27,8 +27,9 @@ versioned per minor release, so `v3.2.1` republishes the `3.2` documentation.
 
    **Release the in-app notes in the same commit** — in `packages/domain/src/release-notes.ts`, the
    first entry of `releaseNotes` is the one being prepared: replace its `version: "Unreleased"` with
-   this version and add the `date`. Nothing else moves. `make test` fails until the newest release
-   the changelog names has an entry.
+   this version and add the `date`, and rename the same key in `releaseHighlights`
+   (`apps/web/src/app/release-highlights.ts`). Nothing else moves. `make test` fails until the
+   newest release the changelog names has an entry.
 
    **Re-read those highlights against the finalized changelog first.** They were written one at a
    time, before it was known what else the release would hold, so they are a draft, not a record:
@@ -73,7 +74,8 @@ versioned per minor release, so `v3.2.1` republishes the `3.2` documentation.
 4. **Reopen the changelog** — in a follow-up commit on `main`, add an empty `## [Unreleased]`
    section above `## [X.Y.Z]` and an `[Unreleased]` compare link from `vX.Y.Z` to `HEAD`. **Reopen
    the in-app notes too** — in `packages/domain/src/release-notes.ts`, add a new first entry with
-   `version: "Unreleased"` and no `date`, above the one just released.
+   `version: "Unreleased"` and no `date`, above the one just released, and an empty `Unreleased`
+   list in `releaseHighlights`. Drop the highlights of releases the modal no longer shows.
 
 ## What the release workflow does
 

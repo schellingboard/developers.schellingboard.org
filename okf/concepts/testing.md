@@ -6,7 +6,7 @@ path: /testing/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T12:30:06.278Z"
+  generated_at: "2026-11-22T13:17:23.201Z"
 ---
 # Testing
 
@@ -194,6 +194,9 @@ dropped, delete those dumps, drop their `releases.json` entries, and raise `olde
 oldest version still covered.
 
 ## Testing the Docker image
+
+The image installs with `--linker hoisted` while dev and CI install isolated; only this tier (not
+part of `make precommit`) catches a break there.
 
 `make test-e2e` runs the suite against the server built on the host, which is not what we ship. The
 image runs `node dist/server/main.mjs`, as a different user, with the database, migrations and
