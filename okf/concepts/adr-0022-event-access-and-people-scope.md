@@ -6,7 +6,7 @@ path: /adr/0022-event-access-and-people-scope/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T13:55:21.865Z"
+  generated_at: "2026-11-22T19:27:14.924Z"
 ---
 # ADR 0022: Event access and people scope
 
