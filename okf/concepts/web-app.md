@@ -6,7 +6,7 @@ path: /web-app/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T13:17:23.202Z"
+  generated_at: "2026-11-22T13:55:21.873Z"
 ---
 # The web app (`apps/web`)
 

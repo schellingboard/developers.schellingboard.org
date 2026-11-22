@@ -6,7 +6,7 @@ path: /adr/0021-forms-in-the-side-panel/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T13:17:23.191Z"
+  generated_at: "2026-11-22T13:55:21.865Z"
 ---
 # ADR 0021: Create and edit forms open in the side panel
 

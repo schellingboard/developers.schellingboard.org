@@ -6,7 +6,7 @@ path: /server/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T13:17:23.200Z"
+  generated_at: "2026-11-22T13:55:21.871Z"
 ---
 # The server and the API
 

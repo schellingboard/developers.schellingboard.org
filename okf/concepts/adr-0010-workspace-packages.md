@@ -6,7 +6,7 @@ path: /adr/0010-workspace-packages/
 updated: 2026-11-22
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T13:17:23.187Z"
+  generated_at: "2026-11-22T13:55:21.861Z"
 ---
 # ADR 0010: Domain and contracts as workspace packages
 
