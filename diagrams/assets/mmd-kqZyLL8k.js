@@ -12,6 +12,11 @@ graph TB
   Sb -. "\`sends email\`" .-> Smtp
   PushService -. "\`delivers push\`" .-> Sb
   Sb -. "\`sends Web Push\`" .-> PushService
+  classDef muted fill:#64748b,stroke:#475569,color:#f8fafc
+  class PushService,Smtp muted
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class Sb primary
+  linkStyle 0,1,2,3,4 stroke:#8D8D8D,stroke-dasharray:8 4
 `;case`containers`:return`---
 title: "L2 · Containers"
 ---
@@ -36,6 +41,14 @@ graph LR
   Sb.Server -. "\`stores uploads\`" .-> Sb.Files
   Sb.Server -. "\`sends email\`" .-> Smtp
   Sb.Server -. "\`sends Web Push\`" .-> PushService
+  classDef muted fill:#64748b,stroke:#475569,color:#f8fafc
+  class PushService,ReverseProxy,Smtp muted
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class Sb.Web,Sb.Server primary
+  classDef secondary fill:#0284c7,stroke:#0369a1,color:#f0f9ff
+  class Sb.Db,Sb.Files secondary
+  linkStyle 0,1,2,3,5,6,7,8 stroke:#8D8D8D,stroke-dasharray:8 4
+  linkStyle 4 stroke:#8D8D8D
 `;case`server`:return`---
 title: "L3 · Server: infrastructure components and modules"
 ---
@@ -77,6 +90,14 @@ graph TB
   SbServer.Jobs -. "\`sends Web Push\`" .-> PushService
   SbServer -. "\`reads and writes\`" .-> SbDb
   SbServer -. "\`stores uploads\`" .-> SbFiles
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class SbWeb,SbServer.Http,SbServer.Feed,SbServer.Jobs,SbServer.MVenue,SbServer.MComments,SbServer.MSettings,SbServer.MUpdates,SbServer.MPeople,SbServer.MNotifications,SbServer.MProposals,SbServer.MSessions,SbServer.MMeetings,SbServer.Kernel,SbServer.MEvents primary
+  classDef secondary fill:#0284c7,stroke:#0369a1,color:#f0f9ff
+  class SbDb,SbFiles secondary
+  classDef muted fill:#64748b,stroke:#475569,color:#f8fafc
+  class Smtp,PushService muted
+  linkStyle 0,2,3,4,5,6,7,8,9,10,11,12,13,14,15 stroke:#8D8D8D,stroke-dasharray:8 4
+  linkStyle 1 stroke:#8D8D8D
 `;case`modules`:return`---
 title: "L3 · Server: modules"
 ---
@@ -95,6 +116,9 @@ graph BT
   SbServerMNotifications -. "\`reacts to\`" .-> SbServerMProposals
   SbServerMNotifications -. "\`reacts to\`" .-> SbServerMSessions
   SbServerMNotifications -. "\`reacts to\`" .-> SbServerMMeetings
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class SbServerMVenue,SbServerMPeople,SbServerMComments,SbServerMNotifications,SbServerMProposals,SbServerMSessions,SbServerMMeetings,SbServerMEvents,SbServerMSettings,SbServerMUpdates primary
+  linkStyle 0,1,2,3 stroke:#8D8D8D,stroke-dasharray:8 4
 `;case`web`:return`---
 title: "L3 · Web app components"
 ---
@@ -118,6 +142,12 @@ graph TB
   SbWeb.Commands -. "\`predicts, then reconciles\`" .-> SbWeb.Replica
   SbWeb.Commands -. "\`commands and queries\`" .-> SbServer.Http
   SbWeb.Replica -. "\`snapshot, then changes since seq\`" .-> SbServer.Feed
+  classDef muted fill:#64748b,stroke:#475569,color:#f8fafc
+  class PushService muted
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class SbWeb.Pwa,SbWeb.Commands,SbWeb.Shell,SbWeb.Replica,SbWeb.Features,SbServer.Http,SbServer.Feed primary
+  linkStyle 0,1,2,3,4,5 stroke:#8D8D8D,stroke-dasharray:8 4
+  linkStyle 6 stroke:#8D8D8D
 `;case`flowRsvp`:return`---
 title: "Flow · RSVP with optimistic update and live propagation"
 ---
@@ -139,6 +169,9 @@ graph LR
   SbServerKernel -. "\`publish change seq N\`" .-> SbServerFeed
   SbServerFeed -. "\`change seq N to every viewer of the event (this one matches it to the prediction by command_key)\`" .-> SbWebReplica
   SbServerHttp -. "\`the result, with the recorded change\`" .-> SbWebCommands
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class SbWebFeatures,SbWebCommands,SbWebReplica,SbServerHttp,SbServerMSessions,SbServerKernel,SbServerFeed primary
+  linkStyle 0,1,2,3,4,5,6,7,8 stroke:#8D8D8D,stroke-dasharray:8 4
 `;case`flowSessionChanged`:return`---
 title: "Flow · Site admin edits a session; attendees are told"
 ---
@@ -159,6 +192,11 @@ graph LR
   SbServerJobs -. "\`reaction: session.changed -> notifications for hosts and RSVP'd attendees\`" .-> SbServerMNotifications
   SbServerJobs -. "\`delivery: email\`" .-> Smtp
   SbServerJobs -. "\`delivery: push\`" .-> PushService
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class SbServerHttp,SbServerMSessions,SbServerKernel,SbServerFeed,SbServerJobs,SbServerMNotifications primary
+  classDef muted fill:#64748b,stroke:#475569,color:#f8fafc
+  class Smtp,PushService muted
+  linkStyle 0,1,2,3,4,5,6 stroke:#8D8D8D,stroke-dasharray:8 4
 `;case`flowJoin`:return`---
 title: "Flow · First login through a personal join link"
 ---
@@ -175,6 +213,10 @@ graph LR
   SbServerHttp -. "\`Set-Cookie (httpOnly, SameSite=Lax) + actor context\`" .-> SbWebShell
   SbWebShell -. "\`load event\`" .-> SbWebReplica
   SbWebReplica -. "\`GET snapshot, then subscribe since seq\`" .-> SbServerFeed
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class SbWebShell,SbServerHttp,SbServerMPeople,SbWebReplica,SbServerFeed primary
+  linkStyle 0,1,2,3,4 stroke:#8D8D8D,stroke-dasharray:8 4
+  linkStyle 5 stroke:#8D8D8D
 `;case`flowReconnect`:return`---
 title: "Flow · Back online after a wifi drop"
 ---
@@ -189,4 +231,8 @@ graph LR
   SbWebReplica -. "\`GET feed?since=4120\`" .-> SbServerFeed
   SbServerFeed -. "\`changes 4121..4187, or a reset message if pruned → full snapshot\`" .-> SbWebReplica
   SbWebReplica -. "\`re-render, banner disappears\`" .-> SbWebFeatures
+  classDef primary fill:#3b82f6,stroke:#2563eb,color:#eff6ff
+  class SbWebPwa,SbWebShell,SbWebReplica,SbServerFeed,SbWebFeatures primary
+  linkStyle 0,1,3,4 stroke:#8D8D8D,stroke-dasharray:8 4
+  linkStyle 2 stroke:#8D8D8D
 `;default:throw Error(`Unknown viewId: `+e)}};export{e as mmdSource};

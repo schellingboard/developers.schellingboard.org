@@ -176,6 +176,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://developers.schellingboard.org/demo-fly-setup/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://developers.schellingboard.org/demo/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://developers.schellingboard.org/documentation/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

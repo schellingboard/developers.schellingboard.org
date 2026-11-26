@@ -3,10 +3,10 @@ type: concept
 title: "Releasing a New Version"
 source: "https://developers.schellingboard.org/releasing/"
 path: /releasing/
-updated: 2026-11-22
+updated: 2026-11-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.929Z"
+  generated_at: "2026-11-26T23:07:01.103Z"
 ---
 # Releasing a New Version
 
@@ -57,7 +57,8 @@ minor release, so `v3.2.1` republishes the `3.2` documentation.
 
    Commit and merge it like any other change.
 
-2. **Tag the commit on `main` and push the tag.** This publishes the documentation.
+2. **Tag the commit on `main` and push the tag.** This publishes the documentation. Only repository
+   administrators can push it.
 
    ```bash
    jj git fetch
@@ -103,17 +104,46 @@ passed:
 
 Images are `linux/amd64` only, which is what has always been published.
 
+A second job, `demo`, runs after `release` only when the release took over `:latest`. It runs
+`make test-e2e-demo` against the `demo` Dockerfile target, then pushes that same image to Fly's
+registry and runs `flyctl deploy --image` (`fly.toml`). Dispatch the workflow against a tag with
+`demo_only` to redeploy the demo without publishing anything.
+
 ### Repository configuration
 
-The workflow needs two repository secrets:
+The workflow needs these repository secrets:
 
 | Secret               | Value                                                                                                                                                        |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `DOCKERHUB_USERNAME` | The Docker Hub account that can push to `schellingboard/schellingboard`.                                                                                     |
 | `DOCKERHUB_TOKEN`    | A Docker Hub [access token](https://app.docker.com/settings/personal-access-tokens) for that account with **Read & Write** scope — not the account password. |
 
+The demo job also needs `FLY_API_TOKEN`, a deploy token for the `schellingboard-demo` app, as a
+secret of the environment `demo`. That and everything on Fly is created by hand, see
+[One-time Fly.io setup of the demo](demo-fly-setup.md).
+
 Nothing else: the GitHub release is created with the automatic `GITHUB_TOKEN`, which the workflow
 grants `contents: write`.
+
+A `v*` tag publishes a release and opens the `demo` environment, so the ruleset "Protect release
+tags" lets only repository administrators create, move or delete one. To create it again:
+
+```bash
+gh api -X POST repos/schellingboard/schellingboard/rulesets --input - <<'JSON'
+{
+  "name": "Protect release tags",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": { "ref_name": { "include": ["refs/tags/v*"], "exclude": [] } },
+  "rules": [{ "type": "creation" }, { "type": "update" }, { "type": "deletion" }],
+  "bypass_actors": [
+    { "actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always" }
+  ]
+}
+JSON
+```
+
+`actor_id` 5 is the repository's admin role.
 
 ### If it fails
 

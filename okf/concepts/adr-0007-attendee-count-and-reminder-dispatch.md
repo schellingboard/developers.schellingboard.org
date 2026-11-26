@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0007: Attendee count storage and in-process reminder dispatch"
 source: "https://developers.schellingboard.org/adr/0007-attendee-count-and-reminder-dispatch/"
 path: /adr/0007-attendee-count-and-reminder-dispatch/
-updated: 2026-11-22
+updated: 2026-11-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.920Z"
+  generated_at: "2026-11-26T23:07:01.090Z"
 ---
 # ADR 0007: Attendee count storage and in-process reminder dispatch
 

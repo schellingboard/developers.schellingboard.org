@@ -3,10 +3,10 @@ type: concept
 title: "Statistics in the admin: figures"
 source: "https://developers.schellingboard.org/statistics/"
 path: /statistics/
-updated: 2026-11-22
+updated: 2026-11-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.930Z"
+  generated_at: "2026-11-26T23:07:01.104Z"
 ---
 # Statistics in the admin: figures
 

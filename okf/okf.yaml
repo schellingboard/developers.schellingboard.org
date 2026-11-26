@@ -1,16 +1,16 @@
-okf_version: 0.9.9
+okf_version: 0.10.1
 bundle:
   name: schellingboard-developers
   title: "SchellingBoard Developers"
   description: ""
   url: "https://developers.schellingboard.org"
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.931Z"
+  generated_at: "2026-11-26T23:07:01.106Z"
   default_type: concept
 stats:
-  concepts: 50
+  concepts: 52
   by_type:
-    concept: 50
+    concept: 52
   locales: 
   versions: 
 concepts:
@@ -326,6 +326,24 @@ concepts:
     description: ""
     path: /coding-guidelines/
     file: concepts/coding-guidelines.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: demo-fly-setup
+    type: concept
+    title: "One-time Fly.io setup of the demo"
+    description: ""
+    path: /demo-fly-setup/
+    file: concepts/demo-fly-setup.md
+    locale: ""
+    version: ""
+    tags: 
+  - id: demo
+    type: concept
+    title: "The public demo"
+    description: ""
+    path: /demo/
+    file: concepts/demo.md
     locale: ""
     version: ""
     tags: 

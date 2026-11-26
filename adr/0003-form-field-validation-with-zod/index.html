@@ -10,7 +10,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="generator" content="docmd v0.9.9">
+    <meta name="generator" content="docmd v0.10.1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script>
@@ -27,6 +27,21 @@
       window.DOCMD_LOCALE = "";
       window.DOCMD_DEFAULT_LOCALE = "";
     </script>
+    <style>
+      html {
+        visibility: hidden;
+      }
+    </style>
+    <title>ADR 0003: Form handling and validation with React Hook Form and Zod - SchellingBoard Developers</title>
+    
+    
+
+    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mwy5wonz">
+    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mwy5wonz">
+    
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mwy5wonz" id="hljs-light" >
+    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mwy5wonz" id="hljs-dark" disabled>
+    
     <script>/**
  * --------------------------------------------------------------------
  * docmd : the zero-config documentation engine.
@@ -93,42 +108,30 @@
     console.error('Theme init failed', e);
   }
 })();</script>
-    <style>
-      html {
-        visibility: hidden;
-      }
-    </style>
-    <title>ADR 0003: Form handling and validation with React Hook Form and Zod - SchellingBoard Developers</title>
-    
-    
-
-    <link id="site-favicon" rel="icon" href="../../logo/favicon.svg?v=mws8ante">
-    <link rel="stylesheet" href="../../assets/css/docmd-main.css?v=mws8ante">
-    
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-light.css?v=mws8ante" id="hljs-light" >
-    <link rel="stylesheet" href="../../assets/css/docmd-highlight-dark.css?v=mws8ante" id="hljs-dark" disabled>
-    
     
 <meta name="description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
 <link rel="canonical" href="https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/">
 <meta property="og:title" content="ADR 0003: Form handling and validation with React Hook Form and Zod - SchellingBoard Developers">
+<meta property="og:site_name" content="SchellingBoard Developers">
 <meta property="og:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
 <meta property="og:url" content="https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://developers.schellingboard.org/logo/logo-reversed.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ADR 0003: Form handling and validation with React Hook Form and Zod - SchellingBoard Developers">
 <meta name="twitter:description" content="Developer documentation for SchellingBoard: setup, coding and testing guidelines, architecture decisions and the release process.">
+<meta name="twitter:image" content="https://developers.schellingboard.org/logo/logo-reversed.svg">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SchellingBoard Developers","item":"https://developers.schellingboard.org/"},{"@type":"ListItem","position":2,"name":"Design"},{"@type":"ListItem","position":3,"name":"Decision records","item":"https://developers.schellingboard.org/adr/"},{"@type":"ListItem","position":4,"name":"0003: Form handling and validation with React Hook Form and Zod","item":"https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/"}]}
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SchellingBoard Developers","item":"https://developers.schellingboard.org/"},{"@type":"ListItem","position":2,"name":"Decision records","item":"https://developers.schellingboard.org/adr/"},{"@type":"ListItem","position":3,"name":"0003: Form handling and validation with React Hook Form and Zod","item":"https://developers.schellingboard.org/adr/0003-form-field-validation-with-zod/"}]}
 </script>
 
 
 
-<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mws8ante" >
-<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mws8ante" >
+<link rel="stylesheet" href="../../assets/css/docmd-git.css?v=mwy5wonz" >
+<link rel="stylesheet" href="../../assets/css/docmd-openapi.css?v=mwy5wonz" >
 
     
-      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mws8ante">
+      <link rel="stylesheet" href="../../assets/css/docmd-overrides.css?v=mwy5wonz">
     
     
   </head>
@@ -2183,16 +2186,16 @@ them over zod, since zod is the most widely used.</p>
       </div>
       
       
-      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.9.9","buildTime":"2026-11-22T19:27:12.391Z","buildDate":"2026-11-22","buildYear":"2026","gitCommit":"f921b85c","gitBranch":"main"},"DOCMD_VERSION":"0.9.9","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-22","GIT_COMMIT":"f921b85c","GIT_BRANCH":"main","git":{"commit":"f921b85c","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"ADR 0003: Form handling and validation with React Hook Form and Zod","slug":"/adr/0003-form-field-validation-with-zod/","path":"adr/0003-form-field-validation-with-zod/index.html"},"frontmatter":{"title":"ADR 0003: Form handling and validation with React Hook Form and Zod","_git":{"lastUpdated":"2026-10-28T21:12:40.000Z","lastUpdatedTimestamp":1793221960000,"commits":[{"hash":"415f84b064c1b212dd98afba40820868642bf8d0","shortHash":"415f84b0","author":"Omar Kohl","timestamp":1793221960000,"date":"2026-10-28T21:12:40.000Z","message":"style: wrap markdown at 100 columns with prettier","avatarUrl":""},{"hash":"f92217f7576f3a9a351f90663e2f1e9533c877c2","shortHash":"f92217f7","author":"Omar Kohl","timestamp":1785058311000,"date":"2026-07-26T09:31:51.000Z","message":"docs: move developers documentation to /docs/dev/","avatarUrl":""},{"hash":"30c9d70749843ee92cad92f1140003aa5297da3b","shortHash":"30c9d707","author":"aggelalex","timestamp":1783181744000,"date":"2026-07-04T16:15:44.000Z","message":"docs: add form handling ADR","avatarUrl":""}]}}};</script>
+      <script>window.__DOCMD_VARIABLES__ = {"docmd":{"version":"0.10.1","buildTime":"2026-11-26T23:06:57.965Z","buildDate":"2026-11-26","buildYear":"2026","gitCommit":"ed37310f","gitBranch":"main"},"DOCMD_VERSION":"0.10.1","BUILD_YEAR":"2026","BUILD_DATE":"2026-11-26","GIT_COMMIT":"ed37310f","GIT_BRANCH":"main","git":{"commit":"ed37310f","branch":"main"},"site":{"title":"SchellingBoard Developers","base":"/"},"page":{"title":"ADR 0003: Form handling and validation with React Hook Form and Zod","slug":"/adr/0003-form-field-validation-with-zod/","path":"adr/0003-form-field-validation-with-zod/index.html"},"frontmatter":{"title":"ADR 0003: Form handling and validation with React Hook Form and Zod","_git":{"lastUpdated":"2026-10-28T21:12:40.000Z","lastUpdatedTimestamp":1793221960000,"commits":[{"hash":"415f84b064c1b212dd98afba40820868642bf8d0","shortHash":"415f84b0","author":"Omar Kohl","timestamp":1793221960000,"date":"2026-10-28T21:12:40.000Z","message":"style: wrap markdown at 100 columns with prettier","avatarUrl":""},{"hash":"f92217f7576f3a9a351f90663e2f1e9533c877c2","shortHash":"f92217f7","author":"Omar Kohl","timestamp":1785058311000,"date":"2026-07-26T09:31:51.000Z","message":"docs: move developers documentation to /docs/dev/","avatarUrl":""},{"hash":"30c9d70749843ee92cad92f1140003aa5297da3b","shortHash":"30c9d707","author":"aggelalex","timestamp":1783181744000,"date":"2026-07-04T16:15:44.000Z","message":"docs: add form handling ADR","avatarUrl":""}]}}};</script>
       
-      <script src="../../assets/js/docmd-runtime.js?v=mws8ante"></script>
-      <script src="../../assets/js/docmd-main.js?v=mws8ante"></script>
+      <script src="../../assets/js/docmd-runtime.js?v=mwy5wonz"></script>
+      <script src="../../assets/js/docmd-main.js?v=mwy5wonz"></script>
       
-      <script src="../../assets/js/docmd-git.js?v=mws8ante"></script>
-      <script src="../../assets/js/docmd-image-lightbox.js?v=mws8ante" ></script>
-<script src="../../assets/js/vendor/minisearch.js?v=mws8ante" ></script>
-<script src="../../assets/js/docmd-search.js?v=mws8ante" ></script>
-<script src="../../assets/js/docmd-git.js?v=mws8ante" ></script>
+      <script src="../../assets/js/docmd-git.js?v=mwy5wonz"></script>
+      <script src="../../assets/js/docmd-image-lightbox.js?v=mwy5wonz" ></script>
+<script src="../../assets/js/vendor/minisearch.js?v=mwy5wonz" ></script>
+<script src="../../assets/js/docmd-search.js?v=mwy5wonz" ></script>
+<script src="../../assets/js/docmd-git.js?v=mwy5wonz" ></script>
 
   <!-- Search Modal (Injected by @docmd/plugin-search) -->
   <div id="docmd-search-modal" class="docmd-search-modal" style="display: none;" data-show-confidence="false" data-show-filters="true"
@@ -2270,7 +2273,7 @@ them over zod, since zod is the most widely used.</p>
 <script>window.__git_config={"repo":null,"branch":"main","editLink":false,"lastUpdated":true,"commitHistory":true,"maxCommits":5,"dateFormat":"relative"};window.__git_i18n={"lastUpdated":"Last updated","recentCommits":"Recent commits","viewCommitHistory":"View commit history","editOnGitHub":"Edit on GitHub","editOnGitLab":"Edit on GitLab","editOnBitbucket":"Edit on Bitbucket","editThisPage":"Edit this page","justNow":"just now","minutesAgo":"{n}m ago","hoursAgo":"{n}h ago","daysAgo":"{n}d ago"}</script>
       
         <script
-          src="../../assets/js/likec4-embed.js?v=mws8ante"></script>
+          src="../../assets/js/likec4-embed.js?v=mwy5wonz"></script>
         
       
       

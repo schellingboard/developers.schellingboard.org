@@ -4150,6 +4150,199 @@ surfaces and failing on one that doesn't resolve an acting guest.
 
 ---
 
+## [One-time Fly.io setup of the demo](https://developers.schellingboard.org/demo-fly-setup/) (Demo Fly Setup)
+
+# One-time Fly.io setup of the demo
+
+How the Fly.io side of [the public demo](demo.md) is created. It is needed once, or again to rebuild
+the demo from nothing; releases deploy on their own afterwards. Commands were checked against the
+Fly documentation and flyctl `v0.5.18` in November 2026.
+
+## What lives outside the repository
+
+| Where        | What                                                                       |
+| ------------ | -------------------------------------------------------------------------- |
+| Fly          | the app `schellingboard-demo`, its IP addresses                            |
+| Fly          | the volume `demo_data` (1 GB, `fra`)                                       |
+| Fly          | the secret `AUTH_SECRET`, the certificate for the domain                   |
+| DNS provider | the records for `demo.schellingboard.org`                                  |
+| GitHub       | the environment `demo` with the secret `FLY_API_TOKEN`, a Fly deploy token |
+
+Everything else is in `fly.toml` and the `demo` job of
+[`release.yml`](https://github.com/schellingboard/schellingboard/blob/main/.github/workflows/release.yml).
+
+## Before you start
+
+- [Install flyctl](https://docs.fly.io/flyctl/install) and run `fly auth login`.
+- Pick the Fly organization and give it a payment card. The machine and volume cost a few dollars a
+  month; see [pricing](https://docs.fly.io/about/pricing) for what the Free plan covers.
+- Run the commands below from the repository root, so that flyctl reads the app name from
+  `fly.toml`.
+
+## Steps
+
+1. **Create the app.** App names are global. If you have to pick another, change it in `fly.toml`
+   and in the `IMAGE` of the workflow job. Do not use `fly launch`, which rewrites `fly.toml`.
+
+   ```bash
+   fly apps create schellingboard-demo --org <org>
+   ```
+
+2. **Create the volume.** Confirm the warning about a single volume: the demo runs one machine and
+   its data is disposable. Snapshots stay off, so visitor content does not outlive the daily reset.
+
+   ```bash
+   fly volumes create demo_data --size 1 --region fra --scheduled-snapshots=false
+   ```
+
+3. **Set the session secret.**
+
+   ```bash
+   fly secrets set AUTH_SECRET="$(openssl rand -base64 32)"
+   ```
+
+4. **Create the GitHub environment**, open to `v*` tags only, so that no branch or pull request
+   workflow can read the token. Do this before the first run of the `demo` job: GitHub creates a
+   missing environment itself, without any restriction.
+
+   ```bash
+   env=repos/schellingboard/schellingboard/environments/demo
+   gh api -X PUT "$env" \
+     -F 'deployment_branch_policy[protected_branches]=false' \
+     -F 'deployment_branch_policy[custom_branch_policies]=true'
+   gh api -X POST "$env/deployment-branch-policies" -f 'name=v*' -f type=tag
+   ```
+
+5. **Store the deploy token** in that environment. It can manage this app only. Paste the whole
+   output of the first command, including the `FlyV1` prefix and the space after it, at the prompt
+   of the second.
+
+   ```bash
+   fly tokens create deploy --name github-actions --expiry 8760h
+   gh secret set FLY_API_TOKEN --env demo --repo schellingboard/schellingboard
+   ```
+
+6. **Deploy the first time.** With a release tag that contains the demo:
+
+   ```bash
+   gh workflow run release.yml --ref vX.Y.Z -f demo_only=true
+   ```
+
+   Without such a tag, deploy from your checkout:
+
+   ```bash
+   IMAGE=registry.fly.io/schellingboard-demo:manual
+   docker build --platform linux/amd64 --target demo \
+     --build-arg "APP_VERSION=$(bun scripts/app-version.js)" -t "$IMAGE" .
+   fly auth docker
+   docker push "$IMAGE"
+   fly deploy --image "$IMAGE"
+   ```
+
+   The first deploy creates one machine (a group with a volume gets no spare), an IPv6 address and a
+   shared IPv4 address.
+
+7. **Add the domain.** Check that `fly ips list` shows both addresses; if not, run
+   `fly ips allocate-v4 --shared` and `fly ips allocate-v6`. Then:
+
+   ```bash
+   fly certs add demo.schellingboard.org
+   fly certs setup demo.schellingboard.org   # prints the DNS records
+   ```
+
+   Create those records at the DNS provider, then repeat `fly certs check demo.schellingboard.org`
+   until the certificate is issued.
+
+## Verify
+
+- `fly machine list` shows exactly one machine, and its health check passes.
+- `curl https://demo.schellingboard.org/demo/status` answers with the next reset time.
+- Signing in works on the demo domain.
+- `fly logs` shows no warning about `X-Forwarded-For`. To check `SB_TRUSTED_PROXIES`, enter a wrong
+  password for one account until it is refused as too many attempts, then try from another network:
+  that attempt must not be refused the same way.
+- After 03:00 UTC, `fly logs` shows `scheduled reset: exiting` and then `database reseeded`.
+
+## Upkeep
+
+- **Token**: it expires after a year, without a warning. The demo keeps running, but the next `demo`
+  job fails at the deploy step; the release itself succeeds. Repeat step 5, re-run the failed job,
+  and revoke the old token (`fly tokens list`, `fly tokens revoke <id>`).
+- **flyctl in CI**: the workflow pins `version:` of `setup-flyctl`. Dependabot updates the action
+  but not this input, so raise it by hand now and then.
+- **Removal**: `fly apps destroy schellingboard-demo` also deletes the volume. Delete the GitHub
+  environment and the DNS records too, and remove the `demo` job.
+
+## Sources
+
+- [Continuous deployment with GitHub Actions](https://docs.fly.io/launch/continuous-deployment-with-github-actions).
+  The demo job differs on purpose: it builds on the runner and deploys with `--image`, so that the
+  tested image is the deployed one, and it pins its actions and flyctl.
+- [Access tokens](https://docs.fly.io/security/tokens)
+- [Custom domains](https://docs.fly.io/networking/custom-domain)
+- [Volumes](https://docs.fly.io/volumes/volume-manage)
+- [`fly.toml` reference](https://docs.fly.io/reference/configuration)
+- [Request headers](https://docs.fly.io/networking/request-headers): why two proxies are trusted
+- [GitHub deployment environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments)
+
+
+---
+
+## [The public demo](https://developers.schellingboard.org/demo/) (Demo)
+
+# The public demo
+
+[demo.schellingboard.org](https://demo.schellingboard.org) runs the app with the large seed, open to
+anyone, reset daily. It is a separate program and image that wraps the normal server; production
+code does not know about it, and an architecture rule stops anything but `server/demo/` and `tests/`
+from importing it.
+
+## Design
+
+- **Entry**: `server/demo/main.ts`, bundled to `dist/server/demo.mjs`. `server/main.ts` is
+  unchanged. The `demo` Dockerfile target adds it and the seed avatars; it is never published to
+  Docker Hub.
+- **Seed**: the `large` profile from `scripts/seed/seed.ts`. No `SITE_PASSWORD`, no SMTP.
+- **Marker**: the table `demo_marker` (created by demo code, not in the drizzle schema) records when
+  and by which version the database was seeded. Boot seeds an empty database, wipes and reseeds one
+  whose marker is older than the last scheduled reset or from another version, and refuses to start
+  on data without a marker.
+- **Gate**: `server/demo/gate.ts` is a Hono app in front of `web.fetch`. It answers
+  `GET /demo/status`, adds `X-Robots-Tag: noindex`, and refuses credential changes and uploads with
+  `site.featureDisabled` (the SPA shows "This is turned off on this site.").
+- **Banner**: `server/demo/banner.ts`. The gate injects a warning bar into the SPA HTML: public
+  demo, reset countdown, the shared credentials, a link to
+  [what works on the demo](https://github.com/schellingboard/schellingboard/blob/main/docs/public/demo.md),
+  the abuse contact. Closing shrinks it to one line (warning and countdown) and is remembered in
+  `sessionStorage`, as most links load a new page; **Show info** expands it again. It sets the CSS
+  variable `--top-inset` to its visible height; the app's fixed bars take their offset from it.
+
+## Daily reset
+
+The process exits at `SB_DEMO_RESET_AT` (default `03:00` UTC). Fly's restart policy is `always`
+(`fly.toml`), so it comes back, deletes the database files and uploads, and reseeds. There is no
+in-place wipe: in-memory feed, snapshot and rate-limit state would go stale.
+
+## Keeping the deny list current
+
+Credentials are denied for every account, because a visitor protecting a shared seeded name would
+lock the others out. When you add an endpoint that sets a credential or accepts an upload, add it to
+`DENIED_OPERATIONS` in `server/demo/gate.ts` (paths spelled as in the OpenAPI document, with the
+`/api/v1` prefix). Bodies that only sometimes carry an upload (`PUT /api/v1/admin/settings` with a
+map, `PUT /api/v1/admin/guests/{id}` with a `username`) have their own checks in the same file. The
+admin user form sends `username` only when edited, so other edits pass. Update `docs/public/demo.md`
+too: it lists the accounts and what is turned off.
+
+## Testing and deployment
+
+`make test-e2e-demo` builds the `demo` target, starts it and runs `tests/e2e-demo/`; it is not part
+of `make prepush`. Deployment and the `demo` workflow job are in
+[Releasing a new version](releasing.md); how the Fly app was created is in
+[One-time Fly.io setup of the demo](demo-fly-setup.md).
+
+
+---
+
 ## [Documentation and the sites](https://developers.schellingboard.org/documentation/) (Documentation)
 
 # Documentation and the sites
@@ -4694,9 +4887,8 @@ A web admin UI is available at `/admin` for managing all core records: events (b
 days), the global pools of users and locations, event↔guest and event↔location assignments,
 moderation of proposals, sessions, and RSVPs, and site settings (title, description, and the
 optional venue map). It is for site admins, who sign in at `/admin`; `make dev-db-seed` seeds one
-(username `site-admin`, password `seed-password`), and `make bootstrap-link` prints a link that
-makes another. It has its own layout, and the sign-in asks for `SITE_PASSWORD` first when one is
-set.
+(username `site-admin`, password `schelling`), and `make bootstrap-link` prints a link that makes
+another. It has its own layout, and the sign-in asks for `SITE_PASSWORD` first when one is set.
 
 ## Dev fake clock
 
@@ -5108,6 +5300,7 @@ the repository.
 | [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine                    |
 | [Documentation and the sites](documentation.md)     | how the three published sites are built                                    |
 | [Releasing a new version](releasing.md)             | tagging, the release checklist, publishing Docker images                   |
+| [The public demo](demo.md)                          | the demo program, its daily reset, the deny list to keep current           |
 | [GitHub issues](github-issues.md)                   | setting Issue Type and Priority via `gh api graphql`                       |
 
 ## Design
@@ -5351,7 +5544,8 @@ minor release, so `v3.2.1` republishes the `3.2` documentation.
 
    Commit and merge it like any other change.
 
-2. **Tag the commit on `main` and push the tag.** This publishes the documentation.
+2. **Tag the commit on `main` and push the tag.** This publishes the documentation. Only repository
+   administrators can push it.
 
    ```bash
    jj git fetch
@@ -5397,17 +5591,46 @@ passed:
 
 Images are `linux/amd64` only, which is what has always been published.
 
+A second job, `demo`, runs after `release` only when the release took over `:latest`. It runs
+`make test-e2e-demo` against the `demo` Dockerfile target, then pushes that same image to Fly's
+registry and runs `flyctl deploy --image` (`fly.toml`). Dispatch the workflow against a tag with
+`demo_only` to redeploy the demo without publishing anything.
+
 ### Repository configuration
 
-The workflow needs two repository secrets:
+The workflow needs these repository secrets:
 
 | Secret               | Value                                                                                                                                                        |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `DOCKERHUB_USERNAME` | The Docker Hub account that can push to `schellingboard/schellingboard`.                                                                                     |
 | `DOCKERHUB_TOKEN`    | A Docker Hub [access token](https://app.docker.com/settings/personal-access-tokens) for that account with **Read & Write** scope — not the account password. |
 
+The demo job also needs `FLY_API_TOKEN`, a deploy token for the `schellingboard-demo` app, as a
+secret of the environment `demo`. That and everything on Fly is created by hand, see
+[One-time Fly.io setup of the demo](demo-fly-setup.md).
+
 Nothing else: the GitHub release is created with the automatic `GITHUB_TOKEN`, which the workflow
 grants `contents: write`.
+
+A `v*` tag publishes a release and opens the `demo` environment, so the ruleset "Protect release
+tags" lets only repository administrators create, move or delete one. To create it again:
+
+```bash
+gh api -X POST repos/schellingboard/schellingboard/rulesets --input - <<'JSON'
+{
+  "name": "Protect release tags",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": { "ref_name": { "include": ["refs/tags/v*"], "exclude": [] } },
+  "rules": [{ "type": "creation" }, { "type": "update" }, { "type": "deletion" }],
+  "bypass_actors": [
+    { "actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always" }
+  ]
+}
+JSON
+```
+
+`actor_id` 5 is the repository's admin role.
 
 ### If it fails
 

@@ -33,6 +33,8 @@
 [WARN] missing-type /attendance-model/attendance-2025/  (using fallback 'concept')
 [WARN] missing-type /changelog/  (using fallback 'concept')
 [WARN] missing-type /coding-guidelines/  (using fallback 'concept')
+[WARN] missing-type /demo-fly-setup/  (using fallback 'concept')
+[WARN] missing-type /demo/  (using fallback 'concept')
 [WARN] missing-type /documentation/  (using fallback 'concept')
 [WARN] missing-type /exploration/matrix-chat/  (using fallback 'concept')
 [WARN] missing-type /getting-started/  (using fallback 'concept')

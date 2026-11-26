@@ -58,6 +58,14 @@
 
 - [Coding Guidelines](https://developers.schellingboard.org/coding-guidelines/)
 
+## Demo Fly Setup
+
+- [One-time Fly.io setup of the demo](https://developers.schellingboard.org/demo-fly-setup/)
+
+## Demo
+
+- [The public demo](https://developers.schellingboard.org/demo/)
+
 ## Documentation
 
 - [Documentation and the sites](https://developers.schellingboard.org/documentation/)

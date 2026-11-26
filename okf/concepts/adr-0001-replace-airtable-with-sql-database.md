@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0001: Replace Airtable with a SQL database"
 source: "https://developers.schellingboard.org/adr/0001-replace-airtable-with-sql-database/"
 path: /adr/0001-replace-airtable-with-sql-database/
-updated: 2026-11-22
+updated: 2026-11-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.918Z"
+  generated_at: "2026-11-26T23:07:01.087Z"
 ---
 # ADR 0001: Replace Airtable with a SQL database
 

@@ -3,10 +3,10 @@ type: concept
 title: "SchellingBoard developer documentation"
 source: "https://developers.schellingboard.org/"
 path: /
-updated: 2026-11-22
+updated: 2026-11-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.917Z"
+  generated_at: "2026-11-26T23:07:01.086Z"
 ---
 # SchellingBoard developer documentation
 
@@ -42,6 +42,7 @@ the repository.
 | [Running multiple instances](multiple-instances.md) | ports and env files when several clones share a machine                    |
 | [Documentation and the sites](documentation.md)     | how the three published sites are built                                    |
 | [Releasing a new version](releasing.md)             | tagging, the release checklist, publishing Docker images                   |
+| [The public demo](demo.md)                          | the demo program, its daily reset, the deny list to keep current           |
 | [GitHub issues](github-issues.md)                   | setting Issue Type and Priority via `gh api graphql`                       |
 
 ## Design

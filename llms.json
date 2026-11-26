@@ -241,6 +241,20 @@
       "priority": "medium"
     },
     {
+      "title": "One-time Fly.io setup of the demo",
+      "url": "https://developers.schellingboard.org/demo-fly-setup/",
+      "description": "",
+      "section": "Demo Fly Setup",
+      "priority": "medium"
+    },
+    {
+      "title": "The public demo",
+      "url": "https://developers.schellingboard.org/demo/",
+      "description": "",
+      "section": "Demo",
+      "priority": "medium"
+    },
+    {
       "title": "Documentation and the sites",
       "url": "https://developers.schellingboard.org/documentation/",
       "description": "",

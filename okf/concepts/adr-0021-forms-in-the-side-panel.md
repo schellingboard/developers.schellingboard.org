@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0021: Create and edit forms open in the side panel"
 source: "https://developers.schellingboard.org/adr/0021-forms-in-the-side-panel/"
 path: /adr/0021-forms-in-the-side-panel/
-updated: 2026-11-22
+updated: 2026-11-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.923Z"
+  generated_at: "2026-11-26T23:07:01.095Z"
 ---
 # ADR 0021: Create and edit forms open in the side panel
 

@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0022: Event access and people scope"
 source: "https://developers.schellingboard.org/adr/0022-event-access-and-people-scope/"
 path: /adr/0022-event-access-and-people-scope/
-updated: 2026-11-22
+updated: 2026-11-26
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-22T19:27:14.924Z"
+  generated_at: "2026-11-26T23:07:01.095Z"
 ---
 # ADR 0022: Event access and people scope
 
