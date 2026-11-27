@@ -121,6 +121,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://developers.schellingboard.org/adr/0024-sign-in-through-a-proxy/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://developers.schellingboard.org/adr/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

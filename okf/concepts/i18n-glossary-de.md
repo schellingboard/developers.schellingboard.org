@@ -3,10 +3,10 @@ type: concept
 title: "German glossary"
 source: "https://developers.schellingboard.org/i18n-glossary-de/"
 path: /i18n-glossary-de/
-updated: 2026-11-26
+updated: 2026-11-27
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-26T23:07:01.102Z"
+  generated_at: "2026-11-27T08:44:10.520Z"
 ---
 # German glossary
 

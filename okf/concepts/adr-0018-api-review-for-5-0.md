@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0018: The API review for 5.0.0"
 source: "https://developers.schellingboard.org/adr/0018-api-review-for-5-0/"
 path: /adr/0018-api-review-for-5-0/
-updated: 2026-11-26
+updated: 2026-11-27
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-26T23:07:01.094Z"
+  generated_at: "2026-11-27T08:44:10.512Z"
 ---
 # ADR 0018: The API review for 5.0.0
 

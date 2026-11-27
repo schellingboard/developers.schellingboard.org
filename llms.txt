@@ -31,6 +31,7 @@
 - [ADR 0021: Create and edit forms open in the side panel](https://developers.schellingboard.org/adr/0021-forms-in-the-side-panel/)
 - [ADR 0022: Event access and people scope](https://developers.schellingboard.org/adr/0022-event-access-and-people-scope/)
 - [ADR 0023: Lingui, ICU messages and \`.po\` catalogs](https://developers.schellingboard.org/adr/0023-translation-library-and-format/)
+- [ADR 0024: Sign-in through a proxy](https://developers.schellingboard.org/adr/0024-sign-in-through-a-proxy/)
 - [Architecture decision records](https://developers.schellingboard.org/adr/)
 
 ## Architecture Rules

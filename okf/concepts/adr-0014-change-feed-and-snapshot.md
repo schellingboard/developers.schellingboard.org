@@ -3,10 +3,10 @@ type: concept
 title: "ADR 0014: The change feed and the snapshot"
 source: "https://developers.schellingboard.org/adr/0014-change-feed-and-snapshot/"
 path: /adr/0014-change-feed-and-snapshot/
-updated: 2026-11-26
+updated: 2026-11-27
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-26T23:07:01.092Z"
+  generated_at: "2026-11-27T08:44:10.511Z"
 ---
 # ADR 0014: The change feed and the snapshot
 

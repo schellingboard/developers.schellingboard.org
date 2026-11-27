@@ -3,10 +3,10 @@ type: concept
 title: "One-time Fly.io setup of the demo"
 source: "https://developers.schellingboard.org/demo-fly-setup/"
 path: /demo-fly-setup/
-updated: 2026-11-26
+updated: 2026-11-27
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-26T23:07:01.100Z"
+  generated_at: "2026-11-27T08:44:10.518Z"
 ---
 # One-time Fly.io setup of the demo
 

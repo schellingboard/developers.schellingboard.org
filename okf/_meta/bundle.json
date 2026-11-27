@@ -6,13 +6,13 @@
     "description": "",
     "url": "https://developers.schellingboard.org",
     "generated_by": "@docmd/plugin-okf",
-    "generated_at": "2026-11-26T23:07:01.106Z",
+    "generated_at": "2026-11-27T08:44:10.524Z",
     "default_type": "concept"
   },
   "stats": {
-    "concepts": 52,
+    "concepts": 53,
     "by_type": {
-      "concept": 52
+      "concept": 53
     },
     "locales": [],
     "versions": []
@@ -278,6 +278,17 @@
       "description": "",
       "path": "/adr/0023-translation-library-and-format/",
       "file": "concepts/adr-0023-translation-library-and-format.md",
+      "locale": "",
+      "version": "",
+      "tags": []
+    },
+    {
+      "id": "adr-0024-sign-in-through-a-proxy",
+      "type": "concept",
+      "title": "ADR 0024: Sign-in through a proxy",
+      "description": "",
+      "path": "/adr/0024-sign-in-through-a-proxy/",
+      "file": "concepts/adr-0024-sign-in-through-a-proxy.md",
       "locale": "",
       "version": "",
       "tags": []

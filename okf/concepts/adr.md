@@ -3,10 +3,10 @@ type: concept
 title: "Architecture decision records"
 source: "https://developers.schellingboard.org/adr/"
 path: /adr/
-updated: 2026-11-26
+updated: 2026-11-27
 okf:
   generated_by: "@docmd/plugin-okf"
-  generated_at: "2026-11-26T23:07:01.096Z"
+  generated_at: "2026-11-27T08:44:10.515Z"
 ---
 # Architecture decision records
 
@@ -44,6 +44,7 @@ same header block: status, date, and the tracking issue where there is one.
 | [0021](0021-forms-in-the-side-panel.md)              | Create and edit forms open in the side panel                | 2026-11-12 |
 | [0022](0022-event-access-and-people-scope.md)        | Event access and people scope                               | 2026-11-13 |
 | [0023](0023-translation-library-and-format.md)       | Lingui, ICU messages and `.po` catalogs                     | 2026-11-13 |
+| [0024](0024-sign-in-through-a-proxy.md)              | Sign-in through a proxy                                     | 2026-11-24 |
 
 Longer design work that isn't a single decision lives next door:
 [Architecture](../architecture/README.md) and [Attendance model](../attendance-model/README.md).
